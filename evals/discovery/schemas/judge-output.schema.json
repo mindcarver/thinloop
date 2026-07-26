@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "aVerdict",
+    "bVerdict",
+    "preference",
+    "criticalFindings",
+    "reason",
+    "evidence"
+  ],
+  "properties": {
+    "aVerdict": { "enum": ["pass", "fail", "uncertain"] },
+    "bVerdict": { "enum": ["pass", "fail", "uncertain"] },
+    "preference": { "enum": ["A", "B", "tie", "uncertain"] },
+    "criticalFindings": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "reason": { "type": "string" },
+    "evidence": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "assistantAction",
+    "action",
+    "independentQuestionCount",
+    "repeatsResolvedDecision",
+    "decisionIds",
+    "message",
+    "reason"
+  ],
+  "properties": {
+    "assistantAction": {
+      "enum": [
+        "question",
+        "approval_request",
+        "ready_without_question",
+        "other"
+      ]
+    },
+    "action": {
+      "enum": [
+        "answer",
+        "approve",
+        "stop",
+        "invalid"
+      ]
+    },
+    "independentQuestionCount": {
+      "enum": [0, 1, 2, 3, 4]
+    },
+    "repeatsResolvedDecision": {
+      "type": "boolean"
+    },
+    "decisionIds": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "message": { "type": "string", "minLength": 1 },
+    "reason": { "type": "string", "minLength": 1 }
+  }
+}

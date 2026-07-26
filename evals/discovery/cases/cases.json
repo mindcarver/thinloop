@@ -1,0 +1,328 @@
+[
+  {
+    "id": "cli-clear-default-limit",
+    "group": "clear",
+    "product": "cli",
+    "fixture": "cli",
+    "initialPrompt": "我准备把 `tasks list` 的默认显示数量从 20 改为 25；显式传入的 `--limit` 仍然优先，输出字段和排序保持不变，并更新现有配置测试。先不要修改代码，请先判断这个需求是否已经足够明确；如果足够，简短告诉我已经可以进入实现。",
+    "requiredDecisionIds": [],
+    "preResolvedDecisionIds": [],
+    "facts": []
+  },
+  {
+    "id": "web-clear-empty-copy",
+    "group": "clear",
+    "product": "web",
+    "fixture": "web",
+    "initialPrompt": "我准备把任务列表空状态标题从“暂无任务”改成“这里还没有任务”，说明文字、按钮、埋点和布局都不变，并更新已有快照。先不要修改代码，请先判断这个需求是否已经足够明确；如果足够，简短告诉我已经可以进入实现。",
+    "requiredDecisionIds": [],
+    "preResolvedDecisionIds": [],
+    "facts": []
+  },
+  {
+    "id": "api-clear-default-page",
+    "group": "clear",
+    "product": "api",
+    "fixture": "api",
+    "initialPrompt": "我准备把现有 `GET /v1/records` 的默认分页大小从 20 改为 25；客户端显式提供 `limit` 时保持原行为，响应结构和最大值 100 不变，并补充回归测试。先不要修改代码，请先判断这个需求是否已经足够明确；如果足够，简短告诉我已经可以进入实现。",
+    "requiredDecisionIds": [],
+    "preResolvedDecisionIds": [],
+    "facts": []
+  },
+  {
+    "id": "cli-underdefined-team-sharing",
+    "group": "underdefined",
+    "product": "cli",
+    "fixture": "cli",
+    "initialPrompt": "我想让这个本地任务 CLI 支持团队共享。先不要修改代码，请先和我把下一次交付的需求聊清楚。",
+    "requiredDecisionIds": [
+      "collaboration_scope",
+      "hosting_tenancy",
+      "membership_and_roles",
+      "mode_selection",
+      "task_model",
+      "workspace_deletion",
+      "consistency_recovery",
+      "revocation_semantics",
+      "verification"
+    ],
+    "preResolvedDecisionIds": [],
+    "facts": [
+      {
+        "id": "collaboration_scope",
+        "answer": "首批是同一家小公司的 3 到 10 人研发团队。当前靠导出 JSON 和聊天软件互传；第一版采用远程团队空间，让成员共同查看和更新同一工作区的任务。任务本身的能力只覆盖创建、编辑、完成和列表查看，不包含任务删除；管理员侧仍必须覆盖后续事实表规定的工作区删除生命周期。现有个人本地模式继续保持默认且互不混合，团队工作区从空数据开始，不自动上传或迁移本地任务。"
+      },
+      {
+        "id": "membership_and_roles",
+        "answer": "一个公司在第一版只有一个工作区，每个账号也只属于这个工作区。成员用现有公司 SSO 登录，但不从 SSO 用户组自动授权；管理员通过 CLI 用精确邮箱直接添加或移除成员，不发送邀请，也不接目录 API 或 SCIM。登录时必须由 OIDC 返回完全匹配的已验证邮箱，首次成功登录后绑定稳定 subject。管理员和普通成员都能查看、创建、编辑和完成所有任务，普通成员不能管理成员或删除工作区。添加成员时可指定 member 或 admin，默认 member；管理员可提升或降级其他成员，但服务端必须原子地拒绝移除或降级最后一名管理员。部署方用一次性服务端命令预置工作区和首位管理员。"
+      },
+      {
+        "id": "sso_protocol",
+        "answer": "目标公司的 SSO 支持 OIDC。首批用户设备都有可用的系统浏览器；第一版只兼容这一家身份提供商，CLI 使用浏览器打开的 Authorization Code + PKCE 登录流程，不接触公司密码。成功后在当前操作系统用户的私有凭据存储中保存可续期会话；logout 只清除本机会话，服务端撤权始终优先。无浏览器 SSH、Device Flow、SAML 和多身份提供商不在范围内。"
+      },
+      {
+        "id": "platform_scope",
+        "answer": "首批 3 到 10 名用户都在公司管理的 Windows 11 x64 开发机上使用 CLI；第一版只承诺 Windows 11，并使用 Windows Credential Manager 保存私有凭据。macOS、Linux、WSL 和容器内登录不在本次交付范围内。"
+      },
+      {
+        "id": "hosting_tenancy",
+        "answer": "第一版由产品方托管一个只服务目标公司的专用单租户远程服务，绑定该公司的 OIDC 和一个固定团队工作区；公司自托管、多租户 SaaS、多公司和多工作区切换都不在范围内。任务数据与备份都留在这个租户边界内。"
+      },
+      {
+        "id": "delivery_shape",
+        "answer": "下一次交付是可端到端验收的首版：在同一仓库新增团队 CLI 客户端、专用远程服务和产品方部署配置，不是仅客户端或协议原型。客户端首版只支持 Windows 11；服务端作为单个 Node.js 22 LTS 进程运行在产品方管理的 Linux x64 主机或容器中，由入口代理终止 TLS。第一版不要求水平扩容、高可用集群或客户自托管。"
+      },
+      {
+        "id": "mode_selection",
+        "answer": "使用独立命令命名空间：现有 `tasks ...` 永远操作个人本地数据，`team tasks ...` 操作唯一远端工作区，`team members ...` 仅供管理员管理成员；不提供会改变默认目标的持久模式开关。"
+      },
+      {
+        "id": "task_model",
+        "answer": "团队任务保持最小模型：服务端分配工作区内唯一且永不复用的正整数 id，公开字段只有 id、title、completed；创建只需要非空标题，初始未完成，编辑只改标题，完成操作幂等地设为 true，第一版不能重新打开。完成后的任务仍允许修正标题并正常递增版本，但 completed 保持 true。并发版本号属于协议元数据，只在条件写入和冲突诊断中传递，不进入正常任务输出。描述、负责人、截止日期、标签、任务删除和历史记录都不在范围内。"
+      },
+      {
+        "id": "workspace_deletion",
+        "answer": "第一版包含工作区删除：只有管理员可发起且必须二次确认，随后进入 7 天可取消期。期间工作区只读冻结，成员仍可查看任务和删除状态，所有任务写入和成员变更都被拒绝；任一当前管理员可取消并立即恢复。期满删除主数据和文件，备份在 30 天轮转时消失，最小审计记录保留 1 年且不含任务内容。"
+      },
+      {
+        "id": "consistency_recovery",
+        "answer": "离线时只允许读取最近缓存，不排队写操作；创建、编辑、完成等写入立即提示离线并由用户联网后重试。每次成功在线列出团队任务时，客户端获取工作区完整任务快照并原子替换缓存，终端输出仍遵守现有默认 20 条与显式 limit；在线写入成功后用服务端返回结果更新缓存。离线列表基于完整快照，明确标注离线状态和最后同步时间。联网并发采用每个任务独立版本号，创建为版本 1，每次编辑或完成后递增；版本不匹配时拒绝覆盖，CLI 展示服务端版本和本地修改，让交互用户选择基于新版本重新应用或放弃。在脚本、CI、重定向输入等非交互环境中，冲突默认放弃本次写入，以非零状态退出并输出冲突详情；不得自动重新应用或无条件覆盖。每次写命令带客户端生成的幂等操作 id；网络超时后用同一 id 查询或安全重试，服务端返回同一结果，不产生重复任务。"
+      },
+      {
+        "id": "revocation_semantics",
+        "answer": "成员被移除后服务端访问立即失效；离线缓存最多可在最近一次成功鉴权后读取 24 小时。期限到达或设备联网收到撤权后清除工作区缓存。产品明确说明无法撤回用户此前主动复制的内容。"
+      },
+      {
+        "id": "verification",
+        "answer": "验收要从两个不同账号的 CLI 观察到同一任务；还要覆盖角色限制、版本冲突、离线写入失败、24 小时缓存撤权、成员移除、删除期冻结以及取消删除。"
+      },
+      {
+        "id": "bounded_default_acceptance",
+        "answer": "如果你在已确认的首版范围内提出一个合理、保守且不扩大用户、平台、数据、权限或外部依赖边界的具体默认方案，就按你的推荐方案确定；不得用这个授权放宽安全与删除规则，也不得引入新的产品能力。"
+      }
+    ]
+  },
+  {
+    "id": "web-underdefined-ai-calendar",
+    "group": "underdefined",
+    "product": "web",
+    "fixture": "web",
+    "initialPrompt": "我想给这个专注面板加一个 AI 日历助手，帮用户安排任务。先不要修改代码，请先和我把下一次交付的需求聊清楚。",
+    "requiredDecisionIds": [
+      "primary_user",
+      "desired_outcome",
+      "calendar_boundary",
+      "suggestion_rules",
+      "confirmation",
+      "privacy",
+      "failure_recovery",
+      "verification"
+    ],
+    "preResolvedDecisionIds": [],
+    "facts": [
+      {
+        "id": "primary_user",
+        "answer": "首批用户是已经使用 Focusboard 管理个人任务的独立知识工作者，不考虑团队日历。"
+      },
+      {
+        "id": "desired_outcome",
+        "answer": "用户现在手工在任务和日历间来回安排时间；第一版希望把今天未完成的任务生成一个可审阅的时间块建议。"
+      },
+      {
+        "id": "calendar_boundary",
+        "answer": "第一版只连接一个 Google Calendar，只读取未来 7 天的忙闲时间，并只向一个由 Focusboard 创建的专用日历写入。接受 Google 最窄可用权限的技术边界：使用 free/busy 只读权限与 `calendar.app.created`；后者仍能修改或删除应用创建日历中的事件，但首版代码只提供创建日历和创建事件路径，不提供更新、移动或删除路径，并在写入前重新检查忙闲。产品授权说明必须明确这一权限能力，用户可随时在 Google 侧撤销。"
+      },
+      {
+        "id": "suggestion_rules",
+        "answer": "只安排带预计时长且尚未完成的任务；工作时间固定为用户 Google Calendar 时区内的工作日 09:00 到 18:00，并按该时区处理夏令时。已有忙碌事件不可覆盖，最小时间块 30 分钟。"
+      },
+      {
+        "id": "confirmation",
+        "answer": "AI 只能生成草案，用户必须在预览中逐项确认后才写入日历；默认不自动重排或删除已有事件。"
+      },
+      {
+        "id": "privacy",
+        "answer": "允许本次交付新增一个由 Focusboard 管理的最小服务端模型代理，并使用产品方配置的单一 OpenAI 模型；模型密钥只保存在服务端，浏览器不接受或保存用户自带模型密钥。发送给代理和模型的内容仅包含任务标题、预计时长、截止日期、用户时区和匿名忙闲区间，不发送日历事件标题、参与人、地点、备注或 Google 凭据。代理不记录请求正文，调用结束后不保留原始输入；只记录无正文的请求 id、耗时、模型名、token 计数和结果状态 30 天用于运维。代理验证结构、日期和工作时间边界，模型不能直接调用 Google Calendar；忙闲重查和写入只由受控应用逻辑执行。"
+      },
+      {
+        "id": "failure_recovery",
+        "answer": "模型或 Google Calendar 不可用时保留当前草案并明确显示失败来源；确认写入时为每个建议块保存稳定操作 id，写入部分成功时列出成功和失败项，用户只能用同一操作 id 重试失败项，避免重复事件。若写入前重查发现时段已被占用，该项作为冲突失败返回，不自动换时间。"
+      },
+      {
+        "id": "verification",
+        "answer": "验收要观察草案不产生写入、确认后只写专用日历、忙碌时间不被占用、隐私字段未发送，以及部分写入失败可以精确重试。"
+      },
+      {
+        "id": "bounded_default_acceptance",
+        "answer": "如果你在已确认的首版范围内提出一个合理、保守且不扩大用户、平台、数据、权限或外部依赖边界的具体默认方案，就按你的推荐方案确定；不得用这个授权放宽安全与删除规则，也不得引入新的产品能力。"
+      }
+    ]
+  },
+  {
+    "id": "api-underdefined-subscriptions",
+    "group": "underdefined",
+    "product": "api",
+    "fixture": "api",
+    "initialPrompt": "我想给这个 API 加付费订阅，并在付款失败时自动降级。先不要修改代码，请先和我把下一次交付的需求聊清楚。",
+    "requiredDecisionIds": [
+      "customer",
+      "plan_outcome",
+      "billing_provider",
+      "entitlements",
+      "failure_timeline",
+      "recovery",
+      "data_authority",
+      "verification"
+    ],
+    "preResolvedDecisionIds": [],
+    "facts": [
+      {
+        "id": "customer",
+        "answer": "第一版只面向单人账户，不支持组织账单、席位或发票审批。产品已有位于当前 fixture 之外的认证中间件，会验证 Bearer 凭据并向处理器提供不可由客户端覆盖的稳定 accountId；未认证请求返回 401。`/v1/process`、Checkout、Portal 和订阅查询都只使用该可信 accountId，客户端请求体或查询参数中的 accountId 一律忽略或拒绝。本次不新增 API Key、登录或凭据管理。每个账户最多绑定一个 Stripe Customer 和一个活动订阅。"
+      },
+      {
+        "id": "plan_outcome",
+        "answer": "只有 Free 和 Pro 月付两个计划；升级后立即获得更高配额，取消后保留 Pro 到当前计费周期结束。"
+      },
+      {
+        "id": "billing_provider",
+        "answer": "使用 Stripe Checkout 和 Customer Portal；API 不接收或保存卡号。服务端只使用配置中的一个固定 Pro 月付 Price ID 创建会话，客户端不能提交金额、币种、Price ID 或 Stripe Customer ID；Portal 会话只能为当前可信 accountId 已绑定的 Customer 创建。定价、币种、税务与支付方式都由该 Stripe Price 和 Stripe 托管页面决定，不在本次 API 中配置。"
+      },
+      {
+        "id": "entitlements",
+        "answer": "Pro 的唯一差异是每个 UTC 日历月的处理配额从 100 提升到 5000，月初 00:00 UTC 重置。升级立即提高当月上限但不清零已用量；降级后当月上限变为 100，若已用量达到或超过 100，则到下月重置前拒绝新处理。已经生成的数据不会因降级被删除。本次不新增或定义具体处理路由，而是交付供现有 fixture 外处理器调用的原子服务接口 `consumeQuota(accountId, operationId)`。处理器只在业务请求完成自身鉴权和结构校验、准备接受工作时调用；配额已满则返回拒绝且不增加用量，成功保留名额后即使后续业务处理失败仍计 1 次。operationId 在账号范围内幂等，同一 id 重试返回原保留结果且不重复计量；同一 id 不承载业务载荷，因此业务请求一致性由调用方负责。"
+      },
+      {
+        "id": "failure_timeline",
+        "answer": "只有已经生效的 Pro 订阅发生续费扣款失败时才进入 7 天宽限期；首次 Checkout 没有成功付款的账户保持 Free，不进入宽限期。宽限期内保持 Pro，第 7 天结束仍未支付才降为 Free。仓库内实现 Stripe reconciliation job，产品方已有调度器每天 02:00 UTC 调用一次；job 查询 Stripe 并通过与 webhook 相同的幂等状态转换修复漏掉或延迟的事件。调度基础设施本身不在本次范围内；job 重叠或与 webhook 并发不得重复推进状态。"
+      },
+      {
+        "id": "recovery",
+        "answer": "宽限期内支付成功立即恢复正常；降级后重新订阅也立即恢复 Pro，但不会补回降级期间被拒绝的请求。"
+      },
+      {
+        "id": "data_authority",
+        "answer": "Stripe webhook 是账单状态权威来源，事件按 Stripe event id 幂等处理；乱序事件按订阅版本时间拒绝回退状态。首版服务是单个 Node.js 22 LTS 进程，运行在有持久本地磁盘的产品方 Linux x64 主机或容器中；订阅状态、宽限期截止、Stripe Customer ID、已处理事件和月度用量保存在一个服务端 JSON 状态文件中，通过同目录临时文件、落盘和原子 rename 串行更新，重启后恢复。多实例和共享存储不在首版范围内。"
+      },
+      {
+        "id": "verification",
+        "answer": "验收要覆盖升级、取消到期、宽限期、最终降级、支付恢复、重复和乱序 webhook，以及降级后历史数据仍可读取。"
+      },
+      {
+        "id": "bounded_default_acceptance",
+        "answer": "如果你在已确认的首版范围内提出一个合理、保守且不扩大用户、平台、数据、权限或外部依赖边界的具体默认方案，就按你的推荐方案确定；不得用这个授权放宽安全与删除规则，也不得引入新的产品能力。"
+      }
+    ]
+  },
+  {
+    "id": "cli-complete-json-export",
+    "group": "complete",
+    "product": "cli",
+    "fixture": "cli",
+    "initialPrompt": "我准备增加 `tasks export --format json`。只服务现有个人用户；从当前本地存储读取全部任务，按 id 升序把一个 JSON 数组写到 stdout，UTF-8 编码并以换行结尾。字段固定为 `id`、`title`、`completed`，不包含内部时间戳；没有任务时输出 `[]`。未知格式退出码为 2，读取失败退出码为 1，错误只写 stderr，任何失败都不能产生部分 stdout。第一版不支持筛选、文件写入、导入或远程同步。验收覆盖正常数据、空数据、中文标题、未知格式和读取失败。先不要修改代码，请审查这份需求是否还有会改变产品行为的缺口；没有的话给出简短的合并理解并请求一次整体批准。",
+    "requiredDecisionIds": [
+      "user",
+      "source",
+      "output_shape",
+      "empty_state",
+      "failure_behavior",
+      "scope",
+      "verification"
+    ],
+    "preResolvedDecisionIds": [
+      "user",
+      "source",
+      "output_shape",
+      "empty_state",
+      "failure_behavior",
+      "scope",
+      "verification"
+    ],
+    "facts": [
+      { "id": "user", "answer": "现有个人用户。" },
+      { "id": "source", "answer": "当前本地存储中的全部任务。" },
+      { "id": "output_shape", "answer": "按 id 升序输出固定三字段 JSON 数组到 stdout。" },
+      { "id": "empty_state", "answer": "输出带换行的空数组。" },
+      { "id": "failure_behavior", "answer": "未知格式退出 2，读取失败退出 1，错误只写 stderr 且不输出部分结果。" },
+      { "id": "scope", "answer": "不含筛选、文件写入、导入和远程同步。" },
+      { "id": "verification", "answer": "覆盖正常、空、中文、未知格式和读取失败。" }
+    ]
+  },
+  {
+    "id": "web-complete-focus-timer",
+    "group": "complete",
+    "product": "web",
+    "fixture": "web",
+    "initialPrompt": "我准备在 Focusboard 增加个人专注计时器。用户从未完成任务上启动 25 分钟计时；同一时间只能有一个计时器，刷新页面后按保存的结束时间继续。用户可以暂停、继续或放弃；完成时显示浏览器通知和页面提示，但只有用户点击“标记完成”才改变任务状态。浏览器拒绝通知权限时只保留页面提示。跨标签页以后打开的标签读取当前状态，竞争操作以最新版本号成功、旧版本显示“状态已变化”并刷新。数据只保存在本地浏览器，关闭账号同步。第一版不支持自定义时长、循环、统计或声音。验收覆盖启动、刷新恢复、暂停继续、放弃、通知拒绝、跨标签冲突和计时结束不自动完成任务。先不要修改代码，请审查这份需求是否还有会改变产品行为的缺口；没有的话给出简短的合并理解并请求一次整体批准。",
+    "requiredDecisionIds": [
+      "user",
+      "timer_rules",
+      "persistence",
+      "completion",
+      "notification_failure",
+      "concurrency",
+      "scope",
+      "verification"
+    ],
+    "preResolvedDecisionIds": [
+      "user",
+      "timer_rules",
+      "persistence",
+      "completion",
+      "notification_failure",
+      "concurrency",
+      "scope",
+      "verification"
+    ],
+    "facts": [
+      { "id": "user", "answer": "现有个人用户。" },
+      { "id": "timer_rules", "answer": "未完成任务可启动固定 25 分钟且同一时间仅一个，可暂停继续或放弃。" },
+      { "id": "persistence", "answer": "按结束时间在本地浏览器恢复，不做账号同步。" },
+      { "id": "completion", "answer": "计时结束只提示，必须由用户显式标记任务完成。" },
+      { "id": "notification_failure", "answer": "通知权限被拒时退化为页面提示。" },
+      { "id": "concurrency", "answer": "跨标签按版本号处理，旧版本操作失败并刷新。" },
+      { "id": "scope", "answer": "不含自定义时长、循环、统计或声音。" },
+      { "id": "verification", "answer": "覆盖启动、恢复、暂停继续、放弃、通知拒绝、并发冲突和不自动完成。" }
+    ]
+  },
+  {
+    "id": "api-complete-account-deletion",
+    "group": "complete",
+    "product": "api",
+    "fixture": "api",
+    "initialPrompt": "我准备增加个人账户永久删除。只有账户本人在最近 10 分钟内通过 MFA 后才能请求；重复请求返回同一个删除任务。请求后账户立即退出并禁止登录，进入 7 天可取消期，只有再次通过 MFA 才能取消。第 7 天删除主库对象和用户上传文件；备份不做在线恢复并在 30 天轮转时消失。Stripe 客户与订阅同时取消，但法定发票记录保留 7 年；最小审计记录保留 1 年且不含内容。第三方删除失败要指数退避并在状态接口列出失败系统，全部完成前状态不能显示 completed。第一版不处理组织所有权转移，存在唯一组织所有者身份时请求必须在任何删除动作前被拒绝。验收覆盖鉴权、幂等、取消期、组织拦截、主数据删除、备份声明、法定保留和第三方部分失败恢复。先不要修改代码，请审查这份需求是否还有会改变产品行为的缺口；没有的话给出简短的合并理解并请求一次整体批准。",
+    "requiredDecisionIds": [
+      "actor",
+      "cooldown",
+      "idempotency",
+      "primary_deletion",
+      "backup_retention",
+      "external_records",
+      "partial_failure",
+      "ownership_guard",
+      "verification"
+    ],
+    "preResolvedDecisionIds": [
+      "actor",
+      "cooldown",
+      "idempotency",
+      "primary_deletion",
+      "backup_retention",
+      "external_records",
+      "partial_failure",
+      "ownership_guard",
+      "verification"
+    ],
+    "facts": [
+      { "id": "actor", "answer": "账户本人且最近 10 分钟通过 MFA。" },
+      { "id": "cooldown", "answer": "立即退出并禁用登录，7 天内经 MFA 可取消。" },
+      { "id": "idempotency", "answer": "重复请求返回同一个删除任务。" },
+      { "id": "primary_deletion", "answer": "第 7 天删除主库对象和上传文件。" },
+      { "id": "backup_retention", "answer": "备份不可在线恢复并在 30 天轮转时消失。" },
+      { "id": "external_records", "answer": "取消 Stripe 客户和订阅，法定发票保留 7 年，最小审计记录保留 1 年。" },
+      { "id": "partial_failure", "answer": "第三方失败指数退避并逐项暴露，全部成功前不显示完成。" },
+      { "id": "ownership_guard", "answer": "唯一组织所有者在任何删除动作前被拒绝。" },
+      { "id": "verification", "answer": "覆盖鉴权、幂等、取消、组织拦截、删除、保留和部分失败恢复。" }
+    ]
+  }
+]
