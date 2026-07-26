@@ -45,6 +45,14 @@ with `scd-uiux` after the product core stabilizes. Bring product-visible UX
 decisions back into the same combined contract and approval. Do not invoke
 UIUX for clear local interface changes.
 
+When that delivery creates a system or changes a durable component, data owner,
+trust boundary, public contract, event, or integration, compose with
+`scd-architecture` after the product core stabilizes. UIUX and Architecture may
+then proceed in parallel. Reconcile their operations, data, errors,
+permissions, and terminology into one shared machine-readable contract before
+independent frontend and backend implementation. Do not invoke Architecture
+for a clear local change that fits existing boundaries and contracts.
+
 ## Interview through the decision tree
 
 Ask one decision at a time. Include the reason it matters now, a recommendation with rationale, and only meaningful alternatives. Resolve upstream decisions before asking downstream questions.
@@ -72,8 +80,10 @@ When no high-impact branch appears open:
 3. identify the external seam through which each acceptance behavior will be verified;
 4. when UIUX was activated, require its experience handoff to be ready and name
    any shared-interface reconciliation still required before implementation;
-5. present one compact shared-understanding summary;
-6. request one explicit approval of the combined contract.
+5. when Architecture was activated, require its baseline or feature design and
+   shared machine-readable contract to be ready;
+6. present one compact shared-understanding summary;
+7. request one explicit approval of the combined contract.
 
 Silence, topic changes, partial agreement, or the model's confidence are not approval. A clear affirmative response to the approval request is approval. If the user changes the contract, revise it and review again.
 

@@ -1,6 +1,6 @@
 ---
 name: scd-dev-loop
-description: "Apply lightweight delivery contracts whenever Codex is asked to change a repository: implement an approved feature, fix a bug, refactor code, change configuration, perform a migration, or resume unfinished implementation work. Keep intent scoped, require observed verification before completion claims, and preserve minimal continuity state only for work that may outlive the current context. Hand underdefined greenfield products and changes with multiple dependent product decisions to scd-discovery before editing. Do not trigger for advice-only questions, explanations, or read-only reviews unless the user also asks for changes."
+description: "Apply lightweight delivery contracts whenever Codex is asked to change a repository: implement an approved feature, fix a bug, refactor code, change configuration, perform a migration, or resume unfinished implementation work. Keep intent scoped, require observed verification before completion claims, and preserve minimal continuity state only for work that may outlive the current context. Hand underdefined greenfield products and changes with multiple dependent product decisions to scd-discovery, and consequential unresolved technical boundaries to scd-architecture, before editing. Do not trigger for advice-only questions, explanations, or read-only reviews unless the user also asks for changes."
 ---
 
 # SCD Dev Loop
@@ -26,6 +26,10 @@ Keep these contracts invisible on clear, local tasks. Do not announce modes or c
 7. When the request follows UIUX, read the relevant `.scd/ux/<slug>.md`, require
    `status: ready`, inspect its retained visual references, and use the shared
    interface contract rather than treating UX interface needs as an API.
+8. When the request follows Architecture, read the relevant
+   `.scd/architecture.md` or `.scd/designs/<feature>.md`, require `status:
+   ready`, and parse the canonical machine-readable contracts with the same
+   format-aware evidence used by their producers.
 
 Do not generate a project wiki. Do not introduce PRDs, roles, command suites, worktrees, subagents, or TDD merely to satisfy this skill.
 
@@ -44,6 +48,12 @@ frontend architecture. If it is draft, contradicts the approved product
 contract, conflicts with retained visuals, or depends on an unreconciled shared
 interface decision, return only that gap to UIUX or the relevant architecture
 work before implementation.
+
+Treat a ready architecture or feature design as the technical handoff, not as a
+second product approval or permission to override the repository. If it is
+draft, contradicts the approved product or UX contract, or names a canonical
+contract that cannot be parsed, return only that gap to `scd-architecture`
+before implementation.
 
 Read `references/scope-contract.md` when ambiguity or scope expansion is plausible.
 

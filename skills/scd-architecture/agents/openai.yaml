@@ -1,0 +1,4 @@
+interface:
+  display_name: "SCD Architecture"
+  short_description: "Design systems and contracts without ceremony"
+  default_prompt: "Use $scd-architecture to turn this stable product behavior into a ready system, domain, and interface design before implementation."

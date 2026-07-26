@@ -83,9 +83,20 @@ When a UI-heavy delivery activates `scd-uiux`, it may add one
 third document required for every medium project and not a second product
 approval.
 
-The architecture document records system purpose, components and responsibilities, runtime and data flow, core data, external dependencies, cross-cutting constraints, verification boundaries, and durable architecture decisions. Keep it concise and update it only when those boundaries change.
+When a delivery activates `scd-architecture`, keep ordinary domain and system
+design in `.scd/architecture.md`. Use `.scd/designs/<feature>.md` for a
+consequential feature-local delta. Prefer the repository's existing contract
+home and format; when none exists, place new machine-readable interface
+contracts in the visible root `contracts/` directory.
 
-Keep core entities in the architecture document unless ownership, permissions, lifecycle, migration, synchronization, audit, or cross-entity invariants become a major source of complexity. Only then split `.scd/data-model.md`.
+The architecture document records system purpose, components and
+responsibilities, runtime and data flow, core data, external dependencies,
+cross-cutting constraints, verification boundaries, and durable architecture
+decisions. Keep it concise and update it only when those boundaries change.
+
+Keep core entities in the architecture document unless ownership, permissions,
+lifecycle, migration, synchronization, audit, or cross-entity invariants become
+a major source of complexity. Only then split `.scd/domain.md`.
 
 Create `.scd/designs/<feature>.md` only when a specific feature has cross-module coordination, concurrency, transactions, retries, complex integration, algorithmic trade-offs, migration, rollback, or multiple expensive alternatives. Do not create a permanent `implementation-plan.md`; use current task state for temporary execution order.
 

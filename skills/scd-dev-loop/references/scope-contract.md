@@ -57,7 +57,11 @@ Prefer existing repository documentation homes. When none exist, a medium projec
 - one evolving `.scd/architecture.md` for long-lived system boundaries;
 - `.scd/tasks/current.md` only while unfinished work needs continuity.
 
-Keep core data in the architecture document until ownership, lifecycle, migration, synchronization, permissions, audit, or cross-entity invariants justify `.scd/data-model.md`.
+Keep core data in the architecture document until ownership, lifecycle,
+migration, synchronization, permissions, audit, or cross-entity invariants
+justify `.scd/domain.md`. Prefer an existing contract home and format; when
+none exists, keep new machine-readable cross-boundary contracts in the visible
+root `contracts/` directory.
 
 Create `.scd/designs/<feature>.md` only for a feature with consequential cross-module, concurrency, transaction, integration, algorithm, migration, or rollback design. Do not create a permanent `implementation-plan.md`; temporary execution order belongs in current task state.
 

@@ -1,6 +1,6 @@
 ---
 name: scd-uiux
-description: "Design or refine a Web product's user experience and interface contract before production implementation. Use for UI-heavy 0-to-1 products after the product core is stable, substantial new screens or journeys, unclear information architecture, interaction or state behavior, responsive and accessibility decisions, visual direction, UX validation, or an explicit UI/UX design request. Use independently for focused UX work or compose it with scd-discovery and scd-dev-loop. Do not use for trivial copy, color, spacing, or obvious local UI changes; backend-only work; native mobile or desktop applications; or production frontend implementation."
+description: "Design or refine a Web product's user experience and interface needs before production implementation. Use for UI-heavy 0-to-1 products after the product core is stable, substantial new screens or journeys, unclear information architecture, interaction or state behavior, responsive and accessibility decisions, visual direction, UX validation, or an explicit UI/UX design request. Use independently for focused UX work or compose it with scd-discovery, scd-architecture, and scd-dev-loop. Do not use for trivial copy, color, spacing, or obvious local UI changes; backend-only work; native mobile or desktop applications; or production frontend implementation."
 ---
 
 # SCD UIUX
@@ -38,10 +38,11 @@ problem, next delivery, business rules, boundaries, and observable acceptance.
 Use `scd-discovery` when several of those decisions remain open. Do not recreate
 the product specification inside the UX contract.
 
-After that core is stable, UIUX may proceed in parallel with architecture work.
-Neither waits for the other to finish, but both must reconcile user operations,
-data, errors, permissions, and terminology through the shared interface
-contract before frontend and backend implementation begins.
+After that core is stable, UIUX may proceed in parallel with
+`scd-architecture`. Neither waits for the other to finish, but both must
+reconcile user operations, data, errors, permissions, and terminology through
+the shared interface contract before frontend and backend implementation
+begins.
 
 If UX work reveals a change to approved behavior, scope, permissions, data or
 privacy boundaries, irreversible actions, or acceptance, return only that
@@ -115,9 +116,11 @@ the states it must distinguish, and representative examples. Reuse stable
 operation and field names from an existing shared interface contract.
 
 UIUX may propose interface needs, but it must not unilaterally finalize
-endpoints, transport schemas, persistence, or backend ownership. Frontend and
-backend are ready to work independently only after the relevant technical owner
-has reconciled those needs into one shared interface contract.
+endpoints, transport schemas, persistence, or backend ownership.
+`scd-architecture` facilitates reconciliation with frontend and backend
+constraints without owning the contract alone. Frontend and backend are ready
+to work independently only after those needs converge in one shared interface
+contract that is machine-readable.
 
 Before handoff, check:
 
@@ -161,11 +164,12 @@ gaps. A handoff is ready when:
 - visual references cover the places where layout or appearance carries a
   decision;
 - engineering interface needs are reconciled or clearly assigned to the
-  shared-contract step;
+  `scd-architecture` shared-contract step;
 - no open item can materially change visible behavior or acceptance.
 
 For a Discovery composition, return the ready UX conclusions and any
 product-contract changes for the single combined approval. For production
 implementation, hand the approved product contract, ready UX contract, visual
-references, and shared interface contract to `scd-dev-loop`. Do not implement
-production frontend code in this skill.
+references, ready architecture or feature design when activated, and shared
+interface contract to `scd-dev-loop`. Do not implement production frontend code
+in this skill.

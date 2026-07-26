@@ -55,7 +55,7 @@ test("uiux keeps the shared frontend-backend contract jointly owned", () => {
   );
 
   assert.match(skill, /must not unilaterally finalize/);
-  assert.match(skill, /one shared interface contract/);
+  assert.match(skill, /one shared\s+interface\s+contract/);
   assert.match(skill, /Do not duplicate the shared interface contract/);
   assert.match(contract, /Label unresolved items as `Interface need`/);
   assert.match(contract, /common source for frontend and backend/);

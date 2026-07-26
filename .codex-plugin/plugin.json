@@ -1,7 +1,7 @@
 {
   "name": "thinloop",
-  "version": "0.4.0",
-  "description": "Simplify complex development with deep discovery, risk-adaptive Web experience design, reliable delivery, and concise experiential knowledge.",
+  "version": "0.5.0",
+  "description": "Simplify complex development with deep discovery, risk-adaptive Web experience and architecture design, reliable delivery, and concise experiential knowledge.",
   "author": {
     "name": "mindcarver"
   },
@@ -11,6 +11,9 @@
     "product-discovery",
     "user-experience",
     "ui-design",
+    "software-architecture",
+    "api-design",
+    "domain-modeling",
     "specification",
     "verification",
     "continuity",
@@ -21,14 +24,14 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Thinloop",
-    "shortDescription": "Discovery, UIUX, delivery, and proven knowledge",
-    "longDescription": "Clarify consequential product decisions, design Web experiences at the lightest useful fidelity, keep implementation scoped and evidence-backed, and preserve proven development experience without a fixed pipeline.",
+    "shortDescription": "Discovery, UIUX, architecture, delivery, and knowledge",
+    "longDescription": "Clarify consequential product decisions, design Web experiences and technical boundaries at the lightest useful fidelity, converge on shared machine-readable contracts, keep implementation scoped and evidence-backed, and preserve proven development experience without a fixed pipeline.",
     "developerName": "mindcarver",
     "category": "Coding",
     "capabilities": [
       "Interactive",
       "Write"
     ],
-    "defaultPrompt": "Use SCD Discovery when product decisions are open, SCD UIUX when a Web experience needs design, SCD Dev Loop for evidence-backed implementation, and SCD Knowledge only when I explicitly ask to capture or retrieve proven experience."
+    "defaultPrompt": "Use SCD Discovery when product decisions are open, SCD UIUX when a Web experience needs design, SCD Architecture when domain, system, or shared interface boundaries need design, SCD Dev Loop for evidence-backed implementation, and SCD Knowledge only when I explicitly ask to capture or retrieve proven experience."
   }
 }
