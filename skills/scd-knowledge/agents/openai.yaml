@@ -1,0 +1,4 @@
+interface:
+  display_name: "SCD Knowledge"
+  short_description: "Capture and retrieve proven dev knowledge"
+  default_prompt: "Use $scd-knowledge to capture or retrieve concise, evidence-backed development knowledge."

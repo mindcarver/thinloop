@@ -5,251 +5,175 @@
 <h1 align="center">THINLOOP</h1>
 
 <p align="center">
-  <kbd>SCD / SIMPLIFY COMPLEX DEVELOPMENT</kbd>
-  &nbsp;
-  <kbd>BUILD 0.2.0</kbd>
-  &nbsp;
-  <kbd>CODEX DEVELOPMENT INSTRUMENT</kbd>
-</p>
-
-<p align="center">
   <strong>需求值得被认真理解，实现不需要被流程接管。</strong>
   <br>
-  Thinloop 用一个深入的需求收敛环和一个安静的开发闭环，
-  <br>
-  把复杂开发变成可批准、可验证、可恢复的交付。
+  面向强编码 Agent 的轻量开发闭环：先聊透，再实现，用证据收尾，把真正有用的经验留下来。
 </p>
 
-<table align="center">
-  <thead>
-    <tr>
-      <th align="center">SCD MODULE</th>
-      <th align="center">它负责什么</th>
-      <th align="center">什么时候出现</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td align="center"><code>scd-discovery</code></td>
-      <td align="center">把模糊想法收敛为明确批准、可以验收的规格</td>
-      <td align="center">新产品或多个产品决策相互依赖时</td>
-    </tr>
-    <tr>
-      <td align="center"><code>scd-dev-loop</code></td>
-      <td align="center">按已知边界实现，用真实证据支撑完成声明</td>
-      <td align="center">清晰改动、已批准规格和未完成实现</td>
-    </tr>
-  </tbody>
+<p align="center">
+  <kbd>v0.3.0</kbd>
+  &nbsp;
+  <kbd>SPEC-DRIVEN</kbd>
+  &nbsp;
+  <kbd>EVIDENCE-BACKED</kbd>
+  &nbsp;
+  <kbd>KNOWLEDGE-AWARE</kbd>
+</p>
+
+<p align="center">
+  <a href="#三块能力">三块能力</a> ·
+  <a href="#设计原则">设计原则</a> ·
+  <a href="#安装到-codex">安装</a> ·
+  <a href="#本地验证">验证</a>
+</p>
+
+---
+
+Thinloop 不试图成为另一个接管开发过程的重型框架。它只守住三个容易在长任务里丢失的结果：
+
+> **需求没有被误解，完成声明有真实证据，中断后和下一次开发仍能接上。**
+
+## 三块能力
+
+<table width="100%">
+  <tr>
+    <td width="33%" valign="top">
+      <img src="./assets/retro-discovery.png" alt="SCD Discovery 复古工程图标" width="92">
+      <h3>01 · SCD Discovery</h3>
+      <p>把模糊想法收敛为一份明确批准、可以验收的交付规格。</p>
+      <p><strong>适合：</strong>新产品、复杂功能、多个产品决定相互依赖。</p>
+    </td>
+    <td width="33%" valign="top">
+      <img src="./assets/retro-dev-loop.png" alt="SCD Dev Loop 复古工程图标" width="92">
+      <h3>02 · SCD Dev Loop</h3>
+      <p>按已知边界安静实现，并让每个完成声明对应真实检查。</p>
+      <p><strong>适合：</strong>清晰改动、已批准规格、跨会话实现。</p>
+    </td>
+    <td width="33%" valign="top">
+      <img src="./assets/retro-knowledge.png" alt="SCD Knowledge 复古工程图标" width="92">
+      <h3>03 · SCD Knowledge</h3>
+      <p>把已证实的开发经验沉淀为短知识，并在需要时精准找回。</p>
+      <p><strong>适合：</strong>用户主动要求沉淀、查找或维护经验。</p>
+    </td>
+  </tr>
 </table>
 
-<p align="center">
-  <code>模糊想法</code>
-  &nbsp;→&nbsp;
-  <code>聊透当前交付</code>
-  &nbsp;→&nbsp;
-  <code>明确批准</code>
-  &nbsp;→&nbsp;
-  <code>可靠实现</code>
-</p>
+## 设计原则
 
----
+| 场景 | Thinloop 的行为 |
+|---|---|
+| 目标、边界和验收已经清楚 | 直接实现，不提问，不制造流程文档 |
+| 只差一个实质决定 | 给出推荐，只问一个问题，然后继续 |
+| 多个上游产品决定尚未存在 | 进入 Discovery，沿依赖逐个收敛 |
+| 实现完成 | 用真实测试、运行或检查支撑完成声明 |
+| 工作可能跨会话 | 只保存恢复所需的最小状态 |
+| 用户明确要求沉淀经验 | 提炼短知识，判断项目内或跨项目，确认后写入 |
 
-<h2 align="center">01 / 轻，不等于草率</h2>
+Thinloop 默认：
 
-<p align="center">
-  Thinloop 不规定固定阶段，不要求每个任务写计划，
-  <br>
-  也不把一个清晰改动升级成产品研讨会。
-</p>
+- 不强制 TDD、角色系统、子代理或固定阶段；
+- 不自动暂存、提交、推送或部署；
+- 不为普通小改动创建 PRD、计划或长期状态；
+- 不把整段会话和完整日志塞进长期上下文；
+- 不用“文件已经创建”代替“行为已经验证”。
 
-<table align="center">
-  <thead>
-    <tr>
-      <th align="center">内部路径</th>
-      <th align="center">判断</th>
-      <th align="center">表现</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td align="center"><code>DIRECT</code></td>
-      <td align="center">目标、边界、验收已经清楚</td>
-      <td align="center">直接实现，不提问，不创建状态</td>
-    </tr>
-    <tr>
-      <td align="center"><code>CLARIFY</code></td>
-      <td align="center">一个答案就能补足范围</td>
-      <td align="center">只问一个实质问题，然后继续</td>
-    </tr>
-    <tr>
-      <td align="center"><code>DISCOVERY</code></td>
-      <td align="center">多个上游产品决定尚未存在</td>
-      <td align="center">逐个收敛，批准前不编码</td>
-    </tr>
-  </tbody>
-</table>
+## 工作闭环
 
-<p align="center">
-  新产品、应用、插件、服务和系统默认进入 <code>DISCOVERY</code>。
-  <br>
-  已有完整规格则走快速通道：审查真实缺口，不重复采访。
-</p>
+```text
+模糊想法
+   │
+   ▼
+聊透当前交付 ──→ 明确批准
+                     │
+                     ▼
+                  可靠实现
+                     │
+                     ▼
+                真实证据收尾
+                     │
+                     └── 用户需要时 ──→ 沉淀可复用经验
+```
 
-<p align="center">
-  ◇ 不强制 TDD
-  &nbsp;◇&nbsp;
-  不默认创建工作树或子代理
-  &nbsp;◇&nbsp;
-  不生成角色和命令套件
-  <br>
-  ◇ 不自动暂存、提交或部署
-  &nbsp;◇&nbsp;
-  不为普通小改动制造流程产物
-</p>
+### 01 · SCD Discovery
 
----
+Discovery 不靠固定问卷堆问题。它寻找当前最上游、会改变产品结果的那个决定，给出推荐与理由，一次只请求一个选择。
 
-<h2 align="center">02 / SCD DISCOVERY</h2>
+```text
+确认用户、问题与期望变化
+          ↓
+定义下一次完整交付
+          ↓
+沿决策依赖逐层展开
+          ↓
+覆盖主路径、失败、数据、权限与边界
+          ↓
+静默执行矛盾与遗漏审查
+          ↓
+用户一次性批准完整契约
+```
 
-<p align="center">
-  Discovery 不靠一张固定问卷堆问题。
-  <br>
-  它寻找当前最上游的决策，给出推荐与理由，一次只请求一个决定。
-</p>
+能从仓库、文档和环境确认的事实不会被重新问给用户。已有完整规格时走快速通道，只审查真实缺口。
 
-<p align="center">
-  <code>确认用户、问题与期望变化</code>
-  <br>↓<br>
-  <code>定义下一次完整交付</code>
-  <br>↓<br>
-  <code>沿决策依赖逐层展开</code>
-  <br>↓<br>
-  <code>覆盖主路径、失败、数据、权限与边界</code>
-  <br>↓<br>
-  <code>静默执行矛盾与遗漏审查</code>
-  <br>↓<br>
-  <code>用户明确批准</code>
-</p>
+### 02 · SCD Dev Loop
 
-<p align="center">
-  能从仓库、文档和环境确认的事实不会被重新问给用户。
-  <br>
-  模型负责调查、推荐和发现矛盾；用户拥有产品取舍。
-</p>
+Dev Loop 相信模型本身会规划和编码，只额外维护三个结果契约：
 
-<p align="center">
-  <strong>聊透的是下一次准备实现的完整版本，</strong>
-  <br>
-  不是一次设计产品未来三年的全部可能性。
-</p>
+| 契约 | 守住什么 | 默认表现 |
+|---|---|---|
+| `SCOPE` | 目标、边界和验收足以行动 | 只有实质歧义才询问 |
+| `EVIDENCE` | 完成声明对应实际验证 | 无法验证时明确降级 |
+| `CONTINUITY` | 中断后恢复到正确下一步 | 只有真正需要时才保存状态 |
 
----
+规格里的 `A1 / A2 / A3` 会一路映射到最终 Evidence。每一项只能是 `PASS`、`UNVERIFIED` 或带原因的阻塞，不能用一次无关测试笼统宣布全部完成。
 
-<h2 align="center">03 / 中型项目的最小文档面</h2>
+### 03 · SCD Knowledge
 
-<p align="center">
-  默认只有两份长期信息和一份临时状态。
-</p>
+Knowledge 只在用户明确要求时出现。它不会自动监听开发，也不会自动修改 Skill、规则、ADR 或 Hook。
 
-<pre align="center"><code>.scd/
-|-- architecture.md
-|-- specs/
-|   |-- 001-mvp.md
-|   `-- 002-next-delivery.md
-`-- tasks/
-    `-- current.md</code></pre>
+| 存储层 | 路径 | 用途 |
+|---|---|---|
+| 项目知识 | `<repo>/.scd/knowledge/` | 当前仓库特有的约束、经验和陷阱 |
+| 个人知识 | 用户配置的 Markdown 目录 | 能跨项目复用的方法与经验 |
 
-<table align="center">
-  <thead>
-    <tr>
-      <th align="center">载体</th>
-      <th align="center">生命周期</th>
-      <th align="center">内容</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td align="center"><code>specs/&lt;slug&gt;.md</code></td>
-      <td align="center">每次交付长期保留</td>
-      <td align="center">用户行为、边界、决定和验收</td>
-    </tr>
-    <tr>
-      <td align="center"><code>architecture.md</code></td>
-      <td align="center">随系统边界演进</td>
-      <td align="center">组件职责、数据流和长期技术取舍</td>
-    </tr>
-    <tr>
-      <td align="center"><code>tasks/current.md</code></td>
-      <td align="center">未完成时临时存在</td>
-      <td align="center">最小恢复状态、证据和唯一下一步</td>
-    </tr>
-  </tbody>
-</table>
+```text
+INDEX.md    一行一个触发入口
+entries/    活跃的短知识
+archive/    不参与普通召回的旧知识
+```
 
-<p align="center">
-  只有数据生命周期真正复杂时才拆出 <code>data-model.md</code>；
-  <br>
-  只有具体功能存在高风险技术取舍时才创建 <code>designs/&lt;feature&gt;.md</code>；
-  <br>
-  不保留会迅速过期的 <code>implementation-plan.md</code>。
-</p>
+写入前会检查证据、适用范围、重复、冲突和敏感信息；所有新增、更新、替换和归档都先展示给用户确认。查询时先看项目索引，再看个人索引，只读取少量真正相关的条目。
 
----
+## 最小项目状态
 
-<h2 align="center">04 / SCD DEV LOOP</h2>
+Thinloop 不创建项目 Wiki。中型项目默认只需要两类长期信息和一份临时状态：
 
-<p align="center">
-  Dev Loop 维护三个结果契约。
-</p>
+```text
+.scd/
+├── architecture.md
+├── specs/
+│   ├── 001-mvp.md
+│   └── 002-next-delivery.md
+└── tasks/
+    └── current.md
+```
 
-<table align="center">
-  <thead>
-    <tr>
-      <th align="center">CONTRACT</th>
-      <th align="center">它守住什么</th>
-      <th align="center">默认表现</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td align="center"><code>SCOPE</code></td>
-      <td align="center">目标、边界和验收足以行动</td>
-      <td align="center">只有实质歧义才询问</td>
-    </tr>
-    <tr>
-      <td align="center"><code>EVIDENCE</code></td>
-      <td align="center">完成声明对应实际验证</td>
-      <td align="center">无法验证时明确降级</td>
-    </tr>
-    <tr>
-      <td align="center"><code>CONTINUITY</code></td>
-      <td align="center">中断后恢复到正确下一步</td>
-      <td align="center">只有必要时才保存状态</td>
-    </tr>
-  </tbody>
-</table>
+| 载体 | 生命周期 | 内容 |
+|---|---|---|
+| `specs/<slug>.md` | 每次交付长期保留 | 用户行为、边界、决定和验收 |
+| `architecture.md` | 随系统边界演进 | 组件职责、数据流和长期技术取舍 |
+| `tasks/current.md` | 未完成时临时存在 | 最小恢复状态、证据和唯一下一步 |
 
-<p align="center">
-  规格里的 <code>A1 / A2 / A3</code> 会一路映射到最终 Evidence。
-  <br>
-  每一项只能是 <code>PASS</code>、<code>UNVERIFIED</code> 或带原因的阻塞，
-  <br>
-  不允许用一次无关的测试笼统宣布全部完成。
-</p>
+只有数据生命周期真正复杂时才拆出 `data-model.md`；只有具体功能存在高风险技术取舍时才创建 `designs/<feature>.md`。
 
----
+## 安装到 Codex
 
-<h2 align="center">05 / 安装到 CODEX</h2>
+三个 Skill 的工作流均与操作系统无关。下面分别提供 Windows Junction 和 macOS/Linux 符号链接示例；源码更新后，无需再次复制 Skill。
 
-<h3 align="center">Windows：使用 Junction 保持源码实时同步</h3>
+<details>
+<summary><strong>Windows · Junction</strong></summary>
 
-<p align="center">
-  仓库中的 Skill 更新后，Codex 侧无需再次复制。
-  <br>
-  分别把两个 Skill 目录链接到用户 Skill 目录。
-</p>
-
-<pre align="center"><code>$repo = "C:\Users\Administrator\workspace\mindcarver\thinloop"
+```powershell
+$repo = "C:\path\to\thinloop"
 $codexSkills = "$env:USERPROFILE\.codex\skills"
 
 New-Item -ItemType Junction `
@@ -258,99 +182,137 @@ New-Item -ItemType Junction `
 
 New-Item -ItemType Junction `
   -Path "$codexSkills\scd-dev-loop" `
-  -Target "$repo\skills\scd-dev-loop"</code></pre>
+  -Target "$repo\skills\scd-dev-loop"
 
-<p align="center"><strong>验证链接</strong></p>
+New-Item -ItemType Junction `
+  -Path "$codexSkills\scd-knowledge" `
+  -Target "$repo\skills\scd-knowledge"
 
-<pre align="center"><code>Get-Item -Force `
-  "$env:USERPROFILE\.codex\skills\scd-discovery", `
-  "$env:USERPROFILE\.codex\skills\scd-dev-loop" |
-  Format-List FullName,LinkType,Target</code></pre>
+Get-Item -Force `
+  "$codexSkills\scd-discovery", `
+  "$codexSkills\scd-dev-loop", `
+  "$codexSkills\scd-knowledge" |
+  Format-List FullName,LinkType,Target
+```
 
-<p align="center">
-  新安装的 Skill 在下一次 Codex 任务中被发现。
-  <br>
-  Skill Junction 只负责方法实时同步；插件根目录中的 Hook
-  <br>
-  仍需通过完整插件加载并完成一次信任审查后才会执行。
-</p>
+</details>
 
-<p align="center"><strong>需要显式调用时</strong></p>
+<details>
+<summary><strong>macOS / Linux · Symbolic links</strong></summary>
 
-<pre align="center"><code>使用 $scd-discovery 把这个想法聊透并形成可验收规格。
+```bash
+repo="/path/to/thinloop"
+codex_skills="${CODEX_HOME:-$HOME/.codex}/skills"
 
-使用 $scd-dev-loop 按已批准规格实现并给出证据。</code></pre>
+mkdir -p "$codex_skills"
+ln -s "$repo/skills/scd-discovery" "$codex_skills/scd-discovery"
+ln -s "$repo/skills/scd-dev-loop" "$codex_skills/scd-dev-loop"
+ln -s "$repo/skills/scd-knowledge" "$codex_skills/scd-knowledge"
+```
 
----
+</details>
 
-<h2 align="center">06 / 本地验证</h2>
+> Skill 链接只负责方法同步。仓库根目录中的 Hook 仍需通过完整插件加载，并完成运行环境要求的信任审查。
 
-<pre align="center"><code>node --test tests\*.test.mjs
+新安装的 Skill 会在下一次 Codex 任务中被发现。
+
+### 显式调用
+
+```text
+使用 $scd-discovery 把这个想法聊透并形成可验收规格。
+
+使用 $scd-dev-loop 按已批准规格实现并给出证据。
+
+使用 $scd-knowledge 沉淀或查找已证实的开发经验。
+```
+
+## 本地验证
+
+当前仓库验证面：
+
+| 检查 | 当前结果 |
+|---|---:|
+| Node 契约与 Hook 测试 | `24 / 24` |
+| Discovery 用例结构 | `PASS` |
+| Knowledge 用例结构 | `PASS` |
+| 官方 Skill 校验 | `PASS` |
+| 官方插件校验 | `PASS` |
+
+<details>
+<summary><strong>运行核心测试</strong></summary>
+
+```powershell
+node --test tests\*.test.mjs
 node evals\validate-discovery-cases.mjs
+node evals\validate-knowledge-cases.mjs
+```
 
-py C:\Users\Administrator\.codex\skills\.system\skill-creator\scripts\quick_validate.py `
-  skills\scd-discovery
+</details>
 
-py C:\Users\Administrator\.codex\skills\.system\skill-creator\scripts\quick_validate.py `
-  skills\scd-dev-loop
+<details>
+<summary><strong>运行 Codex 官方 Skill / 插件校验</strong></summary>
 
-py C:\Users\Administrator\.codex\skills\.system\plugin-creator\scripts\validate_plugin.py .</code></pre>
+Windows：
 
-<p align="center">
-  Dev Loop 第一版的 12 组成对隔离任务中：
-  <br>
-  启用 Thinloop 为 <strong>12 / 12</strong>，未启用为 <strong>10 / 12</strong>，
-  Hook 误拦截为 <strong>0</strong>。
-</p>
+```powershell
+$skillValidator = "$env:USERPROFILE\.codex\skills\.system\skill-creator\scripts\quick_validate.py"
+$pluginValidator = "$env:USERPROFILE\.codex\skills\.system\plugin-creator\scripts\validate_plugin.py"
 
-<p align="center">
-  Discovery 另附 12 组路由与恢复评测用例。
-  <br>
-  用例结构可以本地验证；真实代理行为结果只有实际运行后才记录。
-  <br>
-  完整方法、历史证据和限制见 <a href="./EVALUATION.md">EVALUATION.md</a>。
-</p>
+py $skillValidator skills\scd-discovery
+py $skillValidator skills\scd-dev-loop
+py $skillValidator skills\scd-knowledge
+py $pluginValidator .
+```
+
+macOS / Linux：
+
+```bash
+skill_validator="${CODEX_HOME:-$HOME/.codex}/skills/.system/skill-creator/scripts/quick_validate.py"
+plugin_validator="${CODEX_HOME:-$HOME/.codex}/skills/.system/plugin-creator/scripts/validate_plugin.py"
+
+python3 "$skill_validator" skills/scd-discovery
+python3 "$skill_validator" skills/scd-dev-loop
+python3 "$skill_validator" skills/scd-knowledge
+python3 "$plugin_validator" .
+```
+
+</details>
+
+Dev Loop 第一版的 12 组成对隔离任务中，启用 Thinloop 为 **12/12**，未启用为 **10/12**，Hook 误拦截为 **0**。Discovery 与 Knowledge 的用例目前只验证结构；真实代理行为结果只有实际运行后才记录。
+
+完整方法、历史证据和限制见 [EVALUATION.md](./EVALUATION.md)。
+
+## 仓库结构
+
+<details>
+<summary><strong>展开目录</strong></summary>
+
+```text
+thinloop/
+├── .codex-plugin/
+│   └── plugin.json
+├── .scd/
+│   └── specs/
+├── assets/
+│   ├── thinloop-retro-hero.png
+│   ├── retro-discovery.png
+│   ├── retro-dev-loop.png
+│   └── retro-knowledge.png
+├── skills/
+│   ├── scd-discovery/
+│   ├── scd-dev-loop/
+│   └── scd-knowledge/
+├── hooks/
+├── tests/
+└── evals/
+```
+
+</details>
 
 ---
 
-<h2 align="center">07 / 仓库结构</h2>
-
-<pre align="center"><code>thinloop/
-|-- .codex-plugin/
-|   `-- plugin.json
-|-- .scd/
-|   `-- specs/
-|       `-- scd-discovery.md
-|-- assets/
-|   `-- thinloop-retro-hero.png
-|-- skills/
-|   |-- scd-discovery/
-|   |   |-- SKILL.md
-|   |   |-- agents/openai.yaml
-|   |   `-- references/
-|   `-- scd-dev-loop/
-|       |-- SKILL.md
-|       |-- agents/openai.yaml
-|       |-- assets/current-task.md
-|       `-- references/
-|-- hooks/
-|-- tests/
-`-- evals/</code></pre>
-
----
-
 <p align="center">
-  <kbd>DEEPER UNDERSTANDING.</kbd>
-  &nbsp;
-  <kbd>LESS CEREMONY.</kbd>
-  &nbsp;
-  <kbd>STRONGER EVIDENCE.</kbd>
-</p>
-
-<p align="center">
-  <strong>先把真正重要的决定聊透，再让强模型安静地把它做出来。</strong>
-</p>
-
-<p align="center">
+  <strong>DEEPER UNDERSTANDING · LESS CEREMONY · STRONGER EVIDENCE</strong>
+  <br>
   MIT License · 2026 mindcarver
 </p>

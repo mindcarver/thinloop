@@ -1,7 +1,7 @@
 {
   "name": "thinloop",
-  "version": "0.2.0",
-  "description": "Simplify complex development with deep product discovery and lightweight delivery contracts.",
+  "version": "0.3.0",
+  "description": "Simplify complex development with deep discovery, reliable delivery, and concise experiential knowledge.",
   "author": {
     "name": "mindcarver"
   },
@@ -12,19 +12,21 @@
     "specification",
     "verification",
     "continuity",
+    "knowledge-management",
+    "development-experience",
     "development-workflow"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Thinloop",
-    "shortDescription": "Deep discovery, lightweight delivery",
-    "longDescription": "Clarify consequential product decisions, require one explicit approval, and keep implementation scoped, evidence-backed, and resumable without a fixed development pipeline.",
+    "shortDescription": "Discovery, delivery, and proven knowledge",
+    "longDescription": "Clarify consequential product decisions, keep implementation scoped and evidence-backed, and preserve proven development experience as concise project or personal knowledge without a fixed pipeline.",
     "developerName": "mindcarver",
     "category": "Coding",
     "capabilities": [
       "Interactive",
       "Write"
     ],
-    "defaultPrompt": "Use SCD Discovery when product decisions are still open, then use SCD Dev Loop to implement the approved contract with concrete evidence."
+    "defaultPrompt": "Use SCD Discovery when product decisions are open, SCD Dev Loop for evidence-backed implementation, and SCD Knowledge only when I explicitly ask to capture or retrieve proven experience."
   }
 }

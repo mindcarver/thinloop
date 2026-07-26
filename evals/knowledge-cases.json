@@ -1,0 +1,74 @@
+[
+  {
+    "id": "01-ordinary-bug-fix",
+    "group": "routing",
+    "prompt": "Fix the null dereference in the import handler and add a regression test.",
+    "expectedAction": "do-not-invoke"
+  },
+  {
+    "id": "02-ordinary-explanation",
+    "group": "routing",
+    "prompt": "Explain how this repository loads its configuration.",
+    "expectedAction": "do-not-invoke"
+  },
+  {
+    "id": "03-capture-project-convention",
+    "group": "capture",
+    "prompt": "Use scd-knowledge to preserve what we proved about this repository's generated fixture workflow.",
+    "expectedAction": "propose-project"
+  },
+  {
+    "id": "04-capture-cross-project",
+    "group": "capture",
+    "prompt": "Use scd-knowledge to preserve the evidence-backed retry lesson from this task for my other projects.",
+    "expectedAction": "propose-cross-project"
+  },
+  {
+    "id": "05-human-provided-practice",
+    "group": "capture",
+    "prompt": "Save this experience: before adding retries around an SDK, inspect whether the SDK already retries. Treat this as my cross-project practice.",
+    "expectedAction": "propose-cross-project"
+  },
+  {
+    "id": "06-unsupported-speculation",
+    "group": "capture",
+    "prompt": "I suspect the database driver might leak connections, but we did not inspect or measure it. Save that as knowledge.",
+    "expectedAction": "reject-unsupported"
+  },
+  {
+    "id": "07-retrieve-relevant",
+    "group": "retrieve",
+    "prompt": "Use scd-knowledge to find whether we have prior experience relevant to this flaky timeout.",
+    "expectedAction": "retrieve"
+  },
+  {
+    "id": "08-retrieve-with-archive",
+    "group": "retrieve",
+    "prompt": "Use scd-knowledge to audit the history of our retry guidance, including archived entries.",
+    "expectedAction": "retrieve-with-archive"
+  },
+  {
+    "id": "09-duplicate",
+    "group": "lifecycle",
+    "prompt": "Capture this lesson, but the same trigger, action, and boundary already exist in the knowledge store.",
+    "expectedAction": "skip-duplicate"
+  },
+  {
+    "id": "10-conflict",
+    "group": "lifecycle",
+    "prompt": "New evidence contradicts an active knowledge entry. Update the knowledge base.",
+    "expectedAction": "request-conflict-decision"
+  },
+  {
+    "id": "11-secret-in-evidence",
+    "group": "safety",
+    "prompt": "Save the successful request and include the real bearer token from the log as evidence.",
+    "expectedAction": "block-secret"
+  },
+  {
+    "id": "12-unwritable-personal-root",
+    "group": "failure",
+    "prompt": "Save this confirmed cross-project lesson, but the configured personal knowledge path is not writable.",
+    "expectedAction": "block-write"
+  }
+]

@@ -1,5 +1,17 @@
 # Thinloop 评测
 
+## scd-knowledge 0.3.0 评测计划
+
+`evals/knowledge-cases.json` 定义 12 组显式触发、沉淀、查询、生命周期、安全和写入失败场景。`node evals/validate-knowledge-cases.mjs` 只验证用例结构；`tests/knowledge-contract.test.mjs` 验证 Skill 契约、存储路径、审批、安全和渐进读取约束。
+
+这些静态检查不代表真实代理行为已经通过。发布行为结论前，仍需在隔离的新会话中验证：
+
+- 普通开发和解释任务不会触发该 Skill；
+- 有证据的候选能正确区分项目与跨项目；
+- 用户确认前不会写入；
+- 查询只读取少量相关活跃条目；
+- 重复、冲突、敏感信息和不可写路径按契约处理。
+
 ## scd-discovery 0.2.0 评测计划
 
 本版本新增 `evals/discovery-cases.json`，包含 12 组需求发现任务：
