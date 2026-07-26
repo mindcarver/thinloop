@@ -1,0 +1,4 @@
+interface:
+  display_name: "SCD Dev Loop"
+  short_description: "Reliable coding without workflow overhead"
+  default_prompt: "Use $scd-dev-loop to implement this repository change with scoped intent, concrete evidence, and minimal continuity state."

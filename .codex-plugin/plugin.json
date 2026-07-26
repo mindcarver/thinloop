@@ -1,0 +1,28 @@
+{
+  "name": "thinloop",
+  "version": "0.1.0",
+  "description": "Simplify complex development with lightweight delivery contracts.",
+  "author": {
+    "name": "mindcarver"
+  },
+  "license": "MIT",
+  "keywords": [
+    "coding-agent",
+    "verification",
+    "continuity",
+    "development-workflow"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Thinloop",
+    "shortDescription": "Simplify complex development",
+    "longDescription": "Keep repository changes scoped, evidence-backed, and resumable without forcing a fixed development pipeline.",
+    "developerName": "mindcarver",
+    "category": "Coding",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "defaultPrompt": "Use SCD Dev Loop to implement this repository change with scoped intent, concrete evidence, and minimal continuity state."
+  }
+}
