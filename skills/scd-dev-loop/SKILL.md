@@ -67,7 +67,7 @@ Use durable state only when at least one strong signal exists:
 - a consequential decision must survive handoff;
 - the user pauses the work or asks to resume partial work.
 
-Prefer an existing issue, plan, or project task document. When none is suitable, create `.ai/tasks/current.md` from `assets/current-task.md`. Maintain at most one fallback task note per worktree.
+Prefer an existing issue, plan, or project task document. When none is suitable, create `.scd/tasks/current.md` from `assets/current-task.md`. Maintain at most one fallback task note per worktree.
 
 Before stopping or compaction, keep its status, evidence, and single next action current. The bundled hook checks this mechanically.
 
@@ -75,7 +75,7 @@ On successful completion:
 
 1. move any durable, non-obvious decision into an existing project document when one exists;
 2. remove the SCD Dev Loop task note;
-3. remove an empty `.ai/tasks` directory only when SCD Dev Loop created it;
+3. remove an empty `.scd/tasks` directory only when SCD Dev Loop created it;
 4. do not modify `.gitignore`, stage, or commit the state unless the user asks.
 
 Read `references/continuity-contract.md` before creating, updating, resuming, or removing fallback state.

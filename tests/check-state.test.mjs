@@ -66,7 +66,7 @@ function makeWorkspace() {
 }
 
 function writeState(cwd, content) {
-  const stateDir = path.join(cwd, ".ai", "tasks");
+  const stateDir = path.join(cwd, ".scd", "tasks");
   fs.mkdirSync(stateDir, { recursive: true });
   fs.writeFileSync(path.join(stateDir, "current.md"), content, "utf8");
 }

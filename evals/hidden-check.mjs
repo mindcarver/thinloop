@@ -113,7 +113,7 @@ switch (caseId) {
       'id,title,priority\n1,"Hello, world",normal\n2,"Say ""hi""",critical\n',
     );
     assert.equal(
-      fs.existsSync(path.join(repo, ".ai", "tasks", "current.md")),
+      fs.existsSync(path.join(repo, ".scd", "tasks", "current.md")),
       false,
     );
     break;
@@ -126,7 +126,7 @@ switch (caseId) {
       "normal",
     ]);
     assert.equal(
-      fs.existsSync(path.join(repo, ".ai", "tasks", "current.md")),
+      fs.existsSync(path.join(repo, ".scd", "tasks", "current.md")),
       true,
     );
     break;

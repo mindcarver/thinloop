@@ -66,7 +66,7 @@ function dirtySetup(caseId, repo) {
   }
 
   if (caseId === "10-resume-csv-export") {
-    const stateDir = path.join(repo, ".ai", "tasks");
+    const stateDir = path.join(repo, ".scd", "tasks");
     fs.mkdirSync(stateDir, { recursive: true });
     fs.writeFileSync(
       path.join(stateDir, "current.md"),

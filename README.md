@@ -7,7 +7,7 @@
 <p align="center">
   <kbd>SCD / SIMPLIFY COMPLEX DEVELOPMENT</kbd>
   &nbsp;
-  <kbd>BUILD 0.1.0</kbd>
+  <kbd>BUILD 0.1.1</kbd>
   &nbsp;
   <kbd>CODEX DEVELOPMENT INSTRUMENT</kbd>
 </p>
@@ -160,7 +160,7 @@ New-Item -ItemType Junction -Path $target -Target $source</code></pre>
   它只检查由 Thinloop 管理的：
 </p>
 
-<pre align="center"><code>.ai/tasks/current.md</code></pre>
+<pre align="center"><code>.scd/tasks/current.md</code></pre>
 
 <p align="center">
   没有这个文件时直接放行；<br>

@@ -8,13 +8,13 @@ Use the first suitable source of truth:
 
 1. an existing issue or task document already governing the work;
 2. an existing project plan or implementation note;
-3. `.ai/tasks/current.md` as the fallback.
+3. `.scd/tasks/current.md` as the fallback.
 
 Do not copy an entire issue, conversation, source file, or command log into fallback state. Store only the delta needed to resume.
 
 ## Fallback schema
 
-Copy `assets/current-task.md` to `.ai/tasks/current.md` and replace every placeholder.
+Copy `assets/current-task.md` to `.scd/tasks/current.md` and replace every placeholder.
 
 The frontmatter must contain:
 
@@ -50,7 +50,7 @@ Use exactly one concrete next action. Write `None yet` for decisions when no non
 
 ## Hook boundary
 
-The bundled `PreCompact` and `Stop` hook checks only `.ai/tasks/current.md` files marked `managed_by: scd-dev-loop`.
+The bundled `PreCompact` and `Stop` hook checks only `.scd/tasks/current.md` files marked `managed_by: scd-dev-loop`.
 
 It validates structure and resumability. It does not decide whether product scope is correct, whether evidence is semantically sufficient, or whether an ordinary task should have created state.
 

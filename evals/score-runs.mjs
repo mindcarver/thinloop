@@ -63,7 +63,7 @@ for (const testCase of cases) {
       hiddenPass: hidden.status === 0,
       repositoryTestsPass: tests.status === 0,
       hookDecision,
-      stateExists: fs.existsSync(path.join(repo, ".ai", "tasks", "current.md")),
+      stateExists: fs.existsSync(path.join(repo, ".scd", "tasks", "current.md")),
       commitCount: Number.parseInt(commits.stdout.trim(), 10),
       changed: diff.stdout.trim().split(/\r?\n/).filter(Boolean),
       hiddenOutput: `${hidden.stdout}${hidden.stderr}`.trim(),

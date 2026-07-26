@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 const MANAGED_BY = "scd-dev-loop";
-const RELATIVE_STATE_PATH = path.join(".ai", "tasks", "current.md");
+const RELATIVE_STATE_PATH = path.join(".scd", "tasks", "current.md");
 const REQUIRED_SECTIONS = [
   "Outcome",
   "Boundaries",
@@ -155,7 +155,7 @@ async function main() {
       continue: false,
       stopReason: "SCD Dev Loop continuity state is incomplete.",
       systemMessage:
-        `SCD Dev Loop paused ${eventName} because .ai/tasks/current.md is not resumable:\n` +
+        `SCD Dev Loop paused ${eventName} because .scd/tasks/current.md is not resumable:\n` +
         `${issueList}\nUpdate the note, then retry the lifecycle event.`,
     });
   } catch (error) {
