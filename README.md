@@ -70,6 +70,7 @@ Thinloop 不试图成为另一个接管开发过程的重型框架。它只守�
       <p><strong>适合：</strong>用户主动要求沉淀、查找或维护经验。</p>
     </td>
     <td width="33%" valign="top">
+      <img src="./assets/retro-maintenance.png" alt="SCD Maintenance 复古工程图标" width="92">
       <h3>06 · SCD Maintenance</h3>
       <p>主动审计并小批修复技术债、代码—文档漂移和过期仓库事实。</p>
       <p><strong>适合：</strong>用户主动要求扫描、清理、对齐或维护现有仓库。</p>
@@ -429,7 +430,8 @@ thinloop/
 │   ├── retro-uiux.png
 │   ├── retro-architecture.png
 │   ├── retro-dev-loop.png
-│   └── retro-knowledge.png
+│   ├── retro-knowledge.png
+│   └── retro-maintenance.png
 ├── skills/
 │   ├── scd-discovery/
 │   ├── scd-uiux/
