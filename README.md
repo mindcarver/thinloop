@@ -36,7 +36,7 @@ Thinloop 不接管开发过程，只守住容易在长任务里丢失的结果�
 
 <a id="capabilities"></a>
 
-## ⌖ 01 · 六块能力 <sub>CAPABILITIES</sub>
+## 六块能力 / CAPABILITIES
 
 <table width="100%">
   <tr>
@@ -85,7 +85,7 @@ Thinloop 不接管开发过程，只守住容易在长任务里丢失的结果�
 
 <a id="principles"></a>
 
-## ⚙ 02 · 设计原则 <sub>PRINCIPLES</sub>
+## 设计原则 / PRINCIPLES
 
 | 遇到什么 | Thinloop 怎么做 |
 |---|---|
@@ -99,27 +99,19 @@ Thinloop 不接管开发过程，只守住容易在长任务里丢失的结果�
 
 <a id="workflow"></a>
 
-## ↻ 03 · 工作闭环 <sub>WORKFLOW</sub>
+## 工作闭环 / WORKFLOW
 
 ```text
-模糊想法 ──→ Discovery
-               ├── 按需：UIUX
-               └── 按需：Architecture
-                         ↓
-                   统一契约与批准
-                         ↓
-                     Dev Loop
-                         ↓
-                     真实证据
-               ┌─────────┴─────────┐
-        主动维护：Maintenance   主动沉淀：Knowledge
+模糊任务 → Discovery →（按需 UIUX / Architecture）→ Dev Loop → 证据
+清晰任务 ───────────────────────────────→ Dev Loop → 证据
+主动调用 → Maintenance / Knowledge
 ```
 
 清晰任务从 Dev Loop 直接开始；Maintenance 和 Knowledge 只在用户主动要求时出现。
 
 <a id="state"></a>
 
-## ▦ 04 · 最小项目状态 <sub>STATE</sub>
+## 最小项目状态 / STATE
 
 Thinloop 不创建项目 Wiki，只在复杂度真实出现时保留相应载体：
 
@@ -139,7 +131,7 @@ contracts/              # 按需：跨边界机器契约
 
 <a id="install"></a>
 
-## ⚒ 05 · 安装到 Codex <sub>INSTALL</sub>
+## 安装到 Codex / INSTALL
 
 六个 Skill 与操作系统无关。使用链接安装后，更新仓库即可同步能力。
 
@@ -185,7 +177,7 @@ done
 
 > Skill 链接只同步方法。仓库 Hook 仍需通过完整插件加载并完成信任审查；新 Skill 会在下一次 Codex 任务中被发现。
 
-### ⌁ 手动调用 <sub>EXAMPLES</sub>
+### 手动调用 / EXAMPLES
 
 ```text
 使用 $scd-discovery 把这个想法聊透并形成可验收规格。
@@ -198,7 +190,7 @@ done
 
 <a id="verification"></a>
 
-## ✓ 06 · 本地验证 <sub>VERIFICATION</sub>
+## 本地验证 / VERIFICATION
 
 | 检查 | 当前结果 |
 |---|---:|
