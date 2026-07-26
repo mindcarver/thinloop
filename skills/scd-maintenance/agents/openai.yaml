@@ -1,0 +1,4 @@
+interface:
+  display_name: "SCD Maintenance"
+  short_description: "Audit and repair repository drift"
+  default_prompt: "Use $scd-maintenance to audit this repository for technical debt and code-documentation drift, then repair only the findings I select."

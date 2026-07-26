@@ -1,7 +1,7 @@
 {
   "name": "thinloop",
-  "version": "0.5.0",
-  "description": "Simplify complex development with deep discovery, risk-adaptive Web experience and architecture design, reliable delivery, and concise experiential knowledge.",
+  "version": "0.6.0",
+  "description": "Simplify complex development with deep discovery, risk-adaptive Web experience and architecture design, reliable delivery, evidence-backed maintenance, and concise experiential knowledge.",
   "author": {
     "name": "mindcarver"
   },
@@ -18,20 +18,23 @@
     "verification",
     "continuity",
     "knowledge-management",
+    "technical-debt",
+    "repository-maintenance",
+    "documentation-drift",
     "development-experience",
     "development-workflow"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Thinloop",
-    "shortDescription": "Discovery, UIUX, architecture, delivery, and knowledge",
-    "longDescription": "Clarify consequential product decisions, design Web experiences and technical boundaries at the lightest useful fidelity, converge on shared machine-readable contracts, keep implementation scoped and evidence-backed, and preserve proven development experience without a fixed pipeline.",
+    "shortDescription": "Discovery, design, delivery, maintenance, and knowledge",
+    "longDescription": "Clarify consequential product decisions, design Web experiences and technical boundaries at the lightest useful fidelity, converge on shared machine-readable contracts, keep implementation scoped and evidence-backed, audit or repair repository drift on request, and preserve proven development experience without a fixed pipeline.",
     "developerName": "mindcarver",
     "category": "Coding",
     "capabilities": [
       "Interactive",
       "Write"
     ],
-    "defaultPrompt": "Use SCD Discovery when product decisions are open, SCD UIUX when a Web experience needs design, SCD Architecture when domain, system, or shared interface boundaries need design, SCD Dev Loop for evidence-backed implementation, and SCD Knowledge only when I explicitly ask to capture or retrieve proven experience."
+    "defaultPrompt": "Use SCD Discovery when product decisions are open, SCD UIUX when a Web experience needs design, SCD Architecture when domain, system, or shared interface boundaries need design, SCD Dev Loop for evidence-backed implementation, SCD Maintenance only when I explicitly ask to audit or repair repository debt, and SCD Knowledge only when I explicitly ask to capture or retrieve proven experience."
   }
 }
