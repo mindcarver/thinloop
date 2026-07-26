@@ -78,6 +78,11 @@ For a medium project, prefer two durable documents and one temporary carrier:
 - one evolving `.scd/architecture.md` when the repository has no existing architecture home;
 - `.scd/tasks/current.md` only while unfinished work needs continuity.
 
+When a UI-heavy delivery activates `scd-uiux`, it may add one
+`.scd/ux/<slug>.md` experience contract. This is optional design handoff, not a
+third document required for every medium project and not a second product
+approval.
+
 The architecture document records system purpose, components and responsibilities, runtime and data flow, core data, external dependencies, cross-cutting constraints, verification boundaries, and durable architecture decisions. Keep it concise and update it only when those boundaries change.
 
 Keep core entities in the architecture document unless ownership, permissions, lifecycle, migration, synchronization, audit, or cross-entity invariants become a major source of complexity. Only then split `.scd/data-model.md`.

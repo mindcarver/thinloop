@@ -39,6 +39,12 @@ Challenge an unconfirmed solution assumption when it may solve the wrong problem
 
 Define the next complete, independently verifiable delivery. Keep longer-term ideas visible only as deferred or out of scope.
 
+When that delivery is UI-heavy and its journey, surfaces, states, responsive
+behavior, accessibility, or visual direction remain design-bearing, compose
+with `scd-uiux` after the product core stabilizes. Bring product-visible UX
+decisions back into the same combined contract and approval. Do not invoke
+UIUX for clear local interface changes.
+
 ## Interview through the decision tree
 
 Ask one decision at a time. Include the reason it matters now, a recommendation with rationale, and only meaningful alternatives. Resolve upstream decisions before asking downstream questions.
@@ -64,8 +70,10 @@ When no high-impact branch appears open:
 1. run the readiness and contradiction review silently;
 2. bring only real blockers back into the interview;
 3. identify the external seam through which each acceptance behavior will be verified;
-4. present one compact shared-understanding summary;
-5. request one explicit approval of the combined contract.
+4. when UIUX was activated, require its experience handoff to be ready and name
+   any shared-interface reconciliation still required before implementation;
+5. present one compact shared-understanding summary;
+6. request one explicit approval of the combined contract.
 
 Silence, topic changes, partial agreement, or the model's confidence are not approval. A clear affirmative response to the approval request is approval. If the user changes the contract, revise it and review again.
 

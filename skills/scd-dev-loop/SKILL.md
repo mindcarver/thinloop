@@ -23,6 +23,9 @@ Keep these contracts invisible on clear, local tasks. Do not announce modes or c
 4. Search and read targeted code before proposing a new abstraction.
 5. Resume an existing SCD Dev Loop task note before starting overlapping work.
 6. When the request follows discovery, read the relevant `.scd/specs/<slug>.md` and require `status: approved`.
+7. When the request follows UIUX, read the relevant `.scd/ux/<slug>.md`, require
+   `status: ready`, inspect its retained visual references, and use the shared
+   interface contract rather than treating UX interface needs as an API.
 
 Do not generate a project wiki. Do not introduce PRDs, roles, command suites, worktrees, subagents, or TDD merely to satisfy this skill.
 
@@ -35,6 +38,12 @@ Proceed without an extra question when a reasonable interpretation preserves pro
 For a new product, application, plugin, service, or system, or when several dependent product decisions remain open, use `scd-discovery` before implementation. Do not turn one isolated ambiguity into full discovery. An existing complete and explicitly approved specification takes the fast path.
 
 Treat an approved specification as the product contract. Do not silently expand it or replace user decisions with implementation preferences. If implementation evidence requires a change to outcome, visible behavior, scope, data or privacy boundaries, permissions, irreversible actions, or acceptance, return the affected contract to discovery and obtain approval again. Handle reversible implementation choices autonomously.
+
+Treat a ready UX contract as the experience handoff, not as product approval or
+frontend architecture. If it is draft, contradicts the approved product
+contract, conflicts with retained visuals, or depends on an unreconciled shared
+interface decision, return only that gap to UIUX or the relevant architecture
+work before implementation.
 
 Read `references/scope-contract.md` when ambiguity or scope expansion is plausible.
 

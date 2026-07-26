@@ -1,0 +1,4 @@
+interface:
+  display_name: "SCD UIUX"
+  short_description: "Design web experiences without process overhead"
+  default_prompt: "Use $scd-uiux to turn this web product behavior into a reviewable interaction and interface contract before implementation."
