@@ -50,7 +50,7 @@ Use exactly one concrete next action. Write `None yet` for decisions when no non
 
 ## Hook boundary
 
-The bundled `PreCompact` and `Stop` hook checks only `.scd/tasks/current.md` files marked `managed_by: scd-dev-loop`.
+The bundled `PreCompact` and `Stop` hook checks only `.scd/tasks/current.md` files marked `managed_by: scd-dev-loop` or `managed_by: scd-discovery`.
 
 It validates structure and resumability. It does not decide whether product scope is correct, whether evidence is semantically sufficient, or whether an ordinary task should have created state.
 

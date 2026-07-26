@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
-const MANAGED_BY = "scd-dev-loop";
+const MANAGERS = new Set(["scd-dev-loop", "scd-discovery"]);
 const RELATIVE_STATE_PATH = path.join(".scd", "tasks", "current.md");
 const REQUIRED_SECTIONS = [
   "Outcome",
@@ -71,7 +71,7 @@ function validateState(markdown) {
   const issues = [];
   const metadata = parseFrontmatter(markdown);
 
-  if (metadata.managed_by !== MANAGED_BY) {
+  if (!MANAGERS.has(metadata.managed_by)) {
     return { managed: false, issues };
   }
 
@@ -122,7 +122,7 @@ function validateState(markdown) {
     }
   }
 
-  return { managed: true, issues };
+  return { managed: true, managedBy: metadata.managed_by, issues };
 }
 
 async function main() {
@@ -153,16 +153,16 @@ async function main() {
     const issueList = result.issues.map((issue) => `- ${issue}`).join("\n");
     emit({
       continue: false,
-      stopReason: "SCD Dev Loop continuity state is incomplete.",
+      stopReason: "SCD continuity state is incomplete.",
       systemMessage:
-        `SCD Dev Loop paused ${eventName} because .scd/tasks/current.md is not resumable:\n` +
+        `${result.managedBy} paused ${eventName} because .scd/tasks/current.md is not resumable:\n` +
         `${issueList}\nUpdate the note, then retry the lifecycle event.`,
     });
   } catch (error) {
     emit({
       continue: true,
       systemMessage:
-        `SCD Dev Loop could not inspect continuity state and failed open: ` +
+        `SCD could not inspect continuity state and failed open: ` +
         `${error instanceof Error ? error.message : String(error)}`,
     });
   }

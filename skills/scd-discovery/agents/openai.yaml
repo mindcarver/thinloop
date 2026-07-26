@@ -1,0 +1,4 @@
+interface:
+  display_name: "SCD Discovery"
+  short_description: "Clarify product intent before implementation"
+  default_prompt: "Use $scd-discovery to turn this product idea into an approved, testable specification before implementation."

@@ -117,6 +117,16 @@ test("allows complete active state", () => {
   }
 });
 
+test("allows complete discovery state", () => {
+  const cwd = makeWorkspace();
+  try {
+    writeState(cwd, validState({ managedBy: "scd-discovery" }));
+    assert.equal(parseOutput(runHook(cwd)), null);
+  } finally {
+    fs.rmSync(cwd, { recursive: true, force: true });
+  }
+});
+
 test("allows complete blocked state", () => {
   const cwd = makeWorkspace();
   try {
@@ -175,6 +185,22 @@ test("blocks missing evidence", () => {
     const output = parseOutput(runHook(cwd));
     assert.equal(output.continue, false);
     assert.match(output.systemMessage, /empty section: Evidence/);
+  } finally {
+    fs.rmSync(cwd, { recursive: true, force: true });
+  }
+});
+
+test("blocks incomplete discovery state", () => {
+  const cwd = makeWorkspace();
+  try {
+    writeState(
+      cwd,
+      validState({ managedBy: "scd-discovery", acceptance: "" }),
+    );
+    const output = parseOutput(runHook(cwd));
+    assert.equal(output.continue, false);
+    assert.match(output.systemMessage, /^scd-discovery paused Stop/);
+    assert.match(output.systemMessage, /empty section: Acceptance/);
   } finally {
     fs.rmSync(cwd, { recursive: true, force: true });
   }

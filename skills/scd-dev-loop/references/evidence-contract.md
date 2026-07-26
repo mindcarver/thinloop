@@ -27,6 +27,20 @@ Evidence is useful only when it records:
 
 A passing unrelated suite is not evidence for the changed behavior. A test that never reached the target path is not a regression test.
 
+## Acceptance mapping
+
+When a specification assigns acceptance identifiers, retain them through implementation:
+
+```markdown
+- A1 PASS - `node --test test/import.test.mjs`
+- A2 PASS - observed the oversized upload rejected before a request was sent
+- A3 UNVERIFIED - the current environment cannot exercise the external model outage
+```
+
+Each identifier must map to a directly relevant check, an explicit unverified boundary, or a named blocker. One check may support several acceptance items when it genuinely exercises them; do not duplicate or inflate evidence.
+
+If implementation reveals that an acceptance item is impossible, contradictory, or would require a material product-contract change, do not quietly drop or rewrite it. Return that decision to discovery.
+
 ## Failures and baselines
 
 When a check fails:

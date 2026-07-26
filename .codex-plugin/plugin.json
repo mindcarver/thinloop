@@ -1,13 +1,15 @@
 {
   "name": "thinloop",
-  "version": "0.1.1",
-  "description": "Simplify complex development with lightweight delivery contracts.",
+  "version": "0.2.0",
+  "description": "Simplify complex development with deep product discovery and lightweight delivery contracts.",
   "author": {
     "name": "mindcarver"
   },
   "license": "MIT",
   "keywords": [
     "coding-agent",
+    "product-discovery",
+    "specification",
     "verification",
     "continuity",
     "development-workflow"
@@ -15,14 +17,14 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Thinloop",
-    "shortDescription": "Simplify complex development",
-    "longDescription": "Keep repository changes scoped, evidence-backed, and resumable without forcing a fixed development pipeline.",
+    "shortDescription": "Deep discovery, lightweight delivery",
+    "longDescription": "Clarify consequential product decisions, require one explicit approval, and keep implementation scoped, evidence-backed, and resumable without a fixed development pipeline.",
     "developerName": "mindcarver",
     "category": "Coding",
     "capabilities": [
       "Interactive",
       "Write"
     ],
-    "defaultPrompt": "Use SCD Dev Loop to implement this repository change with scoped intent, concrete evidence, and minimal continuity state."
+    "defaultPrompt": "Use SCD Discovery when product decisions are still open, then use SCD Dev Loop to implement the approved contract with concrete evidence."
   }
 }

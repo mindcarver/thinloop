@@ -1,6 +1,6 @@
 ---
 name: scd-dev-loop
-description: "Apply lightweight delivery contracts whenever Codex is asked to change a repository: implement a feature, fix a bug, refactor code, change configuration, perform a migration, or resume unfinished implementation work. Keep intent scoped, require observed verification before completion claims, and preserve minimal continuity state only for work that may outlive the current context. Do not trigger for advice-only questions, explanations, or read-only reviews unless the user also asks for changes."
+description: "Apply lightweight delivery contracts whenever Codex is asked to change a repository: implement an approved feature, fix a bug, refactor code, change configuration, perform a migration, or resume unfinished implementation work. Keep intent scoped, require observed verification before completion claims, and preserve minimal continuity state only for work that may outlive the current context. Hand underdefined greenfield products and changes with multiple dependent product decisions to scd-discovery before editing. Do not trigger for advice-only questions, explanations, or read-only reviews unless the user also asks for changes."
 ---
 
 # SCD Dev Loop
@@ -22,6 +22,7 @@ Keep these contracts invisible on clear, local tasks. Do not announce modes or c
 3. Reuse existing documentation, tests, naming, and implementation patterns.
 4. Search and read targeted code before proposing a new abstraction.
 5. Resume an existing SCD Dev Loop task note before starting overlapping work.
+6. When the request follows discovery, read the relevant `.scd/specs/<slug>.md` and require `status: approved`.
 
 Do not generate a project wiki. Do not introduce PRDs, roles, command suites, worktrees, subagents, or TDD merely to satisfy this skill.
 
@@ -30,6 +31,10 @@ Do not generate a project wiki. Do not introduce PRDs, roles, command suites, wo
 Derive the requested outcome, meaningful boundary, and observable acceptance behavior from the prompt and repository.
 
 Proceed without an extra question when a reasonable interpretation preserves product behavior and repository conventions. Ask one concise question only when different answers would materially change user-visible behavior, architecture, data, security, compatibility, or external impact.
+
+For a new product, application, plugin, service, or system, or when several dependent product decisions remain open, use `scd-discovery` before implementation. Do not turn one isolated ambiguity into full discovery. An existing complete and explicitly approved specification takes the fast path.
+
+Treat an approved specification as the product contract. Do not silently expand it or replace user decisions with implementation preferences. If implementation evidence requires a change to outcome, visible behavior, scope, data or privacy boundaries, permissions, irreversible actions, or acceptance, return the affected contract to discovery and obtain approval again. Handle reversible implementation choices autonomously.
 
 Read `references/scope-contract.md` when ambiguity or scope expansion is plausible.
 
@@ -53,6 +58,8 @@ Before claiming success, run the strongest practical evidence for the changed be
 4. static inspection only when execution is unavailable.
 
 Inspect the exit code and meaningful output. Do not treat launching a command, creating a file, or predicting behavior as proof.
+
+When an approved specification numbers acceptance items such as `A1`, preserve those identifiers in tests or the delivery report. Map every item to observed evidence, `UNVERIFIED`, or a named blocker. Never use an unrelated passing check as evidence for an acceptance item.
 
 If verification is blocked, state what ran, the blocker, what remains unverified, and the safest next check. Use a partially verified or blocked outcome instead of saying the work is fully done.
 

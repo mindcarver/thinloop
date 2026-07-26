@@ -7,27 +7,205 @@
 <p align="center">
   <kbd>SCD / SIMPLIFY COMPLEX DEVELOPMENT</kbd>
   &nbsp;
-  <kbd>BUILD 0.1.1</kbd>
+  <kbd>BUILD 0.2.0</kbd>
   &nbsp;
   <kbd>CODEX DEVELOPMENT INSTRUMENT</kbd>
 </p>
 
 <p align="center">
-  <strong>模型已经足够强。</strong>
+  <strong>需求值得被认真理解，实现不需要被流程接管。</strong>
   <br>
-  我们需要的不是更重的流程，而是更可靠的结果。
-</p>
-
-<p align="center">
-  Thinloop 是一个轻量 Codex 开发插件。<br>
-  它不规定固定阶段，不接管你的开发方式，<br>
-  只在真正重要的地方维护三个结果契约。
+  Thinloop 用一个深入的需求收敛环和一个安静的开发闭环，
+  <br>
+  把复杂开发变成可批准、可验证、可恢复的交付。
 </p>
 
 <table align="center">
   <thead>
     <tr>
-      <th align="center">信号通道</th>
+      <th align="center">SCD MODULE</th>
+      <th align="center">它负责什么</th>
+      <th align="center">什么时候出现</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center"><code>scd-discovery</code></td>
+      <td align="center">把模糊想法收敛为明确批准、可以验收的规格</td>
+      <td align="center">新产品或多个产品决策相互依赖时</td>
+    </tr>
+    <tr>
+      <td align="center"><code>scd-dev-loop</code></td>
+      <td align="center">按已知边界实现，用真实证据支撑完成声明</td>
+      <td align="center">清晰改动、已批准规格和未完成实现</td>
+    </tr>
+  </tbody>
+</table>
+
+<p align="center">
+  <code>模糊想法</code>
+  &nbsp;→&nbsp;
+  <code>聊透当前交付</code>
+  &nbsp;→&nbsp;
+  <code>明确批准</code>
+  &nbsp;→&nbsp;
+  <code>可靠实现</code>
+</p>
+
+---
+
+<h2 align="center">01 / 轻，不等于草率</h2>
+
+<p align="center">
+  Thinloop 不规定固定阶段，不要求每个任务写计划，
+  <br>
+  也不把一个清晰改动升级成产品研讨会。
+</p>
+
+<table align="center">
+  <thead>
+    <tr>
+      <th align="center">内部路径</th>
+      <th align="center">判断</th>
+      <th align="center">表现</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center"><code>DIRECT</code></td>
+      <td align="center">目标、边界、验收已经清楚</td>
+      <td align="center">直接实现，不提问，不创建状态</td>
+    </tr>
+    <tr>
+      <td align="center"><code>CLARIFY</code></td>
+      <td align="center">一个答案就能补足范围</td>
+      <td align="center">只问一个实质问题，然后继续</td>
+    </tr>
+    <tr>
+      <td align="center"><code>DISCOVERY</code></td>
+      <td align="center">多个上游产品决定尚未存在</td>
+      <td align="center">逐个收敛，批准前不编码</td>
+    </tr>
+  </tbody>
+</table>
+
+<p align="center">
+  新产品、应用、插件、服务和系统默认进入 <code>DISCOVERY</code>。
+  <br>
+  已有完整规格则走快速通道：审查真实缺口，不重复采访。
+</p>
+
+<p align="center">
+  ◇ 不强制 TDD
+  &nbsp;◇&nbsp;
+  不默认创建工作树或子代理
+  &nbsp;◇&nbsp;
+  不生成角色和命令套件
+  <br>
+  ◇ 不自动暂存、提交或部署
+  &nbsp;◇&nbsp;
+  不为普通小改动制造流程产物
+</p>
+
+---
+
+<h2 align="center">02 / SCD DISCOVERY</h2>
+
+<p align="center">
+  Discovery 不靠一张固定问卷堆问题。
+  <br>
+  它寻找当前最上游的决策，给出推荐与理由，一次只请求一个决定。
+</p>
+
+<p align="center">
+  <code>确认用户、问题与期望变化</code>
+  <br>↓<br>
+  <code>定义下一次完整交付</code>
+  <br>↓<br>
+  <code>沿决策依赖逐层展开</code>
+  <br>↓<br>
+  <code>覆盖主路径、失败、数据、权限与边界</code>
+  <br>↓<br>
+  <code>静默执行矛盾与遗漏审查</code>
+  <br>↓<br>
+  <code>用户明确批准</code>
+</p>
+
+<p align="center">
+  能从仓库、文档和环境确认的事实不会被重新问给用户。
+  <br>
+  模型负责调查、推荐和发现矛盾；用户拥有产品取舍。
+</p>
+
+<p align="center">
+  <strong>聊透的是下一次准备实现的完整版本，</strong>
+  <br>
+  不是一次设计产品未来三年的全部可能性。
+</p>
+
+---
+
+<h2 align="center">03 / 中型项目的最小文档面</h2>
+
+<p align="center">
+  默认只有两份长期信息和一份临时状态。
+</p>
+
+<pre align="center"><code>.scd/
+|-- architecture.md
+|-- specs/
+|   |-- 001-mvp.md
+|   `-- 002-next-delivery.md
+`-- tasks/
+    `-- current.md</code></pre>
+
+<table align="center">
+  <thead>
+    <tr>
+      <th align="center">载体</th>
+      <th align="center">生命周期</th>
+      <th align="center">内容</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center"><code>specs/&lt;slug&gt;.md</code></td>
+      <td align="center">每次交付长期保留</td>
+      <td align="center">用户行为、边界、决定和验收</td>
+    </tr>
+    <tr>
+      <td align="center"><code>architecture.md</code></td>
+      <td align="center">随系统边界演进</td>
+      <td align="center">组件职责、数据流和长期技术取舍</td>
+    </tr>
+    <tr>
+      <td align="center"><code>tasks/current.md</code></td>
+      <td align="center">未完成时临时存在</td>
+      <td align="center">最小恢复状态、证据和唯一下一步</td>
+    </tr>
+  </tbody>
+</table>
+
+<p align="center">
+  只有数据生命周期真正复杂时才拆出 <code>data-model.md</code>；
+  <br>
+  只有具体功能存在高风险技术取舍时才创建 <code>designs/&lt;feature&gt;.md</code>；
+  <br>
+  不保留会迅速过期的 <code>implementation-plan.md</code>。
+</p>
+
+---
+
+<h2 align="center">04 / SCD DEV LOOP</h2>
+
+<p align="center">
+  Dev Loop 维护三个结果契约。
+</p>
+
+<table align="center">
+  <thead>
+    <tr>
+      <th align="center">CONTRACT</th>
       <th align="center">它守住什么</th>
       <th align="center">默认表现</th>
     </tr>
@@ -35,262 +213,143 @@
   <tbody>
     <tr>
       <td align="center"><code>SCOPE</code></td>
-      <td align="center">目标、边界和验收条件足以开始</td>
+      <td align="center">目标、边界和验收足以行动</td>
       <td align="center">只有实质歧义才询问</td>
     </tr>
     <tr>
       <td align="center"><code>EVIDENCE</code></td>
-      <td align="center">完成声明必须对应真实验证</td>
+      <td align="center">完成声明对应实际验证</td>
       <td align="center">无法验证时明确降级</td>
     </tr>
     <tr>
       <td align="center"><code>CONTINUITY</code></td>
-      <td align="center">中断后能恢复到正确下一步</td>
+      <td align="center">中断后恢复到正确下一步</td>
       <td align="center">只有必要时才保存状态</td>
     </tr>
   </tbody>
 </table>
 
 <p align="center">
-  普通任务应该像拨动一枚机械开关：<br>
-  <strong>直接、安静、可预测。</strong>
+  规格里的 <code>A1 / A2 / A3</code> 会一路映射到最终 Evidence。
+  <br>
+  每一项只能是 <code>PASS</code>、<code>UNVERIFIED</code> 或带原因的阻塞，
+  <br>
+  不允许用一次无关的测试笼统宣布全部完成。
 </p>
 
 ---
 
-<h2 align="center">01 / 它刻意不做什么</h2>
+<h2 align="center">05 / 安装到 CODEX</h2>
+
+<h3 align="center">Windows：使用 Junction 保持源码实时同步</h3>
 
 <p align="center">
-  Thinloop 不是另一套庞大的开发方法论。
+  仓库中的 Skill 更新后，Codex 侧无需再次复制。
+  <br>
+  分别把两个 Skill 目录链接到用户 Skill 目录。
 </p>
 
-<p align="center">
-  ◈ 不强制 TDD<br>
-  ◈ 不强制 PRD、角色分工或阶段播报<br>
-  ◈ 不默认创建工作树、子代理或项目 Wiki<br>
-  ◈ 不自动暂存、提交、推送或部署<br>
-  ◈ 不因为一个小改动就生成计划和状态文件
-</p>
+<pre align="center"><code>$repo = "C:\Users\Administrator\workspace\mindcarver\thinloop"
+$codexSkills = "$env:USERPROFILE\.codex\skills"
 
-<p align="center">核心只有一个 Skill：</p>
+New-Item -ItemType Junction `
+  -Path "$codexSkills\scd-discovery" `
+  -Target "$repo\skills\scd-discovery"
 
-<pre align="center"><code>scd-dev-loop</code></pre>
+New-Item -ItemType Junction `
+  -Path "$codexSkills\scd-dev-loop" `
+  -Target "$repo\skills\scd-dev-loop"</code></pre>
 
-<p align="center">
-  Scope、Evidence、Continuity 是它内部按需读取的参考契约，<br>
-  不会膨胀成一排需要手动选择的技能。
-</p>
+<p align="center"><strong>验证链接</strong></p>
 
----
-
-<h2 align="center">02 / 工作方式</h2>
-
-<p align="center">
-  <code>复杂请求</code><br>
-  ↓<br>
-  <code>范围是否足够清楚？</code><br>
-  ↓<br>
-  <code>实现最小且完整的改动</code><br>
-  ↓<br>
-  <code>运行当前风险下最强的实际验证</code><br>
-  ↓<br>
-  <code>只在可能跨会话时保存最小恢复状态</code><br>
-  ↓<br>
-  <code>完成后清理</code>
-</p>
-
-<p align="center"><strong>验证证据按风险自适应</strong></p>
-
-<p align="center">
-  行为 / 回归测试<br>
-  ↓<br>
-  类型检查 · 构建 · Lint<br>
-  ↓<br>
-  真实运行 · API · UI<br>
-  ↓<br>
-  静态检查 + 明确未验证边界
-</p>
-
----
-
-<h2 align="center">03 / 安装到 Codex</h2>
-
-<h3 align="center">Windows：推荐使用目录联接</h3>
-
-<p align="center">
-  开发中的仓库不需要复制。<br>
-  把 Skill 目录联接到 Codex，后续修改项目文件即可立即保持同步。
-</p>
-
-<pre align="center"><code>$source = "C:\Users\Administrator\workspace\mindcarver\thinloop\skills\scd-dev-loop"
-$target = "$env:USERPROFILE\.codex\skills\scd-dev-loop"
-
-New-Item -ItemType Junction -Path $target -Target $source</code></pre>
-
-<p align="center"><strong>验证联接</strong></p>
-
-<pre align="center"><code>Get-Item -Force "$env:USERPROFILE\.codex\skills\scd-dev-loop" |
+<pre align="center"><code>Get-Item -Force `
+  "$env:USERPROFILE\.codex\skills\scd-discovery", `
+  "$env:USERPROFILE\.codex\skills\scd-dev-loop" |
   Format-List FullName,LinkType,Target</code></pre>
 
 <p align="center">
-  Codex 官方支持扫描软连接形式的 Skill 目录。<br>
-  新安装的 Skill 在下一次任务中可用。
+  新安装的 Skill 在下一次 Codex 任务中被发现。
+  <br>
+  Skill Junction 只负责方法实时同步；插件根目录中的 Hook
+  <br>
+  仍需通过完整插件加载并完成一次信任审查后才会执行。
 </p>
 
 <p align="center"><strong>需要显式调用时</strong></p>
 
-<pre align="center"><code>使用 $scd-dev-loop 完成这个仓库改动。</code></pre>
+<pre align="center"><code>使用 $scd-discovery 把这个想法聊透并形成可验收规格。
 
-<p align="center">
-  正常情况下无需显式调用。<br>
-  Skill 描述会让 Codex 在功能实现、Bug 修复、重构、迁移<br>
-  和恢复未完成工作时自动选择它。
-</p>
-
-<h3 align="center">关于 Hook</h3>
-
-<p align="center">
-  Skill 目录联接能实时同步核心方法，<br>
-  但插件根目录中的 <code>PreCompact</code> / <code>Stop</code> Hook<br>
-  只有在完整插件被启用并完成信任审查后才会加载。
-</p>
-
-<p align="center">
-  Hook 是机械兜底，不是语义执行引擎。<br>
-  它只检查由 Thinloop 管理的：
-</p>
-
-<pre align="center"><code>.scd/tasks/current.md</code></pre>
-
-<p align="center">
-  没有这个文件时直接放行；<br>
-  Hook 自身异常时也会放行并给出警告，避免死锁。
-</p>
+使用 $scd-dev-loop 按已批准规格实现并给出证据。</code></pre>
 
 ---
 
-<h2 align="center">04 / 最小恢复状态</h2>
+<h2 align="center">06 / 本地验证</h2>
 
-<p align="center">
-  只有任务可能跨会话、多条验收路径需要分别完成、<br>
-  关键决策需要保留，或用户主动暂停时，才创建状态文件。
-</p>
+<pre align="center"><code>node --test tests\*.test.mjs
+node evals\validate-discovery-cases.mjs
 
-<pre align="center"><code>managed_by: scd-dev-loop
-status: active
-updated_at: 2026-07-26T11:00:00+08:00</code></pre>
-
-<p align="center"><strong>正文固定保存</strong></p>
-
-<p align="center">
-  <code>Outcome</code> ·
-  <code>Boundaries</code> ·
-  <code>Acceptance</code> ·
-  <code>Decisions</code> ·
-  <code>Evidence</code> ·
-  <code>Next action</code>
-</p>
-
-<p align="center">
-  同一工作树最多一个 <code>current.md</code>。<br>
-  完成后保留长期有效的决策，删除临时恢复状态。
-</p>
-
----
-
-<h2 align="center">05 / 仓库结构</h2>
-
-<pre align="center"><code>thinloop/
-|-- .codex-plugin/
-|   `-- plugin.json
-|-- assets/
-|   `-- thinloop-retro-hero.png
-|-- skills/
-|   `-- scd-dev-loop/
-|       |-- SKILL.md
-|       |-- agents/openai.yaml
-|       |-- assets/current-task.md
-|       `-- references/
-|-- hooks/
-|   |-- hooks.json
-|   `-- check-state.mjs
-|-- tests/
-`-- evals/</code></pre>
-
-<p align="center"><strong>运行本地检查</strong></p>
-
-<pre align="center"><code>node --test tests\check-state.test.mjs
+py C:\Users\Administrator\.codex\skills\.system\skill-creator\scripts\quick_validate.py `
+  skills\scd-discovery
 
 py C:\Users\Administrator\.codex\skills\.system\skill-creator\scripts\quick_validate.py `
   skills\scd-dev-loop
 
 py C:\Users\Administrator\.codex\skills\.system\plugin-creator\scripts\validate_plugin.py .</code></pre>
 
----
-
-<h2 align="center">06 / 已有证据</h2>
-
 <p align="center">
-  第一版使用 12 组、24 次隔离任务做配对评测。
-</p>
-
-<table align="center">
-  <thead>
-    <tr>
-      <th align="center">条件</th>
-      <th align="center">隐藏验收</th>
-      <th align="center">Hook 误拦截</th>
-      <th align="center">自动提交</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td align="center">未启用 Thinloop</td>
-      <td align="center">10 / 12</td>
-      <td align="center">0</td>
-      <td align="center">0</td>
-    </tr>
-    <tr>
-      <td align="center">启用 Thinloop</td>
-      <td align="center"><strong>12 / 12</strong></td>
-      <td align="center">0</td>
-      <td align="center">0</td>
-    </tr>
-  </tbody>
-</table>
-
-<p align="center">
-  清晰小改动保持零额外提问、零状态文件。<br>
-  净提升集中在连续性：
+  Dev Loop 第一版的 12 组成对隔离任务中：
+  <br>
+  启用 Thinloop 为 <strong>12 / 12</strong>，未启用为 <strong>10 / 12</strong>，
+  Hook 误拦截为 <strong>0</strong>。
 </p>
 
 <p align="center">
-  ◈ 完成已有跨会话任务后，清理失效状态<br>
-  ◈ 按要求中途停止时，留下完整且唯一的下一步
-</p>
-
-<p align="center">
-  完整方法与限制见 <a href="./EVALUATION.md">EVALUATION.md</a>
+  Discovery 另附 12 组路由与恢复评测用例。
+  <br>
+  用例结构可以本地验证；真实代理行为结果只有实际运行后才记录。
+  <br>
+  完整方法、历史证据和限制见 <a href="./EVALUATION.md">EVALUATION.md</a>。
 </p>
 
 ---
 
-<h2 align="center">07 / 设计原则</h2>
+<h2 align="center">07 / 仓库结构</h2>
+
+<pre align="center"><code>thinloop/
+|-- .codex-plugin/
+|   `-- plugin.json
+|-- .scd/
+|   `-- specs/
+|       `-- scd-discovery.md
+|-- assets/
+|   `-- thinloop-retro-hero.png
+|-- skills/
+|   |-- scd-discovery/
+|   |   |-- SKILL.md
+|   |   |-- agents/openai.yaml
+|   |   `-- references/
+|   `-- scd-dev-loop/
+|       |-- SKILL.md
+|       |-- agents/openai.yaml
+|       |-- assets/current-task.md
+|       `-- references/
+|-- hooks/
+|-- tests/
+`-- evals/</code></pre>
+
+---
 
 <p align="center">
+  <kbd>DEEPER UNDERSTANDING.</kbd>
+  &nbsp;
   <kbd>LESS CEREMONY.</kbd>
   &nbsp;
   <kbd>STRONGER EVIDENCE.</kbd>
-  &nbsp;
-  <kbd>CONTINUITY ONLY WHEN IT MATTERS.</kbd>
 </p>
 
 <p align="center">
-  <strong>少一点仪式，多一点证据；</strong><br>
-  <strong>只在真正需要时保存连续性。</strong>
+  <strong>先把真正重要的决定聊透，再让强模型安静地把它做出来。</strong>
 </p>
-
----
 
 <p align="center">
   MIT License · 2026 mindcarver

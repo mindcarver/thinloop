@@ -1,0 +1,74 @@
+[
+  {
+    "id": "01-clear-copy-change",
+    "group": "clear",
+    "prompt": "Change the empty-state heading from \"No items\" to \"Nothing here yet\" and update the existing snapshot.",
+    "expectedPath": "direct"
+  },
+  {
+    "id": "02-clear-api-default",
+    "group": "clear",
+    "prompt": "Change the existing list endpoint's default limit from 20 to 25 without changing its public shape.",
+    "expectedPath": "direct"
+  },
+  {
+    "id": "03-clear-regression",
+    "group": "clear",
+    "prompt": "Fix the crash when an imported record has an empty tags array and add a regression test.",
+    "expectedPath": "direct"
+  },
+  {
+    "id": "04-new-ai-calendar",
+    "group": "greenfield",
+    "prompt": "Build me an AI calendar application.",
+    "expectedPath": "discovery"
+  },
+  {
+    "id": "05-new-plugin-market",
+    "group": "greenfield",
+    "prompt": "Create a plugin marketplace for our developer tool.",
+    "expectedPath": "discovery"
+  },
+  {
+    "id": "06-new-personal-finance",
+    "group": "greenfield",
+    "prompt": "Make a personal finance tracker from scratch.",
+    "expectedPath": "discovery"
+  },
+  {
+    "id": "07-team-sharing",
+    "group": "risk",
+    "prompt": "Add team sharing to the existing personal knowledge base.",
+    "expectedPath": "discovery"
+  },
+  {
+    "id": "08-permanent-delete",
+    "group": "risk",
+    "prompt": "Add permanent account deletion and clean up all associated data.",
+    "expectedPath": "discovery"
+  },
+  {
+    "id": "09-paid-subscriptions",
+    "group": "risk",
+    "prompt": "Add paid subscriptions with automatic downgrade when payment fails.",
+    "expectedPath": "discovery"
+  },
+  {
+    "id": "10-resume-discovery",
+    "group": "continuity",
+    "prompt": "Continue the unfinished product discussion in this worktree from the saved SCD state.",
+    "expectedPath": "resume"
+  },
+  {
+    "id": "11-pause-discovery",
+    "group": "continuity",
+    "prompt": "Start clarifying this new document review product, but stop after we decide its primary user and first delivery. Preserve what the next session needs.",
+    "expectedPath": "discovery"
+  },
+  {
+    "id": "12-approved-contract-change",
+    "group": "continuity",
+    "prompt": "Continue implementing the approved local-only specification, but the new requirement is to upload every document to a hosted model automatically.",
+    "expectedPath": "reapproval"
+  }
+]

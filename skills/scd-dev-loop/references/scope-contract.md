@@ -26,6 +26,41 @@ Before editing, establish internally:
 
 Keep this in conversation context for ordinary work. Do not create a document for a clear local task.
 
+## Discovery handoff
+
+Use full discovery when the request is a greenfield product, application, plugin, service, or system, or when it contains several dependent product decisions. A single isolated ambiguity needs only one concise clarification.
+
+When a relevant `.scd/specs/<slug>.md` exists:
+
+1. require `status: approved` before implementation;
+2. treat its outcome, boundaries, decisions, and acceptance as the product contract;
+3. preserve stable acceptance identifiers;
+4. choose reversible implementation details without another approval.
+
+If a complete specification was already explicitly approved with the implementation request, do not ask the user to approve it twice.
+
+Return to discovery only when new evidence changes:
+
+- outcome or visible behavior;
+- in-scope or out-of-scope behavior;
+- public API, persisted data, privacy, or permissions;
+- an irreversible or expensive-to-reverse external choice;
+- an approved acceptance item.
+
+Clarifying wording, replacing an internal dependency, reorganizing modules, or changing a test layout does not reopen discovery when observable behavior remains intact.
+
+## Medium-project documents
+
+Prefer existing repository documentation homes. When none exist, a medium project may keep:
+
+- approved delivery specifications under `.scd/specs/`;
+- one evolving `.scd/architecture.md` for long-lived system boundaries;
+- `.scd/tasks/current.md` only while unfinished work needs continuity.
+
+Keep core data in the architecture document until ownership, lifecycle, migration, synchronization, permissions, audit, or cross-entity invariants justify `.scd/data-model.md`.
+
+Create `.scd/designs/<feature>.md` only for a feature with consequential cross-module, concurrency, transaction, integration, algorithm, migration, or rollback design. Do not create a permanent `implementation-plan.md`; temporary execution order belongs in current task state.
+
 ## Search funnel
 
 Use the least context needed:
