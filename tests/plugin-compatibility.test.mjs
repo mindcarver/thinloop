@@ -10,6 +10,7 @@ const expectedSkills = [
   "scd-architecture",
   "scd-dev-loop",
   "scd-discovery",
+  "scd-evolve",
   "scd-knowledge",
   "scd-maintenance",
   "scd-uiux",

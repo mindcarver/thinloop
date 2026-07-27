@@ -1,7 +1,7 @@
 {
   "name": "thinloop",
-  "version": "0.6.0",
-  "description": "Simplify complex development with deep discovery, risk-adaptive Web experience and architecture design, reliable delivery, evidence-backed maintenance, and concise experiential knowledge.",
+  "version": "0.6.1",
+  "description": "Simplify complex development with deep discovery, risk-adaptive Web experience and architecture design, reliable delivery, evidence-backed maintenance, concise experiential knowledge, and human-approved skill evolution.",
   "author": {
     "name": "mindcarver"
   },
@@ -23,6 +23,7 @@
     "technical-debt",
     "repository-maintenance",
     "documentation-drift",
+    "skill-evolution",
     "development-experience",
     "development-workflow"
   ],

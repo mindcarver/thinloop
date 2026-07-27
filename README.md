@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <kbd>v0.6.0</kbd>
+  <kbd>v0.6.1</kbd>
   &nbsp;
   <kbd>SPEC-DRIVEN</kbd>
   &nbsp;
@@ -36,7 +36,7 @@ Thinloop 不接管开发过程，只守住容易在长任务里丢失的结果�
 
 <a id="capabilities"></a>
 
-## 六块能力 / CAPABILITIES
+## 七块能力 / CAPABILITIES
 
 <table width="100%">
   <tr>
@@ -79,6 +79,15 @@ Thinloop 不接管开发过程，只守住容易在长任务里丢失的结果�
       <p><strong>适合：</strong>主动扫描、清理、对齐或维护现有仓库。</p>
     </td>
   </tr>
+  <tr>
+    <td width="33%" valign="top">
+      <h3><a href="./skills/scd-evolve/SKILL.md">07 · SCD Evolve</a></h3>
+      <p>从一次开发互动中诊断 Skill 问题，经用户批准后做可回滚试验。</p>
+      <p><strong>适合：</strong>主动复盘并优化本次真正使用过的 Thinloop Skill。</p>
+    </td>
+    <td width="33%" valign="top"></td>
+    <td width="33%" valign="top"></td>
+  </tr>
 </table>
 
 > 能力卡直达各 Skill 的权威说明；更细的契约和模板沿其 `Resources` 按需读取，不在 README 重复维护。
@@ -94,6 +103,7 @@ Thinloop 不接管开发过程，只守住容易在长任务里丢失的结果�
 | 体验或技术边界仍影响交付 | 按需调用 UIUX 或 Architecture，不设固定关卡 |
 | 实现完成或工作将跨会话 | 用真实证据收尾，只保存恢复所需的最小状态 |
 | 用户主动要求维护或沉淀 | 调用 Maintenance 或 Knowledge；普通开发不自动触发 |
+| 用户主动要求优化 Thinloop | 调用 Evolve；先诊断和候选，按候选 ID 批准后才试验 |
 
 默认不强制 TDD、角色系统、子代理或固定阶段，也不会自动暂存、提交、推送或部署。
 
@@ -105,9 +115,10 @@ Thinloop 不接管开发过程，只守住容易在长任务里丢失的结果�
 模糊任务 → Discovery →（按需 UIUX / Architecture）→ Dev Loop → 证据
 清晰任务 ───────────────────────────────→ Dev Loop → 证据
 主动调用 → Maintenance / Knowledge
+主动复盘 → Evolve → 候选 ID 审批 → 可回滚试验 → 证据
 ```
 
-清晰任务从 Dev Loop 直接开始；Maintenance 和 Knowledge 只在用户主动要求时出现。
+清晰任务从 Dev Loop 直接开始；Maintenance、Knowledge 和 Evolve 只在用户主动要求时出现。
 
 <a id="state"></a>
 
@@ -122,18 +133,19 @@ Thinloop 不创建项目 Wiki，只在复杂度真实出现时保留相应载体
 ├── architecture.md     # 按需：系统基线
 ├── designs/            # 按需：高影响功能设计
 ├── knowledge/          # 主动沉淀的项目经验
+├── evolution/          # 主动批准的 Skill 进化历史
 └── tasks/current.md    # 未完成工作的一份临时状态
 
 contracts/              # 按需：跨边界机器契约
 ```
 
-详细规则见 [Discovery 产物契约](./skills/scd-discovery/references/artifacts.md)、[Architecture 契约](./skills/scd-architecture/references/architecture-contract.md)、[Knowledge 存储契约](./skills/scd-knowledge/references/storage-contract.md) 和 [Dev Loop 连续性契约](./skills/scd-dev-loop/references/continuity-contract.md)。
+详细规则见 [Discovery 产物契约](./skills/scd-discovery/references/artifacts.md)、[Architecture 契约](./skills/scd-architecture/references/architecture-contract.md)、[Knowledge 存储契约](./skills/scd-knowledge/references/storage-contract.md)、[Evolve 历史契约](./skills/scd-evolve/references/source-and-history-contract.md) 和 [Dev Loop 连续性契约](./skills/scd-dev-loop/references/continuity-contract.md)。
 
 <a id="install"></a>
 
 ## 安装到 Codex、Claude Code、OpenCode、WorkBuddy 与 ZCode / INSTALL
 
-六个 Skill 遵循同一目录契约，可由 Codex、Claude Code、OpenCode、WorkBuddy
+七个 Skill 遵循同一目录契约，可由 Codex、Claude Code、OpenCode、WorkBuddy
 和 ZCode 共享。链接适合只使用 Skill 并随仓库实时更新；Claude Code /
 WorkBuddy / ZCode 完整插件会额外启用连续性 Hook，但不要与同一 Agent 的
 Skill 链接重复安装。
@@ -152,7 +164,7 @@ $skillRoots = @(
 )
 $skillNames = @(
   "scd-discovery", "scd-uiux", "scd-architecture",
-  "scd-dev-loop", "scd-knowledge", "scd-maintenance"
+  "scd-dev-loop", "scd-knowledge", "scd-maintenance", "scd-evolve"
 )
 
 foreach ($root in $skillRoots) {
@@ -187,7 +199,7 @@ skill_roots=(
 )
 skills=(
   scd-discovery scd-uiux scd-architecture
-  scd-dev-loop scd-knowledge scd-maintenance
+  scd-dev-loop scd-knowledge scd-maintenance scd-evolve
 )
 
 for root in "${skill_roots[@]}"; do
@@ -205,6 +217,21 @@ Code 会热加载个人 Skill；OpenCode 重启后通过原生 `skill` 工具按
 OpenCode 也能读取 `~/.claude/skills`，但使用自己的目录不会依赖 Claude
 兼容开关；WorkBuddy 可从技能页查看并在对话中选择 Skill；ZCode 可从
 Settings → Skills 查看并用 `$scd-dev-loop` 显式调用。
+
+### Evolve 权威源码
+
+`scd-evolve` 诊断阶段不需要源码配置；用户按候选 ID 批准实施后，必须通过本次
+调用的绝对路径，或用户级 `.scd/config.json` 中的
+`thinloop_source_root`，定位 Thinloop 的 Git 源码仓库：
+
+```json
+{
+  "thinloop_source_root": "/absolute/path/to/thinloop"
+}
+```
+
+不要把插件缓存或已安装 Skill 目录配置为源码。若配置文件已有其他字段，更新时
+必须保留；Skill 不会自动创建或覆盖该配置。
 
 ### Claude Code 完整插件
 
@@ -238,7 +265,7 @@ claude plugin install thinloop@thinloop --scope user
 
 WorkBuddy 5.3.5 内置的 CodeBuddy 运行时读取
 `.codebuddy-plugin/marketplace.json` 与 `.codebuddy-plugin/plugin.json`。
-完整插件会注册六个 Skill，并在 `PreCompact` 与 `Stop` 时通过
+完整插件会注册七个 Skill，并在 `PreCompact` 与 `Stop` 时通过
 `CODEBUDDY_PLUGIN_ROOT` 运行连续性检查；状态不完整时返回原生
 `continue: false`，让 Agent 先补齐恢复信息。
 
@@ -252,7 +279,7 @@ WorkBuddy 5.3.5 内置的 CodeBuddy 运行时读取
 3. 自定义 Marketplace 会显示在 Personal 筛选下；切换到 Personal 后，在
    `thinloop` 卡片点击 Install，并保持插件启用；更新代码后点击 Refresh。
 
-完整插件会注册六个 Skill；`Stop` 发现激活状态不可恢复时会让主 Agent
+完整插件会注册七个 Skill；`Stop` 发现激活状态不可恢复时会让主 Agent
 继续补齐，最多连续三次；压缩后的 `SessionStart(compact)` 会把缺失状态作为
 恢复上下文注入。ZCode 不支持 Codex 专用的 `PreCompact` 事件，因此当前运行时
 会记录一条 warning 并只跳过该事件，不影响上述两个 ZCode Hook。
@@ -262,11 +289,13 @@ WorkBuddy 5.3.5 内置的 CodeBuddy 运行时读取
 ```text
 Codex：使用 $scd-discovery 把这个想法聊透并形成可验收规格。
 Codex：使用 $scd-dev-loop 按已批准规格实现并给出证据。
+Codex：使用 $scd-evolve 复盘本次互动，只提出一个候选，不要先修改。
 Claude Code Skill 链接：/scd-discovery
 Claude Code 完整插件：/thinloop:scd-dev-loop
 OpenCode：使用 scd-dev-loop skill 按已批准规格实现并给出证据。
 WorkBuddy 完整插件：/thinloop:scd-dev-loop
 ZCode：使用 $scd-dev-loop 按已批准规格实现并给出证据。
+ZCode：使用 $scd-evolve 诊断本次使用过的 Thinloop Skill。
 ```
 
 <a id="verification"></a>
@@ -278,17 +307,19 @@ ZCode：使用 $scd-dev-loop 按已批准规格实现并给出证据。
 | Node 契约与 Hook 测试 | `PASS` |
 | Discovery / Knowledge 用例结构 | `PASS` |
 | UIUX / Architecture / Maintenance 契约 | `PASS` |
+| Evolve 审批、源码与历史契约 | `PASS` |
 | Codex Skill / 插件校验 | `PASS` |
 | Claude Code 插件校验 | `PASS` |
 | OpenCode Skill 发现与格式校验 | `PASS` |
 | WorkBuddy 插件、Marketplace 与 Hook 校验 | `PASS` |
-| ZCode 插件、Skill 与 Hook 发现 | `PASS` |
+| ZCode 清单、Skill 与 Hook 契约 | `PASS` |
 
 ```powershell
 node --test tests\*.test.mjs
 node evals\validate-discovery-cases.mjs
 node evals\validate-knowledge-cases.mjs
 node skills\scd-maintenance\scripts\collect-signals.mjs --root . --format text
+node skills\scd-evolve\scripts\evolution-history.mjs validate --history .scd\evolution\history.jsonl
 claude plugin validate . --strict
 opencode debug skill
 codebuddy plugin validate .codebuddy-plugin/plugin.json
@@ -300,12 +331,12 @@ zcode skills list --json
 Codex 官方校验器可对 `skills/` 下每个目录运行 `quick_validate.py`，再对仓库
 根目录运行 `validate_plugin.py`；Claude Code 使用
 `claude plugin validate . --strict`；OpenCode 安装链接并重启后，使用
-`opencode debug skill` 检查六个 `scd-*` Skill。OpenCode 当前没有与 Codex /
+`opencode debug skill` 检查七个 `scd-*` Skill。OpenCode 当前没有与 Codex /
 Claude Stop Hook 等价的可取消完成协议，因此本次支持不声明连续性阻断能力。
 WorkBuddy 使用其内置 CodeBuddy CLI 校验原生插件与 Marketplace 清单，并通过
 专用 Hook 配置验证 `CODEBUDDY_PLUGIN_ROOT` 和 `continue: false` 协议。
 ZCode 安装并启用完整插件后，使用 `zcode plugins list --json` 检查两个可运行
-Hook，再用 `zcode skills list --json` 检查六个插件 Skill。
+Hook，再用 `zcode skills list --json` 检查七个插件 Skill。
 完整评测方法、历史证据和限制见 [EVALUATION.md](./EVALUATION.md)。
 
 ---

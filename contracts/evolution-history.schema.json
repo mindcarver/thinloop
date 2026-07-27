@@ -1,0 +1,450 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mindcarver/thinloop/contracts/evolution-history.schema.json",
+  "title": "Thinloop evolution history event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "event_id",
+    "candidate_id",
+    "run_id",
+    "recorded_at",
+    "status",
+    "previous_status",
+    "target_skills",
+    "candidate_level",
+    "coverage",
+    "root_cause",
+    "coupling_rationale",
+    "change_kinds",
+    "attribution",
+    "matched_signals",
+    "unmatched_signals",
+    "evidence",
+    "operations",
+    "validation",
+    "versions",
+    "self_evolution"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "event_id": {
+      "type": "string",
+      "pattern": "^EVE-[A-Za-z0-9][A-Za-z0-9._-]{2,63}$"
+    },
+    "candidate_id": {
+      "type": "string",
+      "pattern": "^EVO-[A-Za-z0-9][A-Za-z0-9._-]{2,63}$"
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^RUN-[A-Za-z0-9][A-Za-z0-9._-]{2,63}$"
+    },
+    "recorded_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "enum": [
+        "proposed",
+        "trial",
+        "accepted",
+        "rejected",
+        "reverted",
+        "trial-unverified"
+      ]
+    },
+    "previous_status": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "enum": [
+            "proposed",
+            "trial"
+          ]
+        }
+      ]
+    },
+    "target_skills": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^scd-[a-z0-9]+(?:-[a-z0-9]+)*$"
+      }
+    },
+    "candidate_level": {
+      "enum": [
+        "exploratory",
+        "supported",
+        "confirmed"
+      ]
+    },
+    "coverage": {
+      "enum": [
+        "full-transcript",
+        "visible-context",
+        "partial"
+      ]
+    },
+    "root_cause": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300
+    },
+    "coupling_rationale": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        }
+      ]
+    },
+    "change_kinds": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "instruction",
+          "trigger",
+          "workflow",
+          "script",
+          "format",
+          "packaging",
+          "documentation"
+        ]
+      }
+    },
+    "attribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "primary",
+        "rationale",
+        "possible_misattribution"
+      ],
+      "properties": {
+        "primary": {
+          "enum": [
+            "thinloop-skill",
+            "agent",
+            "requirements",
+            "tool-environment",
+            "model-limit",
+            "third-party-skill",
+            "insufficient-evidence"
+          ]
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "possible_misattribution": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        }
+      }
+    },
+    "matched_signals": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    "unmatched_signals": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "types",
+        "summary",
+        "fingerprint",
+        "evidence_redacted"
+      ],
+      "properties": {
+        "types": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "conversation",
+              "tool-output",
+              "git",
+              "test",
+              "user-correction",
+              "isolated-replay"
+            ]
+          }
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "fingerprint": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "evidence_redacted": {
+          "type": "boolean"
+        }
+      }
+    },
+    "operations": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "action",
+          "path",
+          "summary"
+        ],
+        "properties": {
+          "action": {
+            "enum": [
+              "add",
+              "delete",
+              "replace"
+            ]
+          },
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 240,
+            "pattern": "^(?![A-Za-z]:[\\\\/])(?![/\\\\])(?!.*(?:^|[/\\\\])\\.\\.(?:[/\\\\]|$)).+"
+          },
+          "summary": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          }
+        }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "checks"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "independent-session",
+            "deterministic",
+            "mixed",
+            "unavailable"
+          ]
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "result",
+              "evidence"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "result": {
+                "enum": [
+                  "pass",
+                  "fail",
+                  "unverified"
+                ]
+              },
+              "evidence": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 300
+              }
+            }
+          }
+        }
+      }
+    },
+    "versions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "before",
+        "after"
+      ],
+      "properties": {
+        "before": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+            }
+          ]
+        },
+        "after": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+            }
+          ]
+        }
+      }
+    },
+    "self_evolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "is_self_evolution",
+        "source_run_id"
+      ],
+      "properties": {
+        "is_self_evolution": {
+          "type": "boolean"
+        },
+        "source_run_id": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^RUN-[A-Za-z0-9][A-Za-z0-9._-]{2,63}$"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "proposed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "previous_status": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "accepted"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "validation": {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "independent-session",
+                  "deterministic",
+                  "mixed"
+                ]
+              },
+              "checks": {
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "const": "pass"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "versions": {
+            "properties": {
+              "before": {
+                "type": "string",
+                "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+              },
+              "after": {
+                "type": "string",
+                "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "self_evolution": {
+            "properties": {
+              "is_self_evolution": {
+                "const": true
+              }
+            },
+            "required": [
+              "is_self_evolution"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "self_evolution": {
+            "properties": {
+              "source_run_id": {
+                "type": "string",
+                "pattern": "^RUN-[A-Za-z0-9][A-Za-z0-9._-]{2,63}$"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

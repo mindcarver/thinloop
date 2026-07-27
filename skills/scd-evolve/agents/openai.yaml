@@ -1,0 +1,4 @@
+interface:
+  display_name: "SCD Evolve"
+  short_description: "Improve Thinloop skills from approved evidence"
+  default_prompt: "Use $scd-evolve to diagnose this development interaction and propose one evidence-graded Thinloop skill improvement before making any change."

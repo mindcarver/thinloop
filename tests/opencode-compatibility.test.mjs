@@ -39,7 +39,7 @@ test("all shared skills satisfy OpenCode's portable Agent Skill contract", () =>
     .map((entry) => entry.name)
     .sort();
 
-  assert.equal(skillNames.length, 6);
+  assert.equal(skillNames.length, 7);
   for (const skillName of skillNames) {
     const skillPath = path.join(skillRoot, skillName, "SKILL.md");
     const { fields, values } = parseFrontmatter(skillPath);
