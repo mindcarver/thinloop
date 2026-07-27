@@ -23,11 +23,13 @@ function readJson(relativePath) {
   return JSON.parse(read(relativePath));
 }
 
-test("Codex, Claude, and ZCode plugin manifests share one version and skill source", () => {
+test("Codex, Claude, WorkBuddy, and ZCode manifests share one version and skill source", () => {
   const codex = readJson(".codex-plugin/plugin.json");
   const claude = readJson(".claude-plugin/plugin.json");
+  const workbuddy = readJson(".codebuddy-plugin/plugin.json");
   const zcode = readJson(".zcode-plugin/plugin.json");
   const claudeMarketplace = readJson(".claude-plugin/marketplace.json");
+  const workbuddyMarketplace = readJson(".codebuddy-plugin/marketplace.json");
   const zcodeMarketplace = readJson("marketplace.json");
   const skillNames = fs
     .readdirSync(path.join(root, "skills"), { withFileTypes: true })
@@ -37,19 +39,61 @@ test("Codex, Claude, and ZCode plugin manifests share one version and skill sour
 
   assert.equal(codex.name, "thinloop");
   assert.equal(claude.name, codex.name);
+  assert.equal(workbuddy.name, codex.name);
   assert.equal(zcode.name, codex.name);
   assert.equal(claude.version, codex.version);
+  assert.equal(workbuddy.version, codex.version);
   assert.equal(zcode.version, codex.version);
   assert.equal(codex.skills, "./skills/");
+  assert.deepEqual(workbuddy.skills, [codex.skills]);
   assert.equal(zcode.skills, codex.skills);
   assert.deepEqual(skillNames, expectedSkills);
-  for (const marketplace of [claudeMarketplace, zcodeMarketplace]) {
+  for (const marketplace of [
+    claudeMarketplace,
+    workbuddyMarketplace,
+    zcodeMarketplace,
+  ]) {
     assert.equal(marketplace.plugins.length, 1);
     assert.equal(marketplace.plugins[0].name, codex.name);
     assert.equal(marketplace.plugins[0].version, codex.version);
     assert.equal(marketplace.plugins[0].source, ".");
   }
 });
+
+test("WorkBuddy plugin uses its native hook root and continuation protocol", () => {
+  const workbuddy = readJson(".codebuddy-plugin/plugin.json");
+  const hooks = readJson("hooks/hooks.workbuddy.json");
+  const commands = Object.values(hooks.hooks)
+    .flat()
+    .flatMap((group) => group.hooks)
+    .map((hook) => hook.command);
+
+  assert.equal(workbuddy.hooks, "./hooks/hooks.workbuddy.json");
+  assert.deepEqual(Object.keys(hooks.hooks).sort(), ["PreCompact", "Stop"]);
+  assert.ok(
+    commands.every((command) => command.includes("${CODEBUDDY_PLUGIN_ROOT}")),
+  );
+  assert.ok(commands.every((command) => !command.includes("${PLUGIN_ROOT}")));
+  assert.ok(commands.every((command) => !command.includes("${CLAUDE_PLUGIN_ROOT}")));
+});
+
+test(
+  "WorkBuddy POSIX hook command resolves its plugin root",
+  { skip: process.platform === "win32" },
+  () => {
+    const stopHook = readJson("hooks/hooks.workbuddy.json").hooks.Stop[0].hooks[0];
+    const result = spawnSync(stopHook.command, {
+      cwd: root,
+      encoding: "utf8",
+      env: { ...process.env, CODEBUDDY_PLUGIN_ROOT: root },
+      input: JSON.stringify({ cwd: root, hook_event_name: "Stop" }),
+      shell: true,
+    });
+
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(result.stdout, "");
+  },
+);
 
 test("Claude plugin uses its native hook path and decision protocol", () => {
   const claude = readJson(".claude-plugin/plugin.json");

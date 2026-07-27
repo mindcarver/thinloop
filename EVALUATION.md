@@ -1,5 +1,27 @@
 # Thinloop 评测
 
+## WorkBuddy 兼容性边界
+
+WorkBuddy 5.3.5 内置 CodeBuddy CLI 2.115.0，并在内置插件中实际使用
+`.codebuddy-plugin/plugin.json`、`skills/` 与 `hooks/hooks.json`。Thinloop
+因此提供 `.codebuddy-plugin/plugin.json` 和
+`.codebuddy-plugin/marketplace.json`，共享仓库中的六个 Skill，不复制 Skill
+内容。
+
+2026-07-27 使用 WorkBuddy 应用包内的 CLI 分别运行
+`plugin validate .codebuddy-plugin/plugin.json` 与
+`plugin validate .codebuddy-plugin/marketplace.json`，两项均通过。
+随后用 `--plugin-dir . --tools ""` 启动同一运行时且不发起模型任务；运行日志
+将当前仓库识别为 `thinloop@inline`，加载出六个 `scd-*` Skill 和两个 Hook，
+Hook 配置也成功载入。
+`tests/plugin-compatibility.test.mjs` 验证版本、Skill 源、Marketplace 和专用
+Hook 路径；`tests/check-state.test.mjs` 验证 WorkBuddy `Stop` 返回
+`{ "continue": false, "reason": "..." }`，而不是已弃用的
+`decision: "block"`。
+
+该结果证明当前本机 WorkBuddy 运行时能解析插件结构、发现 Skill 与 Hook，并
+接受对应协议；不证明自动 Skill 召回率或复杂任务端到端行为。
+
 ## ZCode 兼容性边界
 
 ZCode 优先读取 `.zcode-plugin/plugin.json`，并从插件根目录加载 `skills/` 与

@@ -44,6 +44,14 @@ function block(eventName, managedBy, issues) {
     return;
   }
 
+  if (process.env.CODEBUDDY_PLUGIN_ROOT) {
+    emit({
+      continue: false,
+      reason: message,
+    });
+    return;
+  }
+
   if (process.env.CLAUDE_PLUGIN_ROOT || process.env.ZCODE_PLUGIN_ROOT) {
     emit({
       decision: "block",

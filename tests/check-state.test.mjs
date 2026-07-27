@@ -83,6 +83,7 @@ function runHook(cwd, input = {}, env = {}) {
     env: {
       ...process.env,
       CLAUDE_PLUGIN_ROOT: "",
+      CODEBUDDY_PLUGIN_ROOT: "",
       ZCODE_PLUGIN_ROOT: "",
       ...env,
     },
@@ -202,6 +203,21 @@ test("uses ZCode decision output for Stop", () => {
   }
 });
 
+test("uses WorkBuddy continuation output for Stop", () => {
+  const cwd = makeWorkspace();
+  try {
+    writeState(cwd, validState({ status: "complete" }));
+    const output = parseOutput(
+      runHook(cwd, {}, { CODEBUDDY_PLUGIN_ROOT: path.resolve(testDir, "..") }),
+    );
+    assert.equal(output.continue, false);
+    assert.match(output.reason, /status must be active or blocked/);
+    assert.equal("decision" in output, false);
+  } finally {
+    fs.rmSync(cwd, { recursive: true, force: true });
+  }
+});
+
 test("restores ZCode continuity context after compaction", () => {
   const cwd = makeWorkspace();
   try {
@@ -294,6 +310,7 @@ test("fails open with a warning on invalid hook input", () => {
       env: {
         ...process.env,
         CLAUDE_PLUGIN_ROOT: "",
+        CODEBUDDY_PLUGIN_ROOT: "",
         ZCODE_PLUGIN_ROOT: "",
       },
     });

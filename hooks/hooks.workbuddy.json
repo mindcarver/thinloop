@@ -1,0 +1,27 @@
+{
+  "description": "Protect resumability only when an SCD fallback state is active.",
+  "hooks": {
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CODEBUDDY_PLUGIN_ROOT}/hooks/check-state.mjs\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CODEBUDDY_PLUGIN_ROOT}/hooks/check-state.mjs\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

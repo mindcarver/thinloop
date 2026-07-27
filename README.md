@@ -131,11 +131,12 @@ contracts/              # 按需：跨边界机器契约
 
 <a id="install"></a>
 
-## 安装到 Codex、Claude Code、OpenCode 与 ZCode / INSTALL
+## 安装到 Codex、Claude Code、OpenCode、WorkBuddy 与 ZCode / INSTALL
 
-六个 Skill 遵循同一目录契约，可由 Codex、Claude Code、OpenCode 和 ZCode
-共享。链接适合只使用 Skill 并随仓库实时更新；Claude Code / ZCode 完整插件会
-额外启用连续性 Hook，但不要与同一 Agent 的 Skill 链接重复安装。
+六个 Skill 遵循同一目录契约，可由 Codex、Claude Code、OpenCode、WorkBuddy
+和 ZCode 共享。链接适合只使用 Skill 并随仓库实时更新；Claude Code /
+WorkBuddy / ZCode 完整插件会额外启用连续性 Hook，但不要与同一 Agent 的
+Skill 链接重复安装。
 
 <details>
 <summary><strong>Windows · Junction</strong></summary>
@@ -146,6 +147,7 @@ $skillRoots = @(
   "$env:USERPROFILE\.codex\skills",
   "$env:USERPROFILE\.claude\skills",
   "$env:USERPROFILE\.config\opencode\skills",
+  "$env:USERPROFILE\.workbuddy\skills",
   "$env:USERPROFILE\.zcode\skills"
 )
 $skillNames = @(
@@ -180,6 +182,7 @@ skill_roots=(
   "${CODEX_HOME:-$HOME/.codex}/skills"
   "$HOME/.claude/skills"
   "${XDG_CONFIG_HOME:-$HOME/.config}/opencode/skills"
+  "$HOME/.workbuddy/skills"
   "$HOME/.zcode/skills"
 )
 skills=(
@@ -200,7 +203,8 @@ done
 Skill 链接只同步方法，不启用 Hook。Codex 在下一次任务发现新 Skill；Claude
 Code 会热加载个人 Skill；OpenCode 重启后通过原生 `skill` 工具按需加载。
 OpenCode 也能读取 `~/.claude/skills`，但使用自己的目录不会依赖 Claude
-兼容开关；ZCode 可从 Settings → Skills 查看并用 `$scd-dev-loop` 显式调用。
+兼容开关；WorkBuddy 可从技能页查看并在对话中选择 Skill；ZCode 可从
+Settings → Skills 查看并用 `$scd-dev-loop` 显式调用。
 
 ### Claude Code 完整插件
 
@@ -221,6 +225,22 @@ claude plugin install thinloop@thinloop --scope user
 `/thinloop:scd-discovery` 这类命名空间；个人 Skill 链接使用
 `/scd-discovery`。插件会在 `PreCompact` 与 `Stop` 时检查已激活的
 `.scd/tasks/current.md`，没有 SCD 状态文件时不产生输出。
+
+### WorkBuddy 完整插件
+
+先审查仓库中的 Skill 与 `hooks/check-state.mjs`，再通过 WorkBuddy 左侧的
+插件页安装：
+
+1. 点击插件页的 `+` 添加第三方插件市场。
+2. 远程安装填入 `mindcarver/thinloop`；本地开发填入
+   `/path/to/thinloop`。
+3. 在 Thinloop 卡片点击安装并保持启用；更新后刷新插件市场。
+
+WorkBuddy 5.3.5 内置的 CodeBuddy 运行时读取
+`.codebuddy-plugin/marketplace.json` 与 `.codebuddy-plugin/plugin.json`。
+完整插件会注册六个 Skill，并在 `PreCompact` 与 `Stop` 时通过
+`CODEBUDDY_PLUGIN_ROOT` 运行连续性检查；状态不完整时返回原生
+`continue: false`，让 Agent 先补齐恢复信息。
 
 ### ZCode 完整插件
 
@@ -244,6 +264,7 @@ Codex：使用 $scd-dev-loop 按已批准规格实现并给出证据。
 Claude Code Skill 链接：/scd-discovery
 Claude Code 完整插件：/thinloop:scd-dev-loop
 OpenCode：使用 scd-dev-loop skill 按已批准规格实现并给出证据。
+WorkBuddy 完整插件：/thinloop:scd-dev-loop
 ZCode：使用 $scd-dev-loop 按已批准规格实现并给出证据。
 ```
 
@@ -259,6 +280,7 @@ ZCode：使用 $scd-dev-loop 按已批准规格实现并给出证据。
 | Codex Skill / 插件校验 | `PASS` |
 | Claude Code 插件校验 | `PASS` |
 | OpenCode Skill 发现与格式校验 | `PASS` |
+| WorkBuddy 插件、Marketplace 与 Hook 校验 | `PASS` |
 | ZCode 插件、Skill 与 Hook 发现 | `PASS` |
 
 ```powershell
@@ -268,6 +290,8 @@ node evals\validate-knowledge-cases.mjs
 node skills\scd-maintenance\scripts\collect-signals.mjs --root . --format text
 claude plugin validate . --strict
 opencode debug skill
+codebuddy plugin validate .codebuddy-plugin/plugin.json
+codebuddy plugin validate .codebuddy-plugin/marketplace.json
 zcode plugins list --json
 zcode skills list --json
 ```
@@ -277,6 +301,8 @@ Codex 官方校验器可对 `skills/` 下每个目录运行 `quick_validate.py`�
 `claude plugin validate . --strict`；OpenCode 安装链接并重启后，使用
 `opencode debug skill` 检查六个 `scd-*` Skill。OpenCode 当前没有与 Codex /
 Claude Stop Hook 等价的可取消完成协议，因此本次支持不声明连续性阻断能力。
+WorkBuddy 使用其内置 CodeBuddy CLI 校验原生插件与 Marketplace 清单，并通过
+专用 Hook 配置验证 `CODEBUDDY_PLUGIN_ROOT` 和 `continue: false` 协议。
 ZCode 安装并启用完整插件后，使用 `zcode plugins list --json` 检查两个可运行
 Hook，再用 `zcode skills list --json` 检查六个插件 Skill。
 完整评测方法、历史证据和限制见 [EVALUATION.md](./EVALUATION.md)。
