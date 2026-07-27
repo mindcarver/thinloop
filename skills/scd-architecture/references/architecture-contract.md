@@ -124,6 +124,6 @@ Allowed statuses:
 - `ready` - readiness review passes and remaining notes cannot change
   implementation boundaries or compatibility.
 
-`ready` is not a human approval gate. A linked approved product specification
+`ready` is not a human approval gate. The linked approved GitHub Issue
 owns product approval. Expensive or irreversible decisions are confirmed when
 encountered rather than at a mandatory final ceremony.

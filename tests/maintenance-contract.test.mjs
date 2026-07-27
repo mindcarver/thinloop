@@ -53,7 +53,7 @@ test("maintenance repairs are bounded, coupled, and verified", () => {
   const skill = read("skills/scd-maintenance/SKILL.md");
   const repair = read("skills/scd-maintenance/references/repair-contract.md");
 
-  assert.match(skill, /hand the bounded change to `scd-dev-loop`/);
+  assert.match(skill, /hand the bounded change to `scd-quickdev`/);
   assert.match(skill, /Do not stage, commit, push, publish, deploy/);
   assert.match(repair, /repair at most three/);
   assert.match(repair, /Text search alone does not prove/);

@@ -1,6 +1,6 @@
 ---
 name: scd-architecture
-description: "Design or validate domain models, system boundaries, data ownership, and shared machine-readable interface contracts before production implementation. Use for 0-to-1 products after the product core is stable; new services, modules, public APIs, events, or integrations; consequential data, permission, transaction, concurrency, compatibility, migration, rollback, or reliability decisions; architecture evolution in an existing repository; or an explicit architecture, domain-model, or interface-design request. Compose it with scd-discovery, scd-uiux, and scd-dev-loop. Do not use for a clear local implementation, a trivial endpoint already governed by existing contracts, pure UI/UX work, or production coding, migration execution, and deployment."
+description: "Design or validate domain models, system boundaries, data ownership, and shared machine-readable interface contracts before production implementation. Use for 0-to-1 products after the product core is stable; new services, modules, public APIs, events, or integrations; consequential data, permission, transaction, concurrency, compatibility, migration, rollback, or reliability decisions; architecture evolution in an existing repository; or an explicit architecture, domain-model, or interface-design request. Compose it with scd-discovery, scd-uiux, and scd-quickdev. Do not use for a clear local implementation, a trivial endpoint already governed by existing contracts, pure UI/UX work, or production coding, migration execution, and deployment."
 ---
 
 # SCD Architecture
@@ -8,14 +8,14 @@ description: "Design or validate domain models, system boundaries, data ownershi
 Turn approved product behavior into a coherent technical design and verifiable
 shared contracts without making architecture a mandatory stage for every
 change. Design and validate; leave production implementation to
-`scd-dev-loop`.
+`scd-quickdev`.
 
 ## Select the lightest sufficient path
 
 Inspect the request and repository, then choose internally:
 
 - **Direct:** the change fits existing boundaries and contracts. Hand it to
-  `scd-dev-loop` without architecture questions or artifacts.
+  `scd-quickdev` without architecture questions or artifacts.
 - **Focused:** one interface, domain rule mapping, module boundary, data
   ownership decision, or technical trade-off needs design.
 - **Product:** a 0-to-1 system needs a domain, system, and interface baseline
@@ -32,7 +32,7 @@ rewriting the architecture.
 
 ## Start from product and repository truth
 
-Read applicable repository instructions, approved delivery specifications,
+Read applicable repository instructions, the governing GitHub Issue,
 ready UX contracts when activated, existing architecture and ADRs, interface
 contracts, schemas, code boundaries, runtime configuration, tests, and
 deployment topology before asking questions. Inspect actual code and
@@ -40,7 +40,7 @@ machine-readable contracts; filenames and diagrams are only candidates.
 
 For Product work, require the product core to establish users, outcome,
 business behavior, permissions, boundaries, and acceptance. Product
-specifications own business decisions. Architecture may translate approved
+Issue product contracts own business decisions. Architecture may translate approved
 rules into entities, states, invariants, commands, events, and ownership, but
 must not invent missing product behavior. Return material gaps to
 `scd-discovery`.
@@ -170,6 +170,6 @@ implementation plans.
 - Coordinate non-product breaking interface changes with every affected
   consumer and design compatibility, migration, and rollback before handoff.
 
-For production implementation, hand the approved product specification, ready
+For production implementation, hand the approved GitHub Issue, ready
 UX contract when present, ready architecture or feature design, canonical
-machine contracts, and observed validation evidence to `scd-dev-loop`.
+machine contracts, and observed validation evidence to `scd-quickdev`.

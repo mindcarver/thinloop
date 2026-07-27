@@ -1,16 +1,18 @@
 # Discovery artifacts
 
-Create the minimum artifact that preserves information with continuing value. Prefer repository-native issue, specification, architecture, and ADR locations when they already exist.
+Create the minimum artifact that preserves continuing value. For repository
+delivery, one GitHub Issue is the sole requirement and acceptance source of truth.
 
 ## Temporary discovery state
 
-Do not create state for a short, same-session discussion. When continuity is necessary, use `.scd/tasks/current.md`:
+Do not create state for a short same-session discussion. When continuity is
+necessary, use `.scd/tasks/current.md`:
 
 ```yaml
 ---
 managed_by: scd-discovery
 status: active
-updated_at: 2026-07-26T12:34:56+08:00
+updated_at: 2026-07-27T12:34:56+08:00
 ---
 ```
 
@@ -23,89 +25,103 @@ Allowed statuses are `active` and `blocked`. Keep non-empty sections:
 - `## Evidence`
 - `## Next action`
 
-During discovery, Acceptance may contain provisional checklist items. Decisions must distinguish confirmed, assumed, deferred, and open content. Evidence should name repository or external facts already checked. Next action contains exactly one decision or investigation needed to resume.
+Acceptance may contain provisional checklist items. Distinguish confirmed,
+assumed, deferred, and open decisions. Keep exactly one next decision or
+investigation. When the GitHub Issue exists, add its URL to the note and retain
+only the delta required to resume.
 
-When discovery completes, either turn the file into implementation continuity state or remove it. Never keep a second current task in the same worktree.
+Remove temporary discovery state after handoff. Never keep a second current task
+in the same worktree.
 
-## Delivery specification
+## GitHub Issue
 
-For repository work, create `.scd/specs/<slug>.md` only after the contract converges:
+After the combined contract is ready, present it to the user for explicit
+approval. Then create or update one GitHub Issue:
 
 ```markdown
----
-managed_by: scd-discovery
-status: review
----
+## Outcome
 
-# Outcome
+## Users and problem
 
-# Users and Problem
+## Shared language
 
-# Shared Language
+## User scenarios
 
-# User Scenarios
+## Confirmed decisions
 
-# Rules and Decisions
+## Failure and edge cases
 
-# Failure and Edge Cases
+## Constraints
 
-# Constraints
+## In scope
 
-# In Scope
+## Out of scope
 
-# Out of Scope
+## Acceptance
 
-# Testing Seam
+- [ ] A1: <observable behavior>
 
-# Acceptance
+## Verification seams
 
-- A1: <observable behavior>
+## Assumptions
 
-# Assumptions
+## Deferred decisions
 
-# Deferred Decisions
+## Implementation tasks
+
+- [ ] To be refined by QuickDev after repository inspection
+
+## Verification
+
+- A1: Not run
+
+## Unknowns
+
+- None
 ```
 
-Omit an empty optional section rather than filling it with boilerplate. After explicit approval, set `status: approved`.
+Omit optional empty sections instead of filling them with boilerplate. Preserve
+stable acceptance identifiers. Do not put hidden reasoning or secrets in the
+Issue.
 
-Do not include volatile file paths, function names, code snippets, or step-by-step implementation tasks unless a small prototype encodes a product decision that prose cannot preserve.
+Discovery owns the approved product contract. `scd-quickdev` may refine
+implementation tasks and evidence, but must return product-visible changes to
+the user and update the Issue before proceeding.
 
-## Medium-project baseline
+If the repository has no GitHub remote, authenticated write path, or
+repository-authoritative equivalent tracker, stop after the approved summary
+and report the blocker. Do not silently create a local specification.
 
-For a medium project, prefer two durable documents and one temporary carrier:
+## Technical documents
 
-- approved delivery specifications under `.scd/specs/`;
-- one evolving `.scd/architecture.md` when the repository has no existing architecture home;
-- `.scd/tasks/current.md` only while unfinished work needs continuity.
+The Issue owns requirements and acceptance. Keep technical documents only when
+their complexity justifies them:
 
-When a UI-heavy delivery activates `scd-uiux`, it may add one
-`.scd/ux/<slug>.md` experience contract. This is optional design handoff, not a
-third document required for every medium project and not a second product
-approval.
+- one evolving `.scd/architecture.md` when no repository-native architecture
+  home exists;
+- `.scd/ux/<slug>.md` for a substantial design-bearing Web experience;
+- `.scd/designs/<feature>.md` for consequential feature-local architecture;
+- repository ADRs for irreversible cross-cutting technical decisions;
+- a visible root `contracts/` directory for new shared machine-readable
+  contracts when no repository convention exists.
 
-When a delivery activates `scd-architecture`, keep ordinary domain and system
-design in `.scd/architecture.md`. Use `.scd/designs/<feature>.md` for a
-consequential feature-local delta. Prefer the repository's existing contract
-home and format; when none exists, place new machine-readable interface
-contracts in the visible root `contracts/` directory.
+Do not create a permanent `implementation-plan.md`; keep task breakdown in the
+Issue and use `.scd/tasks/current.md` only for temporary recovery.
 
-The architecture document records system purpose, components and
-responsibilities, runtime and data flow, core data, external dependencies,
-cross-cutting constraints, verification boundaries, and durable architecture
-decisions. Keep it concise and update it only when those boundaries change.
-
-Keep core entities in the architecture document unless ownership, permissions,
-lifecycle, migration, synchronization, audit, or cross-entity invariants become
-a major source of complexity. Only then split `.scd/domain.md`.
-
-Create `.scd/designs/<feature>.md` only when a specific feature has cross-module coordination, concurrency, transactions, retries, complex integration, algorithmic trade-offs, migration, rollback, or multiple expensive alternatives. Do not create a permanent `implementation-plan.md`; use current task state for temporary execution order.
-
-Architecture and technical design do not add fixed approval gates. Return to discovery only when a design choice changes the approved outcome, visible behavior, scope, data or privacy boundary, permissions, irreversible action, or acceptance.
+Architecture and technical design do not add fixed approval gates. Return to
+discovery only when a design choice changes the approved outcome, visible
+behavior, scope, data or privacy boundary, permissions, irreversible action, or
+acceptance.
 
 ## Contract changes after approval
 
-- **Implementation change:** no specification update or approval.
-- **Wording clarification without behavior change:** update the specification and mention it in the handoff.
-- **Product contract change:** set the specification back to `review`, discuss only affected decisions, and obtain explicit approval again.
+- **Implementation change:** update Issue tasks or verification without another
+  approval.
+- **Wording clarification without behavior change:** update the Issue and note
+  it in the handoff.
+- **Product contract change:** update the affected Issue sections, discuss only
+  the affected decisions, and obtain explicit approval before implementation
+  continues.
 
-Promote repeated shared terminology to `.scd/context.md` only after it appears across specifications or causes recurring ambiguity. Promote irreversible cross-cutting technical decisions to an existing ADR system when one exists.
+Promote repeated shared terminology to `.scd/context.md` only when it causes
+recurring cross-Issue ambiguity.

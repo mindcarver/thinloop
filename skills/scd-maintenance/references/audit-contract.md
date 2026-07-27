@@ -7,7 +7,7 @@ documentation, specifications, or architecture disagree.
 
 Classify each side of a conflict before recommending a repair:
 
-1. **Normative contract:** an explicitly approved product specification,
+1. **Normative contract:** the governing GitHub Issue or another explicitly approved product contract,
    public schema, compatibility policy, ADR, security rule, or regulatory
    requirement. This states what must be true.
 2. **Executable behavior:** runtime behavior, tests, manifests, generated

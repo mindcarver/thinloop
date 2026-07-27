@@ -3,8 +3,8 @@ managed_by: scd-architecture
 status: ready
 sources:
   - .scd/specs/scd-evolve.md
-  - skills/scd-dev-loop/references/scope-contract.md
-  - skills/scd-dev-loop/references/evidence-contract.md
+  - skills/scd-quickdev/references/scope-contract.md
+  - skills/scd-quickdev/references/evidence-contract.md
 ---
 
 # Outcome and boundary
@@ -13,7 +13,7 @@ Add an explicit-only `scd-evolve` orchestration skill plus two deterministic sea
 
 ## Existing context
 
-Thinloop ships portable `skills/<name>/SKILL.md` packages to Codex, Claude Code, OpenCode, WorkBuddy, and ZCode. Shared release manifests expose the same skill root and version. `scd-dev-loop` already defines scoped implementation and evidence rules; `scd-evolve` composes those rules after a separate diagnosis and approval gate.
+Thinloop ships portable `skills/<name>/SKILL.md` packages to Codex, Claude Code, OpenCode, WorkBuddy, and ZCode. Shared release manifests expose the same skill root and version. The current `scd-quickdev` skill, renamed from `scd-dev-loop` in v0.7.0, defines scoped implementation and evidence rules; `scd-evolve` composes those rules after a separate diagnosis and approval gate.
 
 ## Domain and responsibility changes
 
@@ -21,7 +21,7 @@ Thinloop ships portable `skills/<name>/SKILL.md` packages to Codex, Claude Code,
 - **Evolution candidate:** one ID-addressable same-root-cause batch with explicit add/delete/replace operations.
 - **Source authority:** resolve an absolute override or `thinloop_source_root`, then require a Thinloop Git checkout and reject plugin caches.
 - **Evolution history:** append sanitized lifecycle events and validate their schema and transitions.
-- **Trial execution:** use `scd-dev-loop` to apply only an approved candidate, preserve unrelated work, and collect verification evidence.
+- **Trial execution:** use `scd-quickdev` to apply only an approved candidate, preserve unrelated work, and collect verification evidence.
 - **Promotion:** accept only verified trials, bump one patch version across release manifests, and leave distribution actions to a separately authorized task.
 
 ## Flow and failure behavior

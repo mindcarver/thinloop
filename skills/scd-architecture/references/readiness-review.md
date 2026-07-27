@@ -75,7 +75,7 @@ For existing systems, verify:
 
 Verify:
 
-- the product specification owns business behavior;
+- the governing GitHub Issue owns business behavior;
 - UX owns interaction behavior;
 - architecture owns technical responsibility;
 - machine contracts own cross-boundary syntax and semantics;
@@ -92,4 +92,4 @@ blocker. Name the smallest responsible next step:
 - Discovery for product behavior;
 - UIUX for experience behavior;
 - Architecture for internal design or shared-contract convergence;
-- Dev Loop only after the required handoff is ready.
+- QuickDev only after the required handoff is ready.

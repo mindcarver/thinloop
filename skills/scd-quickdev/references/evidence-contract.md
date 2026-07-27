@@ -1,4 +1,4 @@
-# Evidence contract
+# QuickDev evidence contract
 
 Use this reference to select proportional verification and describe incomplete results.
 
@@ -29,7 +29,7 @@ A passing unrelated suite is not evidence for the changed behavior. A test that 
 
 ## Acceptance mapping
 
-When a specification assigns acceptance identifiers, retain them through implementation:
+When the governing Issue assigns acceptance identifiers, retain them through implementation:
 
 ```markdown
 - A1 PASS - `node --test test/import.test.mjs`
@@ -39,7 +39,9 @@ When a specification assigns acceptance identifiers, retain them through impleme
 
 Each identifier must map to a directly relevant check, an explicit unverified boundary, or a named blocker. One check may support several acceptance items when it genuinely exercises them; do not duplicate or inflate evidence.
 
-If implementation reveals that an acceptance item is impossible, contradictory, or would require a material product-contract change, do not quietly drop or rewrite it. Return that decision to discovery.
+If implementation reveals that an acceptance item is impossible, contradictory,
+or would require a material product-contract change, do not quietly drop or
+rewrite it. Update the Issue and return that decision to discovery.
 
 ## Failures and baselines
 

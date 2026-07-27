@@ -45,16 +45,18 @@ Give acceptance items stable identifiers:
 
 An item should identify observable behavior, not a task such as "implement parser" or "add tests."
 
-## Existing-spec fast path
+## Existing-Issue fast path
 
-When the user supplies an existing specification:
+When the user supplies an existing GitHub Issue or product contract:
 
-1. inspect repository facts and the specification;
+1. inspect repository facts and the Issue;
 2. run the readiness and adversarial reviews;
 3. ask only about material gaps or contradictions;
 4. if none remain, present the compact shared-understanding summary immediately.
 
-If the user already marked the specification approved and explicitly requested implementation, that instruction can satisfy the approval requirement. Do not ask them to approve the same contract twice.
+If the user already approved the Issue and explicitly requested implementation,
+that instruction can satisfy the approval requirement. Do not ask them to
+approve the same contract twice.
 
 ## Approval request
 
@@ -69,4 +71,6 @@ Present:
 
 Then ask one question: whether this combined contract is accurate and approved.
 
-Only a clear affirmative answer to that request changes `status: review` to `status: approved`. If the user approves but says not to implement, persist the approved contract, clean temporary state, and stop.
+Only a clear affirmative answer authorizes persistence of the approved contract
+to the GitHub Issue. If the user approves but says not to implement, create or
+update the Issue, clean temporary state, and stop.
