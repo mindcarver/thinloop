@@ -53,10 +53,21 @@ test("all shared skills satisfy OpenCode's portable Agent Skill contract", () =>
   }
 });
 
-test("README installs OpenCode skills into its native global directory", () => {
+test("documentation installs and verifies OpenCode through its native interfaces", () => {
   const readme = fs.readFileSync(path.join(root, "README.md"), "utf8");
+  const installation = fs.readFileSync(
+    path.join(root, "docs", "installation.md"),
+    "utf8",
+  );
+  const verification = fs.readFileSync(
+    path.join(root, "docs", "verification.md"),
+    "utf8",
+  );
 
   assert.match(readme, /\.config[\\/]opencode[\\/]skills/);
-  assert.match(readme, /opencode debug skill/);
-  assert.match(readme, /不声明连续性阻断能力/);
+  assert.match(readme, /\.\/docs\/installation\.md/);
+  assert.match(readme, /\.\/docs\/verification\.md/);
+  assert.match(installation, /\.config[\\/]opencode[\\/]skills/);
+  assert.match(verification, /opencode debug skill/);
+  assert.match(verification, /不声明连续性阻断能力/);
 });
