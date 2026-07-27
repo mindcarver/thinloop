@@ -21,6 +21,7 @@
 </p>
 
 <p align="center">
+  <a href="#quick-start">开始</a> ·
   <a href="#capabilities">能力</a> ·
   <a href="#principles">原则</a> ·
   <a href="#workflow">闭环</a> ·
@@ -33,6 +34,31 @@
 Thinloop 不接管开发过程，只守住容易在长任务里丢失的结果：
 
 > **需求不被误解，体验与架构有据可循，完成声明有真实证据，仓库漂移能被主动发现。**
+
+<a id="quick-start"></a>
+
+## 30 秒开始 / QUICK START
+
+大多数开发任务只需要调用 `scd-quickdev` 并说明目标：
+
+```text
+使用 scd-quickdev 修复登录后偶发白屏，并补回归验证。
+使用 scd-quickdev 增加 CSV 导出，完成后提 PR 并合并 main。
+```
+
+QuickDev 会先判断任务是否足够清楚，而不是要求用户选择流程：
+
+| 当前情况 | 默认路径 |
+|---|---|
+| Bug 或清晰、局部的新功能 | 建立或确认 Issue，直接诊断、实现和验证 |
+| 多个产品决定仍未明确 | 调用 Discovery 逐项澄清，批准后把结论写入 Issue |
+| UI 或系统边界会显著影响实现 | 按需组合 UIUX 或 Architecture |
+| 工程验证通过 | Agent 自审、提交、推送、提 PR，并在工程闸门通过后合并 |
+| 合并完成 | Issue 保持 `awaiting-uat`，用户只做真实使用验收 |
+| 生产部署、认证支付、破坏性数据等高风险工作 | 在高风险动作前停下并请求明确批准 |
+
+GitHub Issue 是需求、任务和验收的唯一真值源；PR 是实现证据、工程审阅和回滚
+边界。简单任务不会先写本地 Spec，也不强制创建 worktree。
 
 <a id="capabilities"></a>
 
@@ -151,10 +177,19 @@ contracts/              # 按需：跨边界机器契约
 
 ## 安装到 Codex、Claude Code、OpenCode、WorkBuddy 与 ZCode / INSTALL
 
-七个 Skill 遵循同一目录契约，可由 Codex、Claude Code、OpenCode、WorkBuddy
-和 ZCode 共享。链接适合只使用 Skill 并随仓库实时更新；Claude Code /
-WorkBuddy / ZCode 完整插件会额外启用连续性 Hook，但不要与同一 Agent 的
-Skill 链接重复安装。
+七个 Skill 遵循同一目录契约。推荐安装方式如下：
+
+| Agent | 推荐安装 | 更新生效 |
+|---|---|---|
+| Codex | 把七个 Skill 链接到 `~/.codex/skills` | 新任务 |
+| OpenCode | 把七个 Skill 链接到 `~/.config/opencode/skills` | 重启 OpenCode |
+| Claude Code | 安装完整插件 | 更新后重启或重新加载插件 |
+| WorkBuddy | 安装完整插件 | 更新后重启 WorkBuddy |
+| ZCode | 安装完整插件 | 更新后新建会话 |
+
+Skill 链接随源码仓库更新，但不启用连续性 Hook；Claude Code、WorkBuddy 和
+ZCode 的完整插件会额外启用各自支持的 Hook。不要在同一个 Agent 中同时安装
+完整插件和个人 Skill 链接，以免重复暴露同名能力。
 
 <details>
 <summary><strong>Windows · Junction</strong></summary>
@@ -163,10 +198,7 @@ Skill 链接重复安装。
 $repo = "C:\path\to\thinloop"
 $skillRoots = @(
   "$env:USERPROFILE\.codex\skills",
-  "$env:USERPROFILE\.claude\skills",
-  "$env:USERPROFILE\.config\opencode\skills",
-  "$env:USERPROFILE\.workbuddy\skills",
-  "$env:USERPROFILE\.zcode\skills"
+  "$env:USERPROFILE\.config\opencode\skills"
 )
 $skillNames = @(
   "scd-discovery", "scd-uiux", "scd-architecture",
@@ -175,6 +207,14 @@ $skillNames = @(
 
 foreach ($root in $skillRoots) {
   New-Item -ItemType Directory -Force -Path $root | Out-Null
+
+  $legacy = Join-Path $root "scd-dev-loop"
+  $legacyItem = Get-Item -LiteralPath $legacy -Force -ErrorAction SilentlyContinue
+  if ($null -ne $legacyItem -and
+      ($legacyItem.Attributes -band [IO.FileAttributes]::ReparsePoint)) {
+    Remove-Item -LiteralPath $legacy
+  }
+
   foreach ($name in $skillNames) {
     $link = Join-Path $root $name
     if (-not (Test-Path -LiteralPath $link)) {
@@ -198,10 +238,7 @@ $skillRoots | ForEach-Object {
 repo="/path/to/thinloop"
 skill_roots=(
   "${CODEX_HOME:-$HOME/.codex}/skills"
-  "$HOME/.claude/skills"
   "${XDG_CONFIG_HOME:-$HOME/.config}/opencode/skills"
-  "$HOME/.workbuddy/skills"
-  "$HOME/.zcode/skills"
 )
 skills=(
   scd-discovery scd-uiux scd-architecture
@@ -210,22 +247,30 @@ skills=(
 
 for root in "${skill_roots[@]}"; do
   mkdir -p "$root"
+  [ -L "$root/scd-dev-loop" ] && unlink "$root/scd-dev-loop"
+
   for name in "${skills[@]}"; do
-    [ -e "$root/$name" ] || ln -s "$repo/skills/$name" "$root/$name"
+    link="$root/$name"
+    target="$repo/skills/$name"
+
+    if [ -L "$link" ]; then
+      [ "$(readlink "$link")" = "$target" ] && continue
+      unlink "$link"
+    elif [ -e "$link" ]; then
+      echo "skip existing non-link: $link" >&2
+      continue
+    fi
+
+    ln -s "$target" "$link"
   done
 done
 ```
 
 </details>
 
-Skill 链接只同步方法，不启用 Hook。Codex 在下一次任务发现新 Skill；Claude
-Code 会热加载个人 Skill；OpenCode 重启后通过原生 `skill` 工具按需加载。
-OpenCode 也能读取 `~/.claude/skills`，但使用自己的目录不会依赖 Claude
-兼容开关；WorkBuddy 可从技能页查看并在对话中选择 Skill；ZCode 可从
-Settings → Skills 查看并用 `$scd-quickdev` 显式调用。
-
-从 v0.6.x 升级时，移除各 Skill 根目录中旧的 `scd-dev-loop` 链接，避免同时
-暴露已经停用的旧名称。
+上面的脚本只移除明确的旧链接 `scd-dev-loop`，并修复七个 Thinloop Skill
+链接；遇到同名的真实文件或目录会跳过，不会覆盖用户内容。OpenCode 也能读取
+`~/.claude/skills`，但使用自己的目录不会依赖 Claude 兼容开关。
 
 ### Evolve 权威源码
 
@@ -286,12 +331,38 @@ WorkBuddy 5.3.5 内置的 CodeBuddy 运行时读取
 2. 本地开发填入 `/path/to/thinloop`；远程安装填入
    `mindcarver/thinloop`；若远程 clone 超时，改用本地仓库路径。
 3. 自定义 Marketplace 会显示在 Personal 筛选下；切换到 Personal 后，在
-   `thinloop` 卡片点击 Install，并保持插件启用；更新代码后点击 Refresh。
+   `thinloop` 卡片点击 Install，并保持插件启用。
 
 完整插件会注册七个 Skill；`Stop` 发现激活状态不可恢复时会让主 Agent
 继续补齐，最多连续三次；压缩后的 `SessionStart(compact)` 会把缺失状态作为
 恢复上下文注入。ZCode 不支持 Codex 专用的 `PreCompact` 事件，因此当前运行时
 会记录一条 warning 并只跳过该事件，不影响上述两个 ZCode Hook。
+
+### 更新已有安装 / UPDATE
+
+先更新源码仓库：
+
+```bash
+git -C /path/to/thinloop pull --ff-only
+```
+
+随后按安装方式刷新：
+
+```bash
+# Codex / OpenCode：重新运行上面的链接脚本，然后开启新任务或重启 Agent
+
+# Claude Code 完整插件
+claude plugin update thinloop@thinloop --scope user
+
+# WorkBuddy 完整插件（安装了 CodeBuddy CLI 时）
+codebuddy plugin update thinloop@thinloop --scope user
+```
+
+- Claude Code：命令成功后重启客户端，或在交互会话重新加载插件。
+- WorkBuddy：也可以在插件页刷新市场后更新 Thinloop；完成后重启 WorkBuddy。
+- ZCode：Settings → Plugins → Refresh → `thinloop` → Update；更新后新建会话。
+- 从 v0.6.x 升级：确认旧 `scd-dev-loop` 已消失，当前列表中存在
+  `scd-quickdev`，并且插件版本显示 `0.7.0`。
 
 ### 手动调用 / EXAMPLES
 
@@ -311,41 +382,31 @@ ZCode：使用 $scd-evolve 诊断本次使用过的 Thinloop Skill。
 
 ## 本地验证 / VERIFICATION
 
-| 检查 | 当前结果 |
-|---|---:|
-| Node 契约与 Hook 测试 | `PASS` |
-| Discovery / Knowledge 用例结构 | `PASS` |
-| UIUX / Architecture / Maintenance 契约 | `PASS` |
-| Evolve 审批、源码与历史契约 | `PASS` |
-| Codex Skill / 插件校验 | `PASS` |
-| Claude Code 插件校验 | `PASS` |
-| OpenCode Skill 发现与格式校验 | `PASS` |
-| WorkBuddy 插件、Marketplace 与 Hook 校验 | `PASS` |
-| ZCode 清单、Skill 与 Hook 契约 | `PASS` |
+仓库自身提供并维护以下可执行校验：
 
-```powershell
-node --test tests\*.test.mjs
-node evals\validate-discovery-cases.mjs
-node evals\validate-knowledge-cases.mjs
-node skills\scd-maintenance\scripts\collect-signals.mjs --root . --format text
-node skills\scd-evolve\scripts\evolution-history.mjs validate --history .scd\evolution\history.jsonl
+```bash
+node --test tests/*.test.mjs
+node evals/validate-discovery-cases.mjs
+node evals/validate-knowledge-cases.mjs
+node skills/scd-maintenance/scripts/collect-signals.mjs --root . --format text
 claude plugin validate . --strict
-opencode debug skill
 codebuddy plugin validate .codebuddy-plugin/plugin.json
 codebuddy plugin validate .codebuddy-plugin/marketplace.json
-zcode plugins list --json
-zcode skills list --json
 ```
 
-Codex 官方校验器可对 `skills/` 下每个目录运行 `quick_validate.py`，再对仓库
-根目录运行 `validate_plugin.py`；Claude Code 使用
-`claude plugin validate . --strict`；OpenCode 安装链接并重启后，使用
-`opencode debug skill` 检查七个 `scd-*` Skill。OpenCode 当前没有与 Codex /
-Claude Stop Hook 等价的可取消完成协议，因此本次支持不声明连续性阻断能力。
-WorkBuddy 使用其内置 CodeBuddy CLI 校验原生插件与 Marketplace 清单，并通过
-专用 Hook 配置验证 `CODEBUDDY_PLUGIN_ROOT` 和 `continue: false` 协议。
-ZCode 安装并启用完整插件后，使用 `zcode plugins list --json` 检查两个可运行
-Hook，再用 `zcode skills list --json` 检查七个插件 Skill。
+安装后的运行时证据按平台检查，不假设每个平台都有相同 CLI：
+
+| Agent | 安装后检查 |
+|---|---|
+| Codex | 七个链接都能读取 `SKILL.md`；新任务可发现 `$scd-quickdev` |
+| Claude Code | `claude plugin list` 显示 `thinloop@thinloop`、`0.7.0`、enabled |
+| OpenCode | `opencode debug skill` 输出七个当前 `scd-*` Skill |
+| WorkBuddy | `codebuddy plugin list`（若当前 CLI 支持）或插件页显示 `0.7.0`、enabled |
+| ZCode | Settings → Plugins 显示 `0.7.0`、7 Skills、2 Hooks；Skills 中存在 `scd-quickdev` |
+
+OpenCode 当前没有与 Claude Code / WorkBuddy / ZCode Stop Hook 等价的可取消完成
+协议，因此不声明连续性阻断能力。ZCode 当前安装不提供可依赖的 `zcode` CLI，
+所以 README 以实际 Settings 界面作为安装验证边界。
 完整评测方法、历史证据和限制见 [EVALUATION.md](./EVALUATION.md)。
 
 ---
