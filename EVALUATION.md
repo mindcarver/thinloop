@@ -1,5 +1,22 @@
 # Thinloop 评测
 
+## OpenCode 兼容性边界
+
+OpenCode 原生从 `~/.config/opencode/skills/<name>/SKILL.md` 发现全局 Skill，
+并通过 `skill` 工具按需加载。Thinloop 的安装说明把同一份 `skills/` 源链接到
+该目录；`tests/opencode-compatibility.test.mjs` 验证六个 Skill 的目录名、
+frontmatter 名称、允许字段、名称格式和描述长度符合 OpenCode 契约。
+
+2026-07-27 在 OpenCode 1.17.7 上使用隔离的 `XDG_CONFIG_HOME`，同时禁用
+Claude / Agents 外部 Skill 扫描后运行 `opencode debug skill --pure`，六个
+`scd-*` Skill 均从隔离目录被发现。这证明原生发现和解析有效，不证明自动选择
+召回率或复杂任务行为。
+
+OpenCode 插件提供 `session.idle` 事件和压缩上下文扩展，但当前官方接口没有与
+Codex / Claude Stop Hook 等价的可取消完成输出。因此本版不模拟阻断语义，也不
+把 Skill-only 安装描述为连续性 Hook 已覆盖；OpenCode 中的状态维护仍依赖
+`scd-dev-loop` / `scd-discovery` Skill 自身的连续性契约。
+
 ## Claude Code 兼容性边界
 
 Claude Code 与 Codex 共享 `skills/` 下的六个 Agent Skill，但插件清单、Hook

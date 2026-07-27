@@ -131,11 +131,11 @@ contracts/              # 按需：跨边界机器契约
 
 <a id="install"></a>
 
-## 安装到 Codex 与 Claude Code / INSTALL
+## 安装到 Codex、Claude Code 与 OpenCode / INSTALL
 
-六个 Skill 遵循同一目录契约，可由 Codex 和 Claude Code 共享。选择一种
-Claude Code 安装方式：链接适合只使用 Skill 并随仓库实时更新；完整插件会额外
-启用连续性 Hook，但不要与 Claude 的 Skill 链接重复安装。
+六个 Skill 遵循同一目录契约，可由 Codex、Claude Code 和 OpenCode 共享。
+链接适合只使用 Skill 并随仓库实时更新；Claude Code 完整插件会额外启用连续性
+Hook，但不要与 Claude 的 Skill 链接重复安装。
 
 <details>
 <summary><strong>Windows · Junction</strong></summary>
@@ -144,7 +144,8 @@ Claude Code 安装方式：链接适合只使用 Skill 并随仓库实时更新�
 $repo = "C:\path\to\thinloop"
 $skillRoots = @(
   "$env:USERPROFILE\.codex\skills",
-  "$env:USERPROFILE\.claude\skills"
+  "$env:USERPROFILE\.claude\skills",
+  "$env:USERPROFILE\.config\opencode\skills"
 )
 $skillNames = @(
   "scd-discovery", "scd-uiux", "scd-architecture",
@@ -174,12 +175,19 @@ $skillRoots | ForEach-Object {
 
 ```bash
 repo="/path/to/thinloop"
-skill_roots="${CODEX_HOME:-$HOME/.codex}/skills $HOME/.claude/skills"
-skills="scd-discovery scd-uiux scd-architecture scd-dev-loop scd-knowledge scd-maintenance"
+skill_roots=(
+  "${CODEX_HOME:-$HOME/.codex}/skills"
+  "$HOME/.claude/skills"
+  "${XDG_CONFIG_HOME:-$HOME/.config}/opencode/skills"
+)
+skills=(
+  scd-discovery scd-uiux scd-architecture
+  scd-dev-loop scd-knowledge scd-maintenance
+)
 
-for root in $skill_roots; do
+for root in "${skill_roots[@]}"; do
   mkdir -p "$root"
-  for name in $skills; do
+  for name in "${skills[@]}"; do
     [ -e "$root/$name" ] || ln -s "$repo/skills/$name" "$root/$name"
   done
 done
@@ -188,7 +196,9 @@ done
 </details>
 
 Skill 链接只同步方法，不启用 Hook。Codex 在下一次任务发现新 Skill；Claude
-Code 会热加载个人 Skill。
+Code 会热加载个人 Skill；OpenCode 重启后通过原生 `skill` 工具按需加载。
+OpenCode 也能读取 `~/.claude/skills`，但使用自己的目录不会依赖 Claude
+兼容开关。
 
 ### Claude Code 完整插件
 
@@ -217,6 +227,7 @@ Codex：使用 $scd-discovery 把这个想法聊透并形成可验收规格。
 Codex：使用 $scd-dev-loop 按已批准规格实现并给出证据。
 Claude Code Skill 链接：/scd-discovery
 Claude Code 完整插件：/thinloop:scd-dev-loop
+OpenCode：使用 scd-dev-loop skill 按已批准规格实现并给出证据。
 ```
 
 <a id="verification"></a>
@@ -230,6 +241,7 @@ Claude Code 完整插件：/thinloop:scd-dev-loop
 | UIUX / Architecture / Maintenance 契约 | `PASS` |
 | Codex Skill / 插件校验 | `PASS` |
 | Claude Code 插件校验 | `PASS` |
+| OpenCode Skill 发现与格式校验 | `PASS` |
 
 ```powershell
 node --test tests\*.test.mjs
@@ -237,12 +249,15 @@ node evals\validate-discovery-cases.mjs
 node evals\validate-knowledge-cases.mjs
 node skills\scd-maintenance\scripts\collect-signals.mjs --root . --format text
 claude plugin validate . --strict
+opencode debug skill
 ```
 
 Codex 官方校验器可对 `skills/` 下每个目录运行 `quick_validate.py`，再对仓库
 根目录运行 `validate_plugin.py`；Claude Code 使用
-`claude plugin validate . --strict`。完整评测方法、历史证据和限制见
-[EVALUATION.md](./EVALUATION.md)。
+`claude plugin validate . --strict`；OpenCode 安装链接并重启后，使用
+`opencode debug skill` 检查六个 `scd-*` Skill。OpenCode 当前没有与 Codex /
+Claude Stop Hook 等价的可取消完成协议，因此本次支持不声明连续性阻断能力。
+完整评测方法、历史证据和限制见 [EVALUATION.md](./EVALUATION.md)。
 
 ---
 
