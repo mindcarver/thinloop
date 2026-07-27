@@ -9,11 +9,15 @@ delivery sequence:
 3. create a pull request with acceptance evidence, wait for required checks,
    and merge eligible changes into `main`;
 4. synchronize local `main`;
-5. reinstall or refresh Thinloop for every supported local agent currently
-   installed on this machine, including Codex, Claude Code, OpenCode, WorkBuddy,
-   and ZCode, then verify the installed version, skill names, and hooks that the
+5. only when the merged change modifies installed Thinloop payload or runtime
+   behavior—such as `skills/**`, `hooks/**`, plugin manifests, version metadata,
+   or installation mechanics—reinstall or refresh the affected supported local
+   agents, then verify the installed version, skill names, and hooks that each
    platform supports;
-6. leave the Issue open as `awaiting-uat` until the user completes real-use
+6. do not refresh local agents for repository-only changes such as `README.md`,
+   `docs/**`, tests, evaluations, CI configuration, or assets that installed
+   Skills and plugins do not load;
+7. leave the Issue open as `awaiting-uat` until the user completes real-use
    acceptance.
 
 This standing instruction authorizes ordinary task-local GitHub writes,
