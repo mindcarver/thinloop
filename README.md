@@ -246,10 +246,11 @@ WorkBuddy 5.3.5 内置的 CodeBuddy 运行时读取
 
 先审查仓库中的 Skill 与 `hooks/check-state.mjs`，然后打开一个工作区：
 
-1. 进入 Settings → Plugins → Marketplace，点击搜索框旁的 `+`。
+1. 进入 Settings → Plugins，点击 Create → Add Plugin Marketplace。
 2. 本地开发填入 `/path/to/thinloop`；远程安装填入
-   `mindcarver/thinloop`。
-3. 在 Thinloop 卡片点击 Get，并保持插件启用；更新代码后点击 Refresh。
+   `mindcarver/thinloop`；若远程 clone 超时，改用本地仓库路径。
+3. 自定义 Marketplace 会显示在 Personal 筛选下；切换到 Personal 后，在
+   `thinloop` 卡片点击 Install，并保持插件启用；更新代码后点击 Refresh。
 
 完整插件会注册六个 Skill；`Stop` 发现激活状态不可恢复时会让主 Agent
 继续补齐，最多连续三次；压缩后的 `SessionStart(compact)` 会把缺失状态作为

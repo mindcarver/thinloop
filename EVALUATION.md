@@ -41,6 +41,12 @@ Thinloop 插件源发现。`tests/check-state.test.mjs` 覆盖 ZCode 的 Stop �
 压缩后上下文协议；`tests/plugin-compatibility.test.mjs` 覆盖三端版本一致、
 Marketplace、Hook 映射和共享命令路径。
 
+同日通过 ZCode 实际 Settings → Plugins 界面添加当前仓库路径后，个人
+Marketplace 登记为 `thinloop`、`pluginCount: 1`，切换到 Personal 筛选可见
+`thinloop` 安装卡片。使用 `mindcarver/thinloop` 的远程路径时，本机网络环境在
+GitHub clone 90 秒后超时，因此远程安装未确认；本地 Marketplace 解析与发现已
+确认，但尚未点击安装。
+
 当前已确认的限制：Codex 仍依赖标准 `hooks/hooks.json` 中的 `PreCompact`；
 ZCode 不支持该事件，因此加载共享文件时产生
 `plugin_hook_unsupported_event` warning，并跳过这一项。实机输出同时确认
@@ -239,7 +245,8 @@ JSONL 并使用 `codex exec`。在新增独立的 Claude Code 隔离运行器和
 - 每个条件只运行一次，结果用于发现设计缺陷，不代表统计显著性。
 - 评测验证了 Skill 被加载后的行为，没有测量 Codex 自动路由对隐式 Skill 的召回率。
 - 任务仓库是可重复的小型夹具；发布前仍建议在 2-3 个真实个人项目中做试用。
-- 插件没有在本机全局安装，也没有修改个人插件市场或信任配置。
+- 正式评测没有全局安装插件；补充实机验证只登记了个人本地 Marketplace，
+  尚未点击安装或修改插件信任配置。
 
 ## 可复现
 
