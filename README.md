@@ -24,6 +24,7 @@
   <a href="#quick-start">开始</a> ·
   <a href="#capabilities">能力</a> ·
   <a href="#workflow">闭环</a> ·
+  <a href="#skill-flows">技能流程</a> ·
   <a href="#install">安装</a> ·
   <a href="#docs">文档</a>
 </p>
@@ -122,17 +123,28 @@ GitHub Issue 是需求、任务和验收的唯一真值源；PR 是实现证据�
 
 ## 工作闭环 / WORKFLOW
 
-```text
-模糊任务 → Discovery → 批准 Issue →（按需 UIUX / Architecture）→ QuickDev
-清晰任务 → 创建/确认 Issue ───────────────────────────────→ QuickDev
-QuickDev → 分支 → 开发与工程验收 → 独立 Agent 验收 → PR → main → 关闭 Issue
-主动调用 → Maintenance / Knowledge
-主动复盘 → Evolve → 候选 ID 审批 → 可回滚试验 → 证据
-```
+<p align="center">
+  <img src="./assets/flows/thinloop-overview.svg" alt="Thinloop 总体闭环：请求经按需发现、体验与架构设计进入 QuickDev，通过独立验收后合并并关闭 Issue" width="100%">
+</p>
 
 清晰任务直接开发；不清晰的需求先讨论。默认不强制 TDD、角色系统、额外子代理、
 固定阶段或本地 Spec；QuickDev 只固定使用一个独立验收 Agent。完整的路由、状态与契约说明见
 [工作流与项目状态](./docs/workflow-and-state.md)。
+
+<a id="skill-flows"></a>
+
+## 七个技能如何工作 / SKILL FLOWS
+
+<p><img src="./assets/flows/scd-discovery.svg" alt="SCD Discovery 流程：从仓库事实和交付切片到批准后的 GitHub Issue" width="100%"></p>
+<p><img src="./assets/flows/scd-uiux.svg" alt="SCD UIUX 流程：从稳定产品核心到可交付的体验设计" width="100%"></p>
+<p><img src="./assets/flows/scd-architecture.svg" alt="SCD Architecture 流程：从仓库事实到领域边界和机器可读契约" width="100%"></p>
+<p><img src="./assets/flows/scd-quickdev.svg" alt="SCD QuickDev 流程：从 GitHub Issue 到独立验收、合并 main 并关闭 Issue" width="100%"></p>
+<p><img src="./assets/flows/scd-knowledge.svg" alt="SCD Knowledge 流程：从显式请求和证据到确认后的知识写入或检索" width="100%"></p>
+<p><img src="./assets/flows/scd-maintenance.svg" alt="SCD Maintenance 流程：从仓库信号到证据确认和有边界的修复" width="100%"></p>
+<p><img src="./assets/flows/scd-evolve.svg" alt="SCD Evolve 流程：从可见证据和归因到人工批准的可回滚试验" width="100%"></p>
+
+每张图只保留该 Skill 的五个关键节点；完整触发条件、分支和安全边界仍以对应
+`SKILL.md` 为准。
 
 <a id="install"></a>
 
