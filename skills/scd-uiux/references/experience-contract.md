@@ -34,9 +34,9 @@ Start from `assets/ux-contract.md`. Allowed statuses are:
 - `ready` - the readiness review passes and any remaining notes cannot change
   visible behavior or acceptance.
 
-Use `sources` to link the relevant product specification, design system,
+Use `sources` to link the governing GitHub Issue, design system,
 interface contract, research, or existing UI. Use repository-relative paths or
-stable URLs. A linked product specification owns approval; `status: ready` does
+stable URLs. The linked GitHub Issue owns approval; `status: ready` does
 not add an approval gate.
 
 Prefer one feature UX contract. Put a shared visual system in the repository's

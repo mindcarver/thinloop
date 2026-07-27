@@ -18,7 +18,7 @@ The shared interface contract is the common source of truth for every producer
 and consumer. Architecture facilitates convergence; it does not invent product
 semantics or own the result alone.
 
-- Product specification owns allowed behavior and business meaning.
+- The governing GitHub Issue owns allowed behavior and business meaning.
 - Domain model owns invariants, lifecycle, and command authority.
 - UX contract contributes visible data, operation, state, and error needs.
 - Producers contribute feasibility, security, consistency, and operational

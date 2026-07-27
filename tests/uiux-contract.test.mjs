@@ -17,7 +17,7 @@ test("uiux is composable and keeps clear UI changes on the direct path", () => {
   assert.match(skill, /\*\*Focused:\*\*/);
   assert.match(skill, /\*\*Product:\*\*/);
   assert.match(skill, /\*\*Validate:\*\*/);
-  assert.match(skill, /Hand it to `scd-dev-loop` without UX questions or artifacts/);
+  assert.match(skill, /Hand it to `scd-quickdev` without UX questions or artifacts/);
   assert.match(skill, /does not inherit the Product path/);
 });
 
@@ -77,13 +77,13 @@ test("uiux durable artifacts stay minimal and distinguish readiness from approva
   assert.match(template, /## Shared contract references/);
 });
 
-test("dev loop consumes a ready UX handoff without confusing it for architecture", () => {
-  const devLoop = read("skills/scd-dev-loop/SKILL.md");
+test("quickdev consumes a ready UX handoff without confusing it for architecture", () => {
+  const quickdev = read("skills/scd-quickdev/SKILL.md");
 
-  assert.match(devLoop, /\.scd\/ux\/<slug>\.md/);
-  assert.match(devLoop, /require\s+`status: ready`/);
-  assert.match(devLoop, /not as product approval or\s+frontend architecture/);
-  assert.match(devLoop, /unreconciled shared\s+interface decision/);
+  assert.match(quickdev, /\.scd\/ux\/<slug>\.md/);
+  assert.match(quickdev, /require\s+`status: ready`/);
+  assert.match(quickdev, /not as product approval or\s+frontend architecture/);
+  assert.match(quickdev, /unreconciled shared\s+interface decision/);
 });
 
 test("the approved uiux specification retains A1 through A9", () => {

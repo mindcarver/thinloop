@@ -2,7 +2,7 @@
 managed_by: scd-architecture
 status: draft
 sources:
-  - <approved product specification>
+  - <governing GitHub Issue>
   - <architecture baseline>
 ---
 

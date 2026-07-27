@@ -1,20 +1,20 @@
 ---
 name: scd-uiux
-description: "Design or refine a Web product's user experience and interface needs before production implementation. Use for UI-heavy 0-to-1 products after the product core is stable, substantial new screens or journeys, unclear information architecture, interaction or state behavior, responsive and accessibility decisions, visual direction, UX validation, or an explicit UI/UX design request. Use independently for focused UX work or compose it with scd-discovery, scd-architecture, and scd-dev-loop. Do not use for trivial copy, color, spacing, or obvious local UI changes; backend-only work; native mobile or desktop applications; or production frontend implementation."
+description: "Design or refine a Web product's user experience and interface needs before production implementation. Use for UI-heavy 0-to-1 products after the product core is stable, substantial new screens or journeys, unclear information architecture, interaction or state behavior, responsive and accessibility decisions, visual direction, UX validation, or an explicit UI/UX design request. Use independently for focused UX work or compose it with scd-discovery, scd-architecture, and scd-quickdev. Do not use for trivial copy, color, spacing, or obvious local UI changes; backend-only work; native mobile or desktop applications; or production frontend implementation."
 ---
 
 # SCD UIUX
 
 Make a Web experience explicit enough to review and implement without turning
 every interface change into a design project. Design behavior and presentation;
-leave production code to `scd-dev-loop`.
+leave production code to `scd-quickdev`.
 
 ## Select the lightest sufficient path
 
 Inspect the request and repository, then choose internally:
 
 - **Direct:** the requested UI change and its observable result are already
-  clear. Hand it to `scd-dev-loop` without UX questions or artifacts.
+  clear. Hand it to `scd-quickdev` without UX questions or artifacts.
 - **Focused:** one journey, surface, or interaction needs design. Resolve only
   that slice and preserve only the handoff it needs.
 - **Product:** a UI-heavy 0-to-1 delivery needs a coherent Web experience.
@@ -28,7 +28,7 @@ small UI change does not inherit the Product path.
 
 ## Start from product and repository truth
 
-Read applicable repository instructions, the relevant product specification,
+Read applicable repository instructions, the governing GitHub Issue,
 existing UI, design system or component library, interface contracts, and
 user-supplied visual references before asking questions. Inspect the running
 product when practical; do not infer current behavior from filenames alone.
@@ -36,7 +36,7 @@ product when practical; do not infer current behavior from filenames alone.
 For the Product path, require the product core to establish the primary user,
 problem, next delivery, business rules, boundaries, and observable acceptance.
 Use `scd-discovery` when several of those decisions remain open. Do not recreate
-the product specification inside the UX contract.
+the Issue product contract inside the UX contract.
 
 After that core is stable, UIUX may proceed in parallel with
 `scd-architecture`. Neither waits for the other to finish, but both must
@@ -145,7 +145,7 @@ design documentation home. Otherwise create one `.scd/ux/<slug>.md` from
 Use `status: draft` while material UX decisions remain and `status: ready`
 after the readiness review. `ready` means the UX work is coherent; it is not a
 second product approval. When the UX belongs to Discovery, the linked delivery
-specification carries the user's one combined approval.
+GitHub Issue carries the user's one combined approval.
 
 Keep one UX contract by default. Link visual artifacts rather than restating
 them. Split out a visual system only when it is reused across deliveries and
@@ -171,5 +171,5 @@ For a Discovery composition, return the ready UX conclusions and any
 product-contract changes for the single combined approval. For production
 implementation, hand the approved product contract, ready UX contract, visual
 references, ready architecture or feature design when activated, and shared
-interface contract to `scd-dev-loop`. Do not implement production frontend code
+interface contract to `scd-quickdev`. Do not implement production frontend code
 in this skill.

@@ -53,7 +53,7 @@ code-documentation consistency judgment.
 
 Inspect only categories supported by repository evidence:
 
-- product specifications, acceptance behavior, tests, and implementation;
+- GitHub Issue product contracts, acceptance behavior, tests, and implementation;
 - public API, CLI, configuration, schema, migration, and environment contracts;
 - README instructions, tutorials, examples, screenshots, and local links;
 - documented architecture, actual dependency direction, cycles, and ownership;
@@ -100,7 +100,7 @@ Before editing:
    contract.
 4. Drop findings that cannot be reproduced.
 
-Then hand the bounded change to `scd-dev-loop`:
+Then hand the bounded change to `scd-quickdev`:
 
 - preserve public behavior unless the selected authority requires a change;
 - fix the source and every directly coupled test, example, generated artifact,

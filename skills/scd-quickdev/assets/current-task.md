@@ -1,5 +1,6 @@
 ---
-managed_by: scd-dev-loop
+managed_by: scd-quickdev
+issue: <GitHub Issue URL>
 status: active
 updated_at: <ISO-8601 timestamp with timezone>
 ---
@@ -8,16 +9,16 @@ updated_at: <ISO-8601 timestamp with timezone>
 
 ## Outcome
 
-<One observable result>
+Resume delivery for the governing Issue.
 
 ## Boundaries
 
-- In: <included behavior>
-- Out: <most important exclusion>
+- In: issue-specific work
+- Out: unrelated changes
 
 ## Acceptance
 
-- [ ] <observable check>
+- [ ] <Issue acceptance ID and current state>
 
 ## Decisions
 

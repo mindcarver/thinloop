@@ -1,6 +1,6 @@
 ---
 name: scd-discovery
-description: "Turn an underdefined product idea into an explicitly approved, testable delivery specification before implementation. Use by default for a new product, application, plugin, service, or system; for a substantial feature with multiple dependent product decisions; or when data ownership, permissions, irreversible behavior, public interfaces, or external integrations remain undecided. Also use when the user explicitly asks to clarify, challenge, or specify a product idea. Do not use for a clear local change with an observable outcome, boundary, and acceptance path; one isolated ambiguity can be clarified without full discovery. When an existing specification is already complete, audit it and take the fast path instead of repeating the interview."
+description: "Turn an underdefined product idea into an explicitly approved, testable GitHub Issue before implementation. Use by default for a new product, application, plugin, service, or system; for a substantial feature with multiple dependent product decisions; or when data ownership, permissions, irreversible behavior, public interfaces, or external integrations remain undecided. Also use when the user explicitly asks to clarify, challenge, or specify a product idea. Do not use for a clear local change with an observable outcome, boundary, and acceptance path; one isolated ambiguity can be clarified without full discovery. When an existing Issue is already complete, audit it and take the fast path instead of repeating the interview."
 ---
 
 # SCD Discovery
@@ -13,17 +13,17 @@ Do not edit implementation code during full discovery. A user must explicitly ap
 
 Inspect the request and available repository context, then choose internally:
 
-- **Direct:** outcome, boundary, and observable acceptance are already clear. Hand implementation to `scd-dev-loop` without discovery artifacts or extra questions.
+- **Direct:** outcome, boundary, and observable acceptance are already clear. Hand implementation to `scd-quickdev` without discovery artifacts or extra questions.
 - **Clarify:** one answer can make the work executable. Ask that one material question, then hand off.
 - **Discovery:** multiple dependent product decisions or a high-cost product boundary is unresolved. Follow the full workflow below.
 
-Treat greenfield products, applications, plugins, services, and systems as Discovery by default. If the user supplies a complete specification, use the readiness fast path rather than manufacturing questions.
+Treat greenfield products, applications, plugins, services, and systems as Discovery by default. If the user supplies a complete Issue or product contract, use the readiness fast path rather than manufacturing questions.
 
 Do not announce these path names unless the user asks about the method.
 
 ## Investigate before asking
 
-Read applicable repository instructions, existing specifications, architecture notes, tests, and relevant implementation before interviewing. Discover facts from the environment instead of asking the user to recall them.
+Read applicable repository instructions, existing Issues, architecture notes, tests, and relevant implementation before interviewing. Discover facts from the environment instead of asking the user to recall them.
 
 Keep facts, user decisions, working assumptions, and deferred decisions distinct. Research external standards or referenced products only when a current fact could materially change the decision; do not generate market or competitor analysis by default.
 
@@ -87,13 +87,22 @@ When no high-impact branch appears open:
 
 Silence, topic changes, partial agreement, or the model's confidence are not approval. A clear affirmative response to the approval request is approval. If the user changes the contract, revise it and review again.
 
-Read `references/readiness-review.md` before declaring the specification ready.
+Read `references/readiness-review.md` before declaring the contract ready.
 
 ## Persist the approved contract and hand off
 
-When the user requested repository work, synthesize the converged contract into `.scd/specs/<slug>.md` with `status: review`; after explicit approval, change it to `status: approved`.
+When the user requested repository work, present the converged contract for
+explicit approval, then create or update one detailed GitHub Issue. That Issue
+is the sole requirement and acceptance source of truth; do not create a local
+delivery specification.
 
-If the user approves but does not want implementation, remove temporary discovery state and stop. If the user approves implementation, hand the approved specification to `scd-dev-loop`. Do not add separate approval gates for architecture, task breakdown, or implementation unless a later choice would change the approved product contract.
+If GitHub or the repository's authoritative tracker is unavailable, report the
+blocker instead of silently substituting `.scd/specs/`. If the user approves
+but does not want implementation, remove temporary discovery state and stop
+after creating the Issue. If the user approves implementation, hand the Issue
+to `scd-quickdev`. Do not add separate approval gates for architecture, task
+breakdown, or implementation unless a later choice would change the approved
+product contract.
 
 When the user asked only to discuss an idea, keep the result in conversation unless they request a file.
 
@@ -101,4 +110,4 @@ When the user asked only to discuss an idea, keep the result in conversation unl
 
 - `references/interviewing.md` - decision-tree questioning, depth control, and research discipline.
 - `references/readiness-review.md` - fast path, adversarial review, and explicit approval semantics.
-- `references/artifacts.md` - temporary state, specification schema, medium-project documents, and change handling.
+- `references/artifacts.md` - temporary state, GitHub Issue schema, technical documents, and change handling.

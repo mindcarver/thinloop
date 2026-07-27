@@ -1,7 +1,11 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
-const MANAGERS = new Set(["scd-dev-loop", "scd-discovery"]);
+const MANAGERS = new Set([
+  "scd-quickdev",
+  "scd-dev-loop",
+  "scd-discovery",
+]);
 const RELATIVE_STATE_PATH = path.join(".scd", "tasks", "current.md");
 const REQUIRED_SECTIONS = [
   "Outcome",
@@ -115,6 +119,21 @@ function validateState(markdown) {
 
   if (!MANAGERS.has(metadata.managed_by)) {
     return { managed: false, issues };
+  }
+
+  if (metadata.managed_by === "scd-dev-loop") {
+    issues.push(
+      "frontmatter managed_by scd-dev-loop is legacy; change it to scd-quickdev",
+    );
+  }
+
+  if (
+    metadata.managed_by === "scd-quickdev" &&
+    !/(?:^#\d+$|\/issues\/\d+(?:$|[?#]))/.test(metadata.issue ?? "")
+  ) {
+    issues.push(
+      "frontmatter issue must reference the governing GitHub Issue",
+    );
   }
 
   if (!["active", "blocked"].includes(metadata.status)) {

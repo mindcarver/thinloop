@@ -1,7 +1,7 @@
 {
   "name": "thinloop",
-  "version": "0.6.1",
-  "description": "Simplify complex development with deep discovery, risk-adaptive Web experience and architecture design, reliable delivery, evidence-backed maintenance, concise experiential knowledge, and human-approved skill evolution.",
+  "version": "0.7.0",
+  "description": "Simplify complex development with Issue-backed discovery, risk-adaptive Web experience and architecture design, autonomous PR delivery, evidence-backed maintenance, concise experiential knowledge, and human-approved skill evolution.",
   "author": {
     "name": "mindcarver"
   },
@@ -17,6 +17,8 @@
     "api-design",
     "domain-modeling",
     "specification",
+    "github-issues",
+    "pull-requests",
     "verification",
     "continuity",
     "knowledge-management",

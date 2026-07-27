@@ -14,7 +14,7 @@ Generic agreement without the candidate ID is insufficient. Any changed operatio
 
 ## Trial
 
-Append `proposed` only after the approval gate, then append `trial` immediately before editing. Snapshot only files named by the candidate. Use `scd-dev-loop` for implementation and preserve A1–A13 from the approved specification as acceptance identifiers.
+Append `proposed` only after the approval gate, then append `trial` immediately before editing. Snapshot only files named by the candidate. Use `scd-quickdev` for implementation and preserve the approved candidate acceptance identifiers.
 
 Do not improve adjacent wording, restructure unrelated instructions, reformat unrelated files, or add speculative flexibility. A trial is a causal intervention: the diff must be narrow enough that the observed outcome can be attributed to it.
 

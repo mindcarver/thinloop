@@ -11,7 +11,8 @@ const hookPath = path.resolve(testDir, "..", "hooks", "check-state.mjs");
 
 function validState(overrides = {}) {
   const values = {
-    managedBy: "scd-dev-loop",
+    managedBy: "scd-quickdev",
+    issue: "https://github.com/example/project/issues/123",
     status: "active",
     updatedAt: "2026-07-26T12:34:56+08:00",
     outcome: "The requested behavior is observable.",
@@ -28,6 +29,7 @@ function validState(overrides = {}) {
   return [
     "---",
     `managed_by: ${values.managedBy}`,
+    ...(values.issue === null ? [] : [`issue: ${values.issue}`]),
     `status: ${values.status}`,
     `updated_at: ${values.updatedAt}`,
     "---",
@@ -62,7 +64,7 @@ function validState(overrides = {}) {
 }
 
 function makeWorkspace() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), "scd-dev-loop-hook-"));
+  return fs.mkdtempSync(path.join(os.tmpdir(), "scd-quickdev-hook-"));
 }
 
 function writeState(cwd, content) {
@@ -129,6 +131,36 @@ test("allows complete discovery state", () => {
   try {
     writeState(cwd, validState({ managedBy: "scd-discovery" }));
     assert.equal(parseOutput(runHook(cwd)), null);
+  } finally {
+    fs.rmSync(cwd, { recursive: true, force: true });
+  }
+});
+
+test("blocks quickdev state without its governing issue", () => {
+  const cwd = makeWorkspace();
+  try {
+    writeState(cwd, validState({ issue: null }));
+    const output = parseOutput(runHook(cwd));
+    assert.equal(output.continue, false);
+    assert.match(
+      output.systemMessage,
+      /frontmatter issue must reference the governing GitHub Issue/,
+    );
+  } finally {
+    fs.rmSync(cwd, { recursive: true, force: true });
+  }
+});
+
+test("blocks legacy dev-loop state with a migration instruction", () => {
+  const cwd = makeWorkspace();
+  try {
+    writeState(cwd, validState({ managedBy: "scd-dev-loop", issue: null }));
+    const output = parseOutput(runHook(cwd));
+    assert.equal(output.continue, false);
+    assert.match(
+      output.systemMessage,
+      /managed_by scd-dev-loop is legacy; change it to scd-quickdev/,
+    );
   } finally {
     fs.rmSync(cwd, { recursive: true, force: true });
   }

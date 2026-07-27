@@ -1,0 +1,4 @@
+interface:
+  display_name: "SCD QuickDev"
+  short_description: "Issue-backed coding through verified PR merge"
+  default_prompt: "Use $scd-quickdev to deliver this repository change from its GitHub Issue through verified PR merge and real-use UAT handoff."

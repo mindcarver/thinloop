@@ -36,35 +36,28 @@ test("discovery requires one-decision interviewing and explicit approval", () =>
   assert.match(readiness, /A1:/);
 });
 
-test("discovery artifacts use SCD paths and approved specifications", () => {
+test("discovery persists approved repository work as a GitHub Issue", () => {
   const artifacts = read("skills/scd-discovery/references/artifacts.md");
 
   assert.match(artifacts, /\.scd\/tasks\/current\.md/);
   assert.match(artifacts, /managed_by: scd-discovery/);
-  assert.match(artifacts, /\.scd\/specs\/<slug>\.md/);
-  assert.match(artifacts, /status: review/);
-  assert.match(artifacts, /status: approved/);
+  assert.match(artifacts, /GitHub Issue/);
+  assert.match(artifacts, /sole requirement and acceptance source of truth/i);
+  assert.doesNotMatch(artifacts, /\.scd\/specs\/<slug>\.md/);
+  assert.match(artifacts, /## Acceptance/);
+  assert.match(artifacts, /A1:/);
   assert.match(artifacts, /\.scd\/architecture\.md/);
   assert.match(artifacts, /Do not create a permanent `implementation-plan\.md`/);
 });
 
-test("dev loop consumes approved specifications and maps evidence", () => {
-  const skill = read("skills/scd-dev-loop/SKILL.md");
+test("quickdev consumes the approved issue and maps evidence", () => {
+  const skill = read("skills/scd-quickdev/SKILL.md");
   const evidence = read(
-    "skills/scd-dev-loop/references/evidence-contract.md",
+    "skills/scd-quickdev/references/evidence-contract.md",
   );
 
-  assert.match(skill, /require `status: approved`/);
-  assert.match(skill, /Map every item to observed evidence, `UNVERIFIED`/);
+  assert.match(skill, /GitHub Issue.*source of truth/i);
+  assert.match(skill, /Map every item to observed evidence,\s+`UNVERIFIED`/);
   assert.match(evidence, /A1 PASS/);
   assert.match(evidence, /return that decision to discovery/i);
-});
-
-test("the discovery feature keeps its approved delivery contract", () => {
-  const specification = read(".scd/specs/scd-discovery.md");
-
-  assert.match(specification, /status: approved/);
-  for (let index = 1; index <= 8; index += 1) {
-    assert.match(specification, new RegExp(`^- A${index}:`, "m"));
-  }
 });

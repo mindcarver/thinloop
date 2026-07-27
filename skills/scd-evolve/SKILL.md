@@ -59,7 +59,7 @@ One matched signal is enough to propose a candidate. Grade it `exploratory`, `su
    Keep the sanitized record in a temporary location outside the repository and remove it after the append result is known.
 
 6. Snapshot only candidate-owned files in a temporary location outside the repository. Do not use broad Git restore, reset, checkout, or clean commands.
-7. Hand the exact approved batch to `scd-dev-loop`. Preserve candidate ID, target skills, operations, and acceptance evidence; do not add adjacent cleanup.
+7. Hand the exact approved batch to `scd-quickdev`. Preserve candidate ID, target skills, operations, and acceptance evidence; do not add adjacent cleanup.
 8. Validate according to the change kind:
    - `instruction`, `trigger`, or `workflow`: run relevant deterministic checks and a fresh isolated agent-session forward test.
    - `script` or `format`: run relevant deterministic tests; use an isolated session only when agent behavior also changes.

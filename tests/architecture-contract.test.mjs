@@ -28,7 +28,7 @@ test("architecture translates approved business behavior without inventing it", 
     "skills/scd-architecture/references/architecture-contract.md",
   );
 
-  assert.match(skill, /Product\s+specifications own business decisions/);
+  assert.match(skill, /Issue product contracts own business decisions/);
   assert.match(skill, /must not invent missing product behavior/);
   assert.match(contract, /subordinate to approved product behavior/);
   assert.match(contract, /not permission to invent a missing rule/);
@@ -38,7 +38,7 @@ test("architecture and uiux reconcile one shared machine contract", () => {
   const skill = read("skills/scd-architecture/SKILL.md");
   const discovery = read("skills/scd-discovery/SKILL.md");
   const uiux = read("skills/scd-uiux/SKILL.md");
-  const devLoop = read("skills/scd-dev-loop/SKILL.md");
+  const quickdev = read("skills/scd-quickdev/SKILL.md");
   const contract = read(
     "skills/scd-architecture/references/interface-contract.md",
   );
@@ -51,7 +51,7 @@ test("architecture and uiux reconcile one shared machine contract", () => {
   assert.match(discovery, /UIUX and Architecture may\s+then proceed in parallel/);
   assert.match(discovery, /one shared machine-readable contract/);
   assert.match(uiux, /`scd-architecture` facilitates reconciliation/);
-  assert.match(devLoop, /parse the canonical machine-readable contracts/);
+  assert.match(quickdev, /parse the canonical machine-readable contracts/);
 });
 
 test("machine contracts require real format-aware evidence", () => {

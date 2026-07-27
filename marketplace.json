@@ -1,12 +1,12 @@
 {
   "name": "thinloop",
-  "description": "Thinloop skills and continuity hooks for lightweight, evidence-backed development and approved skill evolution.",
+  "description": "Thinloop skills and continuity hooks for Issue-backed, evidence-backed development and approved skill evolution.",
   "plugins": [
     {
       "name": "thinloop",
       "source": ".",
-      "description": "Discovery, Web UIUX, architecture, delivery, maintenance, knowledge, and evolution skills with continuity checks.",
-      "version": "0.6.1"
+      "description": "Discovery, Web UIUX, architecture, QuickDev delivery, maintenance, knowledge, and evolution skills with continuity checks.",
+      "version": "0.7.0"
     }
   ]
 }

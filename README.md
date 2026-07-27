@@ -11,9 +11,9 @@
 </p>
 
 <p align="center">
-  <kbd>v0.6.1</kbd>
+  <kbd>v0.7.0</kbd>
   &nbsp;
-  <kbd>SPEC-DRIVEN</kbd>
+  <kbd>ISSUE-DRIVEN</kbd>
   &nbsp;
   <kbd>EVIDENCE-BACKED</kbd>
   &nbsp;
@@ -43,7 +43,7 @@ Thinloop 不接管开发过程，只守住容易在长任务里丢失的结果�
     <td width="33%" valign="top">
       <img src="./assets/retro-discovery.png" alt="SCD Discovery 复古工程图标" width="92">
       <h3><a href="./skills/scd-discovery/SKILL.md">01 · SCD Discovery</a></h3>
-      <p>把模糊想法收敛为明确批准、可以验收的交付规格。</p>
+      <p>把模糊想法收敛为明确批准、可以验收的 GitHub Issue。</p>
       <p><strong>适合：</strong>新产品、复杂功能、多个产品决定相互依赖。</p>
     </td>
     <td width="33%" valign="top">
@@ -61,10 +61,10 @@ Thinloop 不接管开发过程，只守住容易在长任务里丢失的结果�
   </tr>
   <tr>
     <td width="33%" valign="top">
-      <img src="./assets/retro-dev-loop.png" alt="SCD Dev Loop 复古工程图标" width="92">
-      <h3><a href="./skills/scd-dev-loop/SKILL.md">04 · SCD Dev Loop</a></h3>
-      <p>按已知边界安静实现，让每个完成声明对应真实检查。</p>
-      <p><strong>适合：</strong>清晰改动、已批准规格和跨会话实现。</p>
+      <img src="./assets/retro-dev-loop.png" alt="SCD QuickDev 复古工程图标" width="92">
+      <h3><a href="./skills/scd-quickdev/SKILL.md">04 · SCD QuickDev</a></h3>
+      <p>从 Issue 开始完成诊断、开发、验证、PR 和可自动合并的交付。</p>
+      <p><strong>适合：</strong>Bug、清晰功能、已批准 Issue 和跨会话实现。</p>
     </td>
     <td width="33%" valign="top">
       <img src="./assets/retro-knowledge.png" alt="SCD Knowledge 复古工程图标" width="92">
@@ -98,27 +98,31 @@ Thinloop 不接管开发过程，只守住容易在长任务里丢失的结果�
 
 | 遇到什么 | Thinloop 怎么做 |
 |---|---|
-| 目标、边界和验收已经清楚 | 直接进入 Dev Loop，不制造额外流程 |
+| 目标、边界和验收已经清楚 | 直接进入 QuickDev，不制造额外需求流程 |
 | 多个上游产品决定仍会改变结果 | 用 Discovery 一次解决一个关键决定 |
 | 体验或技术边界仍影响交付 | 按需调用 UIUX 或 Architecture，不设固定关卡 |
-| 实现完成或工作将跨会话 | 用真实证据收尾，只保存恢复所需的最小状态 |
+| 实现完成 | Agent 验证、自审、提 PR 并在工程闸门通过后合并 `main` |
+| 合并完成 | Issue 保持 `awaiting-uat`，由用户只做真实使用验收 |
 | 用户主动要求维护或沉淀 | 调用 Maintenance 或 Knowledge；普通开发不自动触发 |
 | 用户主动要求优化 Thinloop | 调用 Evolve；先诊断和候选，按候选 ID 批准后才试验 |
 
-默认不强制 TDD、角色系统、子代理或固定阶段，也不会自动暂存、提交、推送或部署。
+默认不强制 TDD、角色系统、子代理或固定阶段。QuickDev 的实现请求包含任务内
+Issue、分支、提交、推送、PR 与合资格合并；高风险合并和生产部署仍需明确授权。
 
 <a id="workflow"></a>
 
 ## 工作闭环 / WORKFLOW
 
 ```text
-模糊任务 → Discovery →（按需 UIUX / Architecture）→ Dev Loop → 证据
-清晰任务 ───────────────────────────────→ Dev Loop → 证据
+模糊任务 → Discovery → 批准 Issue →（按需 UIUX / Architecture）→ QuickDev
+清晰任务 → 创建/确认 Issue ───────────────────────────────→ QuickDev
+QuickDev → 分支 → 开发与工程验收 → PR → main → awaiting-uat → 真人使用验收
 主动调用 → Maintenance / Knowledge
 主动复盘 → Evolve → 候选 ID 审批 → 可回滚试验 → 证据
 ```
 
-清晰任务从 Dev Loop 直接开始；Maintenance、Knowledge 和 Evolve 只在用户主动要求时出现。
+GitHub Issue 是需求和验收的唯一真值源，PR 保存实现与验证证据。清晰任务从
+QuickDev 直接开始；Maintenance、Knowledge 和 Evolve 只在用户主动要求时出现。
 
 <a id="state"></a>
 
@@ -128,7 +132,6 @@ Thinloop 不创建项目 Wiki，只在复杂度真实出现时保留相应载体
 
 ```text
 .scd/
-├── specs/              # 已批准交付规格
 ├── ux/                 # 按需：复杂 Web 体验
 ├── architecture.md     # 按需：系统基线
 ├── designs/            # 按需：高影响功能设计
@@ -139,7 +142,10 @@ Thinloop 不创建项目 Wiki，只在复杂度真实出现时保留相应载体
 contracts/              # 按需：跨边界机器契约
 ```
 
-详细规则见 [Discovery 产物契约](./skills/scd-discovery/references/artifacts.md)、[Architecture 契约](./skills/scd-architecture/references/architecture-contract.md)、[Knowledge 存储契约](./skills/scd-knowledge/references/storage-contract.md)、[Evolve 历史契约](./skills/scd-evolve/references/source-and-history-contract.md) 和 [Dev Loop 连续性契约](./skills/scd-dev-loop/references/continuity-contract.md)。
+仓库中已有的 `.scd/specs/` 文件仅保留为旧版本设计和评估历史；v0.7.0
+开始的新交付不会读取或创建本地产品规格。
+
+详细规则见 [Discovery 产物契约](./skills/scd-discovery/references/artifacts.md)、[QuickDev Issue 交付契约](./skills/scd-quickdev/references/issue-delivery-contract.md)、[Architecture 契约](./skills/scd-architecture/references/architecture-contract.md)、[Knowledge 存储契约](./skills/scd-knowledge/references/storage-contract.md)、[Evolve 历史契约](./skills/scd-evolve/references/source-and-history-contract.md) 和 [QuickDev 连续性契约](./skills/scd-quickdev/references/continuity-contract.md)。
 
 <a id="install"></a>
 
@@ -164,7 +170,7 @@ $skillRoots = @(
 )
 $skillNames = @(
   "scd-discovery", "scd-uiux", "scd-architecture",
-  "scd-dev-loop", "scd-knowledge", "scd-maintenance", "scd-evolve"
+  "scd-quickdev", "scd-knowledge", "scd-maintenance", "scd-evolve"
 )
 
 foreach ($root in $skillRoots) {
@@ -199,7 +205,7 @@ skill_roots=(
 )
 skills=(
   scd-discovery scd-uiux scd-architecture
-  scd-dev-loop scd-knowledge scd-maintenance scd-evolve
+  scd-quickdev scd-knowledge scd-maintenance scd-evolve
 )
 
 for root in "${skill_roots[@]}"; do
@@ -216,7 +222,10 @@ Skill 链接只同步方法，不启用 Hook。Codex 在下一次任务发现新
 Code 会热加载个人 Skill；OpenCode 重启后通过原生 `skill` 工具按需加载。
 OpenCode 也能读取 `~/.claude/skills`，但使用自己的目录不会依赖 Claude
 兼容开关；WorkBuddy 可从技能页查看并在对话中选择 Skill；ZCode 可从
-Settings → Skills 查看并用 `$scd-dev-loop` 显式调用。
+Settings → Skills 查看并用 `$scd-quickdev` 显式调用。
+
+从 v0.6.x 升级时，移除各 Skill 根目录中旧的 `scd-dev-loop` 链接，避免同时
+暴露已经停用的旧名称。
 
 ### Evolve 权威源码
 
@@ -287,14 +296,14 @@ WorkBuddy 5.3.5 内置的 CodeBuddy 运行时读取
 ### 手动调用 / EXAMPLES
 
 ```text
-Codex：使用 $scd-discovery 把这个想法聊透并形成可验收规格。
-Codex：使用 $scd-dev-loop 按已批准规格实现并给出证据。
+Codex：使用 $scd-discovery 把这个想法聊透并形成可验收 Issue。
+Codex：使用 $scd-quickdev 修复这个 Bug，验证后提 PR 并合并 main。
 Codex：使用 $scd-evolve 复盘本次互动，只提出一个候选，不要先修改。
 Claude Code Skill 链接：/scd-discovery
-Claude Code 完整插件：/thinloop:scd-dev-loop
-OpenCode：使用 scd-dev-loop skill 按已批准规格实现并给出证据。
-WorkBuddy 完整插件：/thinloop:scd-dev-loop
-ZCode：使用 $scd-dev-loop 按已批准规格实现并给出证据。
+Claude Code 完整插件：/thinloop:scd-quickdev
+OpenCode：使用 scd-quickdev skill 按 Issue 开发、验证并合并。
+WorkBuddy 完整插件：/thinloop:scd-quickdev
+ZCode：使用 $scd-quickdev 按 Issue 开发、验证并合并。
 ZCode：使用 $scd-evolve 诊断本次使用过的 Thinloop Skill。
 ```
 

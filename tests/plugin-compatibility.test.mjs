@@ -8,11 +8,11 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const expectedSkills = [
   "scd-architecture",
-  "scd-dev-loop",
   "scd-discovery",
   "scd-evolve",
   "scd-knowledge",
   "scd-maintenance",
+  "scd-quickdev",
   "scd-uiux",
 ];
 
@@ -155,11 +155,11 @@ test(
 );
 
 test("shared skills recognize both repository instruction conventions", () => {
-  const devLoop = read("skills/scd-dev-loop/SKILL.md");
+  const quickdev = read("skills/scd-quickdev/SKILL.md");
   const maintenance = read("skills/scd-maintenance/SKILL.md");
 
-  assert.match(devLoop, /whenever a coding agent is asked/i);
-  assert.doesNotMatch(devLoop, /whenever Codex is asked/i);
-  assert.match(devLoop, /`AGENTS\.md`, `CLAUDE\.md`/);
+  assert.match(quickdev, /whenever a coding agent is asked/i);
+  assert.doesNotMatch(quickdev, /whenever Codex is asked/i);
+  assert.match(quickdev, /`AGENTS\.md`, `CLAUDE\.md`/);
   assert.match(maintenance, /`AGENTS\.md`, `CLAUDE\.md`/);
 });
