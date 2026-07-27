@@ -25,8 +25,9 @@ an unbounded rewrite.
 
 ## Start from repository truth
 
-1. Read applicable `AGENTS.md`, repository instructions, manifests, tests,
-   CI configuration, public documentation, and existing debt tooling.
+1. Read applicable `AGENTS.md`, `CLAUDE.md`, repository instructions,
+   manifests, tests, CI configuration, public documentation, and existing debt
+   tooling.
 2. Inspect the working tree and preserve unrelated user changes.
 3. Prefer repository-native lint, test, documentation, dependency, schema, and
    architecture checks over generic guesses.

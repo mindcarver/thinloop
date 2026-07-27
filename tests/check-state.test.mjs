@@ -71,7 +71,7 @@ function writeState(cwd, content) {
   fs.writeFileSync(path.join(stateDir, "current.md"), content, "utf8");
 }
 
-function runHook(cwd, input = {}) {
+function runHook(cwd, input = {}, env = {}) {
   return spawnSync(process.execPath, [hookPath], {
     cwd,
     input: JSON.stringify({
@@ -80,6 +80,11 @@ function runHook(cwd, input = {}) {
       ...input,
     }),
     encoding: "utf8",
+    env: {
+      ...process.env,
+      CLAUDE_PLUGIN_ROOT: "",
+      ...env,
+    },
   });
 }
 
@@ -166,6 +171,21 @@ test("blocks an invalid status", () => {
   }
 });
 
+test("uses Claude Code decision output when loaded as a Claude plugin", () => {
+  const cwd = makeWorkspace();
+  try {
+    writeState(cwd, validState({ status: "complete" }));
+    const output = parseOutput(
+      runHook(cwd, {}, { CLAUDE_PLUGIN_ROOT: path.resolve(testDir, "..") }),
+    );
+    assert.equal(output.decision, "block");
+    assert.match(output.reason, /status must be active or blocked/);
+    assert.equal("continue" in output, false);
+  } finally {
+    fs.rmSync(cwd, { recursive: true, force: true });
+  }
+});
+
 test("blocks unresolved placeholders", () => {
   const cwd = makeWorkspace();
   try {
@@ -230,6 +250,10 @@ test("fails open with a warning on invalid hook input", () => {
       cwd,
       input: "{not-json",
       encoding: "utf8",
+      env: {
+        ...process.env,
+        CLAUDE_PLUGIN_ROOT: "",
+      },
     });
     const output = parseOutput(result);
     assert.equal(output.continue, true);

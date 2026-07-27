@@ -25,6 +25,27 @@ function emit(payload) {
   process.stdout.write(`${JSON.stringify(payload)}\n`);
 }
 
+function block(eventName, managedBy, issues) {
+  const issueList = issues.map((issue) => `- ${issue}`).join("\n");
+  const message =
+    `${managedBy} paused ${eventName} because .scd/tasks/current.md is not resumable:\n` +
+    `${issueList}\nUpdate the note, then retry the lifecycle event.`;
+
+  if (process.env.CLAUDE_PLUGIN_ROOT) {
+    emit({
+      decision: "block",
+      reason: message,
+    });
+    return;
+  }
+
+  emit({
+    continue: false,
+    stopReason: "SCD continuity state is incomplete.",
+    systemMessage: message,
+  });
+}
+
 function parseFrontmatter(markdown) {
   const match = markdown.match(/^---\s*\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/);
   if (!match) {
@@ -150,14 +171,7 @@ async function main() {
     }
 
     const eventName = hookInput.hook_event_name || "lifecycle event";
-    const issueList = result.issues.map((issue) => `- ${issue}`).join("\n");
-    emit({
-      continue: false,
-      stopReason: "SCD continuity state is incomplete.",
-      systemMessage:
-        `${result.managedBy} paused ${eventName} because .scd/tasks/current.md is not resumable:\n` +
-        `${issueList}\nUpdate the note, then retry the lifecycle event.`,
-    });
+    block(eventName, result.managedBy, result.issues);
   } catch (error) {
     emit({
       continue: true,

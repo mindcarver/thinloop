@@ -131,30 +131,40 @@ contracts/              # 按需：跨边界机器契约
 
 <a id="install"></a>
 
-## 安装到 Codex / INSTALL
+## 安装到 Codex 与 Claude Code / INSTALL
 
-六个 Skill 与操作系统无关。使用链接安装后，更新仓库即可同步能力。
+六个 Skill 遵循同一目录契约，可由 Codex 和 Claude Code 共享。选择一种
+Claude Code 安装方式：链接适合只使用 Skill 并随仓库实时更新；完整插件会额外
+启用连续性 Hook，但不要与 Claude 的 Skill 链接重复安装。
 
 <details>
 <summary><strong>Windows · Junction</strong></summary>
 
 ```powershell
 $repo = "C:\path\to\thinloop"
-$codexSkills = "$env:USERPROFILE\.codex\skills"
+$skillRoots = @(
+  "$env:USERPROFILE\.codex\skills",
+  "$env:USERPROFILE\.claude\skills"
+)
 $skillNames = @(
   "scd-discovery", "scd-uiux", "scd-architecture",
   "scd-dev-loop", "scd-knowledge", "scd-maintenance"
 )
 
-foreach ($name in $skillNames) {
-  $link = Join-Path $codexSkills $name
-  if (-not (Test-Path -LiteralPath $link)) {
-    New-Item -ItemType Junction -Path $link -Target (Join-Path $repo "skills\$name")
+foreach ($root in $skillRoots) {
+  New-Item -ItemType Directory -Force -Path $root | Out-Null
+  foreach ($name in $skillNames) {
+    $link = Join-Path $root $name
+    if (-not (Test-Path -LiteralPath $link)) {
+      New-Item -ItemType Junction -Path $link -Target (Join-Path $repo "skills\$name")
+    }
   }
 }
 
-Get-Item -Force ($skillNames | ForEach-Object { Join-Path $codexSkills $_ }) |
-  Format-Table FullName, LinkType, Target
+$skillRoots | ForEach-Object {
+  $root = $_
+  Get-Item -Force ($skillNames | ForEach-Object { Join-Path $root $_ })
+} | Format-Table FullName, LinkType, Target
 ```
 
 </details>
@@ -164,28 +174,49 @@ Get-Item -Force ($skillNames | ForEach-Object { Join-Path $codexSkills $_ }) |
 
 ```bash
 repo="/path/to/thinloop"
-codex_skills="${CODEX_HOME:-$HOME/.codex}/skills"
+skill_roots="${CODEX_HOME:-$HOME/.codex}/skills $HOME/.claude/skills"
 skills="scd-discovery scd-uiux scd-architecture scd-dev-loop scd-knowledge scd-maintenance"
 
-mkdir -p "$codex_skills"
-for name in $skills; do
-  [ -e "$codex_skills/$name" ] || ln -s "$repo/skills/$name" "$codex_skills/$name"
+for root in $skill_roots; do
+  mkdir -p "$root"
+  for name in $skills; do
+    [ -e "$root/$name" ] || ln -s "$repo/skills/$name" "$root/$name"
+  done
 done
 ```
 
 </details>
 
-> Skill 链接只同步方法。仓库 Hook 仍需通过完整插件加载并完成信任审查；新 Skill 会在下一次 Codex 任务中被发现。
+Skill 链接只同步方法，不启用 Hook。Codex 在下一次任务发现新 Skill；Claude
+Code 会热加载个人 Skill。
+
+### Claude Code 完整插件
+
+先审查仓库中的 Skill 与 `hooks/check-state.mjs`，然后选择本地开发加载或持久
+安装：
+
+```bash
+# 本地开发：不写入插件市场配置
+claude plugin validate /path/to/thinloop --strict
+claude --plugin-dir /path/to/thinloop
+
+# 持久安装：注册本地 marketplace，再安装到用户作用域
+claude plugin marketplace add /path/to/thinloop
+claude plugin install thinloop@thinloop --scope user
+```
+
+安装或更新后，在交互会话运行 `/reload-plugins`。完整插件中的 Skill 使用
+`/thinloop:scd-discovery` 这类命名空间；个人 Skill 链接使用
+`/scd-discovery`。插件会在 `PreCompact` 与 `Stop` 时检查已激活的
+`.scd/tasks/current.md`，没有 SCD 状态文件时不产生输出。
 
 ### 手动调用 / EXAMPLES
 
 ```text
-使用 $scd-discovery 把这个想法聊透并形成可验收规格。
-使用 $scd-uiux 把这个 Web 行为设计成可实现的体验。
-使用 $scd-architecture 设计领域、系统和共享接口契约。
-使用 $scd-dev-loop 按已批准规格实现并给出证据。
-使用 $scd-maintenance 审计技术债和代码—文档漂移。
-使用 $scd-knowledge 沉淀或查找已证实的开发经验。
+Codex：使用 $scd-discovery 把这个想法聊透并形成可验收规格。
+Codex：使用 $scd-dev-loop 按已批准规格实现并给出证据。
+Claude Code Skill 链接：/scd-discovery
+Claude Code 完整插件：/thinloop:scd-dev-loop
 ```
 
 <a id="verification"></a>
@@ -197,16 +228,21 @@ done
 | Node 契约与 Hook 测试 | `PASS` |
 | Discovery / Knowledge 用例结构 | `PASS` |
 | UIUX / Architecture / Maintenance 契约 | `PASS` |
-| 官方 Skill / 插件校验 | `PASS` |
+| Codex Skill / 插件校验 | `PASS` |
+| Claude Code 插件校验 | `PASS` |
 
 ```powershell
 node --test tests\*.test.mjs
 node evals\validate-discovery-cases.mjs
 node evals\validate-knowledge-cases.mjs
 node skills\scd-maintenance\scripts\collect-signals.mjs --root . --format text
+claude plugin validate . --strict
 ```
 
-官方校验器可对 `skills/` 下每个目录运行 `quick_validate.py`，再对仓库根目录运行 `validate_plugin.py`。完整评测方法、历史证据和限制见 [EVALUATION.md](./EVALUATION.md)。
+Codex 官方校验器可对 `skills/` 下每个目录运行 `quick_validate.py`，再对仓库
+根目录运行 `validate_plugin.py`；Claude Code 使用
+`claude plugin validate . --strict`。完整评测方法、历史证据和限制见
+[EVALUATION.md](./EVALUATION.md)。
 
 ---
 

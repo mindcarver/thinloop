@@ -1,5 +1,27 @@
 # Thinloop 评测
 
+## Claude Code 兼容性边界
+
+Claude Code 与 Codex 共享 `skills/` 下的六个 Agent Skill，但插件清单、Hook
+路径变量和阻断输出使用各自的运行时协议。Claude Code 支持由以下检查证明：
+
+- `claude plugin validate . --strict` 验证 marketplace、插件、Skill 与 Hook
+  结构；
+- `tests/plugin-compatibility.test.mjs` 验证双端清单版本一致、共享同一 Skill
+  源，并使用 Claude Code 的 Hook 路径；
+- `tests/check-state.test.mjs` 分别验证 Codex 的 `continue: false` 和 Claude
+  Code 的 `decision: "block"` 输出。
+
+2026-07-27 在 Claude Code 2.1.197 上禁用工具，分别通过 `--plugin-dir` 调用
+`/thinloop:scd-dev-loop`、通过个人 Skill 链接调用 `/scd-dev-loop`；两次真实
+单轮结果都正确返回了该 Skill 的证据规则，且未修改文件。这证明插件与个人
+Skill 可以被实际加载，不证明自动路由召回率、复杂任务行为或 Hook 在真实中断
+任务中的端到端效果。
+
+现有 Discovery 正式评测仍是 Codex-only：它隔离 `CODEX_HOME`、解析 Codex
+JSONL 并使用 `codex exec`。在新增独立的 Claude Code 隔离运行器和真实成对结果
+前，不把下面的 Codex 行为分数描述为 Claude Code 行为证据。
+
 ## scd-maintenance 0.1.0 评测计划
 
 `tests/maintenance-contract.test.mjs` 验证手动触发、审计与修复边界、事实源判断、证据格式、删除安全和小批修复约束，并在临时仓库中实际运行确定性信号收集器。

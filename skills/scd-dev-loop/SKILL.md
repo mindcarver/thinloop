@@ -1,6 +1,6 @@
 ---
 name: scd-dev-loop
-description: "Apply lightweight delivery contracts whenever Codex is asked to change a repository: implement an approved feature, fix a bug, refactor code, change configuration, perform a migration, or resume unfinished implementation work. Keep intent scoped, require observed verification before completion claims, and preserve minimal continuity state only for work that may outlive the current context. Hand underdefined greenfield products and changes with multiple dependent product decisions to scd-discovery, and consequential unresolved technical boundaries to scd-architecture, before editing. Do not trigger for advice-only questions, explanations, or read-only reviews unless the user also asks for changes."
+description: "Apply lightweight delivery contracts whenever a coding agent is asked to change a repository: implement an approved feature, fix a bug, refactor code, change configuration, perform a migration, or resume unfinished implementation work. Keep intent scoped, require observed verification before completion claims, and preserve minimal continuity state only for work that may outlive the current context. Hand underdefined greenfield products and changes with multiple dependent product decisions to scd-discovery, and consequential unresolved technical boundaries to scd-architecture, before editing. Do not trigger for advice-only questions, explanations, or read-only reviews unless the user also asks for changes."
 ---
 
 # SCD Dev Loop
@@ -17,7 +17,7 @@ Keep these contracts invisible on clear, local tasks. Do not announce modes or c
 
 ## Start from repository truth
 
-1. Read applicable `AGENTS.md` files and nearby repository instructions.
+1. Read applicable `AGENTS.md`, `CLAUDE.md`, and nearby repository instructions.
 2. Inspect the working tree and preserve unrelated user changes.
 3. Reuse existing documentation, tests, naming, and implementation patterns.
 4. Search and read targeted code before proposing a new abstraction.
