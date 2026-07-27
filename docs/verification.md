@@ -23,10 +23,10 @@ codebuddy plugin validate .codebuddy-plugin/marketplace.json
 | Agent | 安装后检查 |
 |---|---|
 | Codex | 七个链接都能读取 `SKILL.md`；新任务可发现 `$scd-quickdev` |
-| Claude Code | `claude plugin list` 显示 `thinloop@thinloop`、`0.7.0`、enabled |
+| Claude Code | `claude plugin list` 显示 `thinloop@thinloop`、`0.7.1`、enabled |
 | OpenCode | `opencode debug skill` 输出七个当前 `scd-*` Skill |
-| WorkBuddy | `codebuddy plugin list`（若当前 CLI 支持）或插件页显示 `0.7.0`、enabled |
-| ZCode | Settings → Plugins 显示 `0.7.0`、7 Skills、2 Hooks；Skills 中存在 `scd-quickdev` |
+| WorkBuddy | `codebuddy plugin list`（若当前 CLI 支持）或插件页显示 `0.7.1`、enabled |
+| ZCode | Settings → Plugins 显示 `0.7.1`、7 Skills、2 Hooks；Skills 中存在 `scd-quickdev` |
 
 OpenCode 当前没有与 Claude Code、WorkBuddy、ZCode Stop Hook 等价的可取消完成
 协议，因此不声明连续性阻断能力。ZCode 当前安装不提供可依赖的 `zcode` CLI，

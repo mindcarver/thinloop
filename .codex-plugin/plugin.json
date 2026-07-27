@@ -1,6 +1,6 @@
 {
   "name": "thinloop",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Simplify complex development with Issue-backed discovery, risk-adaptive Web experience and architecture design, autonomous PR delivery, evidence-backed maintenance, concise experiential knowledge, and human-approved skill evolution.",
   "author": {
     "name": "mindcarver"
@@ -31,7 +31,7 @@
   "interface": {
     "displayName": "Thinloop",
     "shortDescription": "Discovery, design, delivery, maintenance, knowledge, and evolution",
-    "longDescription": "Clarify consequential product decisions into one GitHub Issue, design Web experiences and technical boundaries at the lightest useful fidelity, keep implementation scoped and evidence-backed, merge eligible pull requests into main, leave real-use acceptance to the user, audit or repair repository drift on request, preserve proven development experience, and evolve used Thinloop skills through human-approved reversible trials.",
+    "longDescription": "Clarify consequential product decisions into one GitHub Issue, design Web experiences and technical boundaries at the lightest useful fidelity, keep implementation scoped and evidence-backed, verify acceptance through an independent agent, merge eligible pull requests into main, close verified Issues, audit or repair repository drift on request, preserve proven development experience, and evolve used Thinloop skills through human-approved reversible trials.",
     "developerName": "mindcarver",
     "category": "Coding",
     "capabilities": [

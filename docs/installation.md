@@ -183,7 +183,7 @@ codebuddy plugin update thinloop@thinloop --scope user
 - WorkBuddy：也可以在插件页刷新市场后更新 Thinloop；完成后重启 WorkBuddy。
 - ZCode：Settings → Plugins → Refresh → `thinloop` → Update；更新后新建会话。
 - 从 v0.6.x 升级：确认旧 `scd-dev-loop` 已消失，当前列表中存在
-  `scd-quickdev`，并且插件版本显示 `0.7.0`。
+  `scd-quickdev`，并且插件版本显示 `0.7.1`。
 
 ## 手动调用示例
 

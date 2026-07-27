@@ -1,6 +1,6 @@
 ---
 name: scd-quickdev
-description: "Drive an issue from request to merged code whenever a coding agent is asked to change a repository: fix a bug, add a feature, refactor code, change configuration, perform a migration, or resume unfinished implementation work. Route underdefined product work through scd-discovery, use one GitHub Issue as the requirement and acceptance source of truth, diagnose bugs before fixing them, isolate meaningful work, verify observed behavior, create a pull request, and merge eligible changes into main before handing real-use acceptance to the user. Do not trigger for advice-only questions, explanations, or read-only reviews unless the user also asks for changes."
+description: "Drive an issue from request to verified merged code whenever a coding agent is asked to change a repository: fix a bug, add a feature, refactor code, change configuration, perform a migration, or resume unfinished implementation work. Route underdefined product work through scd-discovery, use one GitHub Issue as the requirement and acceptance source of truth, diagnose bugs before fixing them, isolate meaningful work, verify observed behavior through an independent acceptance subagent, create a pull request, merge eligible changes into main, and close the Issue only after acceptance passes. Do not trigger for advice-only questions, explanations, or read-only reviews unless the user also asks for changes."
 ---
 
 # SCD QuickDev
@@ -40,8 +40,9 @@ unreconciled shared interface decision, return only that gap before
 implementation.
 
 Do not generate a project wiki, PRD, local product specification, permanent
-implementation plan, role system, command suite, worktree, subagent, or TDD
-ceremony merely to satisfy this skill.
+implementation plan, role system, command suite, worktree, extra subagent
+ceremony, or TDD ceremony merely to satisfy this skill. The independent
+acceptance verifier required below is the only default subagent role.
 
 ## Select the lightest sufficient path
 
@@ -126,6 +127,26 @@ Before delivery, review the complete issue-specific diff for correctness,
 security, acceptance coverage, unintended files, and regression risk. Fix
 in-scope findings and record verification on the Issue and pull request.
 
+After implementation and the parent agent's engineering checks, delegate final
+acceptance to a separate fresh-context subagent. The verifier must independently
+read the governing Issue, acceptance items, repository instructions, and actual
+issue-specific diff. It must run the strongest practical checks that directly
+exercise the changed behavior, including browser, real-model, or produced
+artifact validation when relevant. It must not rely only on the implementing
+agent's summary and must not modify product code.
+
+The verifier returns exactly one evidence-backed outcome:
+
+- **PASS:** every acceptance item has direct observed evidence;
+- **FAIL:** changed behavior violates an acceptance item; return the findings to
+  implementation, repair them, and repeat independent verification;
+- **BLOCKED:** required verification cannot run; record the blocker and keep the
+  Issue open.
+
+Only `PASS` authorizes delivery and later Issue closure. A passing unrelated
+suite, static prompt inspection for a real-model behavior, or a fake runtime for
+a real-environment acceptance item cannot produce `PASS`.
+
 Read `references/evidence-contract.md` when selecting checks or reporting
 incomplete evidence.
 
@@ -140,11 +161,15 @@ When implementation and engineering verification pass:
 5. when the delivery contract permits, merge it into `main`;
 6. synchronize local `main` and safely remove the merged branch or temporary
    worktree;
-7. mark the Issue `awaiting-uat` and hand real-use acceptance to the user.
+7. confirm the merged revision is the independently verified change, rerunning
+   acceptance on `main` when merge, deployment, or environment state can change
+   the result;
+8. attach the verifier evidence and close the Issue.
 
-Do not close the Issue at merge time. The user accepts the actual product use,
-not the code review. If UAT passes, close the Issue. If it fails, record the
-observed result on the same Issue and re-enter QuickDev.
+Do not close the Issue at merge time or through pull-request auto-close syntax.
+Close it explicitly only after independent acceptance returns `PASS`. On
+`FAIL`, record the observed result on the same Issue and re-enter QuickDev. On
+`BLOCKED`, record the missing evidence and leave the Issue open.
 
 ## Preserve continuity only when needed
 
@@ -170,7 +195,7 @@ For ordinary tasks, report only:
 - merged outcome and pull request;
 - important changed locations;
 - observed engineering verification;
-- Issue UAT status;
+- independent acceptance result and Issue status;
 - remaining risk or unverified work.
 
 Do not print contract names, stage labels, or a workflow recap unless escalation
@@ -179,8 +204,8 @@ occurred or the user asks.
 ## Resources
 
 - `references/scope-contract.md` - material ambiguity and scope control.
-- `references/issue-delivery-contract.md` - Issue, isolation, PR, merge, and UAT
-  rules.
+- `references/issue-delivery-contract.md` - Issue, isolation, PR, merge, and
+  independent acceptance rules.
 - `references/evidence-contract.md` - risk-adaptive verification and completion
   language.
 - `references/continuity-contract.md` - fallback state schema and lifecycle.

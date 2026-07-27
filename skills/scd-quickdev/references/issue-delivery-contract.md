@@ -1,7 +1,7 @@
 # Issue delivery contract
 
 Use this reference for GitHub Issue creation, task isolation, pull requests,
-merge decisions, and user acceptance.
+merge decisions, and independent agent acceptance.
 
 ## Source of truth
 
@@ -111,7 +111,7 @@ The agent owns engineering acceptance:
 7. merge into `main` when all required checks pass and no human merge gate
    applies.
 
-Do not use `Closes #<issue>` while real-use acceptance remains pending.
+Do not use `Closes #<issue>` before independent acceptance passes.
 
 After merge, synchronize local `main`. Remove the merged branch or temporary
 worktree only when it contains no uncommitted state.
@@ -135,17 +135,28 @@ automatically deploys to production, treat the merge as a production action and
 obtain the required explicit human approval. Prefer Preview or Staging for
 pre-production evidence when available.
 
-## Real-use UAT
+## Independent acceptance
 
-After an eligible merge:
+After implementation and engineering checks, launch a separate fresh-context
+subagent as the acceptance verifier. Give it the governing Issue and repository
+location, not the implementing agent's conclusions. The verifier must:
 
-1. add the `awaiting-uat` label when it already exists; otherwise add an Issue
-   comment with the same status;
-2. give the user the real product path and a concise acceptance checklist;
-3. leave the Issue open during real-use acceptance;
-4. close the Issue after the user confirms acceptance;
-5. if UAT fails, record the observed result and environment on the same Issue,
-   keep it open, and start a new fix branch from current `main`.
+1. read the Issue acceptance items and applicable repository instructions;
+2. inspect the actual issue-specific diff;
+3. run directly relevant checks and real-environment paths, including browser,
+   real-model, or produced-artifact validation when the changed behavior depends
+   on them;
+4. avoid modifying product code;
+5. return `PASS`, `FAIL`, or `BLOCKED` with reproducible evidence mapped to
+   every acceptance item.
 
-The agent owns engineering correctness and merge evidence. The user owns
-real-use acceptance.
+`PASS` authorizes eligible merge and explicit Issue closure after the merged
+revision is confirmed. `FAIL` returns the evidence to implementation, keeps the
+Issue open, and requires another independent verification after repair.
+`BLOCKED` records the missing environment or dependency and keeps the Issue
+open. If merge, deployment, or environment state can change the observed
+result, rerun the affected acceptance path on `main` before closing.
+
+The parent agent owns delivery orchestration. The independent verifier owns the
+acceptance verdict. Human approval remains required only for the high-risk
+boundaries listed above or a repository-enforced human gate.

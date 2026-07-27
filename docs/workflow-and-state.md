@@ -13,19 +13,20 @@ Thinloop 只在复杂度真实出现时增加流程和产物。GitHub Issue 是�
 | 多个上游产品决定仍会改变结果 | 用 Discovery 一次解决一个关键决定 |
 | 体验或技术边界仍影响交付 | 按需调用 UIUX 或 Architecture，不设固定关卡 |
 | 实现完成 | Agent 验证、自审、提 PR 并在工程闸门通过后合并 `main` |
-| 合并完成 | Issue 保持 `awaiting-uat`，由用户只做真实使用验收 |
+| 工程验证完成 | 独立验收 Agent 按需执行真实环境验证，只在 `PASS` 后关闭 Issue |
 | 用户主动要求维护或沉淀 | 调用 Maintenance 或 Knowledge；普通开发不自动触发 |
 | 用户主动要求优化 Thinloop | 调用 Evolve；先诊断和候选，按候选 ID 批准后才试验 |
 
-默认不强制 TDD、角色系统、子代理或固定阶段。QuickDev 的实现请求包含任务内
-Issue、分支、提交、推送、PR 与合资格合并；高风险合并和生产部署仍需明确授权。
+默认不强制 TDD、角色系统、额外子代理或固定阶段；QuickDev 只固定使用一个独立
+验收 Agent。QuickDev 的实现请求包含任务内 Issue、分支、提交、推送、PR 与
+合资格合并；高风险合并和生产部署仍需明确授权。
 
 ## 工作闭环
 
 ```text
 模糊任务 → Discovery → 批准 Issue →（按需 UIUX / Architecture）→ QuickDev
 清晰任务 → 创建/确认 Issue ───────────────────────────────→ QuickDev
-QuickDev → 分支 → 开发与工程验收 → PR → main → awaiting-uat → 真人使用验收
+QuickDev → 分支 → 开发与工程验收 → 独立 Agent 验收 → PR → main → 关闭 Issue
 主动调用 → Maintenance / Knowledge
 主动复盘 → Evolve → 候选 ID 审批 → 可回滚试验 → 证据
 ```
