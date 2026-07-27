@@ -1,0 +1,109 @@
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import { spawnSync } from "node:child_process";
+import test from "node:test";
+import { fileURLToPath } from "node:url";
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const flowDirectory = path.join(root, "assets", "flows");
+const slugs = [
+  "discovery",
+  "uiux",
+  "architecture",
+  "quickdev",
+  "knowledge",
+  "maintenance",
+  "evolve",
+];
+
+function read(relativePath) {
+  return fs.readFileSync(path.join(root, relativePath), "utf8");
+}
+
+test("README flow diagrams are reproducible", () => {
+  const result = spawnSync(
+    process.execPath,
+    ["scripts/generate-readme-diagrams.mjs", "--check"],
+    { cwd: root, encoding: "utf8" },
+  );
+
+  assert.equal(result.status, 0, result.stderr);
+});
+
+test("README references the overview and all seven skill diagrams with alt text", () => {
+  const readme = read("README.md");
+  const expectedFiles = [
+    "thinloop-overview.svg",
+    ...slugs.map((slug) => `scd-${slug}.svg`),
+  ];
+
+  for (const fileName of expectedFiles) {
+    const reference = `./assets/flows/${fileName}`;
+    assert.match(readme, new RegExp(`<img src="${reference.replaceAll(".", "\\.")}" alt="[^"]{12,}"`));
+    assert.ok(fs.existsSync(path.join(flowDirectory, fileName)), reference);
+  }
+});
+
+test("diagram stage summaries remain traceable to authoritative skill workflows", () => {
+  const evidence = {
+    discovery: [
+      /Investigate before asking/,
+      /Establish the delivery slice/,
+      /Interview through the decision tree/,
+      /Review readiness and request approval/,
+      /Persist the approved contract and hand off/,
+    ],
+    uiux: [
+      /Start from product and repository truth/,
+      /Establish the experience slice/,
+      /Model behavior before polishing appearance/,
+      /Use visual artifacts when seeing changes the decision/,
+      /Review readiness and hand off/,
+    ],
+    architecture: [
+      /Start from product and repository truth/,
+      /Establish the design slice/,
+      /Model domain and system responsibilities/,
+      /Produce shared machine-readable contracts/,
+      /Route changes and hand off/,
+    ],
+    quickdev: [
+      /Start from repository truth/,
+      /Implement the smallest coherent change/,
+      /Verify engineering acceptance/,
+      /separate fresh-context subagent/,
+      /Deliver through the pull request/,
+    ],
+    knowledge: [
+      /Select the requested operation/,
+      /Resolve the stores/,
+      /Capture knowledge/,
+      /Retrieve knowledge/,
+      /Maintain knowledge/,
+    ],
+    maintenance: [
+      /Select the operation/,
+      /Start from repository truth/,
+      /Audit activated surfaces/,
+      /Produce evidence-backed findings/,
+      /Repair selected findings/,
+    ],
+    evolve: [
+      /Select the Mode/,
+      /Diagnose and Propose/,
+      /Assign a stable candidate ID/,
+      /explicitly approves its candidate ID/,
+      /Implement an Approved Candidate/,
+    ],
+  };
+
+  for (const [slug, patterns] of Object.entries(evidence)) {
+    const skill = read(`skills/scd-${slug}/SKILL.md`);
+    const diagram = read(`assets/flows/scd-${slug}.svg`);
+    for (const pattern of patterns) {
+      assert.match(skill, pattern, `scd-${slug}: ${pattern}`);
+    }
+    assert.match(diagram, new RegExp(`SCD ${slug.toUpperCase()}`));
+  }
+});
