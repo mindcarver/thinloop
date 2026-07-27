@@ -43,6 +43,15 @@ If implementation reveals that an acceptance item is impossible, contradictory,
 or would require a material product-contract change, do not quietly drop or
 rewrite it. Update the Issue and return that decision to discovery.
 
+The independent acceptance verifier must produce one aggregate result:
+
+- `PASS` only when every acceptance item has direct observed evidence;
+- `FAIL` when changed behavior violates any acceptance item;
+- `BLOCKED` when a required acceptance path cannot run.
+
+The verifier must not promote `UNVERIFIED` or partially verified behavior to
+`PASS`.
+
 ## Failures and baselines
 
 When a check fails:

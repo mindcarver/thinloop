@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <kbd>v0.7.0</kbd>
+  <kbd>v0.7.1</kbd>
   &nbsp;
   <kbd>ISSUE-DRIVEN</kbd>
   &nbsp;
@@ -53,7 +53,7 @@ QuickDev 会先判断任务是否足够清楚，而不是要求用户选择流�
 | 多个产品决定仍未明确 | 调用 Discovery 逐项澄清，批准后把结论写入 Issue |
 | UI 或系统边界会显著影响实现 | 按需组合 UIUX 或 Architecture |
 | 工程验证通过 | Agent 自审、提交、推送、提 PR，并在工程闸门通过后合并 |
-| 合并完成 | Issue 保持 `awaiting-uat`，用户只做真实使用验收 |
+| 工程验证完成 | 独立验收 Agent 按需执行真实环境验证，只在 `PASS` 后关闭 Issue |
 | 生产部署、认证支付、破坏性数据等高风险工作 | 在高风险动作前停下并请求明确批准 |
 
 GitHub Issue 是需求、任务和验收的唯一真值源；PR 是实现证据、工程审阅和回滚
@@ -125,13 +125,13 @@ GitHub Issue 是需求、任务和验收的唯一真值源；PR 是实现证据�
 ```text
 模糊任务 → Discovery → 批准 Issue →（按需 UIUX / Architecture）→ QuickDev
 清晰任务 → 创建/确认 Issue ───────────────────────────────→ QuickDev
-QuickDev → 分支 → 开发与工程验收 → PR → main → awaiting-uat → 真人使用验收
+QuickDev → 分支 → 开发与工程验收 → 独立 Agent 验收 → PR → main → 关闭 Issue
 主动调用 → Maintenance / Knowledge
 主动复盘 → Evolve → 候选 ID 审批 → 可回滚试验 → 证据
 ```
 
-清晰任务直接开发；不清晰的需求先讨论。默认不强制 TDD、角色系统、子代理、
-固定阶段或本地 Spec。完整的路由、状态与契约说明见
+清晰任务直接开发；不清晰的需求先讨论。默认不强制 TDD、角色系统、额外子代理、
+固定阶段或本地 Spec；QuickDev 只固定使用一个独立验收 Agent。完整的路由、状态与契约说明见
 [工作流与项目状态](./docs/workflow-and-state.md)。
 
 <a id="install"></a>

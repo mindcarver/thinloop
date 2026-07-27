@@ -68,19 +68,32 @@ test("quickdev always isolates meaningful work on a branch and uses worktrees co
   assert.match(contract, /unrelated changes/i);
 });
 
-test("quickdev opens and merges its PR while leaving real-use UAT to the user", () => {
+test("quickdev delegates acceptance to an independent verifier before closing the Issue", () => {
   const skill = read("skills/scd-quickdev/SKILL.md");
   const contract = read(
     "skills/scd-quickdev/references/issue-delivery-contract.md",
   );
+  const guidance = [
+    read("AGENTS.md"),
+    read("README.md"),
+    read("docs/workflow-and-state.md"),
+  ].join("\n");
 
   assert.match(skill, /create the pull request/i);
   assert.match(skill, /merge it into `main`/i);
   assert.match(contract, /`Refs #<issue>`/);
   assert.match(contract, /Do not use `Closes #<issue>`/);
-  assert.match(contract, /awaiting-uat/);
-  assert.match(contract, /real-use acceptance/i);
-  assert.match(contract, /close the Issue/i);
+  assert.match(skill, /separate fresh-context subagent/i);
+  assert.match(skill, /must not rely only on the implementing\s+agent's summary/i);
+  assert.match(contract, /subagent as the acceptance verifier/i);
+  assert.match(contract, /not the implementing agent's conclusions/i);
+  assert.match(contract, /browser,\s+real-model, or produced-artifact validation/i);
+  assert.match(contract, /`PASS`, `FAIL`, or `BLOCKED`/);
+  assert.match(contract, /`PASS` authorizes eligible merge and explicit Issue closure/i);
+  assert.match(contract, /avoid modifying product code/i);
+  assert.match(guidance, /独立验收 Agent/);
+  assert.doesNotMatch(`${skill}\n${contract}\n${guidance}`, /awaiting-uat/);
+  assert.doesNotMatch(contract, /The user owns\s+real-use acceptance/i);
 });
 
 test("quickdev keeps high-risk merge and production deployment behind human approval", () => {

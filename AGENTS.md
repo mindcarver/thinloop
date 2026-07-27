@@ -17,8 +17,9 @@ delivery sequence:
 6. do not refresh local agents for repository-only changes such as `README.md`,
    `docs/**`, tests, evaluations, CI configuration, or assets that installed
    Skills and plugins do not load;
-7. leave the Issue open as `awaiting-uat` until the user completes real-use
-   acceptance.
+7. delegate acceptance to a separate fresh-context verification subagent that
+   returns `PASS`, `FAIL`, or `BLOCKED` with direct evidence; close the Issue
+   only after `PASS`.
 
 This standing instruction authorizes ordinary task-local GitHub writes,
 task-branch cleanup, and local Thinloop reinstall work. It does not authorize
