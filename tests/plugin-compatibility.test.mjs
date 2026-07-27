@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
+import { spawnSync } from "node:child_process";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
@@ -22,10 +23,12 @@ function readJson(relativePath) {
   return JSON.parse(read(relativePath));
 }
 
-test("Codex and Claude plugin manifests share one version and skill source", () => {
+test("Codex, Claude, and ZCode plugin manifests share one version and skill source", () => {
   const codex = readJson(".codex-plugin/plugin.json");
   const claude = readJson(".claude-plugin/plugin.json");
-  const marketplace = readJson(".claude-plugin/marketplace.json");
+  const zcode = readJson(".zcode-plugin/plugin.json");
+  const claudeMarketplace = readJson(".claude-plugin/marketplace.json");
+  const zcodeMarketplace = readJson("marketplace.json");
   const skillNames = fs
     .readdirSync(path.join(root, "skills"), { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
@@ -34,13 +37,18 @@ test("Codex and Claude plugin manifests share one version and skill source", () 
 
   assert.equal(codex.name, "thinloop");
   assert.equal(claude.name, codex.name);
+  assert.equal(zcode.name, codex.name);
   assert.equal(claude.version, codex.version);
+  assert.equal(zcode.version, codex.version);
   assert.equal(codex.skills, "./skills/");
+  assert.equal(zcode.skills, codex.skills);
   assert.deepEqual(skillNames, expectedSkills);
-  assert.equal(marketplace.plugins.length, 1);
-  assert.equal(marketplace.plugins[0].name, claude.name);
-  assert.equal(marketplace.plugins[0].version, claude.version);
-  assert.equal(marketplace.plugins[0].source, ".");
+  for (const marketplace of [claudeMarketplace, zcodeMarketplace]) {
+    assert.equal(marketplace.plugins.length, 1);
+    assert.equal(marketplace.plugins[0].name, codex.name);
+    assert.equal(marketplace.plugins[0].version, codex.version);
+    assert.equal(marketplace.plugins[0].source, ".");
+  }
 });
 
 test("Claude plugin uses its native hook path and decision protocol", () => {
@@ -56,6 +64,50 @@ test("Claude plugin uses its native hook path and decision protocol", () => {
   assert.ok(commands.every((command) => command.includes("${CLAUDE_PLUGIN_ROOT}")));
   assert.ok(commands.every((command) => !command.includes("${PLUGIN_ROOT}")));
 });
+
+test("ZCode plugin maps compaction and Stop to supported hook protocols", () => {
+  const zcode = readJson(".zcode-plugin/plugin.json");
+  const zcodeHooks = readJson("hooks/hooks.zcode.json");
+  const sharedHooks = readJson("hooks/hooks.json");
+  const sessionStart = zcodeHooks.hooks.SessionStart[0];
+  const sessionHook = sessionStart.hooks[0];
+  const stopHook = sharedHooks.hooks.Stop[0].hooks[0];
+
+  assert.equal(zcode.hooks, "./hooks/hooks.zcode.json");
+  assert.equal(sessionStart.matcher, "compact");
+  assert.equal(sessionHook.type, "process");
+  assert.deepEqual(sessionHook.args, [
+    "${ZCODE_PLUGIN_ROOT}/hooks/check-state.mjs",
+  ]);
+  assert.match(stopHook.command, /\$CLAUDE_PLUGIN_ROOT/);
+  assert.match(stopHook.command, /\$PLUGIN_ROOT/);
+  assert.match(stopHook.commandWindows, /\$env:CLAUDE_PLUGIN_ROOT/);
+  assert.match(stopHook.commandWindows, /\$env:PLUGIN_ROOT/);
+});
+
+test(
+  "shared POSIX hook command resolves Codex and ZCode plugin roots",
+  { skip: process.platform === "win32" },
+  () => {
+    const stopHook = readJson("hooks/hooks.json").hooks.Stop[0].hooks[0];
+
+    for (const env of [
+      { PLUGIN_ROOT: root, CLAUDE_PLUGIN_ROOT: "" },
+      { PLUGIN_ROOT: "", CLAUDE_PLUGIN_ROOT: root },
+    ]) {
+      const result = spawnSync(stopHook.command, {
+        cwd: root,
+        encoding: "utf8",
+        env: { ...process.env, ...env },
+        input: JSON.stringify({ cwd: root, hook_event_name: "Stop" }),
+        shell: true,
+      });
+
+      assert.equal(result.status, 0, result.stderr);
+      assert.equal(result.stdout, "");
+    }
+  },
+);
 
 test("shared skills recognize both repository instruction conventions", () => {
   const devLoop = read("skills/scd-dev-loop/SKILL.md");

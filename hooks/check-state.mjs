@@ -31,7 +31,20 @@ function block(eventName, managedBy, issues) {
     `${managedBy} paused ${eventName} because .scd/tasks/current.md is not resumable:\n` +
     `${issueList}\nUpdate the note, then retry the lifecycle event.`;
 
-  if (process.env.CLAUDE_PLUGIN_ROOT) {
+  if (
+    process.env.ZCODE_PLUGIN_ROOT &&
+    eventName === "SessionStart"
+  ) {
+    emit({
+      hookSpecificOutput: {
+        hookEventName: eventName,
+        additionalContext: message,
+      },
+    });
+    return;
+  }
+
+  if (process.env.CLAUDE_PLUGIN_ROOT || process.env.ZCODE_PLUGIN_ROOT) {
     emit({
       decision: "block",
       reason: message,

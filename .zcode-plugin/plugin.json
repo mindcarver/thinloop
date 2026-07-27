@@ -1,0 +1,31 @@
+{
+  "name": "thinloop",
+  "version": "0.6.0",
+  "description": "Simplify complex development with deep discovery, risk-adaptive Web experience and architecture design, reliable delivery, evidence-backed maintenance, and concise experiential knowledge.",
+  "author": {
+    "name": "mindcarver"
+  },
+  "homepage": "https://github.com/mindcarver/thinloop",
+  "repository": "https://github.com/mindcarver/thinloop",
+  "license": "MIT",
+  "keywords": [
+    "coding-agent",
+    "product-discovery",
+    "user-experience",
+    "ui-design",
+    "software-architecture",
+    "api-design",
+    "domain-modeling",
+    "specification",
+    "verification",
+    "continuity",
+    "knowledge-management",
+    "technical-debt",
+    "repository-maintenance",
+    "documentation-drift",
+    "development-experience",
+    "development-workflow"
+  ],
+  "skills": "./skills/",
+  "hooks": "./hooks/hooks.zcode.json"
+}

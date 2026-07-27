@@ -83,6 +83,7 @@ function runHook(cwd, input = {}, env = {}) {
     env: {
       ...process.env,
       CLAUDE_PLUGIN_ROOT: "",
+      ZCODE_PLUGIN_ROOT: "",
       ...env,
     },
   });
@@ -186,6 +187,46 @@ test("uses Claude Code decision output when loaded as a Claude plugin", () => {
   }
 });
 
+test("uses ZCode decision output for Stop", () => {
+  const cwd = makeWorkspace();
+  try {
+    writeState(cwd, validState({ status: "complete" }));
+    const output = parseOutput(
+      runHook(cwd, {}, { ZCODE_PLUGIN_ROOT: path.resolve(testDir, "..") }),
+    );
+    assert.equal(output.decision, "block");
+    assert.match(output.reason, /status must be active or blocked/);
+    assert.equal("continue" in output, false);
+  } finally {
+    fs.rmSync(cwd, { recursive: true, force: true });
+  }
+});
+
+test("restores ZCode continuity context after compaction", () => {
+  const cwd = makeWorkspace();
+  try {
+    writeState(cwd, validState({ status: "complete" }));
+    const output = parseOutput(
+      runHook(
+        cwd,
+        { hook_event_name: "SessionStart", source: "compact" },
+        { ZCODE_PLUGIN_ROOT: path.resolve(testDir, "..") },
+      ),
+    );
+    assert.equal(
+      output.hookSpecificOutput.hookEventName,
+      "SessionStart",
+    );
+    assert.match(
+      output.hookSpecificOutput.additionalContext,
+      /status must be active or blocked/,
+    );
+    assert.equal("decision" in output, false);
+  } finally {
+    fs.rmSync(cwd, { recursive: true, force: true });
+  }
+});
+
 test("blocks unresolved placeholders", () => {
   const cwd = makeWorkspace();
   try {
@@ -253,6 +294,7 @@ test("fails open with a warning on invalid hook input", () => {
       env: {
         ...process.env,
         CLAUDE_PLUGIN_ROOT: "",
+        ZCODE_PLUGIN_ROOT: "",
       },
     });
     const output = parseOutput(result);

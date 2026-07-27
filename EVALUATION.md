@@ -1,5 +1,31 @@
 # Thinloop 评测
 
+## ZCode 兼容性边界
+
+ZCode 优先读取 `.zcode-plugin/plugin.json`，并从插件根目录加载 `skills/` 与
+Hook。Thinloop 还在仓库根目录提供 `marketplace.json`，可通过 ZCode 的自定义
+Marketplace 安装本地路径或 GitHub 仓库。
+
+2026-07-27 在 ZCode App 3.5.2、CLI 0.15.2 上，通过临时工作区配置把当前仓库
+作为 inline 插件加载。`zcode plugins list --json` 报告原生清单版本 0.6.0、
+6 个 Skill、1 个 Skill 根目录，以及两个可运行 Hook：
+
+- `Stop`：复用 `hooks/check-state.mjs`，以
+  `{ "decision": "block", "reason": "..." }` 请求 Agent 补齐不可恢复状态；
+- `SessionStart(compact)`：压缩后以 `additionalContext` 恢复缺失状态信息。
+
+同一隔离配置下运行 `zcode skills list --json`，六个 `scd-*` Skill 全部从
+Thinloop 插件源发现。`tests/check-state.test.mjs` 覆盖 ZCode 的 Stop 阻断与
+压缩后上下文协议；`tests/plugin-compatibility.test.mjs` 覆盖三端版本一致、
+Marketplace、Hook 映射和共享命令路径。
+
+当前已确认的限制：Codex 仍依赖标准 `hooks/hooks.json` 中的 `PreCompact`；
+ZCode 不支持该事件，因此加载共享文件时产生
+`plugin_hook_unsupported_event` warning，并跳过这一项。实机输出同时确认
+ZCode 的 `Stop` 与 `SessionStart` 仍为 runnable，六个 Skill 正常发现。这里的
+通过只证明结构、发现和协议适配，不证明自动 Skill 召回率或复杂任务中的端到端
+行为。
+
 ## OpenCode 兼容性边界
 
 OpenCode 原生从 `~/.config/opencode/skills/<name>/SKILL.md` 发现全局 Skill，

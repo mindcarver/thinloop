@@ -1,0 +1,12 @@
+{
+  "name": "thinloop",
+  "description": "Thinloop skills and continuity hooks for lightweight, evidence-backed development.",
+  "plugins": [
+    {
+      "name": "thinloop",
+      "source": ".",
+      "description": "Discovery, Web UIUX, architecture, delivery, maintenance, and knowledge skills with continuity checks.",
+      "version": "0.6.0"
+    }
+  ]
+}
