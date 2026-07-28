@@ -74,6 +74,25 @@ Do not demand market proof, force competitor research, or repeatedly ask "why." 
 
 The model owns investigation, dependency ordering, recommendations, and contradiction detection. The user owns product trade-offs.
 
+## When a decision comes back unanswered
+
+A skipped or non-substantive answer to a structured interview question is not a
+rejection and is not approval. Treat the strongest recommendation as a
+**provisional assumption** rather than re-asking the same question or halting
+the interview:
+
+1. name the assumption explicitly, with the specific risk if it proves wrong;
+2. continue the dependent work it unblocks, still one decision per turn;
+3. never silently promote the assumption into a confirmed user decision; and
+4. let the final contract approval (see `SKILL.md` → Review readiness) confirm
+   or correct every accumulated provisional assumption in one pass.
+
+This preserves the skill's one-decision-per-turn shape and keeps the interview
+moving, rather than degrading into a long unstructured recommendation turn. If
+two consecutive decisions come back unanswered, surface that as a blocker and
+ask the user directly whether to proceed on assumptions or pause — do not stack
+a third silent assumption.
+
 ## Converge periodically
 
 After three to five consequential decisions, summarize:

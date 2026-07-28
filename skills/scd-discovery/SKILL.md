@@ -63,6 +63,13 @@ After three to five consequential decisions, give a short convergence summary of
 
 Read `references/interviewing.md` when full discovery begins.
 
+A skipped or non-substantive answer to an interview question is not a
+rejection. Treat the strongest recommendation as a provisional assumption, name
+it, and continue dependent work; confirm accumulated assumptions at the final
+contract approval. See `references/interviewing.md` → When a decision comes
+back unanswered. This mirrors the approval-stage silence rule (below) so the
+interview stage is not asymmetrically unguided.
+
 ## Preserve continuity only when needed
 
 Keep short discovery in conversation. Do not create a file merely because the skill triggered.
