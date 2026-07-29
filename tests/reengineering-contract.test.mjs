@@ -93,3 +93,81 @@ test("reengineering preserves independent acceptance and high-risk gates", () =>
   assert.match(execution, /reconstruct execution state/i);
   assert.doesNotMatch(`${skill}\n${execution}`, /\.scd\/reengineering/);
 });
+
+test("reengineering fails closed across explicit authority states", () => {
+  const skill = read("skills/scd-reengineering/SKILL.md");
+  const execution = read(
+    "skills/scd-reengineering/references/execution-contract.md",
+  );
+
+  for (const state of [
+    "SOURCE_BASELINED",
+    "DIRECTION_APPROVED",
+    "PROJECT_MATERIALIZED",
+    "GRAPH_APPROVED",
+    "EXECUTING",
+    "INTEGRATION_ACCEPTED",
+  ]) {
+    assert.match(skill, new RegExp(`\\\`${state}\\\``));
+  }
+
+  assert.match(skill, /Do not skip or infer a state/i);
+  assert.match(skill, /Before the first implementation edit or commit/i);
+  assert.match(skill, /report `BLOCKED` at the\s+current state/i);
+  assert.match(skill, /validate-execution-receipt\.mjs/i);
+  assert.match(execution, /Any validation error is fail-closed/i);
+});
+
+test("reengineering rejects local substitutes for tracker and acceptance evidence", () => {
+  const skill = read("skills/scd-reengineering/SKILL.md");
+  const execution = read(
+    "skills/scd-reengineering/references/execution-contract.md",
+  );
+  const combined = `${skill}\n${execution}`;
+
+  assert.match(combined, /`TaskCreate`, `TodoWrite`/i);
+  assert.match(
+    combined,
+    /session-local tasks, todos, or checklists are not GitHub Issues/i,
+  );
+  assert.match(
+    combined,
+    /direct push to the default branch is not a QuickDev delivery lane/i,
+  );
+  assert.match(
+    combined,
+    /local engineering checks are not fresh-context acceptance/i,
+  );
+  assert.match(
+    skill,
+    /do\s+not reproduce or approximate it with local task\s+tools/i,
+  );
+  assert.match(
+    skill,
+    /Never commit or push implementation directly to the default\s+branch/i,
+  );
+});
+
+test("reengineering keeps staged and unmanaged work honest", () => {
+  const contract = read(
+    "skills/scd-reengineering/references/reengineering-contract.md",
+  );
+
+  assert.match(
+    contract,
+    /Every deferred `keep` or `change` capability remains/i,
+  );
+  assert.match(
+    contract,
+    /do not claim complete rewrite,\s+same product contract, full parity/i,
+  );
+  assert.match(contract, /Recover an unmanaged prototype/i);
+  assert.match(
+    contract,
+    /classify the existing code as an unmanaged candidate, not DONE/i,
+  );
+  assert.match(
+    contract,
+    /does not retroactively claim that the\s+original unmanaged execution complied/i,
+  );
+});
