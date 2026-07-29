@@ -1,6 +1,6 @@
 ---
 name: scd-quickdev
-description: "Drive an issue from request to verified merged code whenever a coding agent is asked to change a repository: fix a bug, add a feature, refactor code, change configuration, perform a migration, or resume unfinished implementation work. Route underdefined product work through scd-discovery, use one GitHub Issue as the requirement and acceptance source of truth, diagnose bugs before fixing them, isolate meaningful work, verify observed behavior through an independent acceptance subagent, create a pull request, merge eligible changes into main, and close the Issue only after acceptance passes. Do not trigger for advice-only questions, explanations, or read-only reviews unless the user also asks for changes."
+description: "Drive one delivery Issue from request to verified merged code whenever a coding agent is asked to change a repository: fix a bug, add a feature, refactor code, change configuration, perform a migration, or resume unfinished implementation work. Route underdefined product work through scd-discovery and multi-delivery projects through scd-project; use one GitHub Delivery Issue as the requirement and acceptance source of truth, diagnose bugs before fixing them, isolate meaningful work, verify observed behavior through an independent acceptance subagent, create a pull request, merge eligible changes into main, and close the Issue only after acceptance passes. Do not trigger for advice-only questions, explanations, read-only reviews, Initiative Issues, PLANNED placeholders, or BLOCKED project nodes."
 ---
 
 # SCD QuickDev
@@ -33,6 +33,9 @@ Maintain four contracts:
    `.scd/architecture.md` or `.scd/designs/<feature>.md`, require `status:
    ready`, and parse the canonical machine-readable contracts with the same
    format-aware evidence used by their producers.
+9. When the request follows Project, read the Initiative and selected Delivery
+   Issue, confirm the node is an approved `READY` Issue in the current graph
+   revision, and use only that Delivery Issue as the implementation contract.
 
 Treat a ready UX contract as the experience handoff, not as product approval or
 frontend architecture. If it conflicts with the Issue, retained visuals, or an
@@ -53,9 +56,14 @@ repository, then choose internally:
   confirm the GitHub Issue and proceed without extra product questions.
 - **Clarify:** one answer can make the task executable. Ask that one material
   question, update the Issue, and proceed.
+- **Project:** the request spans several independently verifiable deliveries,
+  each needing its own Issue and delivery lane, or has hard cross-Issue
+  dependencies. Use `scd-project`; do not treat the Initiative or a project
+  checklist as one QuickDev task. Several pull requests caused only by
+  implementation size do not trigger Project.
 - **Discovery:** several dependent product decisions or a high-cost product
   boundary remain open. Use `scd-discovery`, obtain explicit approval, and
-  continue only from the resulting GitHub Issue.
+  continue from its resulting Delivery Issue or `scd-project` handoff.
 
 Do not announce these path names unless the user asks. A new product,
 application, plugin, service, or system normally takes Discovery; one isolated
@@ -72,6 +80,11 @@ delivery boundary wins. Do not expand a local trial or selected repair into the
 standalone QuickDev Issue-to-merge flow. In particular, an `scd-evolve` trial
 does not authorize commit, push, pull request, or merge because Evolve retains
 those actions behind separate user authorization.
+
+`scd-project` does not authorize implementation of every project node. Accept
+only one explicitly selected, approved `READY` Delivery Issue. Refuse an
+Initiative, PLANNED placeholder, or BLOCKED node and return the exact project
+gap instead of creating a branch.
 
 Read `references/scope-contract.md` when ambiguity or scope expansion is
 plausible. Read `references/issue-delivery-contract.md` before creating or

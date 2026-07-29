@@ -1,7 +1,10 @@
 # Discovery artifacts
 
-Create the minimum artifact that preserves continuing value. For repository
-delivery, one GitHub Issue is the sole requirement and acceptance source of truth.
+Create the minimum artifact that preserves continuing value. For one repository
+delivery, one GitHub Issue is the sole requirement and acceptance source of
+truth. For an approved multi-delivery project, `scd-project` creates one
+Initiative plus separate Delivery Issues; do not force the project into one
+Issue.
 
 ## Temporary discovery state
 
@@ -35,8 +38,8 @@ in the same worktree.
 
 ## GitHub Issue
 
-After the combined contract is ready, present it to the user for explicit
-approval. Then create or update one GitHub Issue:
+After a single-delivery combined contract is ready, present it to the user for
+explicit approval. Then create or update one GitHub Issue:
 
 ```markdown
 ## Outcome
@@ -87,6 +90,11 @@ Issue.
 Discovery owns the approved product contract. `scd-quickdev` may refine
 implementation tasks and evidence, but must return product-visible changes to
 the user and update the Issue before proceeding.
+
+When the approved contract spans multiple independently verifiable deliveries,
+do not use this single-Issue template for the entire project. Hand the shared
+project core to `scd-project`, whose Initiative owns project topology while
+each Delivery Issue owns one slice's requirements and acceptance.
 
 If the repository has no GitHub remote, authenticated write path, or
 repository-authoritative equivalent tracker, stop after the approved summary

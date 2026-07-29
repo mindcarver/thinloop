@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="280" viewBox="0 0 1200 280" role="img" aria-labelledby="title desc">
-  <title id="title">SCD 仓库维护</title>
-  <desc id="desc">仓库信号 → 有边界的修复</desc>
+  <title id="title">SCD 项目拆解</title>
+  <desc id="desc">多交付目标 → 可执行任务图</desc>
   <defs>
     <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
       <path d="M 24 0 L 0 0 0 24" fill="none" stroke="#17313b" stroke-width="0.55" opacity="0.1"/>
@@ -20,9 +20,9 @@
   <rect x="12" y="12" width="1176" height="256" rx="12" fill="none" stroke="#17313b" stroke-width="2"/>
   <path d="M 18 44 H 30 M 24 38 V 50 M 1170 44 H 1182 M 1176 38 V 50" stroke="#c55c2f" stroke-width="2"/>
   <rect x="34" y="30" width="82" height="30" rx="15" fill="#17313b"/>
-  <text x="75" y="51" fill="#f8edcf" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="14" font-weight="700">流程 07</text>
-  <text x="132" y="49" fill="#17313b" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="25" font-weight="800" letter-spacing="1.2">SCD 仓库维护</text>
-  <text x="1166" y="48" fill="#4f7773" text-anchor="end" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="13" font-weight="700" letter-spacing="1.4">仓库信号 → 有边界的修复</text>
+  <text x="75" y="51" fill="#f8edcf" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="14" font-weight="700">流程 04</text>
+  <text x="132" y="49" fill="#17313b" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="25" font-weight="800" letter-spacing="1.2">SCD 项目拆解</text>
+  <text x="1166" y="48" fill="#4f7773" text-anchor="end" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="13" font-weight="700" letter-spacing="1.4">多交付目标 → 可执行任务图</text>
   <line x1="34" y1="76" x2="1166" y2="76" stroke="#17313b" stroke-width="1.5" opacity="0.55"/>
   <path d="M 236 167 H 273" fill="none" stroke="#c55c2f" stroke-width="3" marker-end="url(#arrow)"/>
     <g>
@@ -30,8 +30,8 @@
       <circle cx="78" cy="148" r="13" fill="#f8edcf" stroke="#c55c2f" stroke-width="2"/>
       <text x="78" y="153" fill="#17313b" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="11" font-weight="800">01</text>
       <text x="140" y="168" fill="#f8edcf" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="15" font-weight="800" letter-spacing="0.8">
-        <tspan x="140" dy="0">选择</tspan>
-        <tspan x="140" dy="20">范围</tspan>
+        <tspan x="140" dy="0">项目</tspan>
+        <tspan x="140" dy="20">核心</tspan>
       </text>
     </g>
 <path d="M 465 167 H 502" fill="none" stroke="#c55c2f" stroke-width="3" marker-end="url(#arrow)"/>
@@ -40,8 +40,8 @@
       <circle cx="307" cy="148" r="13" fill="#f8edcf" stroke="#c55c2f" stroke-width="2"/>
       <text x="307" y="153" fill="#17313b" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="11" font-weight="800">02</text>
       <text x="369" y="168" fill="#f8edcf" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="15" font-weight="800" letter-spacing="0.8">
-        <tspan x="369" dy="0">收集</tspan>
-        <tspan x="369" dy="20">信号</tspan>
+        <tspan x="369" dy="0">交付</tspan>
+        <tspan x="369" dy="20">切片</tspan>
       </text>
     </g>
 <path d="M 694 167 H 731" fill="none" stroke="#c55c2f" stroke-width="3" marker-end="url(#arrow)"/>
@@ -50,8 +50,8 @@
       <circle cx="536" cy="148" r="13" fill="#f8edcf" stroke="#c55c2f" stroke-width="2"/>
       <text x="536" y="153" fill="#17313b" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="11" font-weight="800">03</text>
       <text x="598" y="168" fill="#f8edcf" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="15" font-weight="800" letter-spacing="0.8">
-        <tspan x="598" dy="0">核实</tspan>
-        <tspan x="598" dy="20">问题</tspan>
+        <tspan x="598" dy="0">依赖</tspan>
+        <tspan x="598" dy="20">图</tspan>
       </text>
     </g>
 <path d="M 923 167 H 960" fill="none" stroke="#c55c2f" stroke-width="3" marker-end="url(#arrow)"/>
@@ -60,8 +60,8 @@
       <circle cx="765" cy="148" r="13" fill="#f8edcf" stroke="#c55c2f" stroke-width="2"/>
       <text x="765" y="153" fill="#17313b" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="11" font-weight="800">04</text>
       <text x="827" y="168" fill="#f8edcf" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="15" font-weight="800" letter-spacing="0.8">
-        <tspan x="827" dy="0">有界</tspan>
-        <tspan x="827" dy="20">修复</tspan>
+        <tspan x="827" dy="0">就绪</tspan>
+        <tspan x="827" dy="20">校验</tspan>
       </text>
     </g>
 
@@ -70,8 +70,8 @@
       <circle cx="994" cy="148" r="13" fill="#f8edcf" stroke="#c55c2f" stroke-width="2"/>
       <text x="994" y="153" fill="#17313b" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="11" font-weight="800">05</text>
       <text x="1056" y="168" fill="#f8edcf" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="15" font-weight="800" letter-spacing="0.8">
-        <tspan x="1056" dy="0">复核</tspan>
-        <tspan x="1056" dy="20">证据</tspan>
+        <tspan x="1056" dy="0">任务单</tspan>
+        <tspan x="1056" dy="20">集合</tspan>
       </text>
     </g>
   <path d="M 54 236 H 1146" stroke="#6f7453" stroke-width="2" stroke-dasharray="4 8" opacity="0.7"/>

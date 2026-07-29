@@ -12,6 +12,7 @@ const expectedSkills = [
   "scd-evolve",
   "scd-knowledge",
   "scd-maintenance",
+  "scd-project",
   "scd-quickdev",
   "scd-uiux",
 ];
@@ -39,6 +40,7 @@ test("Codex, Claude, WorkBuddy, and ZCode manifests share one version and skill 
     .sort();
 
   assert.equal(codex.name, "thinloop");
+  assert.equal(codex.version, "0.8.0");
   assert.equal(claude.name, codex.name);
   assert.equal(workbuddy.name, codex.name);
   assert.equal(zcode.name, codex.name);
@@ -49,6 +51,12 @@ test("Codex, Claude, WorkBuddy, and ZCode manifests share one version and skill 
   assert.deepEqual(workbuddy.skills, [codex.skills]);
   assert.equal(zcode.skills, codex.skills);
   assert.deepEqual(skillNames, expectedSkills);
+  for (const manifest of [codex, claude, workbuddy, zcode]) {
+    assert.match(manifest.description, /multi-Issue project decomposition/i);
+    assert.match(manifest.description, /dependency DAG/i);
+  }
+  assert.match(codex.interface.defaultPrompt, /SCD Project/);
+  assert.match(codex.interface.defaultPrompt, /does not run an implementation loop/);
   for (const marketplace of [
     claudeMarketplace,
     workbuddyMarketplace,

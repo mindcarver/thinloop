@@ -6,6 +6,16 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const skillRoot = path.join(root, "skills");
+const expectedSkills = [
+  "scd-architecture",
+  "scd-discovery",
+  "scd-evolve",
+  "scd-knowledge",
+  "scd-maintenance",
+  "scd-project",
+  "scd-quickdev",
+  "scd-uiux",
+];
 const allowedFields = new Set([
   "name",
   "description",
@@ -39,7 +49,7 @@ test("all shared skills satisfy OpenCode's portable Agent Skill contract", () =>
     .map((entry) => entry.name)
     .sort();
 
-  assert.equal(skillNames.length, 7);
+  assert.deepEqual(skillNames, expectedSkills);
   for (const skillName of skillNames) {
     const skillPath = path.join(skillRoot, skillName, "SKILL.md");
     const { fields, values } = parseFrontmatter(skillPath);

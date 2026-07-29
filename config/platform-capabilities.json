@@ -16,7 +16,7 @@
           "environment": "CODEX_HOME",
           "suffix": "skills"
         },
-        "summary": "把七个 Skill 链接到 `~/.codex/skills`",
+        "summary": "把八个 Skill 链接到 `~/.codex/skills`",
         "takesEffect": "新任务"
       },
       "capabilities": {
@@ -24,7 +24,7 @@
       },
       "verification": {
         "mode": "skill-links",
-        "summary": "七个链接都能读取 `SKILL.md`；新任务可发现 `$scd-quickdev`"
+        "summary": "八个链接都能读取 `SKILL.md`；新任务可发现 `$scd-project` 与 `$scd-quickdev`"
       }
     },
     {
@@ -37,7 +37,7 @@
           "environment": "XDG_CONFIG_HOME",
           "suffix": "opencode/skills"
         },
-        "summary": "把七个 Skill 链接到 `~/.config/opencode/skills`",
+        "summary": "把八个 Skill 链接到 `~/.config/opencode/skills`",
         "takesEffect": "重启 OpenCode"
       },
       "capabilities": {
@@ -45,7 +45,7 @@
       },
       "verification": {
         "mode": "skill-links",
-        "summary": "七个 Skill 链接均指向当前源码；运行时发现需手动核验",
+        "summary": "八个 Skill 链接均指向当前源码；运行时需确认 `scd-project` 与其他 Skill 均被发现",
         "manualRuntime": {
           "command": [
             "opencode",
@@ -89,7 +89,7 @@
           "--json"
         ],
         "pluginId": "thinloop@thinloop",
-        "summary": "`claude plugin list --json` 提供版本、enabled 与安装路径；检查器从该路径核对七个 Skill 和两个 Hook",
+        "summary": "`claude plugin list --json` 提供版本、enabled 与安装路径；检查器从该路径核对八个 Skill 和两个 Hook，包括 `scd-project`",
         "manualFallback": "Claude Code 插件页显示 thinloop 已启用"
       }
     },
@@ -119,7 +119,7 @@
       "verification": {
         "mode": "manual",
         "pluginId": "thinloop@thinloop",
-        "summary": "插件页显示当前仓库版本、enabled、七个 Skill 和两个 Hook",
+        "summary": "插件页显示当前仓库版本、enabled、八个 Skill 和两个 Hook，包括 `scd-project`",
         "manualFallback": "`codebuddy plugin list --json` 会写客户端日志；必须在 WorkBuddy 插件页核验"
       }
     },
@@ -149,7 +149,7 @@
       },
       "verification": {
         "mode": "manual",
-        "summary": "Settings → Plugins 显示当前仓库版本、7 Skills、2 Hooks；Skills 中存在 `scd-quickdev`",
+        "summary": "Settings → Plugins 显示当前仓库版本、8 Skills、2 Hooks；Skills 中存在 `scd-project` 与 `scd-quickdev`",
         "manualFallback": "ZCode 当前没有可依赖的 CLI；必须在 Settings → Plugins 中核验"
       }
     }

@@ -70,8 +70,21 @@ const skillFlows = [
     ],
   },
   {
-    slug: "quickdev",
+    slug: "project",
     index: "04",
+    title: "SCD 项目拆解",
+    subtitle: "多交付目标 → 可执行任务图",
+    stages: [
+      ["项目", "核心"],
+      ["交付", "切片"],
+      ["依赖", "图"],
+      ["就绪", "校验"],
+      ["任务单", "集合"],
+    ],
+  },
+  {
+    slug: "quickdev",
+    index: "05",
     title: "SCD 快速开发",
     subtitle: "任务单 → 验证并合并的代码",
     stages: [
@@ -84,7 +97,7 @@ const skillFlows = [
   },
   {
     slug: "knowledge",
-    index: "05",
+    index: "06",
     title: "SCD 知识沉淀",
     subtitle: "已证实经验 → 可用知识",
     stages: [
@@ -97,7 +110,7 @@ const skillFlows = [
   },
   {
     slug: "maintenance",
-    index: "06",
+    index: "07",
     title: "SCD 仓库维护",
     subtitle: "仓库信号 → 有边界的修复",
     stages: [
@@ -110,7 +123,7 @@ const skillFlows = [
   },
   {
     slug: "evolve",
-    index: "07",
+    index: "08",
     title: "SCD 技能演进",
     subtitle: "已观察失败 → 可回滚试验",
     stages: [
@@ -217,14 +230,15 @@ function overviewNode({ x, y, width, label, accent = false }) {
 function renderOverview() {
   const mainY = 125;
   const nodes = [
-    { x: 38, width: 138, label: ["请求", "到达"] },
-    { x: 225, width: 148, label: ["按需", "澄清"] },
-    { x: 422, width: 158, label: ["按需体验", "或架构设计"] },
-    { x: 629, width: 148, label: ["QUICKDEV", "交付"] },
-    { x: 826, width: 154, label: ["独立", "验收"] },
+    { x: 28, width: 116, label: ["请求", "到达"] },
+    { x: 178, width: 126, label: ["按需", "澄清"] },
+    { x: 338, width: 146, label: ["按需体验", "或架构设计"] },
+    { x: 518, width: 126, label: ["按需项目", "拆解"] },
+    { x: 678, width: 126, label: ["QUICKDEV", "交付"] },
+    { x: 838, width: 126, label: ["独立", "验收"] },
     {
-      x: 1029,
-      width: 133,
+      x: 998,
+      width: 164,
       label: ["合并主分支", "关闭任务单"],
       accent: true,
     },
@@ -245,7 +259,7 @@ function renderOverview() {
     index: "闭环",
     height: 410,
     body: `${body}
-  <path d="M 95 220 V 266 H 1102 V 220" fill="none" stroke="${palette.teal}" stroke-width="2.5" stroke-dasharray="7 7"/>
+  <path d="M 86 220 V 266 H 1080 V 220" fill="none" stroke="${palette.teal}" stroke-width="2.5" stroke-dasharray="7 7"/>
   <text x="599" y="252" fill="${palette.teal}" text-anchor="middle" font-family="${fontFamily}" font-size="12" font-weight="800" letter-spacing="1.2">证据回流闭环</text>
   <g>
     <rect x="154" y="292" width="240" height="70" rx="35" fill="${palette.paperLight}" stroke="${palette.olive}" stroke-width="2"/>

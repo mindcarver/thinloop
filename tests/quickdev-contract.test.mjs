@@ -10,14 +10,16 @@ function read(relativePath) {
   return fs.readFileSync(path.join(root, relativePath), "utf8");
 }
 
-test("quickdev selects direct, clarify, or discovery without forcing ceremony", () => {
+test("quickdev selects direct, clarify, project, or discovery without forcing ceremony", () => {
   const skill = read("skills/scd-quickdev/SKILL.md");
 
   assert.match(skill, /\*\*Direct:\*\*/);
   assert.match(skill, /\*\*Clarify:\*\*/);
+  assert.match(skill, /\*\*Project:\*\*/);
   assert.match(skill, /\*\*Discovery:\*\*/);
   assert.match(skill, /outcome, boundary, and observable acceptance/i);
   assert.match(skill, /use `scd-discovery`/i);
+  assert.match(skill, /use `scd-project`/i);
 });
 
 test("quickdev makes one GitHub Issue the delivery source of truth", () => {

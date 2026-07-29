@@ -1,6 +1,6 @@
 ---
 name: scd-discovery
-description: "Turn an underdefined product idea into an explicitly approved, testable GitHub Issue before implementation. Use by default for a new product, application, plugin, service, or system; for a substantial feature with multiple dependent product decisions; or when data ownership, permissions, irreversible behavior, public interfaces, or external integrations remain undecided. Also use when the user explicitly asks to clarify, challenge, or specify a product idea. Do not use for a clear local change with an observable outcome, boundary, and acceptance path; one isolated ambiguity can be clarified without full discovery. When an existing Issue is already complete, audit it and take the fast path instead of repeating the interview."
+description: "Turn an underdefined product idea into an explicitly approved, testable delivery contract before implementation. Use by default for a new product, application, plugin, service, or system; for a substantial feature with multiple dependent product decisions; or when data ownership, permissions, irreversible behavior, public interfaces, or external integrations remain undecided. Also use when the user explicitly asks to clarify, challenge, or specify a product idea. Do not use for a clear local change with an observable outcome, boundary, and acceptance path; one isolated ambiguity can be clarified without full discovery. When the approved outcome spans multiple independently verifiable deliveries, hand project decomposition to scd-project instead of forcing one oversized Issue."
 ---
 
 # SCD Discovery
@@ -18,6 +18,11 @@ Inspect the request and available repository context, then choose internally:
 - **Discovery:** multiple dependent product decisions or a high-cost product boundary is unresolved. Follow the full workflow below.
 
 Treat greenfield products, applications, plugins, services, and systems as Discovery by default. If the user supplies a complete Issue or product contract, use the readiness fast path rather than manufacturing questions.
+
+When one approved outcome clearly requires several independently verifiable
+deliveries, stabilize the shared project core and hand decomposition to
+`scd-project`. Do not collapse a project into one Issue containing unrelated
+delivery checklists.
 
 Do not announce these path names unless the user asks about the method.
 
@@ -38,6 +43,12 @@ For a new product, use at most two opening decisions to establish:
 Challenge an unconfirmed solution assumption when it may solve the wrong problem. Give the concern and a recommendation once. When the user confirms the product form is fixed, accept it as a constraint and continue.
 
 Define the next complete, independently verifiable delivery. Keep longer-term ideas visible only as deferred or out of scope.
+
+If the user's requested outcome cannot be represented as one coherent delivery
+without hiding several independent acceptance boundaries, stop slicing at the
+shared project core. Confirm that core, then let `scd-project` create the
+Initiative and Delivery Issue DAG. Discovery does not plan implementation work
+or run a project execution loop.
 
 When that delivery is UI-heavy and its journey, surfaces, states, responsive
 behavior, accessibility, or visual direction remain design-bearing, compose
@@ -98,10 +109,14 @@ Read `references/readiness-review.md` before declaring the contract ready.
 
 ## Persist the approved contract and hand off
 
-When the user requested repository work, present the converged contract for
-explicit approval, then create or update one detailed GitHub Issue. That Issue
-is the sole requirement and acceptance source of truth; do not create a local
-delivery specification.
+When the user requested repository work for one delivery, present the converged
+contract for explicit approval, then create or update one detailed GitHub
+Issue. That Issue is the sole requirement and acceptance source of truth; do
+not create a local delivery specification.
+
+For an approved multi-delivery project, hand the shared project contract to
+`scd-project` instead. Project owns the Initiative and Delivery Issue graph;
+Discovery must not create one oversized implementation Issue first.
 
 If GitHub or the repository's authoritative tracker is unavailable, report the
 blocker instead of silently substituting `.scd/specs/`. If the user approves

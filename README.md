@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <kbd>v0.7.2</kbd>
+  <kbd>v0.8.0</kbd>
   &nbsp;
   <kbd>ISSUE-DRIVEN</kbd>
   &nbsp;
@@ -51,17 +51,19 @@ QuickDev 会先判断任务是否足够清楚，而不是要求用户选择流�
 |---|---|
 | Bug 或清晰、局部的新功能 | 建立或确认 Issue，直接诊断、实现和验证 |
 | 多个产品决定仍未明确 | 调用 Discovery 逐项澄清，批准后把结论写入 Issue |
+| 一个项目包含多个可独立验收的交付 | 调用 Project 拆成 Initiative、Delivery Issues 和依赖图 |
 | UI 或系统边界会显著影响实现 | 按需组合 UIUX 或 Architecture |
 | 工程验证通过 | Agent 自审、提交、推送、提 PR，并在工程闸门通过后合并 |
 | 工程验证完成 | 独立验收 Agent 按需执行真实环境验证，只在 `PASS` 后关闭 Issue |
 | 生产部署、认证支付、破坏性数据等高风险工作 | 在高风险动作前停下并请求明确批准 |
 
-GitHub Issue 是需求、任务和验收的唯一真值源；PR 是实现证据、工程审阅和回滚
-边界。简单任务不会先写本地 Spec，也不强制创建 worktree。
+GitHub Issue 仍是需求和验收真值源：单交付由一个 Delivery Issue 负责；多交付
+项目由 Initiative 负责项目拓扑、各 Delivery Issue 负责自身切片。PR 是实现
+证据、工程审阅和回滚边界。简单任务不会先写本地 Spec，也不强制创建 worktree。
 
 <a id="capabilities"></a>
 
-## 七块能力 / CAPABILITIES
+## 八块能力 / CAPABILITIES
 
 <table width="100%">
   <tr>
@@ -86,32 +88,37 @@ GitHub Issue 是需求、任务和验收的唯一真值源；PR 是实现证据�
   </tr>
   <tr>
     <td width="33%" valign="top">
+      <img src="./assets/retro-project.png" alt="SCD Project 复古项目依赖图标" width="92">
+      <h3><a href="./skills/scd-project/SKILL.md">04 · SCD Project</a></h3>
+      <p>把多交付项目拆成 Initiative、独立 Issue 和可验证依赖图。</p>
+      <p><strong>适合：</strong>多个交付切片、跨 Issue 前置依赖和集成闸门。</p>
+    </td>
+    <td width="33%" valign="top">
       <img src="./assets/retro-dev-loop.png" alt="SCD QuickDev 复古工程图标" width="92">
-      <h3><a href="./skills/scd-quickdev/SKILL.md">04 · SCD QuickDev</a></h3>
+      <h3><a href="./skills/scd-quickdev/SKILL.md">05 · SCD QuickDev</a></h3>
       <p>从 Issue 开始完成诊断、开发、验证、PR 和可自动合并的交付。</p>
       <p><strong>适合：</strong>Bug、清晰功能、已批准 Issue 和跨会话实现。</p>
     </td>
     <td width="33%" valign="top">
       <img src="./assets/retro-knowledge.png" alt="SCD Knowledge 复古工程图标" width="92">
-      <h3><a href="./skills/scd-knowledge/SKILL.md">05 · SCD Knowledge</a></h3>
+      <h3><a href="./skills/scd-knowledge/SKILL.md">06 · SCD Knowledge</a></h3>
       <p>把已证实的开发经验沉淀为短知识，并在需要时找回。</p>
       <p><strong>适合：</strong>主动沉淀、查找或维护开发经验。</p>
-    </td>
-    <td width="33%" valign="top">
-      <img src="./assets/retro-maintenance.png" alt="SCD Maintenance 复古工程图标" width="92">
-      <h3><a href="./skills/scd-maintenance/SKILL.md">06 · SCD Maintenance</a></h3>
-      <p>主动审计并小批修复技术债和代码—文档漂移。</p>
-      <p><strong>适合：</strong>主动扫描、清理、对齐或维护现有仓库。</p>
     </td>
   </tr>
   <tr>
     <td width="33%" valign="top">
+      <img src="./assets/retro-maintenance.png" alt="SCD Maintenance 复古工程图标" width="92">
+      <h3><a href="./skills/scd-maintenance/SKILL.md">07 · SCD Maintenance</a></h3>
+      <p>主动审计并小批修复技术债和代码—文档漂移。</p>
+      <p><strong>适合：</strong>主动扫描、清理、对齐或维护现有仓库。</p>
+    </td>
+    <td width="33%" valign="top">
       <img src="./assets/retro-evolve.png" alt="SCD Evolve 复古工程图标" width="92">
-      <h3><a href="./skills/scd-evolve/SKILL.md">07 · SCD Evolve</a></h3>
+      <h3><a href="./skills/scd-evolve/SKILL.md">08 · SCD Evolve</a></h3>
       <p>从一次开发互动中诊断 Skill 问题，经用户批准后做可回滚试验。</p>
       <p><strong>适合：</strong>主动复盘并优化本次真正使用过的 Thinloop Skill。</p>
     </td>
-    <td width="33%" valign="top"></td>
     <td width="33%" valign="top"></td>
   </tr>
 </table>
@@ -123,20 +130,22 @@ GitHub Issue 是需求、任务和验收的唯一真值源；PR 是实现证据�
 ## 工作闭环 / WORKFLOW
 
 <p align="center">
-  <img src="./assets/flows/thinloop-overview.svg" alt="Thinloop 总体闭环：请求经按需发现、体验与架构设计进入 QuickDev，通过独立验收后合并并关闭 Issue" width="100%">
+  <img src="./assets/flows/thinloop-overview.svg" alt="Thinloop 总体闭环：请求经按需发现、体验与架构设计、项目拆解进入 QuickDev，通过独立验收后合并并关闭 Issue" width="100%">
 </p>
 
-清晰任务直接开发；不清晰的需求先讨论。默认不强制 TDD、角色系统、额外子代理、
-固定阶段或本地 Spec；QuickDev 只固定使用一个独立验收 Agent。完整的路由、状态与契约说明见
+清晰任务直接开发；不清晰的需求先讨论；多交付项目才增加 Project 拆解。默认不强制
+TDD、角色系统、额外子代理、固定阶段或本地 Spec；Project 不执行工程 loop，
+QuickDev 只固定使用一个独立验收 Agent。完整的路由、状态与契约说明见
 [工作流与项目状态](./docs/workflow-and-state.md)。
 
 <a id="skill-flows"></a>
 
-## 七个技能如何工作 / SKILL FLOWS
+## 八个技能如何工作 / SKILL FLOWS
 
 <p><img src="./assets/flows/scd-discovery.svg" alt="SCD Discovery 流程：从仓库事实和交付切片到批准后的 GitHub Issue" width="100%"></p>
 <p><img src="./assets/flows/scd-uiux.svg" alt="SCD UIUX 流程：从稳定产品核心到可交付的体验设计" width="100%"></p>
 <p><img src="./assets/flows/scd-architecture.svg" alt="SCD Architecture 流程：从仓库事实到领域边界和机器可读契约" width="100%"></p>
+<p><img src="./assets/flows/scd-project.svg" alt="SCD Project 流程：从已批准项目核心到 Initiative、Delivery Issues 和就绪依赖图" width="100%"></p>
 <p><img src="./assets/flows/scd-quickdev.svg" alt="SCD QuickDev 流程：从 GitHub Issue 到独立验收、合并 main 并关闭 Issue" width="100%"></p>
 <p><img src="./assets/flows/scd-knowledge.svg" alt="SCD Knowledge 流程：从显式请求和证据到确认后的知识写入或检索" width="100%"></p>
 <p><img src="./assets/flows/scd-maintenance.svg" alt="SCD Maintenance 流程：从仓库信号到证据确认和有边界的修复" width="100%"></p>

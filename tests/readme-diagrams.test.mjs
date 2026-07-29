@@ -11,6 +11,7 @@ const slugs = [
   "discovery",
   "uiux",
   "architecture",
+  "project",
   "quickdev",
   "knowledge",
   "maintenance",
@@ -31,7 +32,7 @@ test("README flow diagrams are reproducible", () => {
   assert.equal(result.status, 0, result.stderr);
 });
 
-test("README references the overview and all seven skill diagrams with alt text", () => {
+test("README references the overview and all eight skill diagrams with alt text", () => {
   const readme = read("README.md");
   const expectedFiles = [
     "thinloop-overview.svg",
@@ -50,6 +51,7 @@ test("diagram stage summaries remain traceable to authoritative skill workflows"
     discovery: "SCD 需求澄清",
     uiux: "SCD 体验设计",
     architecture: "SCD 架构设计",
+    project: "SCD 项目拆解",
     quickdev: "SCD 快速开发",
     knowledge: "SCD 知识沉淀",
     maintenance: "SCD 仓库维护",
@@ -76,6 +78,13 @@ test("diagram stage summaries remain traceable to authoritative skill workflows"
       /Model domain and system responsibilities/,
       /Produce shared machine-readable contracts/,
       /Route changes and hand off/,
+    ],
+    project: [
+      /Start from live project truth/,
+      /Establish the project core/,
+      /Decompose into delivery slices/,
+      /Model the dependency DAG/,
+      /Persist the Initiative and Delivery Issues/,
     ],
     quickdev: [
       /Start from repository truth/,

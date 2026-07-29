@@ -1,7 +1,7 @@
 {
   "name": "thinloop",
-  "version": "0.7.2",
-  "description": "Simplify complex development with Issue-backed discovery, risk-adaptive Web experience and architecture design, autonomous PR delivery, evidence-backed maintenance, concise experiential knowledge, and human-approved skill evolution.",
+  "version": "0.8.0",
+  "description": "Simplify complex development with Issue-backed discovery, risk-adaptive Web experience and architecture design, non-executing multi-Issue project decomposition into dependency DAGs, autonomous single-Issue PR delivery, evidence-backed maintenance, concise experiential knowledge, and human-approved skill evolution.",
   "author": {
     "name": "mindcarver"
   },
@@ -18,6 +18,8 @@
     "domain-modeling",
     "specification",
     "github-issues",
+    "project-decomposition",
+    "dependency-graph",
     "pull-requests",
     "verification",
     "continuity",
