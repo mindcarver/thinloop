@@ -2,12 +2,12 @@
 
 [返回 README](../README.md)
 
-七个 Skill 遵循同一目录契约。推荐安装方式如下：
+八个 Skill 遵循同一目录契约。推荐安装方式如下：
 
 | Agent | 推荐安装 | 更新生效 |
 |---|---|---|
-| Codex | 把七个 Skill 链接到 `~/.codex/skills` | 新任务 |
-| OpenCode | 把七个 Skill 链接到 `~/.config/opencode/skills` | 重启 OpenCode |
+| Codex | 把八个 Skill 链接到 `~/.codex/skills` | 新任务 |
+| OpenCode | 把八个 Skill 链接到 `~/.config/opencode/skills` | 重启 OpenCode |
 | Claude Code | 安装完整插件 | 更新后重启或重新加载插件 |
 | WorkBuddy | 安装完整插件 | 更新后重启 WorkBuddy |
 | ZCode | 安装完整插件 | 更新后新建会话 |
@@ -28,7 +28,8 @@ $skillRoots = @(
 )
 $skillNames = @(
   "scd-discovery", "scd-uiux", "scd-architecture",
-  "scd-quickdev", "scd-knowledge", "scd-maintenance", "scd-evolve"
+  "scd-project", "scd-quickdev", "scd-knowledge", "scd-maintenance",
+  "scd-evolve"
 )
 
 foreach ($root in $skillRoots) {
@@ -65,7 +66,7 @@ skill_roots=(
 )
 skills=(
   scd-discovery scd-uiux scd-architecture
-  scd-quickdev scd-knowledge scd-maintenance scd-evolve
+  scd-project scd-quickdev scd-knowledge scd-maintenance scd-evolve
 )
 
 for root in "${skill_roots[@]}"; do
@@ -89,7 +90,7 @@ for root in "${skill_roots[@]}"; do
 done
 ```
 
-上面的脚本只移除明确的旧链接 `scd-dev-loop`，并修复七个 Thinloop Skill
+上面的脚本只移除明确的旧链接 `scd-dev-loop`，并修复八个 Thinloop Skill
 链接；遇到同名的真实文件或目录会跳过，不会覆盖用户内容。OpenCode 也能读取
 `~/.claude/skills`，但使用自己的目录不会依赖 Claude 兼容开关。
 
@@ -140,7 +141,7 @@ claude plugin install thinloop@thinloop --scope user
 
 WorkBuddy 5.3.5 内置的 CodeBuddy 运行时读取
 `.codebuddy-plugin/marketplace.json` 与 `.codebuddy-plugin/plugin.json`。
-完整插件会注册七个 Skill，并在 `PreCompact` 与 `Stop` 时通过
+完整插件会注册八个 Skill，并在 `PreCompact` 与 `Stop` 时通过
 `CODEBUDDY_PLUGIN_ROOT` 运行连续性检查；状态不完整时返回原生
 `continue: false`，让 Agent 先补齐恢复信息。
 
@@ -154,7 +155,7 @@ WorkBuddy 5.3.5 内置的 CodeBuddy 运行时读取
 3. 自定义 Marketplace 会显示在 Personal 筛选下；切换到 Personal 后，在
    `thinloop` 卡片点击 Install，并保持插件启用。
 
-完整插件会注册七个 Skill；`Stop` 发现激活状态不可恢复时会让主 Agent 继续
+完整插件会注册八个 Skill；`Stop` 发现激活状态不可恢复时会让主 Agent 继续
 补齐，最多连续三次；压缩后的 `SessionStart(compact)` 会把缺失状态作为恢复
 上下文注入。ZCode 不支持 Codex 专用的 `PreCompact` 事件，因此当前运行时会
 记录一条 warning 并只跳过该事件，不影响上述两个 ZCode Hook。
@@ -182,8 +183,9 @@ codebuddy plugin update thinloop@thinloop --scope user
 - Claude Code：命令成功后重启客户端，或在交互会话重新加载插件。
 - WorkBuddy：也可以在插件页刷新市场后更新 Thinloop；完成后重启 WorkBuddy。
 - ZCode：Settings → Plugins → Refresh → `thinloop` → Update；更新后新建会话。
-- 从 v0.6.x 升级：确认旧 `scd-dev-loop` 已消失，当前列表中存在
-  `scd-quickdev`，并且插件版本与当前源码仓库一致。
+- 升级到 v0.8.0：确认当前列表中存在 `scd-project` 与 `scd-quickdev`，
+  并且插件版本与当前源码仓库一致。
+- 若从 v0.6.x 升级，另确认旧 `scd-dev-loop` 已消失。
 
 更新后可以在 Thinloop 源码仓库运行只读检查器：
 
@@ -202,12 +204,15 @@ Skill 根，只读取 Skill 链接、Claude Code 插件清单及本地插件内�
 
 ```text
 Codex：使用 $scd-discovery 把这个想法聊透并形成可验收 Issue。
+Codex：使用 $scd-project 把已批准的多交付项目分解为 Initiative、Delivery Issues 和依赖 DAG；不要运行实现 loop。
 Codex：使用 $scd-quickdev 修复这个 Bug，验证后提 PR 并合并 main。
 Codex：使用 $scd-evolve 复盘本次互动，只提出一个候选，不要先修改。
 Claude Code Skill 链接：/scd-discovery
 Claude Code 完整插件：/thinloop:scd-quickdev
 OpenCode：使用 scd-quickdev skill 按 Issue 开发、验证并合并。
+OpenCode：使用 scd-project skill 建立 multi-Issue 项目 DAG，只报告 READY/BLOCKED，不执行这些 Issues。
 WorkBuddy 完整插件：/thinloop:scd-quickdev
 ZCode：使用 $scd-quickdev 按 Issue 开发、验证并合并。
+ZCode：使用 $scd-project 分解 multi-Issue 项目并验证依赖 DAG，不启动执行 loop。
 ZCode：使用 $scd-evolve 诊断本次使用过的 Thinloop Skill。
 ```

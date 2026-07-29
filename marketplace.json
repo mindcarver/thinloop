@@ -1,12 +1,12 @@
 {
   "name": "thinloop",
-  "description": "Thinloop skills and continuity hooks for Issue-backed, evidence-backed development and approved skill evolution.",
+  "description": "Thinloop skills and continuity hooks for Issue-backed discovery, non-executing multi-Issue project DAG decomposition, evidence-backed delivery, and approved skill evolution.",
   "plugins": [
     {
       "name": "thinloop",
       "source": ".",
-      "description": "Discovery, Web UIUX, architecture, QuickDev delivery, maintenance, knowledge, and evolution skills with continuity checks.",
-      "version": "0.7.2"
+      "description": "Discovery, Web UIUX, architecture, Project decomposition into a multi-Issue dependency DAG, QuickDev delivery, maintenance, knowledge, and evolution skills with continuity checks; Project does not run an execution loop.",
+      "version": "0.8.0"
     }
   ]
 }

@@ -42,7 +42,10 @@ test("discovery persists approved repository work as a GitHub Issue", () => {
   assert.match(artifacts, /\.scd\/tasks\/current\.md/);
   assert.match(artifacts, /managed_by: scd-discovery/);
   assert.match(artifacts, /GitHub Issue/);
-  assert.match(artifacts, /sole requirement and acceptance source of truth/i);
+  assert.match(
+    artifacts,
+    /sole requirement and\s+acceptance source of\s+truth/i,
+  );
   assert.doesNotMatch(artifacts, /\.scd\/specs\/<slug>\.md/);
   assert.match(artifacts, /## Acceptance/);
   assert.match(artifacts, /A1:/);

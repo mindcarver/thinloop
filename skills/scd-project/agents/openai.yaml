@@ -1,0 +1,4 @@
+interface:
+  display_name: "SCD Project"
+  short_description: "Decompose projects into a validated Issue DAG"
+  default_prompt: "Use $scd-project to turn this approved multi-delivery project into an Initiative, Delivery Issues, and a validated readiness DAG without starting an execution loop."
