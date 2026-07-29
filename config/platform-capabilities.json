@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 1,
+  "product": {
+    "name": "thinloop",
+    "versionManifest": ".codex-plugin/plugin.json",
+    "skillsRoot": "skills"
+  },
+  "platforms": [
+    {
+      "id": "codex",
+      "displayName": "Codex",
+      "installation": {
+        "mode": "skill-links",
+        "skillRoot": ".codex/skills",
+        "skillRootOverride": {
+          "environment": "CODEX_HOME",
+          "suffix": "skills"
+        },
+        "summary": "把七个 Skill 链接到 `~/.codex/skills`",
+        "takesEffect": "新任务"
+      },
+      "capabilities": {
+        "hooks": []
+      },
+      "verification": {
+        "mode": "skill-links",
+        "summary": "七个链接都能读取 `SKILL.md`；新任务可发现 `$scd-quickdev`"
+      }
+    },
+    {
+      "id": "opencode",
+      "displayName": "OpenCode",
+      "installation": {
+        "mode": "skill-links",
+        "skillRoot": ".config/opencode/skills",
+        "skillRootOverride": {
+          "environment": "XDG_CONFIG_HOME",
+          "suffix": "opencode/skills"
+        },
+        "summary": "把七个 Skill 链接到 `~/.config/opencode/skills`",
+        "takesEffect": "重启 OpenCode"
+      },
+      "capabilities": {
+        "hooks": []
+      },
+      "verification": {
+        "mode": "skill-links",
+        "summary": "七个 Skill 链接均指向当前源码；运行时发现需手动核验",
+        "manualRuntime": {
+          "command": [
+            "opencode",
+            "debug",
+            "skill"
+          ],
+          "checkerEligible": false,
+          "summary": "需要核对运行时发现时手动执行；该命令会启动 OpenCode 并可能写入日志"
+        }
+      }
+    },
+    {
+      "id": "claude-code",
+      "displayName": "Claude Code",
+      "installation": {
+        "mode": "plugin",
+        "manifest": ".claude-plugin/plugin.json",
+        "skillRoot": "skills",
+        "summary": "安装完整插件",
+        "takesEffect": "更新后重启或重新加载插件"
+      },
+      "capabilities": {
+        "hookHandler": "hooks/check-state.mjs",
+        "hooks": [
+          {
+            "event": "PreCompact",
+            "source": "hooks/hooks.claude.json"
+          },
+          {
+            "event": "Stop",
+            "source": "hooks/hooks.claude.json"
+          }
+        ]
+      },
+      "verification": {
+        "mode": "plugin-cli",
+        "command": [
+          "claude",
+          "plugin",
+          "list",
+          "--json"
+        ],
+        "pluginId": "thinloop@thinloop",
+        "summary": "`claude plugin list --json` 提供版本、enabled 与安装路径；检查器从该路径核对七个 Skill 和两个 Hook",
+        "manualFallback": "Claude Code 插件页显示 thinloop 已启用"
+      }
+    },
+    {
+      "id": "workbuddy",
+      "displayName": "WorkBuddy",
+      "installation": {
+        "mode": "plugin",
+        "manifest": ".codebuddy-plugin/plugin.json",
+        "skillRoot": "skills",
+        "summary": "安装完整插件",
+        "takesEffect": "更新后重启 WorkBuddy"
+      },
+      "capabilities": {
+        "hookHandler": "hooks/check-state.mjs",
+        "hooks": [
+          {
+            "event": "PreCompact",
+            "source": "hooks/hooks.workbuddy.json"
+          },
+          {
+            "event": "Stop",
+            "source": "hooks/hooks.workbuddy.json"
+          }
+        ]
+      },
+      "verification": {
+        "mode": "manual",
+        "pluginId": "thinloop@thinloop",
+        "summary": "插件页显示当前仓库版本、enabled、七个 Skill 和两个 Hook",
+        "manualFallback": "`codebuddy plugin list --json` 会写客户端日志；必须在 WorkBuddy 插件页核验"
+      }
+    },
+    {
+      "id": "zcode",
+      "displayName": "ZCode",
+      "installation": {
+        "mode": "plugin",
+        "manifest": ".zcode-plugin/plugin.json",
+        "skillRoot": "skills",
+        "summary": "安装完整插件",
+        "takesEffect": "更新后新建会话"
+      },
+      "capabilities": {
+        "hookHandler": "hooks/check-state.mjs",
+        "hooks": [
+          {
+            "event": "SessionStart",
+            "matcher": "compact",
+            "source": "hooks/hooks.zcode.json"
+          },
+          {
+            "event": "Stop",
+            "source": "hooks/hooks.json"
+          }
+        ]
+      },
+      "verification": {
+        "mode": "manual",
+        "summary": "Settings → Plugins 显示当前仓库版本、7 Skills、2 Hooks；Skills 中存在 `scd-quickdev`",
+        "manualFallback": "ZCode 当前没有可依赖的 CLI；必须在 Settings → Plugins 中核验"
+      }
+    }
+  ]
+}
