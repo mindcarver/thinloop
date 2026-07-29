@@ -8,6 +8,8 @@ const root = path.resolve(
 );
 const outputDirectory = path.join(root, "assets", "flows");
 const checkOnly = process.argv.includes("--check");
+const fontFamily =
+  "'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace";
 
 const palette = {
   paper: "#f2e4bd",
@@ -31,92 +33,92 @@ const skillFlows = [
   {
     slug: "discovery",
     index: "01",
-    title: "SCD DISCOVERY",
-    subtitle: "UNDERDEFINED IDEA → APPROVED ISSUE",
+    title: "SCD 需求澄清",
+    subtitle: "模糊想法 → 已批准任务单",
     stages: [
-      ["REPO", "TRUTH"],
-      ["DELIVERY", "SLICE"],
-      ["DECISION", "TREE"],
-      ["READINESS", "REVIEW"],
-      ["APPROVED", "ISSUE"],
+      ["仓库", "事实"],
+      ["交付", "切片"],
+      ["决策", "树"],
+      ["就绪", "审查"],
+      ["已批准", "任务单"],
     ],
   },
   {
     slug: "uiux",
     index: "02",
-    title: "SCD UIUX",
-    subtitle: "PRODUCT INTENT → READY EXPERIENCE",
+    title: "SCD 体验设计",
+    subtitle: "产品意图 → 可交付体验",
     stages: [
-      ["PRODUCT", "CORE"],
-      ["JOURNEYS", "& STATES"],
-      ["VISUAL", "EVIDENCE"],
-      ["INTERFACE", "SEAM"],
-      ["READY", "HANDOFF"],
+      ["产品", "核心"],
+      ["用户旅程", "与状态"],
+      ["视觉", "证据"],
+      ["界面", "衔接"],
+      ["就绪", "交付"],
     ],
   },
   {
     slug: "architecture",
     index: "03",
-    title: "SCD ARCHITECTURE",
-    subtitle: "PRODUCT RULES → MACHINE CONTRACTS",
+    title: "SCD 架构设计",
+    subtitle: "产品规则 → 机器契约",
     stages: [
-      ["REPO", "TRUTH"],
-      ["DESIGN", "SLICE"],
-      ["DOMAIN &", "BOUNDARIES"],
-      ["MACHINE", "CONTRACTS"],
-      ["READY", "HANDOFF"],
+      ["仓库", "事实"],
+      ["设计", "切片"],
+      ["领域", "边界"],
+      ["机器", "契约"],
+      ["就绪", "交付"],
     ],
   },
   {
     slug: "quickdev",
     index: "04",
-    title: "SCD QUICKDEV",
-    subtitle: "ISSUE → VERIFIED MERGED CODE",
+    title: "SCD 快速开发",
+    subtitle: "任务单 → 验证并合并的代码",
     stages: [
-      ["GITHUB", "ISSUE"],
-      ["DIAGNOSE", "& BUILD"],
-      ["ENGINEERING", "CHECKS"],
-      ["INDEPENDENT", "ACCEPT"],
-      ["MAIN", "& CLOSE"],
+      ["GITHUB", "任务单"],
+      ["诊断", "与实现"],
+      ["工程", "检查"],
+      ["独立", "验收"],
+      ["合并主分支", "关闭任务单"],
     ],
   },
   {
     slug: "knowledge",
     index: "05",
-    title: "SCD KNOWLEDGE",
-    subtitle: "PROVEN EXPERIENCE → USEFUL MEMORY",
+    title: "SCD 知识沉淀",
+    subtitle: "已证实经验 → 可用知识",
     stages: [
-      ["EXPLICIT", "REQUEST"],
-      ["RESOLVE", "STORES"],
-      ["EVIDENCE", "& SCOPE"],
-      ["CONFIRM", "CHANGE"],
-      ["WRITE OR", "RETRIEVE"],
+      ["显式", "请求"],
+      ["定位", "存储"],
+      ["证据", "与范围"],
+      ["确认", "变更"],
+      ["写入", "或检索"],
     ],
   },
   {
     slug: "maintenance",
     index: "06",
-    title: "SCD MAINTENANCE",
-    subtitle: "REPOSITORY SIGNALS → BOUNDED REPAIR",
+    title: "SCD 仓库维护",
+    subtitle: "仓库信号 → 有边界的修复",
     stages: [
-      ["SELECT", "SCOPE"],
-      ["COLLECT", "SIGNALS"],
-      ["VERIFY", "FINDINGS"],
-      ["BOUNDED", "REPAIR"],
-      ["RECHECK", "EVIDENCE"],
+      ["选择", "范围"],
+      ["收集", "信号"],
+      ["核实", "问题"],
+      ["有界", "修复"],
+      ["复核", "证据"],
     ],
   },
   {
     slug: "evolve",
     index: "07",
-    title: "SCD EVOLVE",
-    subtitle: "OBSERVED FAILURE → REVERSIBLE TRIAL",
+    title: "SCD 技能演进",
+    subtitle: "已观察失败 → 可回滚试验",
     stages: [
-      ["VISIBLE", "EVIDENCE"],
-      ["CAUSE", "ATTRIBUTION"],
-      ["CANDIDATE", "ID"],
-      ["HUMAN", "APPROVAL"],
-      ["TRIAL OR", "REVERT"],
+      ["可见", "证据"],
+      ["原因", "归因"],
+      ["识别", "候选"],
+      ["人工", "批准"],
+      ["试验", "或回滚"],
     ],
   },
 ];
@@ -144,9 +146,9 @@ function svgFrame({ title, subtitle, index, body, height = 280 }) {
   <rect x="12" y="12" width="1176" height="${height - 24}" rx="12" fill="none" stroke="${palette.navy}" stroke-width="2"/>
   <path d="M 18 44 H 30 M 24 38 V 50 M 1170 44 H 1182 M 1176 38 V 50" stroke="${palette.orange}" stroke-width="2"/>
   <rect x="34" y="30" width="82" height="30" rx="15" fill="${palette.navy}"/>
-  <text x="75" y="51" fill="${palette.paperLight}" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14" font-weight="700">${escapeXml(index)}</text>
-  <text x="132" y="49" fill="${palette.navy}" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="25" font-weight="800" letter-spacing="1.2">${escapeXml(title)}</text>
-  <text x="1166" y="48" fill="${palette.teal}" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="700" letter-spacing="1.4">${escapeXml(subtitle)}</text>
+  <text x="75" y="51" fill="${palette.paperLight}" text-anchor="middle" font-family="${fontFamily}" font-size="14" font-weight="700">${escapeXml(index)}</text>
+  <text x="132" y="49" fill="${palette.navy}" font-family="${fontFamily}" font-size="25" font-weight="800" letter-spacing="1.2">${escapeXml(title)}</text>
+  <text x="1166" y="48" fill="${palette.teal}" text-anchor="end" font-family="${fontFamily}" font-size="13" font-weight="700" letter-spacing="1.4">${escapeXml(subtitle)}</text>
   <line x1="34" y1="76" x2="1166" y2="76" stroke="${palette.navy}" stroke-width="1.5" opacity="0.55"/>
   ${body}
 </svg>
@@ -181,8 +183,8 @@ function renderSkillFlow(flow) {
     <g>
       <rect x="${x}" y="${y}" width="${nodeWidth}" height="${nodeHeight}" rx="8" fill="${fill}" stroke="${palette.navy}" stroke-width="2"/>
       <circle cx="${x + 24}" cy="${y + 22}" r="13" fill="${palette.paperLight}" stroke="${palette.orange}" stroke-width="2"/>
-      <text x="${x + 24}" y="${y + 27}" fill="${palette.navy}" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="800">${number}</text>
-      <text x="${x + nodeWidth / 2}" y="${y + 42}" fill="${labelColor}" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15" font-weight="800" letter-spacing="0.8">
+      <text x="${x + 24}" y="${y + 27}" fill="${palette.navy}" text-anchor="middle" font-family="${fontFamily}" font-size="11" font-weight="800">${number}</text>
+      <text x="${x + nodeWidth / 2}" y="${y + 42}" fill="${labelColor}" text-anchor="middle" font-family="${fontFamily}" font-size="15" font-weight="800" letter-spacing="0.8">
         <tspan x="${x + nodeWidth / 2}" dy="0">${escapeXml(stage[0])}</tspan>
         <tspan x="${x + nodeWidth / 2}" dy="20">${escapeXml(stage[1])}</tspan>
       </text>
@@ -193,7 +195,7 @@ function renderSkillFlow(flow) {
   return svgFrame({
     title: flow.title,
     subtitle: flow.subtitle,
-    index: `FLOW ${flow.index}`,
+    index: `流程 ${flow.index}`,
     body: `${nodes}
   <path d="M 54 236 H 1146" stroke="${palette.olive}" stroke-width="2" stroke-dasharray="4 8" opacity="0.7"/>
   <circle cx="54" cy="236" r="5" fill="${palette.orange}"/>
@@ -205,7 +207,7 @@ function overviewNode({ x, y, width, label, accent = false }) {
   const [first, second] = label;
   return `<g>
     <rect x="${x}" y="${y}" width="${width}" height="74" rx="8" fill="${accent ? palette.orange : palette.navy}" stroke="${palette.navy}" stroke-width="2"/>
-    <text x="${x + width / 2}" y="${y + 31}" fill="${palette.paperLight}" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15" font-weight="800" letter-spacing="0.8">
+    <text x="${x + width / 2}" y="${y + 31}" fill="${palette.paperLight}" text-anchor="middle" font-family="${fontFamily}" font-size="15" font-weight="800" letter-spacing="0.8">
       <tspan x="${x + width / 2}">${escapeXml(first)}</tspan>
       <tspan x="${x + width / 2}" dy="20">${escapeXml(second)}</tspan>
     </text>
@@ -215,15 +217,15 @@ function overviewNode({ x, y, width, label, accent = false }) {
 function renderOverview() {
   const mainY = 125;
   const nodes = [
-    { x: 38, width: 138, label: ["REQUEST", "ARRIVES"] },
-    { x: 225, width: 148, label: ["DISCOVER", "IF NEEDED"] },
-    { x: 422, width: 158, label: ["UIUX / ARCH", "WHEN NEEDED"] },
-    { x: 629, width: 148, label: ["QUICKDEV", "DELIVERS"] },
-    { x: 826, width: 154, label: ["INDEPENDENT", "ACCEPTANCE"] },
+    { x: 38, width: 138, label: ["请求", "到达"] },
+    { x: 225, width: 148, label: ["按需", "澄清"] },
+    { x: 422, width: 158, label: ["按需体验", "或架构设计"] },
+    { x: 629, width: 148, label: ["QUICKDEV", "交付"] },
+    { x: 826, width: 154, label: ["独立", "验收"] },
     {
       x: 1029,
       width: 133,
-      label: ["MAIN", "& CLOSE"],
+      label: ["合并主分支", "关闭任务单"],
       accent: true,
     },
   ];
@@ -238,30 +240,30 @@ function renderOverview() {
     .join("\n");
 
   return svgFrame({
-    title: "THINLOOP SYSTEM MAP",
-    subtitle: "DEEPER UNDERSTANDING → VERIFIED DELIVERY",
-    index: "SYSTEM",
+    title: "THINLOOP 开发闭环",
+    subtitle: "深入理解 → 验证交付",
+    index: "闭环",
     height: 410,
     body: `${body}
   <path d="M 95 220 V 266 H 1102 V 220" fill="none" stroke="${palette.teal}" stroke-width="2.5" stroke-dasharray="7 7"/>
-  <text x="599" y="252" fill="${palette.teal}" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="800" letter-spacing="1.2">EVIDENCE RETURNS TO THE LOOP</text>
+  <text x="599" y="252" fill="${palette.teal}" text-anchor="middle" font-family="${fontFamily}" font-size="12" font-weight="800" letter-spacing="1.2">证据回流闭环</text>
   <g>
     <rect x="154" y="292" width="240" height="70" rx="35" fill="${palette.paperLight}" stroke="${palette.olive}" stroke-width="2"/>
     <circle cx="189" cy="327" r="19" fill="${palette.olive}"/>
-    <text x="218" y="322" fill="${palette.navy}" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14" font-weight="800">KNOWLEDGE</text>
-    <text x="218" y="342" fill="${palette.teal}" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="700">EXPLICIT CAPTURE / RETRIEVE</text>
+    <text x="218" y="322" fill="${palette.navy}" font-family="${fontFamily}" font-size="14" font-weight="800">知识沉淀</text>
+    <text x="218" y="342" fill="${palette.teal}" font-family="${fontFamily}" font-size="11" font-weight="700">明确写入 / 按需检索</text>
   </g>
   <g>
     <rect x="480" y="292" width="240" height="70" rx="35" fill="${palette.paperLight}" stroke="${palette.olive}" stroke-width="2"/>
     <circle cx="515" cy="327" r="19" fill="${palette.orange}"/>
-    <text x="544" y="322" fill="${palette.navy}" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14" font-weight="800">MAINTENANCE</text>
-    <text x="544" y="342" fill="${palette.teal}" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="700">AUDIT / BOUNDED REPAIR</text>
+    <text x="544" y="322" fill="${palette.navy}" font-family="${fontFamily}" font-size="14" font-weight="800">仓库维护</text>
+    <text x="544" y="342" fill="${palette.teal}" font-family="${fontFamily}" font-size="11" font-weight="700">审计 / 有界修复</text>
   </g>
   <g>
     <rect x="806" y="292" width="240" height="70" rx="35" fill="${palette.paperLight}" stroke="${palette.olive}" stroke-width="2"/>
     <circle cx="841" cy="327" r="19" fill="${palette.navy}"/>
-    <text x="870" y="322" fill="${palette.navy}" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14" font-weight="800">EVOLVE</text>
-    <text x="870" y="342" fill="${palette.teal}" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="700">APPROVED REVERSIBLE TRIAL</text>
+    <text x="870" y="322" fill="${palette.navy}" font-family="${fontFamily}" font-size="14" font-weight="800">技能演进</text>
+    <text x="870" y="342" fill="${palette.teal}" font-family="${fontFamily}" font-size="11" font-weight="700">批准后进行可回滚试验</text>
   </g>`,
   });
 }

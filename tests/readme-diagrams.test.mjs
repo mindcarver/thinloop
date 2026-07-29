@@ -46,6 +46,15 @@ test("README references the overview and all seven skill diagrams with alt text"
 });
 
 test("diagram stage summaries remain traceable to authoritative skill workflows", () => {
+  const diagramTitles = {
+    discovery: "SCD 需求澄清",
+    uiux: "SCD 体验设计",
+    architecture: "SCD 架构设计",
+    quickdev: "SCD 快速开发",
+    knowledge: "SCD 知识沉淀",
+    maintenance: "SCD 仓库维护",
+    evolve: "SCD 技能演进",
+  };
   const evidence = {
     discovery: [
       /Investigate before asking/,
@@ -104,6 +113,6 @@ test("diagram stage summaries remain traceable to authoritative skill workflows"
     for (const pattern of patterns) {
       assert.match(skill, pattern, `scd-${slug}: ${pattern}`);
     }
-    assert.match(diagram, new RegExp(`SCD ${slug.toUpperCase()}`));
+    assert.match(diagram, new RegExp(diagramTitles[slug]));
   }
 });

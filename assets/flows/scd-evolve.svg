@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="280" viewBox="0 0 1200 280" role="img" aria-labelledby="title desc">
-  <title id="title">SCD EVOLVE</title>
-  <desc id="desc">OBSERVED FAILURE → REVERSIBLE TRIAL</desc>
+  <title id="title">SCD 技能演进</title>
+  <desc id="desc">已观察失败 → 可回滚试验</desc>
   <defs>
     <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
       <path d="M 24 0 L 0 0 0 24" fill="none" stroke="#17313b" stroke-width="0.55" opacity="0.1"/>
@@ -20,58 +20,58 @@
   <rect x="12" y="12" width="1176" height="256" rx="12" fill="none" stroke="#17313b" stroke-width="2"/>
   <path d="M 18 44 H 30 M 24 38 V 50 M 1170 44 H 1182 M 1176 38 V 50" stroke="#c55c2f" stroke-width="2"/>
   <rect x="34" y="30" width="82" height="30" rx="15" fill="#17313b"/>
-  <text x="75" y="51" fill="#f8edcf" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14" font-weight="700">FLOW 07</text>
-  <text x="132" y="49" fill="#17313b" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="25" font-weight="800" letter-spacing="1.2">SCD EVOLVE</text>
-  <text x="1166" y="48" fill="#4f7773" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="700" letter-spacing="1.4">OBSERVED FAILURE → REVERSIBLE TRIAL</text>
+  <text x="75" y="51" fill="#f8edcf" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="14" font-weight="700">流程 07</text>
+  <text x="132" y="49" fill="#17313b" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="25" font-weight="800" letter-spacing="1.2">SCD 技能演进</text>
+  <text x="1166" y="48" fill="#4f7773" text-anchor="end" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="13" font-weight="700" letter-spacing="1.4">已观察失败 → 可回滚试验</text>
   <line x1="34" y1="76" x2="1166" y2="76" stroke="#17313b" stroke-width="1.5" opacity="0.55"/>
   <path d="M 236 167 H 273" fill="none" stroke="#c55c2f" stroke-width="3" marker-end="url(#arrow)"/>
     <g>
       <rect x="54" y="126" width="172" height="82" rx="8" fill="#17313b" stroke="#17313b" stroke-width="2"/>
       <circle cx="78" cy="148" r="13" fill="#f8edcf" stroke="#c55c2f" stroke-width="2"/>
-      <text x="78" y="153" fill="#17313b" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="800">01</text>
-      <text x="140" y="168" fill="#f8edcf" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15" font-weight="800" letter-spacing="0.8">
-        <tspan x="140" dy="0">VISIBLE</tspan>
-        <tspan x="140" dy="20">EVIDENCE</tspan>
+      <text x="78" y="153" fill="#17313b" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="11" font-weight="800">01</text>
+      <text x="140" y="168" fill="#f8edcf" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="15" font-weight="800" letter-spacing="0.8">
+        <tspan x="140" dy="0">可见</tspan>
+        <tspan x="140" dy="20">证据</tspan>
       </text>
     </g>
 <path d="M 465 167 H 502" fill="none" stroke="#c55c2f" stroke-width="3" marker-end="url(#arrow)"/>
     <g>
       <rect x="283" y="126" width="172" height="82" rx="8" fill="#4f7773" stroke="#17313b" stroke-width="2"/>
       <circle cx="307" cy="148" r="13" fill="#f8edcf" stroke="#c55c2f" stroke-width="2"/>
-      <text x="307" y="153" fill="#17313b" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="800">02</text>
-      <text x="369" y="168" fill="#f8edcf" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15" font-weight="800" letter-spacing="0.8">
-        <tspan x="369" dy="0">CAUSE</tspan>
-        <tspan x="369" dy="20">ATTRIBUTION</tspan>
+      <text x="307" y="153" fill="#17313b" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="11" font-weight="800">02</text>
+      <text x="369" y="168" fill="#f8edcf" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="15" font-weight="800" letter-spacing="0.8">
+        <tspan x="369" dy="0">原因</tspan>
+        <tspan x="369" dy="20">归因</tspan>
       </text>
     </g>
 <path d="M 694 167 H 731" fill="none" stroke="#c55c2f" stroke-width="3" marker-end="url(#arrow)"/>
     <g>
       <rect x="512" y="126" width="172" height="82" rx="8" fill="#17313b" stroke="#17313b" stroke-width="2"/>
       <circle cx="536" cy="148" r="13" fill="#f8edcf" stroke="#c55c2f" stroke-width="2"/>
-      <text x="536" y="153" fill="#17313b" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="800">03</text>
-      <text x="598" y="168" fill="#f8edcf" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15" font-weight="800" letter-spacing="0.8">
-        <tspan x="598" dy="0">CANDIDATE</tspan>
-        <tspan x="598" dy="20">ID</tspan>
+      <text x="536" y="153" fill="#17313b" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="11" font-weight="800">03</text>
+      <text x="598" y="168" fill="#f8edcf" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="15" font-weight="800" letter-spacing="0.8">
+        <tspan x="598" dy="0">识别</tspan>
+        <tspan x="598" dy="20">候选</tspan>
       </text>
     </g>
 <path d="M 923 167 H 960" fill="none" stroke="#c55c2f" stroke-width="3" marker-end="url(#arrow)"/>
     <g>
       <rect x="741" y="126" width="172" height="82" rx="8" fill="#4f7773" stroke="#17313b" stroke-width="2"/>
       <circle cx="765" cy="148" r="13" fill="#f8edcf" stroke="#c55c2f" stroke-width="2"/>
-      <text x="765" y="153" fill="#17313b" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="800">04</text>
-      <text x="827" y="168" fill="#f8edcf" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15" font-weight="800" letter-spacing="0.8">
-        <tspan x="827" dy="0">HUMAN</tspan>
-        <tspan x="827" dy="20">APPROVAL</tspan>
+      <text x="765" y="153" fill="#17313b" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="11" font-weight="800">04</text>
+      <text x="827" y="168" fill="#f8edcf" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="15" font-weight="800" letter-spacing="0.8">
+        <tspan x="827" dy="0">人工</tspan>
+        <tspan x="827" dy="20">批准</tspan>
       </text>
     </g>
 
     <g>
       <rect x="970" y="126" width="172" height="82" rx="8" fill="#c55c2f" stroke="#17313b" stroke-width="2"/>
       <circle cx="994" cy="148" r="13" fill="#f8edcf" stroke="#c55c2f" stroke-width="2"/>
-      <text x="994" y="153" fill="#17313b" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="800">05</text>
-      <text x="1056" y="168" fill="#f8edcf" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15" font-weight="800" letter-spacing="0.8">
-        <tspan x="1056" dy="0">TRIAL OR</tspan>
-        <tspan x="1056" dy="20">REVERT</tspan>
+      <text x="994" y="153" fill="#17313b" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="11" font-weight="800">05</text>
+      <text x="1056" y="168" fill="#f8edcf" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="15" font-weight="800" letter-spacing="0.8">
+        <tspan x="1056" dy="0">试验</tspan>
+        <tspan x="1056" dy="20">或回滚</tspan>
       </text>
     </g>
   <path d="M 54 236 H 1146" stroke="#6f7453" stroke-width="2" stroke-dasharray="4 8" opacity="0.7"/>
