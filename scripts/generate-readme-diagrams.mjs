@@ -134,6 +134,19 @@ const skillFlows = [
       ["试验", "或回滚"],
     ],
   },
+  {
+    slug: "reengineering",
+    index: "09",
+    title: "SCD 项目再工程",
+    subtitle: "旧系统 → 可验证的新实现",
+    stages: [
+      ["固定", "上游"],
+      ["行为", "基线"],
+      ["兼容", "边界"],
+      ["任务图", "执行"],
+      ["集成", "验收"],
+    ],
+  },
 ];
 
 function svgFrame({ title, subtitle, index, body, height = 280 }) {

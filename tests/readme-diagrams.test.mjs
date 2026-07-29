@@ -16,6 +16,7 @@ const slugs = [
   "knowledge",
   "maintenance",
   "evolve",
+  "reengineering",
 ];
 
 function read(relativePath) {
@@ -32,7 +33,7 @@ test("README flow diagrams are reproducible", () => {
   assert.equal(result.status, 0, result.stderr);
 });
 
-test("README references the overview and all eight skill diagrams with alt text", () => {
+test("README references the overview and all nine skill diagrams with alt text", () => {
   const readme = read("README.md");
   const expectedFiles = [
     "thinloop-overview.svg",
@@ -56,6 +57,7 @@ test("diagram stage summaries remain traceable to authoritative skill workflows"
     knowledge: "SCD 知识沉淀",
     maintenance: "SCD 仓库维护",
     evolve: "SCD 技能演进",
+    reengineering: "SCD 项目再工程",
   };
   const evidence = {
     discovery: [
@@ -113,6 +115,13 @@ test("diagram stage summaries remain traceable to authoritative skill workflows"
       /Assign a stable candidate ID/,
       /explicitly approves its candidate ID/,
       /Implement an Approved Candidate/,
+    ],
+    reengineering: [
+      /Start from source and repository truth/,
+      /Establish the compatibility envelope/,
+      /Choose a direction with evidence/,
+      /Materialize the reengineering project/,
+      /Execute approved READY waves/,
     ],
   };
 

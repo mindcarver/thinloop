@@ -22,11 +22,11 @@ codebuddy plugin validate .codebuddy-plugin/marketplace.json
 
 | Agent | 安装后检查 |
 |---|---|
-| Codex | 八个链接都能读取 `SKILL.md`；新任务可发现 `$scd-project` 与 `$scd-quickdev` |
-| OpenCode | 八个 Skill 链接均指向当前源码；运行时需确认 `scd-project` 与其他 Skill 均被发现 |
-| Claude Code | `claude plugin list --json` 提供版本、enabled 与安装路径；检查器从该路径核对八个 Skill 和两个 Hook，包括 `scd-project` |
-| WorkBuddy | 插件页显示当前仓库版本、enabled、八个 Skill 和两个 Hook，包括 `scd-project` |
-| ZCode | Settings → Plugins 显示当前仓库版本、8 Skills、2 Hooks；Skills 中存在 `scd-project` 与 `scd-quickdev` |
+| Codex | 九个链接都能读取 `SKILL.md`；新任务可发现 `$scd-reengineering`、`$scd-project` 与 `$scd-quickdev` |
+| OpenCode | 九个 Skill 链接均指向当前源码；运行时需确认 `scd-reengineering`、`scd-project` 与其他 Skill 均被发现 |
+| Claude Code | `claude plugin list --json` 提供版本、enabled 与安装路径；检查器从该路径核对九个 Skill 和两个 Hook，包括 `scd-reengineering` |
+| WorkBuddy | 插件页显示当前仓库版本、enabled、九个 Skill 和两个 Hook，包括 `scd-reengineering` |
+| ZCode | Settings → Plugins 显示当前仓库版本、9 Skills、2 Hooks；Skills 中存在 `scd-reengineering`、`scd-project` 与 `scd-quickdev` |
 
 在 Thinloop 源码仓库运行统一的只读检查：
 

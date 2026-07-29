@@ -14,6 +14,7 @@ const expectedSkills = [
   "scd-maintenance",
   "scd-project",
   "scd-quickdev",
+  "scd-reengineering",
   "scd-uiux",
 ];
 const allowedFields = new Set([

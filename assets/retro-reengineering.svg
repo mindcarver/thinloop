@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" role="img" aria-labelledby="title desc">
+  <title id="title">SCD Reengineering</title>
+  <desc id="desc">旧系统经过兼容契约转换为新实现的复古工程图标</desc>
+  <rect width="160" height="160" rx="22" fill="#f2e4bd"/>
+  <path d="M16 32H144M16 128H144M32 16V144M128 16V144" stroke="#17313b" stroke-width="1.5" opacity=".16"/>
+  <rect x="20" y="48" width="46" height="64" rx="8" fill="#17313b"/>
+  <rect x="94" y="48" width="46" height="64" rx="8" fill="#4f7773"/>
+  <path d="M33 66H53M33 80H53M33 94H47M107 66H127M107 80H127M107 94H121" stroke="#f8edcf" stroke-width="5" stroke-linecap="round"/>
+  <path d="M69 69H91M84 61L92 69L84 77M91 91H69M76 83L68 91L76 99" fill="none" stroke="#c55c2f" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="80" cy="80" r="52" fill="none" stroke="#6f7453" stroke-width="3" stroke-dasharray="5 7"/>
+</svg>

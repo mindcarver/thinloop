@@ -52,6 +52,9 @@ test("project models an executable Issue DAG without an execution loop", () => {
   assert.match(contract, /integration or release Delivery Issue/i);
   assert.match(skill, /must not automatically\s+launch agents/i);
   assert.match(skill, /Do not add leases, retries, concurrency slots/i);
+  assert.match(skill, /`scd-reengineering` is an external consumer/i);
+  assert.match(skill, /does not give Project\s+execution authority/i);
+  assert.match(contract, /Project itself remains\s+non-executing/i);
 });
 
 test("project uses rolling approval and deterministic graph validation", () => {
@@ -80,6 +83,7 @@ test("discovery and quickdev route project work without widening implementation 
   assert.match(discovery, /must not create one oversized implementation Issue/i);
   assert.match(quickdev, /\*\*Project:\*\*/);
   assert.match(quickdev, /one explicitly selected, approved `READY` Delivery Issue/i);
-  assert.match(quickdev, /Refuse an\s+Initiative, PLANNED placeholder, or BLOCKED node/i);
+  assert.match(quickdev, /approved Reengineering execution wave/i);
+  assert.match(quickdev, /Refuse an\s+Initiative,\s+PLANNED placeholder, BLOCKED node/i);
   assert.match(workflow, /不启动 Agent、worktree 或长期 loop/);
 });
