@@ -25,7 +25,6 @@
   <a href="#capabilities">能力</a> ·
   <a href="#workflow">闭环</a> ·
   <a href="#skill-flows">技能流程</a> ·
-  <a href="#install">安装</a> ·
   <a href="#docs">文档</a>
 </p>
 
@@ -145,21 +144,6 @@ GitHub Issue 是需求、任务和验收的唯一真值源；PR 是实现证据�
 
 每张图只保留该 Skill 的五个关键节点；完整触发条件、分支和安全边界仍以对应
 `SKILL.md` 为准。
-
-<a id="install"></a>
-
-## 安装到 Codex、Claude Code、OpenCode、WorkBuddy 与 ZCode / INSTALL
-
-| Agent | 推荐安装 | 更新生效 |
-|---|---|---|
-| Codex | 把七个 Skill 链接到 `~/.codex/skills` | 新任务 |
-| OpenCode | 把七个 Skill 链接到 `~/.config/opencode/skills` | 重启 OpenCode |
-| Claude Code | 安装完整插件 | 更新后重启或重新加载插件 |
-| WorkBuddy | 安装完整插件 | 更新后重启 WorkBuddy |
-| ZCode | 安装完整插件 | 更新后新建会话 |
-
-完整命令、插件安装、升级迁移和调用方式见
-[安装与更新指南](./docs/installation.md)。
 
 <a id="docs"></a>
 

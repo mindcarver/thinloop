@@ -64,7 +64,6 @@ test("documentation installs and verifies OpenCode through its native interfaces
     "utf8",
   );
 
-  assert.match(readme, /\.config[\\/]opencode[\\/]skills/);
   assert.match(readme, /\.\/docs\/installation\.md/);
   assert.match(readme, /\.\/docs\/verification\.md/);
   assert.match(installation, /\.config[\\/]opencode[\\/]skills/);
