@@ -14,6 +14,7 @@ const expectedSkills = [
   "scd-maintenance",
   "scd-project",
   "scd-quickdev",
+  "scd-reengineering",
   "scd-uiux",
 ];
 
@@ -40,7 +41,7 @@ test("Codex, Claude, WorkBuddy, and ZCode manifests share one version and skill 
     .sort();
 
   assert.equal(codex.name, "thinloop");
-  assert.equal(codex.version, "0.8.0");
+  assert.equal(codex.version, "0.9.0");
   assert.equal(claude.name, codex.name);
   assert.equal(workbuddy.name, codex.name);
   assert.equal(zcode.name, codex.name);
@@ -54,9 +55,12 @@ test("Codex, Claude, WorkBuddy, and ZCode manifests share one version and skill 
   for (const manifest of [codex, claude, workbuddy, zcode]) {
     assert.match(manifest.description, /multi-Issue project decomposition/i);
     assert.match(manifest.description, /dependency DAG/i);
+    assert.match(manifest.description, /cross-stack reimplementation/i);
   }
   assert.match(codex.interface.defaultPrompt, /SCD Project/);
   assert.match(codex.interface.defaultPrompt, /does not run an implementation loop/);
+  assert.match(codex.interface.defaultPrompt, /SCD Reengineering/);
+  assert.match(codex.interface.defaultPrompt, /bounded READY waves/);
   for (const marketplace of [
     claudeMarketplace,
     workbuddyMarketplace,
@@ -165,9 +169,11 @@ test(
 test("shared skills recognize both repository instruction conventions", () => {
   const quickdev = read("skills/scd-quickdev/SKILL.md");
   const maintenance = read("skills/scd-maintenance/SKILL.md");
+  const reengineering = read("skills/scd-reengineering/SKILL.md");
 
   assert.match(quickdev, /whenever a coding agent is asked/i);
   assert.doesNotMatch(quickdev, /whenever Codex is asked/i);
   assert.match(quickdev, /`AGENTS\.md`, `CLAUDE\.md`/);
   assert.match(maintenance, /`AGENTS\.md`, `CLAUDE\.md`/);
+  assert.match(reengineering, /`AGENTS\.md`, `CLAUDE\.md`/);
 });

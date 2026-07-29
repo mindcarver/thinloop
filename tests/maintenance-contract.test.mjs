@@ -25,6 +25,8 @@ test("maintenance is explicitly invoked and supports audit and repair", () => {
   assert.match(skill, /\*\*Repair:\*\*/);
   assert.match(skill, /\*\*Focused:\*\*/);
   assert.match(skill, /first batch of no more\s+than three findings/i);
+  assert.match(skill, /Use `scd-reengineering` instead/i);
+  assert.match(skill, /does not own\s+the reengineering direction or execution graph/i);
 });
 
 test("maintenance resolves authority instead of assuming code is correct", () => {

@@ -82,9 +82,11 @@ does not authorize commit, push, pull request, or merge because Evolve retains
 those actions behind separate user authorization.
 
 `scd-project` does not authorize implementation of every project node. Accept
-only one explicitly selected, approved `READY` Delivery Issue. Refuse an
-Initiative, PLANNED placeholder, or BLOCKED node and return the exact project
-gap instead of creating a branch.
+only one explicitly selected, approved `READY` Delivery Issue. Selection may
+come directly from the user or from an approved Reengineering execution wave
+whose exact Initiative graph revision remains current. Refuse an Initiative,
+PLANNED placeholder, BLOCKED node, stale graph revision, or a request to absorb
+sibling Issues, and return the exact project gap instead of creating a branch.
 
 Read `references/scope-contract.md` when ambiguity or scope expansion is
 plausible. Read `references/issue-delivery-contract.md` before creating or

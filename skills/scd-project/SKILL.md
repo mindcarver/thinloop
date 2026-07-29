@@ -183,10 +183,17 @@ launch agents or run them sequentially or in parallel. When the user explicitly
 selects one READY Delivery Issue for implementation, hand only that Issue to
 `scd-quickdev`.
 
+`scd-reengineering` is an external consumer for an Initiative whose approved
+contract is specifically a project-scale refactor or reimplementation. It may
+execute an explicitly approved graph revision under its own READY-wave,
+isolation, merge, and integration contract. This does not give Project
+execution authority and does not authorize another skill or an ordinary
+Initiative to launch the graph.
+
 Do not add leases, retries, concurrency slots, resource locks, automatic
 worktree creation, merge queues, deployment, or a long-running scheduler. A
-future external loop may consume the same validated Issue graph, but it is
-outside this skill's current authority.
+supported external consumer may use the same validated Issue graph, but that
+execution remains outside Project's authority.
 
 ## Resources
 

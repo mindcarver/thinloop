@@ -1,6 +1,6 @@
 ---
 name: scd-maintenance
-description: "Audit and repair repository technical debt, code-documentation drift, stale specifications, architecture erosion, dead code, dependency hygiene, and obsolete project artifacts. Use when the user explicitly asks to inspect, clean up, reconcile, modernize, or reduce debt in an existing repository, including requests such as 'audit this repo', 'find stale docs', 'clean technical debt', or 'make the implementation and documentation agree'. Do not invoke automatically during ordinary feature work, routine code review, or documentation editing."
+description: "Audit and repair repository technical debt, code-documentation drift, stale specifications, architecture erosion, dead code, dependency hygiene, and obsolete project artifacts. Use when the user explicitly asks to inspect, clean up, reconcile, modernize, or reduce debt in an existing repository, including requests such as 'audit this repo', 'find stale docs', 'clean technical debt', or 'make the implementation and documentation agree'. Do not invoke automatically during ordinary feature work, routine code review, or documentation editing, and use scd-reengineering instead for a project-scale refactor or reimplementation."
 ---
 
 # SCD Maintenance
@@ -22,6 +22,12 @@ conflict is known.
 For a broad repair request, audit first and recommend a first batch of no more
 than three findings. Do not interpret "clean the repository" as permission for
 an unbounded rewrite.
+
+Use `scd-reengineering` instead when the requested outcome is a project-scale
+refactor, replacement implementation, language or framework port, architectural
+replacement, or staged migration across several independently verifiable
+deliveries. Maintenance may supply confirmed debt evidence, but it does not own
+the reengineering direction or execution graph.
 
 ## Start from repository truth
 

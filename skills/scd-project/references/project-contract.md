@@ -259,7 +259,13 @@ requests, and verifier evidence.
 This contract does not define:
 
 - an execution loop or scheduler;
-- automatic agent, branch, worktree, pull-request, merge, or deployment actions;
+- automatic agent, branch, worktree, pull-request, merge, or deployment actions
+  by Project itself;
 - concurrency slots, leases, retries, or distributed locks;
 - file-, function-, or checklist-task dependency graphs;
 - more than one QuickDev implementation lane for one Delivery Issue.
+
+An external skill may consume this graph only under its own approved execution
+contract. `scd-reengineering` is the supported consumer for an approved
+project-scale refactor or reimplementation Initiative; Project itself remains
+non-executing.

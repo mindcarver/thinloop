@@ -13,6 +13,7 @@ Issue 保存自身切片。PR 保存实现、工程审阅、验证与回滚证�
 | 目标、边界和验收已经清楚 | 直接进入 QuickDev，不制造额外需求流程 |
 | 多个上游产品决定仍会改变结果 | 用 Discovery 一次解决一个关键决定 |
 | 已批准目标跨越多个独立交付 | 用 Project 创建 Initiative、Delivery Issues 和依赖 DAG；不启动执行 loop |
+| 现有系统需要项目级重构或跨技术栈重新实现 | 用 Reengineering 固定上游、兼容边界和目标方向，再消费批准的 Project DAG |
 | 体验或技术边界仍影响交付 | 按需调用 UIUX 或 Architecture，不设固定关卡 |
 | 实现完成 | Agent 验证、自审、提 PR 并在工程闸门通过后合并 `main` |
 | 工程验证完成 | 独立验收 Agent 按需执行真实环境验证，只在 `PASS` 后关闭 Issue |
@@ -21,7 +22,9 @@ Issue 保存自身切片。PR 保存实现、工程审阅、验证与回滚证�
 
 默认不强制 TDD、角色系统、额外子代理或固定阶段。Project 只拆解项目、校验
 Issue 级 DAG 并报告 READY/BLOCKED，不启动 Agent、worktree 或长期 loop；
-QuickDev 只固定使用一个独立验收 Agent。QuickDev 的实现请求包含任务内 Issue、
+Reengineering 是限定于已批准再工程 Initiative 的外部执行器，可将安全独立的
+READY Issues 分配到隔离 QuickDev lane，并让硬依赖串行。QuickDev 只固定使用
+一个独立验收 Agent。QuickDev 的实现请求包含任务内 Issue、
 分支、提交、推送、PR 与合资格合并；高风险合并和生产部署仍需明确授权。
 
 ## 工作闭环
@@ -31,14 +34,16 @@ QuickDev 只固定使用一个独立验收 Agent。QuickDev 的实现请求包�
 清晰单交付 → 创建/确认 Issue ─────────────────────────────────→ QuickDev
 多交付项目 →（核心未澄清时先 Discovery）→ Project → Initiative + Delivery Issue DAG → 停止
 已选 READY Delivery Issue ────────────────────────────────────→ QuickDev
+项目级重构/重写 → Reengineering → 基线与兼容边界 → Project DAG → READY 波次 → QuickDev lanes
 QuickDev → 分支 → 开发与工程验收 → 独立 Agent 验收 → PR → main → 关闭 Issue
 主动调用 → Maintenance / Knowledge
 主动复盘 → Evolve → 候选 ID 审批 → 可回滚试验 → 证据
 ```
 
 清晰任务从 QuickDev 直接开始；Project 只在多个独立交付真实存在时出现，并把
-一个被明确选择的 READY Delivery Issue 交给 QuickDev。Maintenance、Knowledge
-和 Evolve 只在用户主动要求时出现。
+一个被明确选择的 READY Delivery Issue 交给 QuickDev。Reengineering 只消费
+用户批准的项目级重构或重新实现图，不把普通 Project 变成自动执行器。
+Maintenance、Knowledge 和 Evolve 只在用户主动要求时出现。
 
 ## 最小项目状态
 
@@ -71,3 +76,5 @@ Wiki、永久实施计划或调度数据库。
 - [Architecture 契约](../skills/scd-architecture/references/architecture-contract.md)
 - [Knowledge 存储契约](../skills/scd-knowledge/references/storage-contract.md)
 - [Evolve 历史契约](../skills/scd-evolve/references/source-and-history-contract.md)
+- [Reengineering 再工程契约](../skills/scd-reengineering/references/reengineering-contract.md)
+- [Reengineering 执行契约](../skills/scd-reengineering/references/execution-contract.md)

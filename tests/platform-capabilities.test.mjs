@@ -157,8 +157,9 @@ test("platform registry is the five-platform capability contract", () => {
     registry.platforms.map((entry) => entry.id),
     ["codex", "opencode", "claude-code", "workbuddy", "zcode"],
   );
-  assert.equal(expectedSkills.length, 8);
+  assert.equal(expectedSkills.length, 9);
   assert.ok(expectedSkills.includes("scd-project"));
+  assert.ok(expectedSkills.includes("scd-reengineering"));
 
   const installation = read("docs/installation.md");
   const verification = read("docs/verification.md");
