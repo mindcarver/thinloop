@@ -123,6 +123,43 @@ Do not create a Delivery Issue solely for every source directory or technical
 layer. A platform foundation is justified only when another slice cannot be
 implemented or verified without it.
 
+## Staged milestones
+
+A user may approve an initial milestone that delivers only part of the
+compatibility envelope. Treat that as delivery sequencing, not permission to
+erase the remaining contract.
+
+- Every deferred `keep` or `change` capability remains a visible `PLANNED` or
+  `BLOCKED` graph node with its target contract and verification seam.
+- A milestone may be called complete only for its explicitly approved slice.
+- While any retained capability is deferred, do not claim complete rewrite,
+  same product contract, full parity, or integration acceptance.
+- User-facing skills, commands, documentation, and examples shipped in that
+  milestone must not require an unavailable capability without an explicit
+  partial-state warning and an approved usable fallback.
+- The final integration Issue remains dependent on all retained leaf
+  capabilities, including those assigned to a later milestone.
+
+## Recover an unmanaged prototype
+
+When implementation or default-branch commits already exist without the
+required Initiative, graph, Issue lanes, or acceptance evidence:
+
+1. stop adding features;
+2. classify the existing code as an unmanaged candidate, not DONE;
+3. audit its commits, tests, provenance, and external behavior without treating
+   the implementer's summary as acceptance;
+4. materialize the Initiative, compatibility envelope, Delivery Issues, and
+   integration gate through `scd-project`;
+5. attach existing code and test results only as candidate evidence to the
+   applicable Issues;
+6. run the remaining QuickDev and independent acceptance contracts from live
+   Issue state.
+
+Do not rewrite history merely to imitate the missing lanes. Recovery restores
+authoritative contracts and evidence; it does not retroactively claim that the
+original unmanaged execution complied.
+
 ## License and clean-room boundary
 
 Thinloop records evidence and blockers; it does not determine whether a license

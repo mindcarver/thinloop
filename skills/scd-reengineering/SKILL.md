@@ -21,6 +21,50 @@ Maintain these boundaries:
 - independent acceptance and an integration gate own completion evidence;
 - production cutover and other high-risk actions retain a human gate.
 
+## Follow the fail-closed state machine
+
+Advance only through these states:
+
+1. `SOURCE_BASELINED` - pinned source, license evidence, and executable baseline
+   results or exact blockers are recorded.
+2. `DIRECTION_APPROVED` - the user approved the mode, target boundary,
+   compatibility envelope, and material uncertainties.
+3. `PROJECT_MATERIALIZED` - `scd-project` created or updated the live
+   Initiative, Delivery Issues, and validated graph revision.
+4. `GRAPH_APPROVED` - the user approved that exact live graph revision and its
+   READY wave.
+5. `EXECUTING` - one `scd-quickdev` lane is operating per selected READY Issue
+   under the execution contract.
+6. `INTEGRATION_ACCEPTED` - the assembled current base passed the integration
+   Issue and capability-level acceptance.
+
+Do not skip or infer a state. A later state requires direct evidence for every
+earlier state. Direction approval does not imply Project materialization or
+graph approval. Before the first implementation edit or commit, and again
+before every later READY wave, build the transient receipt defined in
+`references/execution-contract.md` and run
+`scripts/validate-execution-receipt.mjs`. The receipt validates a live
+coordination snapshot; never commit it or use it as a second state database.
+
+If a required Thinloop skill, tracker, graph validator, approval, Issue
+contract, or verification environment is unavailable, report `BLOCKED` at the
+current state. Do not approximate the missing dependency or continue directly.
+
+## Never substitute local activity for project evidence
+
+- `TaskCreate`, `TodoWrite`, checklists, or another session-local task tool are
+  not an Initiative, Delivery Issue, or Project DAG.
+- A local plan, memory entry, scratch file, or generated receipt is not the
+  tracker-backed project truth.
+- A branch, commit, checked task, local test, or implementer summary is not
+  independent acceptance.
+- A direct push to the default branch is not a QuickDev delivery lane.
+- A list of capability packages or source files is not a graph of approved
+  vertical Delivery Issues.
+
+Local task tracking may mirror the next action for convenience, but it cannot
+authorize work, replace live URLs and Issue contracts, or establish DONE.
+
 ## Select the operation
 
 Choose the smallest operation supported by the requested outcome and repository
@@ -144,6 +188,11 @@ approved:
 consumer that may execute an explicitly approved graph revision. Approval of
 the direction alone does not authorize unspecified Delivery Issues.
 
+The handoff from direction to Project is mandatory. Invoke `scd-project`; do
+not reproduce or approximate it with local task tools. If `scd-project` cannot
+be invoked or the repository-authoritative tracker cannot be read and written,
+stop as `BLOCKED` after the approved direction summary.
+
 ## Execute approved READY waves
 
 Read `references/execution-contract.md` before launching implementation lanes.
@@ -151,24 +200,30 @@ Read `references/execution-contract.md` before launching implementation lanes.
 After the user approves the exact executable graph revision:
 
 1. re-read the live Initiative and Delivery Issues and validate the graph;
-2. select only approved READY nodes;
-3. identify coordination constraints such as overlapping files, shared
+2. create and validate the pre-execution receipt from live evidence;
+3. select only approved READY nodes;
+4. identify coordination constraints such as overlapping files, shared
    generated artifacts, scarce environments, or likely merge conflicts without
    adding false dependency edges;
-4. launch separate agents and isolated worktrees for safely independent nodes,
+5. launch separate agents and isolated worktrees for safely independent nodes,
    bounded by available concurrency and repository policy;
-5. give each agent explicit file or module ownership, tell it that other agents
+6. give each agent explicit file or module ownership, tell it that other agents
    are working concurrently, and hand it exactly one Delivery Issue through
    `scd-quickdev`;
-6. keep dependent or coordination-conflicting nodes serial;
-7. serialize merges, synchronize remaining worktrees after each merge, and
+7. keep dependent or coordination-conflicting nodes serial;
+8. serialize merges, synchronize remaining worktrees after each merge, and
    rerun the affected focused and integration checks;
-8. rebuild the live Project graph after every PASS, FAIL, BLOCKED result, scope
+9. rebuild the live Project graph after every PASS, FAIL, BLOCKED result, scope
    change, or merged dependency.
 
 One Delivery Issue gets one QuickDev implementation lane and its required
 fresh-context acceptance verifier. A lane must not implement sibling Issues,
 weaken acceptance, or close its Issue on engineering checks alone.
+
+Invoking `scd-quickdev` is mandatory for each selected Issue. If it is
+unavailable, stop the affected lane as `BLOCKED`; do not implement the Issue in
+the parent session. Never commit or push implementation directly to the default
+branch.
 
 When one lane fails, block its downstream nodes and continue only unrelated
 READY work that remains safe. When evidence changes the compatibility envelope,
@@ -221,3 +276,5 @@ production readiness beyond the exact evidence obtained.
   envelope, direction approval, Initiative additions, and parity rules.
 - `references/execution-contract.md` - READY-wave scheduling, isolated lanes,
   merge coordination, failure handling, integration, and resumption.
+- `scripts/validate-execution-receipt.mjs` - dependency-free validation of the
+  transient live pre-execution evidence gate.
