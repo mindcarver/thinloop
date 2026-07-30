@@ -1,7 +1,7 @@
 # Issue delivery contract
 
 Use this reference for GitHub Issue creation, task isolation, pull requests,
-merge decisions, and independent agent acceptance.
+merge decisions, and independent agent review and acceptance.
 
 ## Source of truth
 
@@ -135,28 +135,46 @@ automatically deploys to production, treat the merge as a production action and
 obtain the required explicit human approval. Prefer Preview or Staging for
 pre-production evidence when available.
 
-## Independent acceptance
+## Independent review and acceptance
 
-After implementation and engineering checks, launch a separate fresh-context
-subagent as the acceptance verifier. Give it the governing Issue and repository
-location, not the implementing agent's conclusions. The verifier must:
+After implementation and engineering checks, launch one separate fresh-context
+subagent as the independent code reviewer and acceptance verifier. Give it the
+governing Issue, repository location, and exact review target: base and target
+refs for committed changes, or the workspace state before commit. Do not give it
+the implementing agent's conclusions. The verifier must:
 
 1. read the Issue acceptance items and applicable repository instructions;
 2. inspect the actual issue-specific diff;
-3. run directly relevant checks and real-environment paths, including browser,
-   real-model, or produced-artifact validation when the changed behavior depends
-   on them;
-4. avoid modifying product code;
-5. return `PASS`, `FAIL`, or `BLOCKED` with reproducible evidence mapped to
-   every acceptance item.
+3. for reviewable code changes, prefer the `open-code-review-delegate` skill
+   when discoverable;
+4. otherwise use `command -v ocr`, `ocr delegate preview`, and
+   `ocr delegate rule` when the CLI is available;
+5. when OCR is unavailable or fails, record `OCR_UNAVAILABLE` or the exact
+   error and perform a normal fresh-context diff review;
+6. validate OCR findings against the actual code and requirement context,
+   discard false positives, and return `REVIEW_PASS` or `REVIEW_FAIL` with
+   confirmed findings;
+7. only after `REVIEW_PASS`, run directly relevant checks and real-environment
+   paths, including browser, real-model, or produced-artifact validation when
+   the changed behavior depends on them;
+8. avoid modifying product code;
+9. return acceptance `PASS`, `FAIL`, or `BLOCKED` with reproducible evidence
+   mapped to every acceptance item.
 
-`PASS` authorizes eligible merge and explicit Issue closure after the merged
-revision is confirmed. `FAIL` returns the evidence to implementation, keeps the
-Issue open, and requires another independent verification after repair.
-`BLOCKED` records the missing environment or dependency and keeps the Issue
-open. If merge, deployment, or environment state can change the observed
-result, rerun the affected acceptance path on `main` before closing.
+The review stage does not require provider-backed `ocr review` and must not
+install, configure, or invent a missing OCR capability. OCR comments are
+candidate findings, not facts. The verifier must confirm them before reporting
+them, and it must not apply suggested fixes. `REVIEW_FAIL` returns the confirmed
+findings to implementation and requires a new independent review after repair.
+
+`REVIEW_PASS` followed by acceptance `PASS` authorizes eligible merge and
+explicit Issue closure after the merged revision is confirmed. `FAIL` returns
+the evidence to implementation, keeps the Issue open, and requires another
+independent verification after repair. `BLOCKED` records the missing environment
+or dependency and keeps the Issue open. If merge, deployment, or environment
+state can change the observed result, rerun the affected acceptance path on
+`main` before closing.
 
 The parent agent owns delivery orchestration. The independent verifier owns the
-acceptance verdict. Human approval remains required only for the high-risk
-boundaries listed above or a repository-enforced human gate.
+review and acceptance verdicts. Human approval remains required only for the
+high-risk boundaries listed above or a repository-enforced human gate.

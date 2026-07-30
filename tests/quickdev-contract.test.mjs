@@ -70,10 +70,13 @@ test("quickdev always isolates meaningful work on a branch and uses worktrees co
   assert.match(contract, /unrelated changes/i);
 });
 
-test("quickdev delegates acceptance to an independent verifier before closing the Issue", () => {
+test("quickdev delegates code review and acceptance to one independent verifier", () => {
   const skill = read("skills/scd-quickdev/SKILL.md");
   const contract = read(
     "skills/scd-quickdev/references/issue-delivery-contract.md",
+  );
+  const evidence = read(
+    "skills/scd-quickdev/references/evidence-contract.md",
   );
   const guidance = [
     read("AGENTS.md"),
@@ -85,15 +88,46 @@ test("quickdev delegates acceptance to an independent verifier before closing th
   assert.match(skill, /merge it into `main`/i);
   assert.match(contract, /`Refs #<issue>`/);
   assert.match(contract, /Do not use `Closes #<issue>`/);
-  assert.match(skill, /separate fresh-context subagent/i);
-  assert.match(skill, /must not rely only on the implementing\s+agent's summary/i);
-  assert.match(contract, /subagent as the acceptance verifier/i);
-  assert.match(contract, /not the implementing agent's conclusions/i);
+  assert.match(skill, /one separate fresh-context\s+subagent/i);
+  assert.match(
+    skill,
+    /must not rely only\s+on the\s+implementing\s+agent's summary/i,
+  );
+  assert.match(contract, /independent code reviewer and acceptance verifier/i);
+  assert.match(contract, /Do not give it\s+the implementing agent's conclusions/i);
+  assert.match(skill, /`open-code-review-delegate` skill/i);
+  assert.match(skill, /`command -v ocr`/i);
+  assert.match(contract, /`ocr delegate preview`/i);
+  assert.match(contract, /`ocr delegate rule`/i);
+  assert.match(contract, /`OCR_UNAVAILABLE`/);
+  assert.match(contract, /validate OCR findings against the actual code/i);
+  assert.match(contract, /discard false positives/i);
+  assert.match(evidence, /`REVIEW_PASS`/);
+  assert.match(evidence, /`REVIEW_FAIL`/);
+  assert.match(evidence, /never modifies product code/i);
+  assert.match(contract, /base and target\s+refs.*or the workspace state/is);
+  assert.match(skill, /do not install or configure OCR/i);
+  assert.match(skill, /Provider-backed `ocr review` is not required/i);
+  assert.ok(
+    skill.indexOf("Independent code review.") <
+      skill.indexOf("Behavioral acceptance."),
+  );
+  assert.ok(
+    skill.indexOf("`open-code-review-delegate`") <
+      skill.indexOf("`command -v ocr`"),
+  );
+  assert.ok(
+    skill.indexOf("`command -v ocr`") <
+      skill.indexOf("`OCR_UNAVAILABLE`"),
+  );
   assert.match(contract, /browser,\s+real-model, or produced-artifact validation/i);
   assert.match(contract, /`PASS`, `FAIL`, or `BLOCKED`/);
-  assert.match(contract, /`PASS` authorizes eligible merge and explicit Issue closure/i);
+  assert.match(
+    contract,
+    /`REVIEW_PASS` followed by acceptance `PASS` authorizes eligible merge/i,
+  );
   assert.match(contract, /avoid modifying product code/i);
-  assert.match(guidance, /独立验收 Agent/);
+  assert.match(guidance, /Open Code Review/);
   assert.doesNotMatch(`${skill}\n${contract}\n${guidance}`, /awaiting-uat/);
   assert.doesNotMatch(contract, /The user owns\s+real-use acceptance/i);
 });

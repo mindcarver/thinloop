@@ -15,8 +15,8 @@ Issue 保存自身切片。PR 保存实现、工程审阅、验证与回滚证�
 | 已批准目标跨越多个独立交付 | 用 Project 创建 Initiative、Delivery Issues 和依赖 DAG；不启动执行 loop |
 | 现有系统需要项目级重构或跨技术栈重新实现 | 用 Reengineering 固定上游、兼容边界和目标方向，再消费批准的 Project DAG |
 | 体验或技术边界仍影响交付 | 按需调用 UIUX 或 Architecture，不设固定关卡 |
-| 实现完成 | Agent 验证、自审、提 PR 并在工程闸门通过后合并 `main` |
-| 工程验证完成 | 独立验收 Agent 按需执行真实环境验证，只在 `PASS` 后关闭 Issue |
+| 实现完成 | Agent 验证、自审并提交任务内变更 |
+| 工程验证完成 | 一个独立 Agent 优先通过 Open Code Review 审查 diff，通过后执行真实环境验收；只有 `REVIEW_PASS` 和验收 `PASS` 才能交付 |
 | 用户主动要求维护或沉淀 | 调用 Maintenance 或 Knowledge；普通开发不自动触发 |
 | 用户主动要求优化 Thinloop | 调用 Evolve；先诊断和候选，按候选 ID 批准后才试验 |
 
@@ -24,7 +24,7 @@ Issue 保存自身切片。PR 保存实现、工程审阅、验证与回滚证�
 Issue 级 DAG 并报告 READY/BLOCKED，不启动 Agent、worktree 或长期 loop；
 Reengineering 是限定于已批准再工程 Initiative 的外部执行器，可将安全独立的
 READY Issues 分配到隔离 QuickDev lane，并让硬依赖串行。QuickDev 只固定使用
-一个独立验收 Agent。QuickDev 的实现请求包含任务内 Issue、
+一个独立审查与验收 Agent。QuickDev 的实现请求包含任务内 Issue、
 分支、提交、推送、PR 与合资格合并；高风险合并和生产部署仍需明确授权。
 
 ## 工作闭环
@@ -35,7 +35,7 @@ READY Issues 分配到隔离 QuickDev lane，并让硬依赖串行。QuickDev �
 多交付项目 →（核心未澄清时先 Discovery）→ Project → Initiative + Delivery Issue DAG → 停止
 已选 READY Delivery Issue ────────────────────────────────────→ QuickDev
 项目级重构/重写 → Reengineering → 基线与兼容边界 → Project DAG → READY 波次 → QuickDev lanes
-QuickDev → 分支 → 开发与工程验收 → 独立 Agent 验收 → PR → main → 关闭 Issue
+QuickDev → 分支 → 开发与工程验收 → 独立代码审查 → 独立行为验收 → PR → main → 关闭 Issue
 主动调用 → Maintenance / Knowledge
 主动复盘 → Evolve → 候选 ID 审批 → 可回滚试验 → 证据
 ```
