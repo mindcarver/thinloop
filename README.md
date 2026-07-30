@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <kbd>v0.9.3</kbd>
+  <kbd>v0.9.4</kbd>
   &nbsp;
   <kbd>ISSUE-DRIVEN</kbd>
   &nbsp;
@@ -171,7 +171,7 @@ QuickDev 只固定使用一个独立审查与验收 Agent。完整的路由、�
 | 文档 | 内容 |
 |---|---|
 | [工作流与项目状态](./docs/workflow-and-state.md) | 路由原则、Issue/PR 边界、最小状态与契约入口 |
-| [安装与更新指南](./docs/installation.md) | 五类 Agent 的安装、升级、调用与 Evolve 源码配置 |
+| [安装与更新指南](./docs/installation.md) | 六类 Agent（含 Pi）的安装、升级、调用与 Evolve 源码配置 |
 | [验证指南](./docs/verification.md) | 仓库校验命令、各 Agent 的运行时证据与已知边界 |
 | [评测说明](./EVALUATION.md) | 评测方法、历史证据与限制 |
 

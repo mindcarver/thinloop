@@ -8,6 +8,7 @@
 |---|---|---|
 | Codex | 把九个 Skill 链接到 `~/.codex/skills` | 新任务 |
 | OpenCode | 把九个 Skill 链接到 `~/.config/opencode/skills` | 重启 OpenCode |
+| Pi | 把九个 Skill 链接到 `~/.pi/agent/skills` | 新会话或执行 `/reload` |
 | Claude Code | 安装完整插件 | 更新后重启或重新加载插件 |
 | WorkBuddy | 安装完整插件 | 更新后重启 WorkBuddy |
 | ZCode | 安装完整插件 | 更新后新建会话 |
@@ -16,7 +17,7 @@ Skill 链接随源码仓库更新，但不启用连续性 Hook；Claude Code、W
 ZCode 的完整插件会额外启用各自支持的 Hook。不要在同一个 Agent 中同时安装
 完整插件和个人 Skill 链接，以免重复暴露同名能力。
 
-## Codex 与 OpenCode
+## Codex、OpenCode 与 Pi
 
 ### Windows · Junction
 
@@ -24,7 +25,8 @@ ZCode 的完整插件会额外启用各自支持的 Hook。不要在同一个 Ag
 $repo = "C:\path\to\thinloop"
 $skillRoots = @(
   "$env:USERPROFILE\.codex\skills",
-  "$env:USERPROFILE\.config\opencode\skills"
+  "$env:USERPROFILE\.config\opencode\skills",
+  "$env:USERPROFILE\.pi\agent\skills"
 )
 $skillNames = @(
   "scd-discovery", "scd-uiux", "scd-architecture",
@@ -63,6 +65,7 @@ repo="/path/to/thinloop"
 skill_roots=(
   "${CODEX_HOME:-$HOME/.codex}/skills"
   "${XDG_CONFIG_HOME:-$HOME/.config}/opencode/skills"
+  "${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}/skills"
 )
 skills=(
   scd-discovery scd-uiux scd-architecture
@@ -93,7 +96,12 @@ done
 
 上面的脚本只移除明确的旧链接 `scd-dev-loop`，并修复九个 Thinloop Skill
 链接；遇到同名的真实文件或目录会跳过，不会覆盖用户内容。OpenCode 也能读取
-`~/.claude/skills`，但使用自己的目录不会依赖 Claude 兼容开关。
+`~/.claude/skills`，Pi 也能读取 `~/.agents/skills`；使用各自的原生目录可以
+明确区分安装来源，不依赖兼容目录。
+
+Pi 会把这些 Skill 注册为 `/skill:scd-*` 命令。链接更新后，在现有会话执行
+`/reload`，或开启新会话。Thinloop 当前没有为 Pi 安装扩展，也不声明
+Stop 等价的连续性阻断能力。
 
 ## Evolve 权威源码
 
@@ -172,7 +180,7 @@ git -C /path/to/thinloop pull --ff-only
 随后按安装方式刷新：
 
 ```bash
-# Codex / OpenCode：重新运行上面的链接脚本，然后开启新任务或重启 Agent
+# Codex / OpenCode / Pi：重新运行上面的链接脚本，然后开启新任务、重启或 /reload
 
 # Claude Code 完整插件
 claude plugin update thinloop@thinloop --scope user
@@ -196,8 +204,9 @@ node scripts/verify-install.mjs
 
 检查器从
 [`config/platform-capabilities.json`](../config/platform-capabilities.json)
-读取五个平台的能力契约，遵循 `CODEX_HOME`、`XDG_CONFIG_HOME` 的自定义
-Skill 根，只读取 Skill 链接、Claude Code 插件清单及本地插件内容；
+读取六个平台的能力契约，遵循 `CODEX_HOME`、`XDG_CONFIG_HOME` 的自定义
+Skill 根以及 `PI_CODING_AGENT_DIR/skills`，只读取 Skill 链接、Claude Code
+插件清单及本地插件内容；
 不安装、修复、覆盖、重启或重新加载任何 Agent。状态和退出码见
 [验证指南](./verification.md)。
 
@@ -214,6 +223,8 @@ Claude Code 完整插件：/thinloop:scd-quickdev
 OpenCode：使用 scd-quickdev skill 按 Issue 开发、验证并合并。
 OpenCode：使用 scd-project skill 建立 multi-Issue 项目 DAG，只报告 READY/BLOCKED，不执行这些 Issues。
 OpenCode：使用 scd-reengineering skill 评估并执行这个项目级重构，独立节点并行、硬依赖串行。
+Pi：使用 /skill:scd-quickdev 按 Issue 开发、验证并合并。
+Pi：使用 /skill:scd-project 从批准的 PRD 分解 multi-Issue 项目 DAG，不执行 Issues。
 WorkBuddy 完整插件：/thinloop:scd-quickdev
 ZCode：使用 $scd-quickdev 按 Issue 开发、验证并合并。
 ZCode：使用 $scd-project 分解 multi-Issue 项目并验证依赖 DAG，不启动执行 loop。

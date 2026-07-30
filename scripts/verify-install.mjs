@@ -47,6 +47,12 @@ function parseArgs(argv) {
     } else if (argument === "--home") {
       options.homeDir = argv[index + 1];
       index += 1;
+    } else if (argument === "--platform") {
+      options.platformId = argv[index + 1];
+      if (!options.platformId) {
+        throw new Error("--platform requires an id");
+      }
+      index += 1;
     } else if (argument === "--help" || argument === "-h") {
       options.help = true;
     } else {
@@ -60,7 +66,6 @@ function parseArgs(argv) {
   if (!options.homeDir) {
     throw new Error("--home requires a path");
   }
-
   return options;
 }
 
@@ -586,15 +591,22 @@ export function inspectInstallations({
   homeDir = os.homedir(),
   environment = process.env,
   runCommand = defaultRunCommand,
+  platformId,
 } = {}) {
   const registry = readJson(path.resolve(registryPath));
   validateRegistry(registry);
   const expected = expectedSource(registry, path.resolve(sourceRoot));
+  const platforms = platformId
+    ? registry.platforms.filter((platform) => platform.id === platformId)
+    : registry.platforms;
+  if (platforms.length === 0) {
+    throw new Error(`Unknown platform: ${platformId}`);
+  }
   const context = {
     homeDir: path.resolve(homeDir),
     environment,
   };
-  const results = registry.platforms.map((platform) => {
+  const results = platforms.map((platform) => {
     if (platform.verification.mode === "skill-links") {
       const result = inspectSkillLinks(
         platform,
@@ -668,7 +680,7 @@ export function formatText(report) {
 function printHelp() {
   process.stdout.write(
     [
-      "Usage: node scripts/verify-install.mjs [--format text|json] [--home <path>]",
+      "Usage: node scripts/verify-install.mjs [--format text|json] [--home <path>] [--platform <id>]",
       "",
       "Read platform capabilities from config/platform-capabilities.json and",
       "inspect Thinloop installations without changing files or client state.",
@@ -692,6 +704,7 @@ function main() {
     const report = inspectInstallations({
       registryPath: options.registryPath,
       homeDir: options.homeDir,
+      platformId: options.platformId,
     });
     process.stdout.write(
       options.format === "json"
