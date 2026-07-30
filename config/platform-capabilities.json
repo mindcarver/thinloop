@@ -58,6 +58,27 @@
       }
     },
     {
+      "id": "pi",
+      "displayName": "Pi",
+      "installation": {
+        "mode": "skill-links",
+        "skillRoot": ".pi/agent/skills",
+        "skillRootOverride": {
+          "environment": "PI_CODING_AGENT_DIR",
+          "suffix": "skills"
+        },
+        "summary": "把九个 Skill 链接到 `~/.pi/agent/skills`",
+        "takesEffect": "新会话或执行 `/reload`"
+      },
+      "capabilities": {
+        "hooks": []
+      },
+      "verification": {
+        "mode": "skill-links",
+        "summary": "九个 Skill 链接均指向当前源码；Pi RPC `get_commands` 可发现九个 `/skill:scd-*` 命令"
+      }
+    },
+    {
       "id": "claude-code",
       "displayName": "Claude Code",
       "installation": {

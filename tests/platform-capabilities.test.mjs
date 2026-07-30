@@ -151,11 +151,11 @@ function resultMap(report) {
   );
 }
 
-test("platform registry is the five-platform capability contract", () => {
+test("platform registry is the six-platform capability contract", () => {
   assert.equal(registry.schemaVersion, 1);
   assert.deepEqual(
     registry.platforms.map((entry) => entry.id),
-    ["codex", "opencode", "claude-code", "workbuddy", "zcode"],
+    ["codex", "opencode", "pi", "claude-code", "workbuddy", "zcode"],
   );
   assert.equal(expectedSkills.length, 9);
   assert.ok(expectedSkills.includes("scd-project"));
@@ -210,6 +210,7 @@ test("read-only checker verifies complete automatic installs", () => {
   try {
     linkSkills(homeDir, "codex");
     linkSkills(homeDir, "opencode");
+    linkSkills(homeDir, "pi");
     const report = inspectInstallations({
       registryPath,
       sourceRoot: root,
@@ -232,6 +233,7 @@ test("read-only checker verifies complete automatic installs", () => {
     assert.equal(report.exitCode, 0);
     assert.equal(results.codex.status, "PASS");
     assert.equal(results.opencode.status, "MANUAL");
+    assert.equal(results.pi.status, "PASS");
     assert.equal(results["claude-code"].status, "PASS");
     assert.equal(results.workbuddy.status, "MANUAL");
     assert.equal(results.zcode.status, "MANUAL");
@@ -250,6 +252,7 @@ test("checker reports missing, partial, stale, and hook-mismatched installs", ()
   });
   try {
     linkSkills(homeDir, "opencode", expectedSkills.slice(0, -1));
+    linkSkills(homeDir, "pi");
     const report = inspectInstallations({
       registryPath,
       sourceRoot: root,
@@ -271,6 +274,7 @@ test("checker reports missing, partial, stale, and hook-mismatched installs", ()
     assert.equal(report.exitCode, 1);
     assert.equal(results.codex.status, "FAIL");
     assert.equal(results.opencode.status, "FAIL");
+    assert.equal(results.pi.status, "PASS");
     assert.equal(results["claude-code"].status, "FAIL");
     assert.equal(results.workbuddy.status, "MANUAL");
     assert.equal(results.zcode.status, "MANUAL");
@@ -294,6 +298,7 @@ test("unavailable automatic plugin CLI stays unverified instead of failing", () 
   try {
     linkSkills(homeDir, "codex");
     linkSkills(homeDir, "opencode");
+    linkSkills(homeDir, "pi");
     const report = inspectInstallations({
       registryPath,
       sourceRoot: root,
@@ -312,6 +317,7 @@ test("unavailable automatic plugin CLI stays unverified instead of failing", () 
 
     assert.equal(report.exitCode, 0);
     assert.equal(results.opencode.status, "MANUAL");
+    assert.equal(results.pi.status, "PASS");
     assert.equal(results["claude-code"].status, "UNVERIFIED");
     assert.equal(results.workbuddy.status, "MANUAL");
     assert.equal(results.zcode.status, "MANUAL");
@@ -325,6 +331,7 @@ test("missing plugin evidence stays unverified instead of being guessed", () => 
   try {
     linkSkills(homeDir, "codex");
     linkSkills(homeDir, "opencode");
+    linkSkills(homeDir, "pi");
     const report = inspectInstallations({
       registryPath,
       sourceRoot: root,
@@ -353,6 +360,7 @@ test("checker has a dedicated not-installed fixture", () => {
   try {
     linkSkills(homeDir, "codex");
     linkSkills(homeDir, "opencode");
+    linkSkills(homeDir, "pi");
     const report = inspectInstallations({
       registryPath,
       sourceRoot: root,
@@ -377,16 +385,18 @@ test("checker has a dedicated not-installed fixture", () => {
   }
 });
 
-test("checker honors CODEX_HOME and XDG_CONFIG_HOME independently", () => {
+test("checker honors skill-root environment overrides independently", () => {
   const homeDir = makeFixture();
   const environment = {
     CODEX_HOME: path.join(homeDir, "custom-codex"),
     XDG_CONFIG_HOME: path.join(homeDir, "custom-xdg"),
+    PI_CODING_AGENT_DIR: path.join(homeDir, "custom-pi"),
   };
   const claudePath = makePluginInstall("claude-code");
   try {
     linkSkills(homeDir, "codex", expectedSkills, environment);
     linkSkills(homeDir, "opencode", expectedSkills, environment);
+    linkSkills(homeDir, "pi", expectedSkills, environment);
     const report = inspectInstallations({
       registryPath,
       sourceRoot: root,
@@ -407,6 +417,7 @@ test("checker honors CODEX_HOME and XDG_CONFIG_HOME independently", () => {
 
     assert.equal(results.codex.status, "PASS");
     assert.equal(results.opencode.status, "MANUAL");
+    assert.equal(results.pi.status, "PASS");
     assert.match(
       results.codex.checks.find((check) => check.name === "skills").detail,
       /custom-codex/,
@@ -414,6 +425,10 @@ test("checker honors CODEX_HOME and XDG_CONFIG_HOME independently", () => {
     assert.match(
       results.opencode.checks.find((check) => check.name === "skills").detail,
       /custom-xdg/,
+    );
+    assert.match(
+      results.pi.checks.find((check) => check.name === "skills").detail,
+      /custom-pi/,
     );
   } finally {
     fs.rmSync(homeDir, { recursive: true, force: true });
@@ -429,6 +444,7 @@ test("checker rejects unexpected legacy skills", () => {
   try {
     linkSkills(homeDir, "codex");
     linkSkills(homeDir, "opencode");
+    linkSkills(homeDir, "pi");
     const legacyPath = path.join(
       fixtureSkillRoot(homeDir, "codex"),
       "scd-dev-loop",
@@ -483,6 +499,7 @@ test("checker rejects broken plugin manifest and hook wiring", () => {
   try {
     linkSkills(homeDir, "codex");
     linkSkills(homeDir, "opencode");
+    linkSkills(homeDir, "pi");
     const report = inspectInstallations({
       registryPath,
       sourceRoot: root,
@@ -525,6 +542,7 @@ test("checker never executes probes registered as manual", () => {
   try {
     linkSkills(homeDir, "codex");
     linkSkills(homeDir, "opencode");
+    linkSkills(homeDir, "pi");
     const report = inspectInstallations({
       registryPath,
       sourceRoot: root,
@@ -557,6 +575,8 @@ test("checker source and registered probes are read-only", () => {
     /\b(?:writeFile|appendFile|mkdir|rm|rename|unlink|symlink)(?:Sync)?\b/,
   );
   assert.equal(platform("opencode").verification.mode, "skill-links");
+  assert.equal(platform("pi").verification.mode, "skill-links");
+  assert.deepEqual(platform("pi").capabilities.hooks, []);
   assert.deepEqual(platform("opencode").verification.manualRuntime.command, [
     "opencode",
     "debug",
@@ -577,6 +597,32 @@ test("checker source and registered probes are read-only", () => {
   assert.equal(platform("zcode").verification.mode, "manual");
 });
 
+test("checker can target Pi without probing unrelated platforms", () => {
+  const homeDir = makeFixture();
+  const environment = {
+    PI_CODING_AGENT_DIR: path.join(homeDir, "custom-pi"),
+  };
+  try {
+    linkSkills(homeDir, "pi", expectedSkills, environment);
+    const report = inspectInstallations({
+      registryPath,
+      sourceRoot: root,
+      homeDir,
+      environment,
+      platformId: "pi",
+      runCommand: () => {
+        throw new Error("targeted Pi verification must not run a CLI probe");
+      },
+    });
+
+    assert.equal(report.exitCode, 0);
+    assert.deepEqual(report.results.map((result) => result.id), ["pi"]);
+    assert.equal(report.results[0].status, "PASS");
+  } finally {
+    fs.rmSync(homeDir, { recursive: true, force: true });
+  }
+});
+
 test("checker reserves exit code 2 for invalid invocation", () => {
   const result = spawnSync(
     process.execPath,
@@ -586,4 +632,13 @@ test("checker reserves exit code 2 for invalid invocation", () => {
 
   assert.equal(result.status, 2);
   assert.match(result.stderr, /--format must be json or text/);
+
+  const unknownPlatform = spawnSync(
+    process.execPath,
+    [checkerPath, "--platform", "unknown"],
+    { cwd: root, encoding: "utf8" },
+  );
+
+  assert.equal(unknownPlatform.status, 2);
+  assert.match(unknownPlatform.stderr, /Unknown platform: unknown/);
 });
