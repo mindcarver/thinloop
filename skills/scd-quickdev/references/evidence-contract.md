@@ -27,6 +27,29 @@ Evidence is useful only when it records:
 
 A passing unrelated suite is not evidence for the changed behavior. A test that never reached the target path is not a regression test.
 
+## Independent review evidence
+
+Record the review engine, exact committed refs or workspace state, reviewable
+files, and confirmed findings. Prefer `open-code-review-delegate`; when only the
+CLI is available, record the completed `ocr delegate preview` and
+`ocr delegate rule` commands. When OCR is unavailable or fails, record
+`OCR_UNAVAILABLE` or the exact error and the manual fresh-context review
+performed instead.
+
+OCR output is candidate evidence. Confirm each finding against the actual code,
+requirement context, and relevant tests before reporting it. Discard false
+positives. Return:
+
+- `REVIEW_PASS` when the independent review finds no confirmed issue that
+  requires an in-scope change;
+- `REVIEW_FAIL` when a confirmed correctness, security, acceptance, unintended
+  change, or regression issue requires repair.
+
+Style preferences and unsupported speculation do not fail the review. The
+independent verifier never modifies product code. After `REVIEW_FAIL`, the
+implementing agent repairs confirmed in-scope findings and requests a new
+fresh-context review.
+
 ## Acceptance mapping
 
 When the governing Issue assigns acceptance identifiers, retain them through implementation:
@@ -43,7 +66,8 @@ If implementation reveals that an acceptance item is impossible, contradictory,
 or would require a material product-contract change, do not quietly drop or
 rewrite it. Update the Issue and return that decision to discovery.
 
-The independent acceptance verifier must produce one aggregate result:
+Only after `REVIEW_PASS`, the independent acceptance verifier produces one
+aggregate result:
 
 - `PASS` only when every acceptance item has direct observed evidence;
 - `FAIL` when changed behavior violates any acceptance item;
