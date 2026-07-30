@@ -83,8 +83,21 @@ const skillFlows = [
     ],
   },
   {
-    slug: "quickdev",
+    slug: "execute",
     index: "05",
+    title: "SCD 项目执行",
+    subtitle: "已批准任务图 → 安全交付波次",
+    stages: [
+      ["项目图", "复核"],
+      ["就绪波次", "选择"],
+      ["隔离任务", "并行"],
+      ["逐个合并", "重算"],
+      ["集成", "验收"],
+    ],
+  },
+  {
+    slug: "quickdev",
+    index: "06",
     title: "SCD 快速开发",
     subtitle: "任务单 → 验证并合并的代码",
     stages: [
@@ -97,7 +110,7 @@ const skillFlows = [
   },
   {
     slug: "knowledge",
-    index: "06",
+    index: "07",
     title: "SCD 知识沉淀",
     subtitle: "已证实经验 → 可用知识",
     stages: [
@@ -110,7 +123,7 @@ const skillFlows = [
   },
   {
     slug: "maintenance",
-    index: "07",
+    index: "08",
     title: "SCD 仓库维护",
     subtitle: "仓库信号 → 有边界的修复",
     stages: [
@@ -123,7 +136,7 @@ const skillFlows = [
   },
   {
     slug: "evolve",
-    index: "08",
+    index: "09",
     title: "SCD 技能演进",
     subtitle: "已观察失败 → 可回滚试验",
     stages: [
@@ -136,7 +149,7 @@ const skillFlows = [
   },
   {
     slug: "reengineering",
-    index: "09",
+    index: "10",
     title: "SCD 项目再工程",
     subtitle: "旧系统 → 可验证的新实现",
     stages: [
@@ -243,15 +256,16 @@ function overviewNode({ x, y, width, label, accent = false }) {
 function renderOverview() {
   const mainY = 125;
   const nodes = [
-    { x: 28, width: 116, label: ["请求", "到达"] },
-    { x: 178, width: 126, label: ["澄清", "或 PRD"] },
-    { x: 338, width: 146, label: ["按需体验", "或架构设计"] },
-    { x: 518, width: 126, label: ["按需项目", "拆解"] },
-    { x: 678, width: 126, label: ["QUICKDEV", "交付"] },
-    { x: 838, width: 126, label: ["独立", "验收"] },
+    { x: 24, width: 98, label: ["请求", "到达"] },
+    { x: 146, width: 112, label: ["澄清", "或 PRD"] },
+    { x: 282, width: 138, label: ["按需体验", "或架构设计"] },
+    { x: 444, width: 106, label: ["按需项目", "拆解"] },
+    { x: 574, width: 106, label: ["就绪波次", "执行"] },
+    { x: 704, width: 106, label: ["QUICKDEV", "交付"] },
+    { x: 834, width: 106, label: ["独立", "验收"] },
     {
-      x: 998,
-      width: 164,
+      x: 964,
+      width: 202,
       label: ["合并主分支", "关闭任务单"],
       accent: true,
     },

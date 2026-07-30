@@ -206,14 +206,15 @@ graph.
 This version may identify several READY Issues, but it must not automatically
 launch agents or run them sequentially or in parallel. When the user explicitly
 selects one READY Delivery Issue for implementation, hand only that Issue to
-`scd-quickdev`.
+`scd-quickdev`. When the user asks to start, continue, resume, or finish the
+approved Initiative or execute its current READY Issues, hand the current graph
+revision to `scd-execute`.
 
-`scd-reengineering` is an external consumer for an Initiative whose approved
-contract is specifically a project-scale refactor or reimplementation. It may
-execute an explicitly approved graph revision under its own READY-wave,
-isolation, merge, and integration contract. This does not give Project
-execution authority and does not authorize another skill or an ordinary
-Initiative to launch the graph.
+`scd-execute` is the general external consumer for an approved Initiative. It
+may execute the validated graph revision under its own READY-wave, isolation,
+merge, and integration contract. `scd-reengineering` composes that executor
+only after satisfying its additional source, direction, compatibility, receipt,
+and parity gates. Neither consumer gives Project execution authority.
 
 Do not add leases, retries, concurrency slots, resource locks, automatic
 worktree creation, merge queues, deployment, or a long-running scheduler. A

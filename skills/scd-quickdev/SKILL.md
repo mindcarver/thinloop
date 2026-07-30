@@ -1,6 +1,6 @@
 ---
 name: scd-quickdev
-description: "Drive one delivery Issue from request to verified merged code whenever a coding agent is asked to change a repository: fix a bug, add a feature, refactor code, change configuration, perform a migration, or resume unfinished implementation work. Route underdefined product work through scd-discovery and multi-delivery projects through scd-project; use one GitHub Delivery Issue as the delivery boundary and acceptance source of truth, consume an approved greenfield PRD when one governs product scope, diagnose bugs before fixing them, isolate meaningful work, verify the diff and observed behavior through an independent review and acceptance subagent, create a pull request, merge eligible changes into main, and close the Issue only after both gates pass. Do not trigger for advice-only questions, explanations, read-only reviews, Initiative Issues, PLANNED placeholders, or BLOCKED project nodes."
+description: "Drive one delivery Issue from request to verified merged code whenever a coding agent is asked to change a repository: fix a bug, add a feature, refactor code, change configuration, perform a migration, or resume unfinished implementation work. Route underdefined product work through scd-discovery and multi-delivery projects through scd-project; accept exactly one approved READY Issue selected directly or by an scd-execute wave, use that GitHub Delivery Issue as the delivery boundary and acceptance source of truth, consume an approved greenfield PRD when one governs product scope, diagnose bugs before fixing them, isolate meaningful work, verify the diff and observed behavior through an independent review and acceptance subagent, create a pull request, merge eligible changes into main, and close the Issue only after both gates pass. Do not trigger for advice-only questions, explanations, read-only reviews, Initiative Issues, PLANNED placeholders, or BLOCKED project nodes."
 ---
 
 # SCD QuickDev
@@ -91,10 +91,12 @@ those actions behind separate user authorization.
 
 `scd-project` does not authorize implementation of every project node. Accept
 only one explicitly selected, approved `READY` Delivery Issue. Selection may
-come directly from the user or from an approved Reengineering execution wave
-whose exact Initiative graph revision remains current. Refuse an Initiative,
-PLANNED placeholder, BLOCKED node, stale graph revision, or a request to absorb
-sibling Issues, and return the exact project gap instead of creating a branch.
+come directly from the user or from an approved `scd-execute` wave whose exact
+Initiative graph revision remains current. A Reengineering wave reaches
+QuickDev through Execute after its additional fail-closed gates pass. Refuse an
+Initiative, PLANNED placeholder, BLOCKED node, stale graph revision, or a
+request to absorb sibling Issues, and return the exact project gap instead of
+creating a branch.
 
 For a PRD-governed product, also refuse a missing, draft, uncommitted,
 superseded, or contradictory PRD reference and an Issue whose named `FR-*`

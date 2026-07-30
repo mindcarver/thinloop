@@ -293,6 +293,7 @@ This contract does not define:
 - more than one QuickDev implementation lane for one Delivery Issue.
 
 An external skill may consume this graph only under its own approved execution
-contract. `scd-reengineering` is the supported consumer for an approved
-project-scale refactor or reimplementation Initiative; Project itself remains
-non-executing.
+contract. `scd-execute` is the general supported consumer for an approved
+Initiative. `scd-reengineering` composes Execute only after satisfying its
+additional source, compatibility, receipt, parity, and cutover gates. Project
+itself remains non-executing.

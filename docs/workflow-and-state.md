@@ -14,19 +14,21 @@ GitHub Delivery Issue 保存切片边界和验收；多交付项目由 Initiativ
 | 目标、边界和验收已经清楚 | 直接进入 QuickDev，不制造额外需求流程 |
 | 从 0 到 1，或多个上游产品决定仍会改变结果 | 用 Discovery 一次解决一个关键决定；新产品批准后形成轻量 PRD |
 | 已批准目标跨越多个独立交付 | 用 Project 从 PRD/产品契约创建 Initiative、Delivery Issues 和依赖 DAG；不启动执行 loop |
-| 现有系统需要项目级重构或跨技术栈重新实现 | 用 Reengineering 固定上游、兼容边界和目标方向，再消费批准的 Project DAG |
+| 已批准 Initiative 需要开始、继续、恢复或完成 | 用 Execute 复核实时 DAG，默认执行当前所有安全 READY Issues，也接受单 Issue、串行或并发上限覆盖 |
+| 现有系统需要项目级重构或跨技术栈重新实现 | 用 Reengineering 固定上游、兼容边界和目标方向，再通过 Execute 消费批准的 Project DAG |
 | 体验或技术边界仍影响交付 | 按需调用 UIUX 或 Architecture，不设固定关卡 |
 | 实现完成 | Agent 验证、自审并提交任务内变更 |
 | 工程验证完成 | 一个独立 Agent 优先通过 Open Code Review 审查 diff，通过后执行真实环境验收；只有 `REVIEW_PASS` 和验收 `PASS` 才能交付 |
 | 用户主动要求维护或沉淀 | 调用 Maintenance 或 Knowledge；普通开发不自动触发 |
 | 用户主动要求优化 Thinloop | 调用 Evolve；先诊断和候选，按候选 ID 批准后才试验 |
 
-默认不强制 TDD、角色系统、额外子代理或固定阶段。Project 只拆解项目、校验
-Issue 级 DAG 并报告 READY/BLOCKED，不启动 Agent、worktree 或长期 loop；
-Reengineering 是限定于已批准再工程 Initiative 的外部执行器，可将安全独立的
-READY Issues 分配到隔离 QuickDev lane，并让硬依赖串行。QuickDev 只固定使用
-一个独立审查与验收 Agent。QuickDev 的实现请求包含任务内 Issue、
-分支、提交、推送、PR 与合资格合并；高风险合并和生产部署仍需明确授权。
+默认不强制 TDD、角色系统或固定阶段。Project 只拆解项目、校验 Issue 级 DAG
+并报告 READY/BLOCKED，不启动 Agent、worktree 或长期 loop；Execute 消费批准
+的图，把安全独立的 READY Issues 分配到隔离 QuickDev lanes，并让硬依赖和临时
+协调冲突串行。Reengineering 在 Execute 外增加源码、兼容性、receipt、parity
+和 cutover 门禁。QuickDev 每个 lane 只固定使用一个独立审查与验收 Agent，其
+实现请求包含任务内 Issue、分支、提交、推送、PR 与合资格合并；高风险合并和
+生产部署仍需明确授权。
 
 ## 工作闭环
 
@@ -34,17 +36,19 @@ READY Issues 分配到隔离 QuickDev lane，并让硬依赖串行。QuickDev �
 模糊的现有产品单交付 → Discovery → 批准 Issue →（按需 UIUX / Architecture）→ QuickDev
 从 0 到 1 → Discovery → 批准 PRD →（按需 UIUX / Architecture）→ Project 或 Delivery Issue
 清晰单交付 → 创建/确认 Issue ─────────────────────────────────→ QuickDev
-多交付项目 → 批准 PRD/产品契约 → Project → Initiative + Delivery Issue DAG → 停止
+多交付项目 → 批准 PRD/产品契约 → Project → Initiative + Delivery Issue DAG
+批准 Initiative → Execute → 当前安全 READY 波次 → 隔离 QuickDev lanes → 重算 DAG
 已选 READY Delivery Issue ────────────────────────────────────→ QuickDev
-项目级重构/重写 → Reengineering → 基线与兼容边界 → Project DAG → READY 波次 → QuickDev lanes
+项目级重构/重写 → Reengineering → 基线与兼容边界 → Project DAG → Execute → QuickDev lanes
 QuickDev → 分支 → 开发与工程验收 → 独立代码审查 → 独立行为验收 → PR → main → 关闭 Issue
 主动调用 → Maintenance / Knowledge
 主动复盘 → Evolve → 候选 ID 审批 → 可回滚试验 → 证据
 ```
 
-清晰任务从 QuickDev 直接开始；Project 只在多个独立交付真实存在时出现，并把
-一个被明确选择的 READY Delivery Issue 交给 QuickDev。Reengineering 只消费
-用户批准的项目级重构或重新实现图，不把普通 Project 变成自动执行器。
+清晰任务从 QuickDev 直接开始；Project 只在多个独立交付真实存在时出现。用户
+选择一个 READY Issue 时直接进入 QuickDev；用户说“开始/继续/恢复这个项目”时，
+Execute 默认选择当前所有安全 READY 节点，并允许用户指定单 Issue、串行或最大
+并发数。Reengineering 复用 Execute 的通用编排，但保留再工程专属门禁。
 Maintenance、Knowledge 和 Evolve 只在用户主动要求时出现。
 
 ## 最小项目状态
@@ -76,6 +80,7 @@ Delivery Issues 和 DAG 位于 GitHub，不创建本地项目 Wiki、永久实�
 
 - [Discovery 产物契约](../skills/scd-discovery/references/artifacts.md)
 - [Project 项目契约](../skills/scd-project/references/project-contract.md)
+- [Execute 执行契约](../skills/scd-execute/references/execution-contract.md)
 - [QuickDev Issue 交付契约](../skills/scd-quickdev/references/issue-delivery-contract.md)
 - [QuickDev 连续性契约](../skills/scd-quickdev/references/continuity-contract.md)
 - [Architecture 契约](../skills/scd-architecture/references/architecture-contract.md)

@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <kbd>v0.9.4</kbd>
+  <kbd>v0.10.0</kbd>
   &nbsp;
   <kbd>ISSUE-DRIVEN</kbd>
   &nbsp;
@@ -52,6 +52,7 @@ QuickDev 会先判断任务是否足够清楚，而不是要求用户选择流�
 | Bug 或清晰、局部的新功能 | 建立或确认 Issue，直接诊断、实现和验证 |
 | 从 0 到 1 的新产品，或多个产品决定仍未明确 | 调用 Discovery 逐项澄清；新产品批准后形成轻量 PRD |
 | 已批准项目包含多个可独立验收的交付 | 调用 Project 从 PRD/产品契约拆成 Initiative、Delivery Issues 和依赖图 |
+| 已批准 Initiative 需要开始、继续或恢复交付 | 调用 Execute 自动选择当前安全 READY 波次，每个 Issue 进入独立 QuickDev lane |
 | 对现有项目做大型重构或跨语言、跨架构重新实现 | 调用 Reengineering 固定上游与兼容边界，再执行批准的 Project 任务图 |
 | UI 或系统边界会显著影响实现 | 按需组合 UIUX 或 Architecture |
 | 工程验证通过 | Agent 自审并提交任务内变更 |
@@ -65,7 +66,7 @@ QuickDev 会先判断任务是否足够清楚，而不是要求用户选择流�
 
 <a id="capabilities"></a>
 
-## 九块能力 / CAPABILITIES
+## 十块能力 / CAPABILITIES
 
 <table width="100%">
   <tr>
@@ -96,34 +97,42 @@ QuickDev 会先判断任务是否足够清楚，而不是要求用户选择流�
       <p><strong>适合：</strong>多个交付切片、跨 Issue 前置依赖和集成闸门。</p>
     </td>
     <td width="33%" valign="top">
-      <img src="./assets/retro-dev-loop.png" alt="SCD QuickDev 复古工程图标" width="92">
-      <h3><a href="./skills/scd-quickdev/SKILL.md">05 · SCD QuickDev</a></h3>
-      <p>从 Issue 开始完成诊断、开发、验证、PR 和可自动合并的交付。</p>
-      <p><strong>适合：</strong>Bug、清晰功能、已批准 Issue 和跨会话实现。</p>
+      <img src="./assets/retro-project.png" alt="SCD Execute 复古项目执行图标" width="92">
+      <h3><a href="./skills/scd-execute/SKILL.md">05 · SCD Execute</a></h3>
+      <p>消费已批准的 Initiative DAG，按安全 READY 波次并行交付。</p>
+      <p><strong>适合：</strong>开始、继续或恢复普通多交付项目。</p>
     </td>
     <td width="33%" valign="top">
-      <img src="./assets/retro-knowledge.png" alt="SCD Knowledge 复古工程图标" width="92">
-      <h3><a href="./skills/scd-knowledge/SKILL.md">06 · SCD Knowledge</a></h3>
-      <p>把已证实的开发经验沉淀为短知识，并在需要时找回。</p>
-      <p><strong>适合：</strong>主动沉淀、查找或维护开发经验。</p>
+      <img src="./assets/retro-dev-loop.png" alt="SCD QuickDev 复古工程图标" width="92">
+      <h3><a href="./skills/scd-quickdev/SKILL.md">06 · SCD QuickDev</a></h3>
+      <p>从 Issue 开始完成诊断、开发、验证、PR 和可自动合并的交付。</p>
+      <p><strong>适合：</strong>Bug、清晰功能、已批准 Issue 和跨会话实现。</p>
     </td>
   </tr>
   <tr>
     <td width="33%" valign="top">
+      <img src="./assets/retro-knowledge.png" alt="SCD Knowledge 复古工程图标" width="92">
+      <h3><a href="./skills/scd-knowledge/SKILL.md">07 · SCD Knowledge</a></h3>
+      <p>把已证实的开发经验沉淀为短知识，并在需要时找回。</p>
+      <p><strong>适合：</strong>主动沉淀、查找或维护开发经验。</p>
+    </td>
+    <td width="33%" valign="top">
       <img src="./assets/retro-maintenance.png" alt="SCD Maintenance 复古工程图标" width="92">
-      <h3><a href="./skills/scd-maintenance/SKILL.md">07 · SCD Maintenance</a></h3>
+      <h3><a href="./skills/scd-maintenance/SKILL.md">08 · SCD Maintenance</a></h3>
       <p>主动审计并小批修复技术债和代码—文档漂移。</p>
       <p><strong>适合：</strong>主动扫描、清理、对齐或维护现有仓库。</p>
     </td>
     <td width="33%" valign="top">
       <img src="./assets/retro-evolve.png" alt="SCD Evolve 复古工程图标" width="92">
-      <h3><a href="./skills/scd-evolve/SKILL.md">08 · SCD Evolve</a></h3>
+      <h3><a href="./skills/scd-evolve/SKILL.md">09 · SCD Evolve</a></h3>
       <p>从一次开发互动中诊断 Skill 问题，经用户批准后做可回滚试验。</p>
       <p><strong>适合：</strong>主动复盘并优化本次真正使用过的 Thinloop Skill。</p>
     </td>
+  </tr>
+  <tr>
     <td width="33%" valign="top">
       <img src="./assets/retro-reengineering.svg" alt="SCD Reengineering 复古工程图标" width="92">
-      <h3><a href="./skills/scd-reengineering/SKILL.md">09 · SCD Reengineering</a></h3>
+      <h3><a href="./skills/scd-reengineering/SKILL.md">10 · SCD Reengineering</a></h3>
       <p>用行为基线和兼容边界治理项目级重构、跨语言或跨架构重新实现。</p>
       <p><strong>适合：</strong>开源项目重写、技术栈迁移、渐进替换和大型重构。</p>
     </td>
@@ -137,24 +146,25 @@ QuickDev 会先判断任务是否足够清楚，而不是要求用户选择流�
 ## 工作闭环 / WORKFLOW
 
 <p align="center">
-  <img src="./assets/flows/thinloop-overview.svg" alt="Thinloop 总体闭环：新产品经需求澄清形成批准 PRD，再按需完成体验、架构和项目拆解，进入 QuickDev 并通过独立验收" width="100%">
+  <img src="./assets/flows/thinloop-overview.svg" alt="Thinloop 总体闭环：新产品经需求澄清形成批准 PRD，再按需完成体验、架构和项目拆解，由 Execute 组织 READY 波次并通过 QuickDev 独立交付" width="100%">
 </p>
 
 清晰任务直接开发；不清晰的需求先讨论；多交付项目才增加 Project 拆解。
-Reengineering 是 Project 图的专用外部执行器，只用于已批准的项目级重构或重新
-实现。清晰单交付不制造本地 Spec；新产品只保留一个批准的轻量 PRD。默认不
-强制 TDD、角色系统、额外子代理或固定阶段；Project 自身不执行工程 loop，
-QuickDev 只固定使用一个独立审查与验收 Agent。完整的路由、状态与契约说明见
-[工作流与项目状态](./docs/workflow-and-state.md)。
+Execute 消费普通已批准 Initiative 的 READY 波次；Reengineering 在此基础上
+增加源码、兼容性和集成门禁。清晰单交付不制造本地 Spec；新产品只保留一个
+批准的轻量 PRD。默认不强制 TDD、角色系统或固定阶段；Project 自身不执行工程
+loop，QuickDev 每个 lane 只固定使用一个独立审查与验收 Agent。完整的路由、
+状态与契约说明见[工作流与项目状态](./docs/workflow-and-state.md)。
 
 <a id="skill-flows"></a>
 
-## 九个技能如何工作 / SKILL FLOWS
+## 十个技能如何工作 / SKILL FLOWS
 
 <p><img src="./assets/flows/scd-discovery.svg" alt="SCD Discovery 流程：从用户问题和 MVP 边界到批准后的轻量 PRD 或 Delivery Issue" width="100%"></p>
 <p><img src="./assets/flows/scd-uiux.svg" alt="SCD UIUX 流程：从稳定产品核心到可交付的体验设计" width="100%"></p>
 <p><img src="./assets/flows/scd-architecture.svg" alt="SCD Architecture 流程：从仓库事实到领域边界和机器可读契约" width="100%"></p>
 <p><img src="./assets/flows/scd-project.svg" alt="SCD Project 流程：从批准的 PRD 或产品契约到 Initiative、Delivery Issues 和就绪依赖图" width="100%"></p>
+<p><img src="./assets/flows/scd-execute.svg" alt="SCD Execute 流程：从批准的 Initiative DAG 到安全 READY 波次、隔离 QuickDev lanes 和集成验收" width="100%"></p>
 <p><img src="./assets/flows/scd-quickdev.svg" alt="SCD QuickDev 流程：从 GitHub Issue 到独立代码审查与验收、合并 main 并关闭 Issue" width="100%"></p>
 <p><img src="./assets/flows/scd-knowledge.svg" alt="SCD Knowledge 流程：从显式请求和证据到确认后的知识写入或检索" width="100%"></p>
 <p><img src="./assets/flows/scd-maintenance.svg" alt="SCD Maintenance 流程：从仓库信号到证据确认和有边界的修复" width="100%"></p>
