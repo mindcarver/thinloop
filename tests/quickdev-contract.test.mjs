@@ -22,17 +22,23 @@ test("quickdev selects direct, clarify, project, or discovery without forcing ce
   assert.match(skill, /use `scd-project`/i);
 });
 
-test("quickdev makes one GitHub Issue the delivery source of truth", () => {
+test("quickdev separates product PRD authority from delivery Issue authority", () => {
   const skill = read("skills/scd-quickdev/SKILL.md");
   const issueContract = read(
     "skills/scd-quickdev/references/issue-delivery-contract.md",
   );
 
-  assert.match(skill, /GitHub Issue.*source of truth/i);
+  assert.match(skill, /GitHub Issue.*source of truth for the selected delivery/i);
   assert.match(
     issueContract,
-    /sole requirement and\s+acceptance source of truth/i,
+    /sole source of truth for the\s+selected delivery boundary/i,
   );
+  assert.match(issueContract, /approved `.scd\/product\/prd\.md`/i);
+  assert.match(issueContract, /## Product traceability/);
+  assert.match(issueContract, /Requirements: `FR-001`/);
+  assert.match(issueContract, /reachable from the default branch/i);
+  assert.match(skill, /Do not generate or redefine a PRD during implementation/i);
+  assert.match(skill, /clear isolated changes and bugs\s+remain Issue-only/i);
   assert.match(issueContract, /## Outcome/);
   assert.match(issueContract, /## In scope/);
   assert.match(issueContract, /## Out of scope/);

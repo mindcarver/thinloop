@@ -205,7 +205,7 @@ Skill 根，只读取 Skill 链接、Claude Code 插件清单及本地插件内�
 
 ```text
 Codex：使用 $scd-discovery 把这个想法聊透并形成可验收 Issue。
-Codex：使用 $scd-project 把已批准的多交付项目分解为 Initiative、Delivery Issues 和依赖 DAG；不要运行实现 loop。
+Codex：从 0 到 1 时使用 $scd-discovery 形成批准的 `.scd/product/prd.md`；再使用 $scd-project 把批准的多交付产品契约分解为 Initiative、Delivery Issues 和依赖 DAG；不要运行实现 loop。
 Codex：使用 $scd-reengineering 把这个开源项目换成 Go 重新实现，只保留批准的兼容能力，并按 READY 波次交付。
 Codex：使用 $scd-quickdev 修复这个 Bug，验证后提 PR 并合并 main。
 Codex：使用 $scd-evolve 复盘本次互动，只提出一个候选，不要先修改。

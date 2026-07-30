@@ -1,6 +1,6 @@
 {
   "name": "thinloop",
-  "version": "0.9.2",
+  "version": "0.9.3",
   "description": "Simplify complex development with Issue-backed discovery, risk-adaptive Web experience and architecture design, non-executing multi-Issue project decomposition into dependency DAGs, project-scale refactoring and cross-stack reimplementation, autonomous single-Issue PR delivery, evidence-backed maintenance, concise experiential knowledge, and human-approved skill evolution.",
   "author": {
     "name": "mindcarver"

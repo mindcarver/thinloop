@@ -28,8 +28,9 @@ test("architecture translates approved business behavior without inventing it", 
     "skills/scd-architecture/references/architecture-contract.md",
   );
 
-  assert.match(skill, /Issue product contracts own business decisions/);
-  assert.match(skill, /must not invent missing product behavior/);
+  assert.match(skill, /approved PRD\s+owns product-level business decisions/i);
+  assert.match(skill, /otherwise the governing\s+Issue owns them/i);
+  assert.match(skill, /must not invent\s+missing product behavior/);
   assert.match(contract, /subordinate to approved product behavior/);
   assert.match(contract, /not permission to invent a missing rule/);
 });

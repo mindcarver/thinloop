@@ -5,12 +5,20 @@ merge decisions, and independent agent review and acceptance.
 
 ## Source of truth
 
-For repository delivery, the GitHub Issue is the sole requirement and
-acceptance source of truth. The pull request holds implementation and
-verification evidence. Local SCD state is temporary recovery data only.
+For repository delivery, the GitHub Issue is the sole source of truth for the
+selected delivery boundary, acceptance, and verification seams. The pull
+request holds implementation and verification evidence. Local SCD state is
+temporary recovery data only.
 
-Do not silently replace the GitHub Issue with a local product specification
-under `.scd/`.
+For a greenfield product with an approved `.scd/product/prd.md`, that PRD
+remains authoritative for product-level why, users, problem, MVP scope,
+`FR-*` requirements, and success metrics. The Delivery Issue references the
+approved version and requirements it implements; it does not duplicate or
+silently override the PRD.
+
+Do not silently replace a Delivery Issue with a local implementation
+specification. Do not treat an unapproved or uncommitted PRD as shared product
+authority.
 
 If the repository has no GitHub remote or authenticated write path, stop before
 implementation and report the blocker. A clear user request may authorize the
@@ -24,6 +32,12 @@ For a feature or change, preserve this minimum structure:
 ## Outcome
 
 ## User problem
+
+## Product traceability
+
+- PRD: `.scd/product/prd.md`, or Not applicable
+- Approved version: <positive integer>, or Not applicable
+- Requirements: `FR-001`, ..., or Not applicable
 
 ## In scope
 
@@ -53,6 +67,11 @@ For a feature or change, preserve this minimum structure:
 Discovery owns the approved product sections. QuickDev adds or updates the
 implementation tasks and verification after inspecting the repository. Do not
 store hidden reasoning, secrets, or speculative future work.
+
+When Product traceability is applicable, QuickDev must confirm that the exact
+approved PRD version is reachable from the default branch and every named
+`FR-*` identifier exists. A missing, stale, contradictory, or widened reference
+returns to Discovery and cannot be implemented as a READY delivery.
 
 For a bug, also record:
 

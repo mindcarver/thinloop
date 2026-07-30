@@ -11,10 +11,12 @@ decomposition is not implementation authority.
 
 Maintain these boundaries:
 
-- the Initiative Issue owns the project outcome, shared decisions, graph
-  topology, and project-level acceptance;
-- each Delivery Issue is the sole requirement and acceptance source of truth
-  for one independently verifiable slice;
+- an approved greenfield PRD owns product-level why, users, problem, MVP scope,
+  `FR-*` requirements, and success metrics;
+- the Initiative Issue owns delivery topology, shared coordination decisions,
+  graph revision, and project-level integration acceptance;
+- each Delivery Issue owns the boundary, acceptance, verification seams, and
+  PRD traceability for one independently verifiable slice;
 - pull requests and independent verifiers hold implementation and delivery
   evidence;
 - any derived graph snapshot is a validated coordination view, not a second
@@ -44,6 +46,8 @@ return only after the project core is explicitly approved.
 
 1. Read applicable `AGENTS.md`, `CLAUDE.md`, repository instructions, existing
    Issues, pull requests, architecture documents, shared contracts, and tests.
+   For a new greenfield product, read the approved default-branch
+   `.scd/product/prd.md`.
 2. Find an existing Initiative and Delivery Issues before creating duplicates.
 3. Separate confirmed project decisions, working assumptions, deferred
    deliveries, and unresolved blockers.
@@ -56,9 +60,15 @@ Do not infer project completion from checked tasks, a merged pull request, or a
 closed dependency alone. A Delivery Issue is done only when its QuickDev
 contract has completed independent acceptance and closure.
 
+For greenfield work, do not materialize READY Delivery Issues from a draft,
+uncommitted, missing, or superseded PRD. Existing products may use an approved
+repository-native product contract; record that authority explicitly instead
+of manufacturing a new PRD during Project.
+
 ## Establish the project core
 
-Confirm only the decisions shared by several deliveries:
+Derive the product-wide decisions from the approved product contract and
+confirm only the coordination decisions shared by several deliveries:
 
 - the project outcome and primary users;
 - project boundaries and non-goals;
@@ -67,8 +77,9 @@ Confirm only the decisions shared by several deliveries:
 - project-level failure, integration, and release acceptance.
 
 Use `scd-uiux` or `scd-architecture` only when those shared decisions need
-design. Reconcile any shared interface before declaring dependent Delivery
-Issues executable.
+design. They may refine how the product works but must not silently change the
+approved PRD. Reconcile any shared interface before declaring dependent
+Delivery Issues executable.
 
 Do not fully specify the product's distant future. Apply rolling decomposition:
 make the next useful delivery wave precise, and keep later ideas deferred or
@@ -81,6 +92,8 @@ Each executable node must be an explicitly approved GitHub Delivery Issue that:
 - produces one observable outcome;
 - has its own in-scope and out-of-scope boundary;
 - has stable acceptance identifiers and external verification seams;
+- for a PRD-governed product, names the approved PRD version and every `FR-*`
+  requirement it implements;
 - can use one QuickDev branch, pull request, and independent acceptance lane;
 - does not hide several independently valuable outcomes in one checklist.
 
@@ -95,6 +108,12 @@ update a Delivery Issue when the exact slice contract is approved.
 Add an explicit integration or release Delivery Issue when child completion
 does not directly prove cross-slice behavior. It depends on the applicable leaf
 nodes and owns project-level end-to-end evidence.
+
+A PRD-governed Delivery Issue cannot become READY when its product-contract
+reference is missing, the approved version is not reachable from the default
+branch, an `FR-*` identifier does not exist in that version, or its slice
+contradicts the PRD. Return the exact traceability gap to Discovery; do not
+repair product scope inside Project.
 
 ## Model the dependency DAG
 
@@ -123,8 +142,12 @@ If Node.js is unavailable, state that deterministic graph validation is
 
 Present one compact approval summary containing:
 
-- Initiative outcome, boundaries, shared decisions, and project acceptance;
+- governing product contract and approved version;
+- Initiative coordination boundaries, shared decisions, and project
+  integration acceptance;
 - each materialized Delivery Issue outcome and acceptance seam;
+- each Delivery Issue's implemented `FR-*` identifiers when a PRD governs the
+  product;
 - graph edges and their causal reason;
 - PLANNED placeholders and why they are not executable;
 - the current READY set, BLOCKED reasons, integration gate, and human gates.
@@ -144,13 +167,15 @@ For repository work:
 1. create or update the Initiative Issue;
 2. create or update only the approved Delivery Issues;
 3. update the Initiative's canonical graph after Issue numbers are known;
-4. mirror the Initiative link, node ID, graph revision, and hard dependencies
-   in each Delivery Issue;
+4. mirror the Initiative link, node ID, graph revision, hard dependencies,
+   product-contract version, and applicable `FR-*` identifiers in each Delivery
+   Issue;
 5. validate the resulting live snapshot again;
 6. report the READY and BLOCKED sets, then stop.
 
 Do not create a permanent local project plan, project wiki, execution database,
-branch, worktree, pull request, or implementation checklist. QuickDev adds
+branch, worktree, pull request, or implementation checklist. The approved
+greenfield PRD is a product contract, not a Project plan. QuickDev adds
 implementation tasks only after targeted repository inspection for one
 selected READY Delivery Issue.
 

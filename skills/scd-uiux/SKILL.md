@@ -29,6 +29,7 @@ small UI change does not inherit the Product path.
 ## Start from product and repository truth
 
 Read applicable repository instructions, the governing GitHub Issue,
+the exact approved `.scd/product/prd.md` version when one governs the product,
 existing UI, design system or component library, interface contracts, and
 user-supplied visual references before asking questions. Inspect the running
 product when practical; do not infer current behavior from filenames alone.
@@ -36,7 +37,7 @@ product when practical; do not infer current behavior from filenames alone.
 For the Product path, require the product core to establish the primary user,
 problem, next delivery, business rules, boundaries, and observable acceptance.
 Use `scd-discovery` when several of those decisions remain open. Do not recreate
-the Issue product contract inside the UX contract.
+the PRD or Issue product contract inside the UX contract.
 
 After that core is stable, UIUX may proceed in parallel with
 `scd-architecture`. Neither waits for the other to finish, but both must

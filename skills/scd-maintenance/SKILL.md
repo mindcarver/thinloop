@@ -59,7 +59,8 @@ code-documentation consistency judgment.
 
 Inspect only categories supported by repository evidence:
 
-- GitHub Issue product contracts, acceptance behavior, tests, and implementation;
+- approved PRDs, GitHub delivery contracts, acceptance behavior, tests, and
+  implementation;
 - public API, CLI, configuration, schema, migration, and environment contracts;
 - README instructions, tutorials, examples, screenshots, and local links;
 - documented architecture, actual dependency direction, cycles, and ownership;

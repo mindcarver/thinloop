@@ -1,6 +1,6 @@
 ---
 name: scd-quickdev
-description: "Drive one delivery Issue from request to verified merged code whenever a coding agent is asked to change a repository: fix a bug, add a feature, refactor code, change configuration, perform a migration, or resume unfinished implementation work. Route underdefined product work through scd-discovery and multi-delivery projects through scd-project; use one GitHub Delivery Issue as the requirement and acceptance source of truth, diagnose bugs before fixing them, isolate meaningful work, verify the diff and observed behavior through an independent review and acceptance subagent, create a pull request, merge eligible changes into main, and close the Issue only after both gates pass. Do not trigger for advice-only questions, explanations, read-only reviews, Initiative Issues, PLANNED placeholders, or BLOCKED project nodes."
+description: "Drive one delivery Issue from request to verified merged code whenever a coding agent is asked to change a repository: fix a bug, add a feature, refactor code, change configuration, perform a migration, or resume unfinished implementation work. Route underdefined product work through scd-discovery and multi-delivery projects through scd-project; use one GitHub Delivery Issue as the delivery boundary and acceptance source of truth, consume an approved greenfield PRD when one governs product scope, diagnose bugs before fixing them, isolate meaningful work, verify the diff and observed behavior through an independent review and acceptance subagent, create a pull request, merge eligible changes into main, and close the Issue only after both gates pass. Do not trigger for advice-only questions, explanations, read-only reviews, Initiative Issues, PLANNED placeholders, or BLOCKED project nodes."
 ---
 
 # SCD QuickDev
@@ -12,7 +12,10 @@ delivery boundary and evidence.
 Maintain four contracts:
 
 - the requested outcome, boundary, and acceptance must be clear;
-- one GitHub Issue is the source of truth for requirements and acceptance;
+- one GitHub Issue is the source of truth for the selected delivery boundary and
+  acceptance;
+- an approved greenfield PRD remains authoritative for product-level why,
+  users, problem, MVP scope, `FR-*` requirements, and success metrics;
 - implementation and completion claims must match observed evidence;
 - merge and deployment authority must respect risk.
 
@@ -36,17 +39,21 @@ Maintain four contracts:
 9. When the request follows Project, read the Initiative and selected Delivery
    Issue, confirm the node is an approved `READY` Issue in the current graph
    revision, and use only that Delivery Issue as the implementation contract.
+10. When the Issue references a product PRD, read the exact approved version
+    from the default branch, confirm every named `FR-*` identifier exists, and
+    stop if the Issue contradicts or silently widens the product contract.
 
 Treat a ready UX contract as the experience handoff, not as product approval or
 frontend architecture. If it conflicts with the Issue, retained visuals, or an
 unreconciled shared interface decision, return only that gap before
 implementation.
 
-Do not generate a project wiki, PRD, local product specification, permanent
-implementation plan, role system, command suite, worktree, extra subagent
-ceremony, or TDD ceremony merely to satisfy this skill. The independent
-reviewer and acceptance verifier required below is the only default subagent
-role.
+Do not generate or redefine a PRD during implementation. Consume the approved
+greenfield PRD when Discovery produced one; clear isolated changes and bugs
+remain Issue-only. Do not generate a project wiki, permanent implementation
+plan, role system, command suite, worktree, extra subagent ceremony, or TDD
+ceremony merely to satisfy this skill. The independent reviewer and acceptance
+verifier required below is the only default subagent role.
 
 ## Select the lightest sufficient path
 
@@ -88,6 +95,11 @@ come directly from the user or from an approved Reengineering execution wave
 whose exact Initiative graph revision remains current. Refuse an Initiative,
 PLANNED placeholder, BLOCKED node, stale graph revision, or a request to absorb
 sibling Issues, and return the exact project gap instead of creating a branch.
+
+For a PRD-governed product, also refuse a missing, draft, uncommitted,
+superseded, or contradictory PRD reference and an Issue whose named `FR-*`
+identifiers do not exist in the approved version. Return that product-contract
+gap to Discovery rather than guessing the intended scope.
 
 Read `references/scope-contract.md` when ambiguity or scope expansion is
 plausible. Read `references/issue-delivery-contract.md` before creating or

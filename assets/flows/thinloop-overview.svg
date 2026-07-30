@@ -34,8 +34,8 @@
 <path d="M 314 162 H 328" fill="none" stroke="#c55c2f" stroke-width="3" marker-end="url(#arrow)"/><g>
     <rect x="178" y="125" width="126" height="74" rx="8" fill="#17313b" stroke="#17313b" stroke-width="2"/>
     <text x="241" y="156" fill="#f8edcf" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="15" font-weight="800" letter-spacing="0.8">
-      <tspan x="241">按需</tspan>
-      <tspan x="241" dy="20">澄清</tspan>
+      <tspan x="241">澄清</tspan>
+      <tspan x="241" dy="20">或 PRD</tspan>
     </text>
   </g>
 <path d="M 494 162 H 508" fill="none" stroke="#c55c2f" stroke-width="3" marker-end="url(#arrow)"/><g>
