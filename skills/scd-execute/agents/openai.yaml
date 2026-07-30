@@ -1,0 +1,4 @@
+interface:
+  display_name: "SCD Execute"
+  short_description: "Execute approved Project DAGs in safe READY waves"
+  default_prompt: "Use $scd-execute to continue this approved Initiative by validating its live DAG, launching the current safe READY wave through isolated QuickDev lanes, merging serially, and recomputing readiness."

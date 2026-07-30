@@ -1,8 +1,9 @@
 # Reengineering execution contract
 
-This contract lets `scd-reengineering` consume an approved `scd-project` graph
-without changing Project into a scheduler or widening one QuickDev lane across
-multiple Delivery Issues.
+This contract adds Reengineering's source, compatibility, receipt, parity, and
+cutover gates to the generic READY-wave mechanics owned by `scd-execute`.
+Together they consume an approved `scd-project` graph without changing Project
+into a scheduler or widening one QuickDev lane across multiple Delivery Issues.
 
 ## Execution authority
 

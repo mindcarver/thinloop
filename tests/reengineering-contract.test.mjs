@@ -53,14 +53,17 @@ test("reengineering defines selected compatibility from executable evidence", ()
 test("reengineering composes existing Thinloop authority", () => {
   const skill = read("skills/scd-reengineering/SKILL.md");
   const project = read("skills/scd-project/SKILL.md");
+  const execute = read("skills/scd-execute/SKILL.md");
   const quickdev = read("skills/scd-quickdev/SKILL.md");
 
   assert.match(skill, /use `scd-discovery` before\s+reengineering/i);
   assert.match(skill, /Use `scd-architecture` when/i);
   assert.match(skill, /Use `scd-project` after/i);
+  assert.match(skill, /invoke\s+`scd-execute`/i);
   assert.match(skill, /exactly one Delivery Issue through\s+`scd-quickdev`/i);
-  assert.match(project, /external consumer/i);
-  assert.match(quickdev, /approved Reengineering execution wave/i);
+  assert.match(project, /general external consumer/i);
+  assert.match(execute, /each `scd-quickdev` lane owns exactly one READY Delivery Issue/i);
+  assert.match(quickdev, /Reengineering wave reaches\s+QuickDev through Execute/i);
 });
 
 test("reengineering executes bounded READY waves without corrupting the DAG", () => {

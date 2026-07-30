@@ -10,6 +10,7 @@ const expectedSkills = [
   "scd-architecture",
   "scd-discovery",
   "scd-evolve",
+  "scd-execute",
   "scd-knowledge",
   "scd-maintenance",
   "scd-project",

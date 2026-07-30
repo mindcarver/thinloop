@@ -1,6 +1,6 @@
 ---
 name: scd-reengineering
-description: "Reengineer an existing repository through evidence-backed project-scale refactoring or a new implementation that may change language, framework, architecture, storage, or runtime while preserving only explicitly selected behavior and compatibility. Use for requests to rewrite, reimplement, replace, port, modernize, or substantially refactor an open-source or internal project across multiple independently verifiable deliveries. Pin source and license evidence, establish executable baselines, define keep/change/drop boundaries, compose scd-discovery, scd-architecture, scd-project, and scd-quickdev, and execute approved READY Issue waves with bounded parallelism. Do not use for a small local refactor, ordinary maintenance, a new product with no source baseline, or an unapproved production cutover."
+description: "Reengineer an existing repository through evidence-backed project-scale refactoring or a new implementation that may change language, framework, architecture, storage, or runtime while preserving only explicitly selected behavior and compatibility. Use for requests to rewrite, reimplement, replace, port, modernize, or substantially refactor an open-source or internal project across multiple independently verifiable deliveries. Pin source and license evidence, establish executable baselines, define keep/change/drop boundaries, compose scd-discovery, scd-architecture, scd-project, scd-execute, and scd-quickdev, and execute approved READY Issue waves with bounded parallelism. Do not use for a small local refactor, ordinary maintenance, a new product with no source baseline, or an unapproved production cutover."
 ---
 
 # SCD Reengineering
@@ -17,6 +17,8 @@ Maintain these boundaries:
 - the approved compatibility envelope owns what the target must keep, change,
   drop, or leave unverified;
 - `scd-project` owns the Initiative, Delivery Issues, and hard dependency DAG;
+- `scd-execute` owns safe READY-wave selection, isolated lane launch, and
+  serial merge coordination after Reengineering's additional gates pass;
 - each `scd-quickdev` lane owns one READY Delivery Issue and pull request;
 - independent acceptance and an integration gate own completion evidence;
 - production cutover and other high-risk actions retain a human gate.
@@ -184,9 +186,10 @@ approved:
 6. validate and present the exact graph revision, READY wave, BLOCKED nodes,
    coordination constraints, and human gates for approval.
 
-`scd-project` remains a non-executing planner. Reengineering is the external
-consumer that may execute an explicitly approved graph revision. Approval of
-the direction alone does not authorize unspecified Delivery Issues.
+`scd-project` remains a non-executing planner. Reengineering composes
+`scd-execute` as the external consumer only after its source, direction,
+compatibility, receipt, and graph-approval gates pass. Approval of the direction
+alone does not authorize unspecified Delivery Issues.
 
 The handoff from direction to Project is mandatory. Invoke `scd-project`; do
 not reproduce or approximate it with local task tools. If `scd-project` cannot
@@ -195,9 +198,12 @@ stop as `BLOCKED` after the approved direction summary.
 
 ## Execute approved READY waves
 
-Read `references/execution-contract.md` before launching implementation lanes.
+Read `references/execution-contract.md` and
+`../scd-execute/references/execution-contract.md` before launching
+implementation lanes.
 
-After the user approves the exact executable graph revision:
+After the user approves the exact executable graph revision, invoke
+`scd-execute` under these Reengineering-specific restrictions:
 
 1. re-read the live Initiative and Delivery Issues and validate the graph;
 2. create and validate the pre-execution receipt from live evidence;
