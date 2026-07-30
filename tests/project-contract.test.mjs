@@ -26,13 +26,32 @@ test("project preserves Initiative, Delivery Issue, and evidence authority", () 
     "skills/scd-project/references/project-contract.md",
   );
 
-  assert.match(skill, /Initiative Issue owns the project outcome/i);
-  assert.match(skill, /each Delivery Issue is the sole requirement/i);
+  assert.match(skill, /approved greenfield PRD owns product-level/i);
+  assert.match(skill, /Initiative Issue owns delivery topology/i);
+  assert.match(skill, /each Delivery Issue owns the boundary/i);
+  assert.match(contract, /Approved greenfield PRD.*Product vision/is);
   assert.match(contract, /Validated graph snapshot.*derived readiness view/i);
-  assert.match(contract, /Do not copy full child acceptance/i);
+  assert.match(contract, /Do not copy the PRD into the Initiative/i);
   assert.match(contract, /## Delivery graph/);
   assert.match(contract, /## Project coordination/);
+  assert.match(contract, /## Product traceability/);
   assert.match(contract, /stable acceptance identifiers/i);
+});
+
+test("project requires versioned PRD traceability before READY handoff", () => {
+  const skill = read("skills/scd-project/SKILL.md");
+  const contract = read(
+    "skills/scd-project/references/project-contract.md",
+  );
+
+  assert.match(skill, /names the approved PRD version and every `FR-\*`/i);
+  assert.match(skill, /cannot become READY/i);
+  assert.match(skill, /reachable from the default\s+branch/i);
+  assert.match(skill, /does not exist in that version/i);
+  assert.match(contract, /Approved version:/);
+  assert.match(contract, /Requirements: `FR-001`/);
+  assert.match(contract, /Issue omits product traceability/i);
+  assert.match(contract, /Return those gaps to Discovery/i);
 });
 
 test("project models an executable Issue DAG without an execution loop", () => {

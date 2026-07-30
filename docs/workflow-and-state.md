@@ -2,17 +2,18 @@
 
 [返回 README](../README.md)
 
-Thinloop 只在复杂度真实出现时增加流程和产物。单交付由一个 GitHub Delivery
-Issue 保存需求和验收；多交付项目由 Initiative 保存项目拓扑、各 Delivery
-Issue 保存自身切片。PR 保存实现、工程审阅、验证与回滚证据。
+Thinloop 只在复杂度真实出现时增加流程和产物。从 0 到 1 的新产品由
+`.scd/product/prd.md` 保存产品级目标、MVP、`FR-*` 需求和成功指标；单交付由
+GitHub Delivery Issue 保存切片边界和验收；多交付项目由 Initiative 保存交付
+拓扑、各 Delivery Issue 保存自身切片。PR 保存实现、工程审阅、验证与回滚证据。
 
 ## 路由原则
 
 | 遇到什么 | Thinloop 怎么做 |
 |---|---|
 | 目标、边界和验收已经清楚 | 直接进入 QuickDev，不制造额外需求流程 |
-| 多个上游产品决定仍会改变结果 | 用 Discovery 一次解决一个关键决定 |
-| 已批准目标跨越多个独立交付 | 用 Project 创建 Initiative、Delivery Issues 和依赖 DAG；不启动执行 loop |
+| 从 0 到 1，或多个上游产品决定仍会改变结果 | 用 Discovery 一次解决一个关键决定；新产品批准后形成轻量 PRD |
+| 已批准目标跨越多个独立交付 | 用 Project 从 PRD/产品契约创建 Initiative、Delivery Issues 和依赖 DAG；不启动执行 loop |
 | 现有系统需要项目级重构或跨技术栈重新实现 | 用 Reengineering 固定上游、兼容边界和目标方向，再消费批准的 Project DAG |
 | 体验或技术边界仍影响交付 | 按需调用 UIUX 或 Architecture，不设固定关卡 |
 | 实现完成 | Agent 验证、自审并提交任务内变更 |
@@ -30,9 +31,10 @@ READY Issues 分配到隔离 QuickDev lane，并让硬依赖串行。QuickDev �
 ## 工作闭环
 
 ```text
-模糊单交付 → Discovery → 批准 Issue →（按需 UIUX / Architecture）→ QuickDev
+模糊的现有产品单交付 → Discovery → 批准 Issue →（按需 UIUX / Architecture）→ QuickDev
+从 0 到 1 → Discovery → 批准 PRD →（按需 UIUX / Architecture）→ Project 或 Delivery Issue
 清晰单交付 → 创建/确认 Issue ─────────────────────────────────→ QuickDev
-多交付项目 →（核心未澄清时先 Discovery）→ Project → Initiative + Delivery Issue DAG → 停止
+多交付项目 → 批准 PRD/产品契约 → Project → Initiative + Delivery Issue DAG → 停止
 已选 READY Delivery Issue ────────────────────────────────────→ QuickDev
 项目级重构/重写 → Reengineering → 基线与兼容边界 → Project DAG → READY 波次 → QuickDev lanes
 QuickDev → 分支 → 开发与工程验收 → 独立代码审查 → 独立行为验收 → PR → main → 关闭 Issue
@@ -51,6 +53,7 @@ Thinloop 不创建项目 Wiki，只在需要时保留相应载体：
 
 ```text
 .scd/
+├── product/prd.md      # 从 0 到 1：批准的轻量产品需求基线
 ├── ux/                 # 按需：复杂 Web 体验
 ├── architecture.md     # 按需：系统基线
 ├── designs/            # 按需：高影响功能设计
@@ -61,11 +64,13 @@ Thinloop 不创建项目 Wiki，只在需要时保留相应载体：
 contracts/              # 按需：跨边界机器契约
 ```
 
-Project 的 Initiative、Delivery Issues 和 DAG 位于 GitHub，不创建本地项目
-Wiki、永久实施计划或调度数据库。
+PRD 只管理产品级 why/what、MVP、`FR-*` 和成功指标。Project 的 Initiative、
+Delivery Issues 和 DAG 位于 GitHub，不创建本地项目 Wiki、永久实施计划或
+调度数据库，也不把 PRD 变成执行计划。
 
-仓库中已有的 `.scd/specs/` 文件仅保留为旧版本设计和评估历史；v0.7.0 开始的
-新交付不会读取或创建本地产品规格。
+仓库中已有的 `.scd/specs/` 文件仅保留为旧版本设计和评估历史；普通新交付
+不会读取或创建它们。`.scd/product/prd.md` 只用于批准后的绿地产品基线，不是
+旧版按交付生成的 Spec。
 
 ## 权威契约
 

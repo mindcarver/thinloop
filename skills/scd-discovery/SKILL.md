@@ -1,11 +1,14 @@
 ---
 name: scd-discovery
-description: "Turn an underdefined product idea into an explicitly approved, testable delivery contract before implementation. Use by default for a new product, application, plugin, service, or system; for a substantial feature with multiple dependent product decisions; or when data ownership, permissions, irreversible behavior, public interfaces, or external integrations remain undecided. Also use when the user explicitly asks to clarify, challenge, or specify a product idea. Do not use for a clear local change with an observable outcome, boundary, and acceptance path; one isolated ambiguity can be clarified without full discovery. When the approved outcome spans multiple independently verifiable deliveries, hand project decomposition to scd-project instead of forcing one oversized Issue."
+description: "Turn an underdefined product idea into an explicitly approved, testable product or delivery contract before implementation. Use by default for a new product, application, plugin, service, or system; for a substantial feature with multiple dependent product decisions; or when data ownership, permissions, irreversible behavior, public interfaces, or external integrations remain undecided. Approved greenfield products receive a lightweight `.scd/product/prd.md`; clear isolated changes and bugs remain Issue-only. Also use when the user explicitly asks to clarify, challenge, or specify a product idea. Do not use for a clear local change with an observable outcome, boundary, and acceptance path; one isolated ambiguity can be clarified without full discovery. When the approved outcome spans multiple independently verifiable deliveries, hand project decomposition to scd-project instead of forcing one oversized Issue."
 ---
 
 # SCD Discovery
 
-Resolve consequential product decisions before implementation without turning discovery into a fixed ceremony. Cover the next coherent delivery, not the product's entire future.
+Resolve consequential product decisions before implementation without turning
+discovery into a fixed ceremony. For greenfield work, define the approved MVP
+product baseline. For an existing product, cover the next coherent delivery,
+not the product's entire future.
 
 Do not edit implementation code during full discovery. A user must explicitly approve the combined product contract before implementation begins.
 
@@ -17,7 +20,10 @@ Inspect the request and available repository context, then choose internally:
 - **Clarify:** one answer can make the work executable. Ask that one material question, then hand off.
 - **Discovery:** multiple dependent product decisions or a high-cost product boundary is unresolved. Follow the full workflow below.
 
-Treat greenfield products, applications, plugins, services, and systems as Discovery by default. If the user supplies a complete Issue or product contract, use the readiness fast path rather than manufacturing questions.
+Treat greenfield products, applications, plugins, services, and systems as
+Discovery by default. Their approved result is a lightweight product PRD, not
+only an implementation Issue. If the user supplies a complete Issue or product
+contract, use the readiness fast path rather than manufacturing questions.
 
 When one approved outcome clearly requires several independently verifiable
 deliveries, stabilize the shared project core and hand decomposition to
@@ -43,6 +49,17 @@ For a new product, use at most two opening decisions to establish:
 Challenge an unconfirmed solution assumption when it may solve the wrong problem. Give the concern and a recommendation once. When the user confirms the product form is fixed, accept it as a constraint and continue.
 
 Define the next complete, independently verifiable delivery. Keep longer-term ideas visible only as deferred or out of scope.
+
+For a greenfield product, stabilize the MVP before slicing delivery:
+
+- product vision, primary users, and the problem or current alternative;
+- MVP goals, non-goals, and core user journeys;
+- observable functional requirements with stable `FR-*` identifiers;
+- important rules, failure cases, data, permissions, and integrations;
+- measurable success criteria, assumptions, risks, and open questions.
+
+Do not expand the PRD into roadmap theater, implementation tasks, architecture,
+or a speculative future backlog.
 
 If the user's requested outcome cannot be represented as one coherent delivery
 without hiding several independent acceptance boundaries, stop slicing at the
@@ -100,8 +117,11 @@ When no high-impact branch appears open:
    any shared-interface reconciliation still required before implementation;
 5. when Architecture was activated, require its baseline or feature design and
    shared machine-readable contract to be ready;
-6. present one compact shared-understanding summary;
-7. request one explicit approval of the combined contract.
+6. for greenfield work, confirm the PRD has no product-blocking open question,
+   its `FR-*` identifiers are unique and stable, and its success metrics are
+   observable;
+7. present one compact shared-understanding summary;
+8. request one explicit approval of the combined contract.
 
 Silence, topic changes, partial agreement, or the model's confidence are not approval. A clear affirmative response to the approval request is approval. If the user changes the contract, revise it and review again.
 
@@ -109,10 +129,31 @@ Read `references/readiness-review.md` before declaring the contract ready.
 
 ## Persist the approved contract and hand off
 
+For an approved greenfield product requested as repository work:
+
+1. create or update `.scd/product/prd.md` from
+   `assets/product-prd.md`;
+2. set `status: approved`, increment `version` for a material product-contract
+   change, record `approved_at`, and keep stable `FR-*` identifiers;
+3. use the repository's ordinary low-risk document-delivery path so the
+   approved version is reachable from the default branch before Project marks
+   delivery nodes READY or QuickDev starts product implementation;
+4. treat the PRD as authoritative for product-level why, users, problem, MVP
+   scope, requirements, and success metrics.
+
+Do not keep a permanent draft PRD. Before approval, use conversation or the
+temporary Discovery continuity state. If the approved PRD cannot be made
+reachable from the default branch, report that downstream work is blocked
+instead of treating an uncommitted local file as shared product truth.
+
 When the user requested repository work for one delivery, present the converged
 contract for explicit approval, then create or update one detailed GitHub
-Issue. That Issue is the sole requirement and acceptance source of truth; do
-not create a local delivery specification.
+Issue. For a clear change to an existing product, that Issue is the sole
+requirement and acceptance source of truth. For a greenfield product, the PRD
+owns the product baseline while the Delivery Issue owns the next slice's
+boundary, acceptance, and verification seams. Reference the PRD path, approved
+version, and implemented `FR-*` identifiers without copying the full PRD into
+the Issue.
 
 For an approved multi-delivery project, hand the shared project contract to
 `scd-project` instead. Project owns the Initiative and Delivery Issue graph;
@@ -126,10 +167,13 @@ to `scd-quickdev`. Do not add separate approval gates for architecture, task
 breakdown, or implementation unless a later choice would change the approved
 product contract.
 
-When the user asked only to discuss an idea, keep the result in conversation unless they request a file.
+When the user asked only to discuss an idea, keep the result in conversation
+unless they request a file. Discussion alone does not authorize creating or
+approving a repository PRD.
 
 ## Resources
 
 - `references/interviewing.md` - decision-tree questioning, depth control, and research discipline.
 - `references/readiness-review.md` - fast path, adversarial review, and explicit approval semantics.
 - `references/artifacts.md` - temporary state, GitHub Issue schema, technical documents, and change handling.
+- `assets/product-prd.md` - minimum greenfield PRD template.

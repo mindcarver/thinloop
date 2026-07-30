@@ -34,13 +34,13 @@ const skillFlows = [
     slug: "discovery",
     index: "01",
     title: "SCD 需求澄清",
-    subtitle: "模糊想法 → 已批准任务单",
+    subtitle: "从 0 到 1 → 已批准产品契约",
     stages: [
-      ["仓库", "事实"],
-      ["交付", "切片"],
-      ["决策", "树"],
-      ["就绪", "审查"],
-      ["已批准", "任务单"],
+      ["用户", "问题"],
+      ["MVP", "边界"],
+      ["需求", "与指标"],
+      ["批准", "PRD"],
+      ["任务单", "或项目图"],
     ],
   },
   {
@@ -73,9 +73,9 @@ const skillFlows = [
     slug: "project",
     index: "04",
     title: "SCD 项目拆解",
-    subtitle: "多交付目标 → 可执行任务图",
+    subtitle: "批准产品契约 → 可执行任务图",
     stages: [
-      ["项目", "核心"],
+      ["PRD", "基线"],
       ["交付", "切片"],
       ["依赖", "图"],
       ["就绪", "校验"],
@@ -244,7 +244,7 @@ function renderOverview() {
   const mainY = 125;
   const nodes = [
     { x: 28, width: 116, label: ["请求", "到达"] },
-    { x: 178, width: 126, label: ["按需", "澄清"] },
+    { x: 178, width: 126, label: ["澄清", "或 PRD"] },
     { x: 338, width: 146, label: ["按需体验", "或架构设计"] },
     { x: 518, width: 126, label: ["按需项目", "拆解"] },
     { x: 678, width: 126, label: ["QUICKDEV", "交付"] },

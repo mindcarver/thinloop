@@ -7,13 +7,16 @@ not replace, the single-Issue Discovery and QuickDev contracts.
 
 | Artifact | Authoritative for |
 |---|---|
-| Initiative Issue | Project outcome, shared decisions, graph topology, project acceptance |
-| Delivery Issue | One slice's requirements, boundaries, acceptance, and verification seams |
+| Approved greenfield PRD | Product vision, users, problem, MVP scope, `FR-*` requirements, and success metrics |
+| Initiative Issue | Delivery topology, shared coordination decisions, graph revision, and project integration acceptance |
+| Delivery Issue | One slice's boundary, acceptance, verification seams, and product traceability |
+| UX and Architecture artifacts | Experience and technical design within the approved product contract |
 | Pull request and verifier evidence | Implementation, engineering checks, and delivery proof |
 | Validated graph snapshot | A derived readiness view of the live tracker state |
 
-Do not copy full child acceptance into the Initiative or make a local project
-file authoritative. The Initiative links to child Issues; each child remains
+Do not copy the PRD into the Initiative, copy full child acceptance into the
+Initiative, or make a local project plan authoritative. The Initiative links to
+the approved product contract and child Issues; each child remains
 self-contained for QuickDev.
 
 ## Initiative Issue
@@ -24,6 +27,12 @@ After explicit approval, create or update one Initiative:
 ## Outcome
 
 ## Users and problem
+
+## Product contract
+
+- Authority: `.scd/product/prd.md`, or <approved repository-native contract>
+- Approved version: <positive integer or immutable revision>
+- Default-branch evidence: <commit or URL>
 
 ## Project boundaries
 
@@ -91,6 +100,12 @@ Every executable graph node is one approved Delivery Issue:
 
 ## User problem
 
+## Product traceability
+
+- Authority: `.scd/product/prd.md`, or <approved repository-native contract>
+- Approved version: <positive integer or immutable revision>
+- Requirements: `FR-001`, ...
+
 ## Project coordination
 
 - Initiative: #<number>
@@ -132,6 +147,18 @@ live Initiative and Issue evidence before relying on it. QuickDev must refuse
 an Initiative, a PLANNED placeholder, or a BLOCKED Delivery Issue as an
 implementation source. Preserve stable acceptance identifiers when the graph
 revision changes.
+
+For a PRD-governed greenfield product, Project and QuickDev must also refuse a
+Delivery Issue when:
+
+- the referenced PRD version is not approved and reachable from the default
+  branch;
+- any referenced `FR-*` identifier is absent from that version;
+- the Issue's outcome, boundary, or acceptance contradicts the PRD;
+- the Issue omits product traceability.
+
+Return those gaps to Discovery. Do not reinterpret or silently repair the
+product contract during decomposition or implementation.
 
 ## Graph snapshot
 

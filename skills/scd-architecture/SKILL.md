@@ -33,17 +33,18 @@ rewriting the architecture.
 ## Start from product and repository truth
 
 Read applicable repository instructions, the governing GitHub Issue,
+the exact approved `.scd/product/prd.md` version when one governs the product,
 ready UX contracts when activated, existing architecture and ADRs, interface
 contracts, schemas, code boundaries, runtime configuration, tests, and
 deployment topology before asking questions. Inspect actual code and
 machine-readable contracts; filenames and diagrams are only candidates.
 
 For Product work, require the product core to establish users, outcome,
-business behavior, permissions, boundaries, and acceptance. Product
-Issue product contracts own business decisions. Architecture may translate approved
-rules into entities, states, invariants, commands, events, and ownership, but
-must not invent missing product behavior. Return material gaps to
-`scd-discovery`.
+business behavior, permissions, boundaries, and acceptance. The approved PRD
+owns product-level business decisions when one exists; otherwise the governing
+Issue owns them. Architecture may translate approved rules into entities,
+states, invariants, commands, events, and ownership, but must not invent
+missing product behavior. Return material gaps to `scd-discovery`.
 
 After the product core stabilizes, architecture may proceed in parallel with
 `scd-uiux`. Neither waits for the other to finish, but both must reconcile

@@ -17,6 +17,15 @@ The next delivery is ready for review only when:
 
 Readiness applies to the next delivery, not the product's entire future.
 
+For a greenfield product, the approved MVP baseline is also ready only when:
+
+- every required PRD section has concrete content;
+- functional requirements have unique, stable `FR-*` identifiers;
+- success metrics are observable without prescribing implementation;
+- open questions contain no item that can materially change the MVP contract;
+- the proposed first delivery or Project handoff can name the requirements it
+  implements.
+
 ## Silent adversarial review
 
 Before presenting the contract, look for:
@@ -71,6 +80,10 @@ Present:
 
 Then ask one question: whether this combined contract is accurate and approved.
 
-Only a clear affirmative answer authorizes persistence of the approved contract
-to the GitHub Issue. If the user approves but says not to implement, create or
-update the Issue, clean temporary state, and stop.
+Only a clear affirmative answer authorizes persistence of the approved
+contract. For greenfield repository work, persist the approved PRD through the
+repository's normal document-delivery path and then create the applicable
+Delivery Issue or Project handoff. For an existing-product delivery, persist
+the approved contract to the GitHub Issue. If the user approves but says not to
+implement, persist only the approved artifacts they requested, clean temporary
+state, and stop.

@@ -26,8 +26,10 @@ Before editing, establish:
 3. **Acceptance** — how the outcome can be checked.
 4. **Location** — where repository evidence says the change belongs.
 
-Keep this in conversation for ordinary work. Put the approved requirement and
-acceptance contract in the GitHub Issue, not a local specification.
+Keep this in conversation for ordinary work. Put the approved delivery boundary
+and acceptance contract in the GitHub Issue. When an approved greenfield PRD
+governs the product, reference its version and applicable `FR-*` identifiers
+instead of copying or redefining the product baseline.
 
 ## Discovery handoff
 
@@ -37,10 +39,14 @@ ambiguity needs only one concise clarification.
 
 When a governing Issue exists:
 
-1. treat its outcome, boundaries, decisions, and acceptance as authoritative;
-2. preserve stable acceptance identifiers;
-3. choose reversible implementation details without another approval;
-4. update the Issue before changing any product-visible contract.
+1. treat its delivery outcome, boundaries, decisions, and acceptance as
+   authoritative;
+2. when it references an approved PRD, treat that PRD as authoritative for
+   product-level scope and confirm its version and `FR-*` traceability;
+3. preserve stable acceptance identifiers;
+4. choose reversible implementation details without another approval;
+5. update the PRD and Issue through Discovery before changing any
+   product-visible contract.
 
 If a complete Issue was already approved with the implementation request, do
 not ask the user to approve it twice.
@@ -59,9 +65,9 @@ remains intact.
 
 ## Technical documents
 
-The Issue owns product requirements and acceptance. Existing repository
-architecture, ADR, UX, and machine-contract homes may still own technical
-design:
+The approved greenfield PRD owns product requirements; the Issue owns one
+delivery boundary and acceptance. Existing repository architecture, ADR, UX,
+and machine-contract homes may still own technical design:
 
 - one evolving `.scd/architecture.md` only when no repository-native home
   exists;
