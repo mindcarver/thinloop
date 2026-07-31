@@ -137,6 +137,32 @@ approved and no material decision or high-risk gate changes. Stop when the
 Initiative is complete, no nodes are READY, a lane fails or blocks all useful
 progress, or approval must be renewed.
 
+## End every execution pass with an actionable handoff
+
+After the final live graph recomputation, classify the pass before replying.
+Never report only “no READY nodes”; state whether the pass ended, the
+Initiative ended, or a different owner must act.
+
+| State | Evidence | Required handoff |
+| --- | --- | --- |
+| `COMPLETE` | Valid graph; every required node is `DONE`; required integration acceptance passed. | Report Initiative completion and remaining human gates, if any. |
+| `ROLLING_REPLAN_REQUIRED` | Valid open Initiative; no `READY` nodes; remaining executable work is only `PLANNED` placeholders. | Name each placeholder and its stated blocker. Explain that this is neither a failed execution nor a request to redo Discovery; do not make the user redo Discovery. Direct the user to `scd-project` to review and approve the next exact Delivery-Issue contracts and graph revision; Execute must not materialize them. |
+| `EXTERNAL_OR_HUMAN_BLOCK` | No `READY` nodes because a named authority, environment, dependency, or human gate blocks remaining work. | Name the blocking evidence, required authority, and owner. Do not send the user to Project merely to hide that block. |
+| `INVALID_OR_STALE_GRAPH` | The Initiative revision is invalid, stale, missing materialized Issue evidence, or no longer canonical. | Name the failed graph evidence and return to `scd-project` for repair or revision before any execution resumes. |
+
+For `ROLLING_REPLAN_REQUIRED`, provide one copy-ready continuation prompt that
+includes the Initiative identifier, completed upstream nodes, the named planned
+nodes, and their blockers. State that the governing PRD and current product
+scope remain in force unless the live evidence says otherwise; do not imply
+that `scd-discovery` or `scd-quickdev` should restart. The prompt may ask
+`scd-project` to present the next graph revision for approval, but must not
+promise Issue creation or implementation before that approval.
+
+Every terminal response must name the completed wave, current Initiative state,
+the classification above, the evidence used, and exactly one next action or
+explicitly say that none remains. This is a user-facing handoff, not a
+notification service or a persistent scheduler.
+
 ## Handle failure and replanning
 
 Classify every lane:

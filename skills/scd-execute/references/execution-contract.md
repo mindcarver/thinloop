@@ -128,6 +128,23 @@ current base.
 Project completion requires every required child `DONE`, a valid current graph,
 and integration acceptance where specified.
 
+## Terminal handoff
+
+After the final graph rebuild, report one terminal state instead of only an
+empty READY set:
+
+| State | Condition | Next action |
+| --- | --- | --- |
+| `COMPLETE` | All required nodes are `DONE` and integration acceptance passed when required. | Report completion. |
+| `ROLLING_REPLAN_REQUIRED` | The valid Initiative remains open, no node is `READY`, and remaining work is only `PLANNED`. | Name planned nodes and blockers; give a copy-ready `scd-project` prompt to review and approve the next Delivery-Issue contracts and graph revision. |
+| `EXTERNAL_OR_HUMAN_BLOCK` | A named external dependency, environment, authority, or human gate prevents progress. | Name the evidence and required owner action. |
+| `INVALID_OR_STALE_GRAPH` | The graph is invalid, stale, missing Issue evidence, or non-canonical. | Return to `scd-project` for repair or revision. |
+
+For a rolling replan, say explicitly that execution did not fail and that the
+user need not rerun Discovery while the governing product contract remains
+current. Do not let Execute create the next Issues, bypass approval, or imply
+that QuickDev can implement PLANNED work.
+
 ## Resumption
 
 Reconstruct state from:
