@@ -1,0 +1,8 @@
+{
+  "name": "knowledge-boundary-fixture",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}

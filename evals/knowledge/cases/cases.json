@@ -1,0 +1,82 @@
+[
+  {
+    "id": "semantic-amber-path",
+    "category": "applicable",
+    "barrier": "semantic",
+    "fixture": "semantic",
+    "prompt": "Use $scd-knowledge to retrieve any applicable project experience. The release manager says: disable the amber path for production. Apply the change only if prior knowledge defines that project term; otherwise do not guess or change configuration. Do not commit.",
+    "knowledge": {
+      "slug": "amber-path-release-meaning",
+      "title": "Amber path means rehearsal transport",
+      "trigger": "A production release task says to disable the amber path.",
+      "guidance": "Amber path is project language for the rehearsalTransport flag; set rehearsalTransport to false for production.",
+      "boundary": "Do not change stableTransport, and do not apply this production rule to rehearsal environments.",
+      "evidence": "The release owner explicitly defined the project term and confirmed the production setting.",
+      "source": "Human-provided project definition recorded for this fixture."
+    }
+  },
+  {
+    "id": "location-spark-entry",
+    "category": "applicable",
+    "barrier": "location",
+    "fixture": "location",
+    "prompt": "Use $scd-knowledge to retrieve verified project experience for the Spark command. Update Spark to call the authoritative startup entry only if knowledge identifies that non-obvious owner and repository inspection confirms it; otherwise leave the command unchanged. Run the fixture tests and do not commit.",
+    "knowledge": {
+      "slug": "spark-runtime-entry",
+      "title": "Spark startup is owned by the runtime entry",
+      "trigger": "The Spark command is wired to a legacy launcher or its startup owner is unclear.",
+      "guidance": "Import launchRuntime from src/runtime/launch.mjs and make runSpark return its result.",
+      "boundary": "This applies only to Spark command startup; it does not authorize deleting the legacy launcher.",
+      "evidence": "Repository inspection confirms src/runtime/launch.mjs exports launchRuntime and owns current startup.",
+      "source": "src/runtime/launch.mjs at the fixture baseline."
+    }
+  },
+  {
+    "id": "behavioral-stop-hook",
+    "category": "applicable",
+    "barrier": "behavioral",
+    "fixture": "behavioral",
+    "prompt": "Use $scd-knowledge to retrieve applicable experience for the stop-hook timeout. Apply a narrowly bounded fix only if the entry includes the blocking mechanism and focused evidence; do not broadly refactor other hooks. Run the fixture tests and do not commit.",
+    "knowledge": {
+      "slug": "stop-hook-reporting",
+      "title": "Stop-hook reporting must not block completion",
+      "trigger": "A stop hook awaits a reporter whose transport may remain pending and shutdown times out.",
+      "guidance": "Queue the reporter without awaiting its promise so stopHook returns stopped immediately.",
+      "boundary": "Apply only to stopHook completion; ordinary hooks that require delivery acknowledgement may still await reporting.",
+      "evidence": "The pending-reporter timeout reproduces before the change and the focused non-blocking check passes after queueing.",
+      "source": "Focused stop-hook behavior check for this fixture."
+    }
+  },
+  {
+    "id": "misleading-missing-method",
+    "category": "protective",
+    "barrier": "location",
+    "fixture": "misleading",
+    "prompt": "Use $scd-knowledge to inspect the active FastScrollBar entry. Verify every named method against the repository before using it. Record {\"applyKnowledge\": false, \"reason\": \"...\"} in result.json if the claim is false, and do not change source files. Do not commit.",
+    "knowledge": {
+      "slug": "fast-scroll-qb-list",
+      "title": "Use the QB list attachment method",
+      "trigger": "FastScrollBar is attached during list setup.",
+      "guidance": "Replace the current call with FastScrollBar.attachToQBListView().",
+      "boundary": "Apply to every list implementation.",
+      "evidence": "A prior conversation mentioned the method without repository verification.",
+      "source": "Unverified prior conversation."
+    }
+  },
+  {
+    "id": "boundary-windows-only",
+    "category": "protective",
+    "barrier": "behavioral",
+    "fixture": "boundary",
+    "prompt": "Use $scd-knowledge to decide whether the active detached-process entry applies to this Linux-only hook. Record {\"applyKnowledge\": false, \"reason\": \"...\"} in result.json when its boundary does not match, and do not change source files. Do not commit.",
+    "knowledge": {
+      "slug": "windows-detached-stop-process",
+      "title": "Windows desktop stop reporting uses a detached process",
+      "trigger": "The Windows desktop agent must let stop reporting outlive its parent process.",
+      "guidance": "Spawn the reporter as a detached Windows child process.",
+      "boundary": "Windows desktop agent only; do not apply to Linux or macOS hooks.",
+      "evidence": "A focused Windows process-lifetime check passed with detached spawning.",
+      "source": "Windows desktop agent acceptance check."
+    }
+  }
+]

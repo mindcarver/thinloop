@@ -8,16 +8,23 @@ const cases = JSON.parse(
   fs.readFileSync(path.join(evalDir, "knowledge-cases.json"), "utf8"),
 );
 
-assert.equal(cases.length, 12, "expected exactly 12 knowledge cases");
-assert.equal(new Set(cases.map(({ id }) => id)).size, 12, "case IDs must be unique");
+assert.equal(cases.length, 22, "expected exactly 22 knowledge cases");
+assert.equal(
+  new Set(cases.map(({ id }) => id)).size,
+  cases.length,
+  "case IDs must be unique",
+);
 
 const expectedGroups = {
   routing: 2,
   capture: 4,
   retrieve: 2,
-  lifecycle: 2,
+  lifecycle: 4,
   safety: 1,
   failure: 1,
+  eligibility: 4,
+  factual: 2,
+  post_delivery: 2,
 };
 
 for (const [group, expectedCount] of Object.entries(expectedGroups)) {
@@ -39,6 +46,12 @@ const allowedActions = new Set([
   "request-conflict-decision",
   "block-secret",
   "block-write",
+  "reject-ineligible",
+  "reject-false-claim",
+  "report-stale",
+  "keep-separate",
+  "no-forced-update",
+  "propose-candidates",
 ]);
 
 for (const testCase of cases) {
