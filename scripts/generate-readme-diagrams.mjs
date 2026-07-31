@@ -160,6 +160,19 @@ const skillFlows = [
       ["集成", "验收"],
     ],
   },
+  {
+    slug: "next",
+    index: "11",
+    title: "SCD 下一步导航",
+    subtitle: "实时项目状态 → 唯一下一步",
+    stages: [
+      ["选择", "范围"],
+      ["读取", "实时证据"],
+      ["分类", "当前状态"],
+      ["判断", "唯一下一步"],
+      ["交接", "责任技能"],
+    ],
+  },
 ];
 
 function svgFrame({ title, subtitle, index, body, height = 280 }) {

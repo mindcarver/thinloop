@@ -185,9 +185,10 @@ Initiative with `.scd/specs/` or another local requirements file.
 
 ## Replan without freezing the future
 
-Re-enter Project when the user asks what is ready, a dependency finishes, a
-shared contract changes, a slice proves too broad, or new evidence changes the
-graph.
+Re-enter Project when a dependency finishes, a shared contract changes, a slice
+proves too broad, or new evidence requires a graph change. Use `scd-next` when
+the request is only to inspect current status, readiness, unfinished work, or
+the recommended continuation without changing the graph.
 
 - Re-read the Initiative, affected Delivery Issues, pull requests, and
   acceptance evidence.
@@ -215,6 +216,10 @@ may execute the validated graph revision under its own READY-wave, isolation,
 merge, and integration contract. `scd-reengineering` composes that executor
 only after satisfying its additional source, direction, compatibility, receipt,
 and parity gates. Neither consumer gives Project execution authority.
+
+`scd-next` is the read-only status consumer. It may derive and explain current
+state from the live graph, Issues, pull requests, and acceptance evidence, but
+it cannot create or revise nodes, edges, approvals, or Issue contracts.
 
 Do not add leases, retries, concurrency slots, resource locks, automatic
 worktree creation, merge queues, deployment, or a long-running scheduler. A

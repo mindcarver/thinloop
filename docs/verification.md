@@ -22,12 +22,12 @@ codebuddy plugin validate .codebuddy-plugin/marketplace.json
 
 | Agent | 安装后检查 |
 |---|---|
-| Codex | 十个链接都能读取 `SKILL.md`；新任务可发现 `$scd-execute`、`$scd-project` 与 `$scd-quickdev` |
-| OpenCode | 十个 Skill 链接均指向当前源码；运行时需确认 `scd-execute`、`scd-project` 与其他 Skill 均被发现 |
-| Pi | 十个 Skill 链接均指向当前源码；Pi RPC `get_commands` 可发现十个 `/skill:scd-*` 命令 |
-| Claude Code | `claude plugin list --json` 提供版本、enabled 与安装路径；检查器从该路径核对十个 Skill 和两个 Hook，包括 `scd-execute` |
-| WorkBuddy | 插件页显示当前仓库版本、enabled、十个 Skill 和两个 Hook，包括 `scd-execute` |
-| ZCode | Settings → Plugins 显示当前仓库版本、10 Skills、2 Hooks；Skills 中存在 `scd-execute`、`scd-project` 与 `scd-quickdev` |
+| Codex | 十一个链接都能读取 `SKILL.md`；新任务可发现 `$scd-next`、`$scd-execute`、`$scd-project` 与 `$scd-quickdev` |
+| OpenCode | 十一个 Skill 链接均指向当前源码；运行时需确认 `scd-next`、`scd-execute`、`scd-project` 与其他 Skill 均被发现 |
+| Pi | 十一个 Skill 链接均指向当前源码；Pi RPC `get_commands` 可发现十一个 `/skill:scd-*` 命令 |
+| Claude Code | `claude plugin list --json` 提供版本、enabled 与安装路径；检查器从该路径核对十一个 Skill 和两个 Hook，包括 `scd-next` 与 `scd-execute` |
+| WorkBuddy | 插件页显示当前仓库版本、enabled、十一个 Skill 和两个 Hook，包括 `scd-next` 与 `scd-execute` |
+| ZCode | Settings → Plugins 显示当前仓库版本、11 Skills、2 Hooks；Skills 中存在 `scd-next`、`scd-execute`、`scd-project` 与 `scd-quickdev` |
 
 在 Thinloop 源码仓库运行统一的只读检查：
 
@@ -69,7 +69,7 @@ printf '%s\n' '{"type":"get_commands"}' \
       | {name, path: .sourceInfo.path}]'
 ```
 
-结果应恰好包含十个 `skill:scd-*` 命令，路径均位于当前 Pi Skill 根。该检查
+结果应恰好包含十一个 `skill:scd-*` 命令，路径均位于当前 Pi Skill 根。该检查
 只证明 Skill 发现，不证明 Pi 存在 Thinloop 的连续性 Hook。
 
 WorkBuddy 的 `codebuddy plugin list --json` 实测会写客户端日志，因此统一

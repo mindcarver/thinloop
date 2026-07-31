@@ -1,7 +1,7 @@
 {
   "name": "thinloop",
-  "version": "0.10.1",
-  "description": "Simplify complex development with Issue-backed discovery, risk-adaptive Web experience and architecture design, non-executing multi-Issue project decomposition into dependency DAGs, bounded READY-wave execution, project-scale refactoring and cross-stack reimplementation, autonomous single-Issue PR delivery, evidence-backed maintenance, concise experiential knowledge, and human-approved skill evolution.",
+  "version": "0.11.0",
+  "description": "Simplify complex development with Issue-backed discovery, risk-adaptive Web experience and architecture design, non-executing multi-Issue project decomposition into dependency DAGs, bounded READY-wave execution, read-only project-status navigation, project-scale refactoring and cross-stack reimplementation, autonomous single-Issue PR delivery, evidence-backed maintenance, concise experiential knowledge, and human-approved skill evolution.",
   "author": {
     "name": "mindcarver"
   },
@@ -19,6 +19,7 @@
     "project-decomposition",
     "dependency-graph",
     "ready-wave-execution",
+    "project-status",
     "software-reengineering",
     "reimplementation",
     "refactoring",
@@ -37,14 +38,14 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Thinloop",
-    "shortDescription": "Discovery, project DAGs, READY-wave execution, design, delivery, and evidence",
-    "longDescription": "Clarify consequential product decisions into approved delivery contracts, design Web experiences and technical boundaries at the lightest useful fidelity, decompose approved multi-delivery projects into Initiative and Delivery Issues plus dependency DAGs, execute approved ordinary Initiatives through bounded READY waves and isolated QuickDev lanes, govern project-scale refactors and cross-language or cross-architecture reimplementation through selected compatibility and additional fail-closed gates, keep each implementation lane scoped and evidence-backed, verify acceptance through independent agents, merge eligible pull requests into main, close verified Issues, audit or repair repository drift on request, preserve proven development experience, and evolve used Thinloop skills through human-approved reversible trials.",
+    "shortDescription": "Discovery, project status, DAGs, READY-wave execution, delivery, and evidence",
+    "longDescription": "Clarify consequential product decisions into approved delivery contracts, design Web experiences and technical boundaries at the lightest useful fidelity, decompose approved multi-delivery projects into Initiative and Delivery Issues plus dependency DAGs, inspect live Issue, pull-request, Initiative DAG, and acceptance state to recommend one next action, execute approved ordinary Initiatives through bounded READY waves and isolated QuickDev lanes, govern project-scale refactors and cross-language or cross-architecture reimplementation through selected compatibility and additional fail-closed gates, keep each implementation lane scoped and evidence-backed, verify acceptance through independent agents, merge eligible pull requests into main, close verified Issues, audit or repair repository drift on request, preserve proven development experience, and evolve used Thinloop skills through human-approved reversible trials.",
     "developerName": "mindcarver",
     "category": "Coding",
     "capabilities": [
       "Interactive",
       "Write"
     ],
-    "defaultPrompt": "Use SCD Discovery when product decisions are open, SCD UIUX when a Web experience needs design, SCD Architecture when domain, system, or shared interface boundaries need design, and SCD Project to decompose an approved multi-delivery outcome into Initiative and Delivery Issues plus a dependency DAG; SCD Project stops at the validated graph and does not run an implementation loop. Use SCD Execute to start, continue, resume, or finish an approved Initiative by selecting the current safe READY wave, launching one isolated QuickDev lane per Issue, merging serially, and recomputing the graph. Use SCD Reengineering for project-scale refactoring or cross-language, framework, architecture, storage, or runtime reimplementation; it adds source evidence, selected compatibility, receipt, parity, and cutover gates around Execute. Use SCD QuickDev for Issue-backed single-delivery implementation through eligible PR merge, SCD Maintenance only when I explicitly ask to audit or repair repository debt, SCD Knowledge only when I explicitly ask to capture or retrieve proven experience, and SCD Evolve only when I explicitly ask to diagnose this interaction and improve a Thinloop skill."
+    "defaultPrompt": "Use SCD Next when I ask for current progress, unfinished work, Issue or Initiative status, blockers, or what to do next; it reads live project evidence and recommends the single next action without changing state. Use SCD Discovery when product decisions are open, SCD UIUX when a Web experience needs design, SCD Architecture when domain, system, or shared interface boundaries need design, and SCD Project to decompose an approved multi-delivery outcome into Initiative and Delivery Issues plus a dependency DAG; SCD Project stops at the validated graph and does not run an implementation loop. Use SCD Execute to start, continue, resume, or finish an approved Initiative by selecting the current safe READY wave, launching one isolated QuickDev lane per Issue, merging serially, and recomputing the graph. Use SCD Reengineering for project-scale refactoring or cross-language, framework, architecture, storage, or runtime reimplementation; it adds source evidence, selected compatibility, receipt, parity, and cutover gates around Execute. Use SCD QuickDev for Issue-backed single-delivery implementation through eligible PR merge, SCD Maintenance only when I explicitly ask to audit or repair repository debt, SCD Knowledge only when I explicitly ask to capture or retrieve proven experience, and SCD Evolve only when I explicitly ask to diagnose this interaction and improve a Thinloop skill."
   }
 }

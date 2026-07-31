@@ -157,8 +157,9 @@ test("platform registry is the six-platform capability contract", () => {
     registry.platforms.map((entry) => entry.id),
     ["codex", "opencode", "pi", "claude-code", "workbuddy", "zcode"],
   );
-  assert.equal(expectedSkills.length, 10);
+  assert.equal(expectedSkills.length, 11);
   assert.ok(expectedSkills.includes("scd-execute"));
+  assert.ok(expectedSkills.includes("scd-next"));
   assert.ok(expectedSkills.includes("scd-project"));
   assert.ok(expectedSkills.includes("scd-reengineering"));
 

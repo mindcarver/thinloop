@@ -13,6 +13,7 @@ const expectedSkills = [
   "scd-execute",
   "scd-knowledge",
   "scd-maintenance",
+  "scd-next",
   "scd-project",
   "scd-quickdev",
   "scd-reengineering",
@@ -42,7 +43,7 @@ test("Codex, Claude, WorkBuddy, and ZCode manifests share one version and skill 
     .sort();
 
   assert.equal(codex.name, "thinloop");
-  assert.equal(codex.version, "0.10.1");
+  assert.equal(codex.version, "0.11.0");
   assert.equal(claude.name, codex.name);
   assert.equal(workbuddy.name, codex.name);
   assert.equal(zcode.name, codex.name);
@@ -57,12 +58,15 @@ test("Codex, Claude, WorkBuddy, and ZCode manifests share one version and skill 
     assert.match(manifest.description, /multi-Issue project decomposition/i);
     assert.match(manifest.description, /dependency DAG/i);
     assert.match(manifest.description, /READY-wave execution/i);
+    assert.match(manifest.description, /read-only project-status navigation/i);
     assert.match(manifest.description, /cross-stack reimplementation/i);
   }
   assert.match(codex.interface.defaultPrompt, /SCD Project/);
   assert.match(codex.interface.defaultPrompt, /does not run an implementation loop/);
   assert.match(codex.interface.defaultPrompt, /SCD Execute/);
   assert.match(codex.interface.defaultPrompt, /current safe READY wave/);
+  assert.match(codex.interface.defaultPrompt, /SCD Next/);
+  assert.match(codex.interface.defaultPrompt, /single next action/);
   assert.match(codex.interface.defaultPrompt, /SCD Reengineering/);
   assert.match(codex.interface.defaultPrompt, /safe READY wave/);
   for (const marketplace of [

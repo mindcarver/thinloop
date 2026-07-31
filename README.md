@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <kbd>v0.10.1</kbd>
+  <kbd>v0.11.0</kbd>
   &nbsp;
   <kbd>ISSUE-DRIVEN</kbd>
   &nbsp;
@@ -53,6 +53,7 @@ QuickDev 会先判断任务是否足够清楚，而不是要求用户选择流�
 | 从 0 到 1 的新产品，或多个产品决定仍未明确 | 调用 Discovery 逐项澄清；新产品批准后形成轻量 PRD |
 | 已批准项目包含多个可独立验收的交付 | 调用 Project 从 PRD/产品契约拆成 Initiative、Delivery Issues 和依赖图 |
 | 已批准 Initiative 需要开始、继续或恢复交付 | 调用 Execute 自动选择当前安全 READY 波次，每个 Issue 进入独立 QuickDev lane |
+| 不清楚当前做到哪、还有什么没做或下一步该干嘛 | 调用 Next 只读检查实时 Issue、PR、Initiative DAG 和验收状态，并给出唯一建议下一步 |
 | 对现有项目做大型重构或跨语言、跨架构重新实现 | 调用 Reengineering 固定上游与兼容边界，再执行批准的 Project 任务图 |
 | UI 或系统边界会显著影响实现 | 按需组合 UIUX 或 Architecture |
 | 工程验证通过 | Agent 自审并提交任务内变更 |
@@ -66,7 +67,7 @@ QuickDev 会先判断任务是否足够清楚，而不是要求用户选择流�
 
 <a id="capabilities"></a>
 
-## 十块能力 / CAPABILITIES
+## 十一块能力 / CAPABILITIES
 
 <table width="100%">
   <tr>
@@ -136,6 +137,12 @@ QuickDev 会先判断任务是否足够清楚，而不是要求用户选择流�
       <p>用行为基线和兼容边界治理项目级重构、跨语言或跨架构重新实现。</p>
       <p><strong>适合：</strong>开源项目重写、技术栈迁移、渐进替换和大型重构。</p>
     </td>
+    <td width="33%" valign="top">
+      <img src="./assets/retro-project.png" alt="SCD Next 复古项目导航图标" width="92">
+      <h3><a href="./skills/scd-next/SKILL.md">11 · SCD Next</a></h3>
+      <p>只读扫描实时 Issue、PR、Initiative DAG 和验收状态，给出唯一下一步。</p>
+      <p><strong>适合：</strong>查看当前进度、未完成工作、阻塞原因或恢复入口。</p>
+    </td>
   </tr>
 </table>
 
@@ -152,13 +159,14 @@ QuickDev 会先判断任务是否足够清楚，而不是要求用户选择流�
 清晰任务直接开发；不清晰的需求先讨论；多交付项目才增加 Project 拆解。
 Execute 消费普通已批准 Initiative 的 READY 波次；Reengineering 在此基础上
 增加源码、兼容性和集成门禁。清晰单交付不制造本地 Spec；新产品只保留一个
-批准的轻量 PRD。默认不强制 TDD、角色系统或固定阶段；Project 自身不执行工程
-loop，QuickDev 每个 lane 只固定使用一个独立审查与验收 Agent。完整的路由、
-状态与契约说明见[工作流与项目状态](./docs/workflow-and-state.md)。
+批准的轻量 PRD。Next 在用户不知道如何继续时只读重建当前进度并把工作交给
+正确的责任 Skill。默认不强制 TDD、角色系统或固定阶段；Project 自身不执行
+工程 loop，QuickDev 每个 lane 只固定使用一个独立审查与验收 Agent。完整的
+路由、状态与契约说明见[工作流与项目状态](./docs/workflow-and-state.md)。
 
 <a id="skill-flows"></a>
 
-## 十个技能如何工作 / SKILL FLOWS
+## 十一个技能如何工作 / SKILL FLOWS
 
 <p><img src="./assets/flows/scd-discovery.svg" alt="SCD Discovery 流程：从用户问题和 MVP 边界到批准后的轻量 PRD 或 Delivery Issue" width="100%"></p>
 <p><img src="./assets/flows/scd-uiux.svg" alt="SCD UIUX 流程：从稳定产品核心到可交付的体验设计" width="100%"></p>
@@ -170,6 +178,7 @@ loop，QuickDev 每个 lane 只固定使用一个独立审查与验收 Agent。�
 <p><img src="./assets/flows/scd-maintenance.svg" alt="SCD Maintenance 流程：从仓库信号到证据确认和有边界的修复" width="100%"></p>
 <p><img src="./assets/flows/scd-evolve.svg" alt="SCD Evolve 流程：从可见证据和归因到人工批准的可回滚试验" width="100%"></p>
 <p><img src="./assets/flows/scd-reengineering.svg" alt="SCD Reengineering 流程：从固定上游和行为基线到可验证的重构或重新实现" width="100%"></p>
+<p><img src="./assets/flows/scd-next.svg" alt="SCD Next 流程：从实时 Issue、PR、Initiative DAG 和验收证据到唯一建议下一步" width="100%"></p>
 
 每张图只保留该 Skill 的五个关键节点；完整触发条件、分支和安全边界仍以对应
 `SKILL.md` 为准。

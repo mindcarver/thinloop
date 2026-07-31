@@ -1,0 +1,4 @@
+interface:
+  display_name: "SCD Next"
+  short_description: "Inspect project status and recommend what to do next"
+  default_prompt: "Use $scd-next to inspect this repository's live Issues, pull requests, Initiative DAG, and acceptance state, then report what is done, in flight, ready, planned, blocked, or unverified and recommend the single next action."
