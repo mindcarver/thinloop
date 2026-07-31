@@ -79,6 +79,35 @@
       }
     },
     {
+      "id": "codewhale",
+      "displayName": "CodeWhale",
+      "installation": {
+        "mode": "skill-links",
+        "skillRoot": ".codewhale/skills",
+        "skillRootOverride": {
+          "environment": "CODEWHALE_SKILLS_DIR",
+          "direct": true
+        },
+        "summary": "把十一个 Skill 链接到 `~/.codewhale/skills`",
+        "takesEffect": "新会话"
+      },
+      "capabilities": {
+        "hooks": []
+      },
+      "verification": {
+        "mode": "skill-links",
+        "summary": "十一个 Skill 链接均指向当前源码；`codewhale doctor --json` 确认全局 Skill 根、数量且跳过实时 API 探测",
+        "runtimeDiscovery": {
+          "command": [
+            "codewhale",
+            "doctor",
+            "--json"
+          ],
+          "checkerEligible": true
+        }
+      }
+    },
+    {
       "id": "claude-code",
       "displayName": "Claude Code",
       "installation": {

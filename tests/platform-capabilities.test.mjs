@@ -51,6 +51,9 @@ function fixtureSkillRoot(homeDir, platformId, environment = {}) {
   const override = installation.skillRootOverride;
   const overrideRoot = override && environment[override.environment];
   if (overrideRoot) {
+    if (override.direct === true) {
+      return path.resolve(overrideRoot);
+    }
     return path.join(overrideRoot, ...override.suffix.split("/"));
   }
   return path.join(homeDir, ...installation.skillRoot.split("/"));
@@ -137,12 +140,42 @@ function makePluginInstall(
   return installPath;
 }
 
+function codeWhaleReport(homeDir, environment = {}) {
+  const skillRoot = fixtureSkillRoot(homeDir, "codewhale", environment);
+  let entries = [];
+  try {
+    entries = fs.readdirSync(skillRoot);
+  } catch (error) {
+    if (error.code !== "ENOENT") {
+      throw error;
+    }
+  }
+  return {
+    version: "0.9.2",
+    skills: {
+      global: {
+        path: skillRoot,
+        present: entries.length > 0,
+        count: entries.length,
+      },
+    },
+    api_connectivity: { checked: false },
+  };
+}
+
 function pluginRunner(recordsByExecutable) {
-  return ([executable]) => ({
-    status: 0,
-    stdout: JSON.stringify(recordsByExecutable[executable] ?? []),
-    stderr: "",
-  });
+  return ([executable], context = {}) => {
+    const output = Object.hasOwn(recordsByExecutable, executable)
+      ? recordsByExecutable[executable]
+      : executable === "codewhale"
+        ? codeWhaleReport(context.homeDir, context.environment)
+        : [];
+    return {
+      status: 0,
+      stdout: JSON.stringify(output),
+      stderr: "",
+    };
+  };
 }
 
 function resultMap(report) {
@@ -151,11 +184,19 @@ function resultMap(report) {
   );
 }
 
-test("platform registry is the six-platform capability contract", () => {
+test("platform registry is the seven-platform capability contract", () => {
   assert.equal(registry.schemaVersion, 1);
   assert.deepEqual(
     registry.platforms.map((entry) => entry.id),
-    ["codex", "opencode", "pi", "claude-code", "workbuddy", "zcode"],
+    [
+      "codex",
+      "opencode",
+      "pi",
+      "codewhale",
+      "claude-code",
+      "workbuddy",
+      "zcode",
+    ],
   );
   assert.equal(expectedSkills.length, 11);
   assert.ok(expectedSkills.includes("scd-execute"));
@@ -213,6 +254,7 @@ test("read-only checker verifies complete automatic installs", () => {
     linkSkills(homeDir, "codex");
     linkSkills(homeDir, "opencode");
     linkSkills(homeDir, "pi");
+    linkSkills(homeDir, "codewhale");
     const report = inspectInstallations({
       registryPath,
       sourceRoot: root,
@@ -236,6 +278,7 @@ test("read-only checker verifies complete automatic installs", () => {
     assert.equal(results.codex.status, "PASS");
     assert.equal(results.opencode.status, "MANUAL");
     assert.equal(results.pi.status, "PASS");
+    assert.equal(results.codewhale.status, "PASS");
     assert.equal(results["claude-code"].status, "PASS");
     assert.equal(results.workbuddy.status, "MANUAL");
     assert.equal(results.zcode.status, "MANUAL");
@@ -255,6 +298,7 @@ test("checker reports missing, partial, stale, and hook-mismatched installs", ()
   try {
     linkSkills(homeDir, "opencode", expectedSkills.slice(0, -1));
     linkSkills(homeDir, "pi");
+    linkSkills(homeDir, "codewhale", expectedSkills.slice(0, -1));
     const report = inspectInstallations({
       registryPath,
       sourceRoot: root,
@@ -277,6 +321,7 @@ test("checker reports missing, partial, stale, and hook-mismatched installs", ()
     assert.equal(results.codex.status, "FAIL");
     assert.equal(results.opencode.status, "FAIL");
     assert.equal(results.pi.status, "PASS");
+    assert.equal(results.codewhale.status, "FAIL");
     assert.equal(results["claude-code"].status, "FAIL");
     assert.equal(results.workbuddy.status, "MANUAL");
     assert.equal(results.zcode.status, "MANUAL");
@@ -288,6 +333,10 @@ test("checker reports missing, partial, stale, and hook-mismatched installs", ()
       results["claude-code"].checks.find((check) => check.name === "hooks")
         .detail,
       /Stop/,
+    );
+    assert.match(
+      results.codewhale.checks.find((check) => check.name === "skills").detail,
+      new RegExp(`missing: ${escapeRegex(expectedSkills.at(-1))}`),
     );
   } finally {
     fs.rmSync(homeDir, { recursive: true, force: true });
@@ -301,6 +350,7 @@ test("unavailable automatic plugin CLI stays unverified instead of failing", () 
     linkSkills(homeDir, "codex");
     linkSkills(homeDir, "opencode");
     linkSkills(homeDir, "pi");
+    linkSkills(homeDir, "codewhale");
     const report = inspectInstallations({
       registryPath,
       sourceRoot: root,
@@ -320,6 +370,7 @@ test("unavailable automatic plugin CLI stays unverified instead of failing", () 
     assert.equal(report.exitCode, 0);
     assert.equal(results.opencode.status, "MANUAL");
     assert.equal(results.pi.status, "PASS");
+    assert.equal(results.codewhale.status, "UNVERIFIED");
     assert.equal(results["claude-code"].status, "UNVERIFIED");
     assert.equal(results.workbuddy.status, "MANUAL");
     assert.equal(results.zcode.status, "MANUAL");
@@ -334,6 +385,7 @@ test("missing plugin evidence stays unverified instead of being guessed", () => 
     linkSkills(homeDir, "codex");
     linkSkills(homeDir, "opencode");
     linkSkills(homeDir, "pi");
+    linkSkills(homeDir, "codewhale");
     const report = inspectInstallations({
       registryPath,
       sourceRoot: root,
@@ -363,6 +415,7 @@ test("checker has a dedicated not-installed fixture", () => {
     linkSkills(homeDir, "codex");
     linkSkills(homeDir, "opencode");
     linkSkills(homeDir, "pi");
+    linkSkills(homeDir, "codewhale");
     const report = inspectInstallations({
       registryPath,
       sourceRoot: root,
@@ -393,12 +446,14 @@ test("checker honors skill-root environment overrides independently", () => {
     CODEX_HOME: path.join(homeDir, "custom-codex"),
     XDG_CONFIG_HOME: path.join(homeDir, "custom-xdg"),
     PI_CODING_AGENT_DIR: path.join(homeDir, "custom-pi"),
+    CODEWHALE_SKILLS_DIR: path.join(homeDir, "custom-codewhale-skills"),
   };
   const claudePath = makePluginInstall("claude-code");
   try {
     linkSkills(homeDir, "codex", expectedSkills, environment);
     linkSkills(homeDir, "opencode", expectedSkills, environment);
     linkSkills(homeDir, "pi", expectedSkills, environment);
+    linkSkills(homeDir, "codewhale", expectedSkills, environment);
     const report = inspectInstallations({
       registryPath,
       sourceRoot: root,
@@ -420,6 +475,7 @@ test("checker honors skill-root environment overrides independently", () => {
     assert.equal(results.codex.status, "PASS");
     assert.equal(results.opencode.status, "MANUAL");
     assert.equal(results.pi.status, "PASS");
+    assert.equal(results.codewhale.status, "PASS");
     assert.match(
       results.codex.checks.find((check) => check.name === "skills").detail,
       /custom-codex/,
@@ -431,6 +487,10 @@ test("checker honors skill-root environment overrides independently", () => {
     assert.match(
       results.pi.checks.find((check) => check.name === "skills").detail,
       /custom-pi/,
+    );
+    assert.match(
+      results.codewhale.checks.find((check) => check.name === "skills").detail,
+      /custom-codewhale-skills/,
     );
   } finally {
     fs.rmSync(homeDir, { recursive: true, force: true });
@@ -447,6 +507,7 @@ test("checker rejects unexpected legacy skills", () => {
     linkSkills(homeDir, "codex");
     linkSkills(homeDir, "opencode");
     linkSkills(homeDir, "pi");
+    linkSkills(homeDir, "codewhale");
     const legacyPath = path.join(
       fixtureSkillRoot(homeDir, "codex"),
       "scd-dev-loop",
@@ -502,6 +563,7 @@ test("checker rejects broken plugin manifest and hook wiring", () => {
     linkSkills(homeDir, "codex");
     linkSkills(homeDir, "opencode");
     linkSkills(homeDir, "pi");
+    linkSkills(homeDir, "codewhale");
     const report = inspectInstallations({
       registryPath,
       sourceRoot: root,
@@ -545,14 +607,19 @@ test("checker never executes probes registered as manual", () => {
     linkSkills(homeDir, "codex");
     linkSkills(homeDir, "opencode");
     linkSkills(homeDir, "pi");
+    linkSkills(homeDir, "codewhale");
     const report = inspectInstallations({
       registryPath,
       sourceRoot: root,
       homeDir,
       environment: {},
-      runCommand: (command) => {
+      runCommand: (command, context) => {
         calls.push(command);
-        return { status: 0, stdout: "[]", stderr: "" };
+        const output =
+          command[0] === "codewhale"
+            ? codeWhaleReport(context.homeDir, context.environment)
+            : [];
+        return { status: 0, stdout: JSON.stringify(output), stderr: "" };
       },
     });
     const results = resultMap(report);
@@ -560,7 +627,10 @@ test("checker never executes probes registered as manual", () => {
       (check) => check.name === "runtime-discovery",
     );
 
-    assert.deepEqual(calls, [["claude", "plugin", "list", "--json"]]);
+    assert.deepEqual(calls, [
+      ["codewhale", "doctor", "--json"],
+      ["claude", "plugin", "list", "--json"],
+    ]);
     assert.equal(runtimeCheck.status, "MANUAL");
     assert.match(runtimeCheck.detail, /可能写入日志/);
     assert.equal(results.workbuddy.status, "MANUAL");
@@ -579,6 +649,20 @@ test("checker source and registered probes are read-only", () => {
   assert.equal(platform("opencode").verification.mode, "skill-links");
   assert.equal(platform("pi").verification.mode, "skill-links");
   assert.deepEqual(platform("pi").capabilities.hooks, []);
+  assert.equal(platform("codewhale").verification.mode, "skill-links");
+  assert.deepEqual(platform("codewhale").capabilities.hooks, []);
+  assert.equal(
+    platform("codewhale").installation.skillRootOverride.direct,
+    true,
+  );
+  assert.deepEqual(
+    platform("codewhale").verification.runtimeDiscovery.command,
+    ["codewhale", "doctor", "--json"],
+  );
+  assert.equal(
+    platform("codewhale").verification.runtimeDiscovery.checkerEligible,
+    true,
+  );
   assert.deepEqual(platform("opencode").verification.manualRuntime.command, [
     "opencode",
     "debug",
@@ -620,6 +704,55 @@ test("checker can target Pi without probing unrelated platforms", () => {
     assert.equal(report.exitCode, 0);
     assert.deepEqual(report.results.map((result) => result.id), ["pi"]);
     assert.equal(report.results[0].status, "PASS");
+  } finally {
+    fs.rmSync(homeDir, { recursive: true, force: true });
+  }
+});
+
+test("checker targets CodeWhale and rejects a mismatched runtime Skill root", () => {
+  const homeDir = makeFixture();
+  const environment = {
+    CODEWHALE_SKILLS_DIR: path.join(homeDir, "expected-codewhale-skills"),
+  };
+  const calls = [];
+  try {
+    linkSkills(homeDir, "codewhale", expectedSkills, environment);
+    const report = inspectInstallations({
+      registryPath,
+      sourceRoot: root,
+      homeDir,
+      environment,
+      platformId: "codewhale",
+      runCommand: (command) => {
+        calls.push(command);
+        return {
+          status: 0,
+          stdout: JSON.stringify({
+            version: "0.9.2",
+            skills: {
+              global: {
+                path: path.join(homeDir, "wrong-codewhale-skills"),
+                present: true,
+                count: expectedSkills.length,
+              },
+            },
+            api_connectivity: { checked: false },
+          }),
+          stderr: "",
+        };
+      },
+    });
+
+    assert.deepEqual(calls, [["codewhale", "doctor", "--json"]]);
+    assert.equal(report.exitCode, 1);
+    assert.deepEqual(report.results.map((result) => result.id), ["codewhale"]);
+    assert.equal(report.results[0].status, "FAIL");
+    assert.match(
+      report.results[0].checks.find(
+        (check) => check.name === "runtime-discovery",
+      ).detail,
+      /wrong-codewhale-skills/,
+    );
   } finally {
     fs.rmSync(homeDir, { recursive: true, force: true });
   }

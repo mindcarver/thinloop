@@ -9,6 +9,7 @@
 | Codex | 把十一个 Skill 链接到 `~/.codex/skills` | 新任务 |
 | OpenCode | 把十一个 Skill 链接到 `~/.config/opencode/skills` | 重启 OpenCode |
 | Pi | 把十一个 Skill 链接到 `~/.pi/agent/skills` | 新会话或执行 `/reload` |
+| CodeWhale | 把十一个 Skill 链接到 `~/.codewhale/skills` | 新会话 |
 | Claude Code | 安装完整插件 | 更新后重启或重新加载插件 |
 | WorkBuddy | 安装完整插件 | 更新后重启 WorkBuddy |
 | ZCode | 安装完整插件 | 更新后新建会话 |
@@ -17,16 +18,22 @@ Skill 链接随源码仓库更新，但不启用连续性 Hook；Claude Code、W
 ZCode 的完整插件会额外启用各自支持的 Hook。不要在同一个 Agent 中同时安装
 完整插件和个人 Skill 链接，以免重复暴露同名能力。
 
-## Codex、OpenCode 与 Pi
+## Codex、OpenCode、Pi 与 CodeWhale
 
 ### Windows · Junction
 
 ```powershell
 $repo = "C:\path\to\thinloop"
+$codeWhaleSkillRoot = if ($env:CODEWHALE_SKILLS_DIR) {
+  $env:CODEWHALE_SKILLS_DIR
+} else {
+  "$env:USERPROFILE\.codewhale\skills"
+}
 $skillRoots = @(
   "$env:USERPROFILE\.codex\skills",
   "$env:USERPROFILE\.config\opencode\skills",
-  "$env:USERPROFILE\.pi\agent\skills"
+  "$env:USERPROFILE\.pi\agent\skills",
+  $codeWhaleSkillRoot
 )
 $skillNames = @(
   "scd-discovery", "scd-uiux", "scd-architecture",
@@ -67,6 +74,7 @@ skill_roots=(
   "${CODEX_HOME:-$HOME/.codex}/skills"
   "${XDG_CONFIG_HOME:-$HOME/.config}/opencode/skills"
   "${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}/skills"
+  "${CODEWHALE_SKILLS_DIR:-$HOME/.codewhale/skills}"
 )
 skills=(
   scd-discovery scd-uiux scd-architecture
@@ -97,12 +105,18 @@ done
 
 上面的脚本只移除明确的旧链接 `scd-dev-loop`，并修复十一个 Thinloop Skill
 链接；遇到同名的真实文件或目录会跳过，不会覆盖用户内容。OpenCode 也能读取
-`~/.claude/skills`，Pi 也能读取 `~/.agents/skills`；使用各自的原生目录可以
-明确区分安装来源，不依赖兼容目录。
+`~/.claude/skills`，Pi 也能读取 `~/.agents/skills`；CodeWhale 使用
+`~/.codewhale/skills`，并允许 `CODEWHALE_SKILLS_DIR` 直接覆盖整个 Skill
+根。使用各自的原生目录可以明确区分安装来源，不依赖兼容目录。
 
 Pi 会把这些 Skill 注册为 `/skill:scd-*` 命令。链接更新后，在现有会话执行
 `/reload`，或开启新会话。Thinloop 当前没有为 Pi 安装扩展，也不声明
 Stop 等价的连续性阻断能力。
+
+CodeWhale 会在新会话发现这些 Skill，可用 `/skills` 查看并用
+`/skill scd-next` 激活。Thinloop 只安装标准 `SKILL.md`，不安装 CodeWhale
+Plugin Bundle 或连续性 Hook；当前 CodeWhale 的 Bundle 兼容层尚未提供 Hook
+适配器。
 
 ## Evolve 权威源码
 
@@ -181,7 +195,7 @@ git -C /path/to/thinloop pull --ff-only
 随后按安装方式刷新：
 
 ```bash
-# Codex / OpenCode / Pi：重新运行上面的链接脚本，然后开启新任务、重启或 /reload
+# Codex / OpenCode / Pi / CodeWhale：重新运行上面的链接脚本，然后新建任务或会话、重启或 /reload
 
 # Claude Code 完整插件
 claude plugin update thinloop@thinloop --scope user
@@ -193,7 +207,7 @@ codebuddy plugin update thinloop@thinloop --scope user
 - Claude Code：命令成功后重启客户端，或在交互会话重新加载插件。
 - WorkBuddy：也可以在插件页刷新市场后更新 Thinloop；完成后重启 WorkBuddy。
 - ZCode：Settings → Plugins → Refresh → `thinloop` → Update；更新后新建会话。
-- 升级到 v0.11.0：确认当前列表中存在 `scd-next`、`scd-execute`、`scd-reengineering`、`scd-project` 与 `scd-quickdev`，
+- 升级到 v0.12.0：确认当前列表中存在 `scd-next`、`scd-execute`、`scd-reengineering`、`scd-project` 与 `scd-quickdev`，
   并且插件版本与当前源码仓库一致。
 - 若从 v0.6.x 升级，另确认旧 `scd-dev-loop` 已消失。
 
@@ -205,9 +219,10 @@ node scripts/verify-install.mjs
 
 检查器从
 [`config/platform-capabilities.json`](../config/platform-capabilities.json)
-读取六个平台的能力契约，遵循 `CODEX_HOME`、`XDG_CONFIG_HOME` 的自定义
-Skill 根以及 `PI_CODING_AGENT_DIR/skills`，只读取 Skill 链接、Claude Code
-插件清单及本地插件内容；
+读取七个平台的能力契约，遵循 `CODEX_HOME`、`XDG_CONFIG_HOME`、
+`PI_CODING_AGENT_DIR/skills` 与 `CODEWHALE_SKILLS_DIR`，只读取 Skill
+链接、CodeWhale 的无网络 `doctor --json` 报告、Claude Code 插件清单及本地
+插件内容；
 不安装、修复、覆盖、重启或重新加载任何 Agent。状态和退出码见
 [验证指南](./verification.md)。
 
@@ -232,6 +247,10 @@ Pi：使用 /skill:scd-quickdev 按 Issue 开发、验证并合并。
 Pi：使用 /skill:scd-project 从批准的 PRD 分解 multi-Issue 项目 DAG，不执行 Issues。
 Pi：使用 /skill:scd-execute 继续已批准的 Initiative，串行合并并在每次交付后重算 DAG。
 Pi：使用 /skill:scd-next 只读检查当前项目进度和下一步。
+CodeWhale：使用 /skill scd-quickdev 按 Issue 开发、验证并合并。
+CodeWhale：使用 /skill scd-project 从批准的 PRD 分解 multi-Issue 项目 DAG，不执行 Issues。
+CodeWhale：使用 /skill scd-execute 继续已批准的 Initiative，按安全 READY 波次执行。
+CodeWhale：使用 /skill scd-next 只读检查当前项目进度和下一步。
 WorkBuddy 完整插件：/thinloop:scd-quickdev
 ZCode：使用 $scd-quickdev 按 Issue 开发、验证并合并。
 ZCode：使用 $scd-project 分解 multi-Issue 项目并验证依赖 DAG，不启动执行 loop。
