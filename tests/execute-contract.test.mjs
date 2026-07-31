@@ -80,3 +80,18 @@ test("execute fails closed and resumes from authoritative evidence", () => {
   assert.match(combined, /Do not add leases/i);
   assert.match(combined, /second state database/i);
 });
+
+test("execute turns an empty READY set into an actionable handoff", () => {
+  const skill = read("skills/scd-execute/SKILL.md");
+  const contract = read("skills/scd-execute/references/execution-contract.md");
+  const combined = `${skill}\n${contract}`;
+
+  assert.match(combined, /`ROLLING_REPLAN_REQUIRED`/);
+  assert.match(combined, /remaining executable work is only `PLANNED` placeholders/i);
+  assert.match(combined, /not.*redo Discovery/i);
+  assert.match(combined, /copy-ready.*`scd-project` prompt/i);
+  assert.match(combined, /`EXTERNAL_OR_HUMAN_BLOCK`/);
+  assert.match(combined, /`INVALID_OR_STALE_GRAPH`/);
+  assert.match(combined, /Never report only “no READY nodes”/);
+  assert.match(combined, /must not materialize them/i);
+});
