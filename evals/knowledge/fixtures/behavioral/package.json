@@ -1,0 +1,8 @@
+{
+  "name": "knowledge-behavioral-fixture",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}

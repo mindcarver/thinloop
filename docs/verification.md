@@ -10,11 +10,25 @@
 node --test tests/*.test.mjs
 node evals/validate-discovery-cases.mjs
 node evals/validate-knowledge-cases.mjs
+node evals/knowledge/validate.mjs
+node evals/knowledge/runner/run.mjs --mode dry
 node skills/scd-maintenance/scripts/collect-signals.mjs --root . --format text
 claude plugin validate . --strict
 codebuddy plugin validate .codebuddy-plugin/plugin.json
 codebuddy plugin validate .codebuddy-plugin/marketplace.json
 ```
+
+Knowledge 发布前还需在隔离 Fixture 中运行真实成对行为评测：
+
+```bash
+node evals/knowledge/runner/run.mjs --mode smoke
+node evals/knowledge/runner/run.mjs --mode full
+```
+
+该评测固定任务、模型、推理强度、沙箱和 Skill，只改变项目知识是否存在；
+同时包含虚假方法与平台边界不匹配用例。只有“无知识失败、有知识通过”的同对
+结果计为可观察提升，召回、引用或单次任务成功不单独作为因果证据。完整运行会
+调用真实模型，默认结果目录位于 Thinloop 同级的 `test/` 工作区，不写入仓库。
 
 ## 安装后证据
 

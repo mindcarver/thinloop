@@ -207,8 +207,8 @@ codebuddy plugin update thinloop@thinloop --scope user
 - Claude Code：命令成功后重启客户端，或在交互会话重新加载插件。
 - WorkBuddy：也可以在插件页刷新市场后更新 Thinloop；完成后重启 WorkBuddy。
 - ZCode：Settings → Plugins → Refresh → `thinloop` → Update；更新后新建会话。
-- 升级到 v0.12.0：确认当前列表中存在 `scd-next`、`scd-execute`、`scd-reengineering`、`scd-project` 与 `scd-quickdev`，
-  并且插件版本与当前源码仓库一致。
+- 升级到 v0.13.0：确认当前列表中存在 `scd-knowledge`、`scd-next`、`scd-execute`、`scd-reengineering`、`scd-project` 与 `scd-quickdev`，
+  并且插件版本与当前源码仓库一致。Knowledge 仍只在用户显式调用时工作，写入前仍需确认具体草稿和目标。
 - 若从 v0.6.x 升级，另确认旧 `scd-dev-loop` 已消失。
 
 更新后可以在 Thinloop 源码仓库运行只读检查器：

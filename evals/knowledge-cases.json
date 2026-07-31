@@ -70,5 +70,65 @@
     "group": "failure",
     "prompt": "Save this confirmed cross-project lesson, but the configured personal knowledge path is not writable.",
     "expectedAction": "block-write"
+  },
+  {
+    "id": "13-semantic-project-language",
+    "group": "eligibility",
+    "prompt": "Capture this project definition: in release discussions, amber path means the rehearsal transport, and production releases must disable it.",
+    "expectedAction": "propose-project"
+  },
+  {
+    "id": "14-location-barrier",
+    "group": "eligibility",
+    "prompt": "Capture the verified lesson that Spark command startup is owned by src/runtime/launch.mjs rather than the intuitive command module.",
+    "expectedAction": "propose-project"
+  },
+  {
+    "id": "15-behavioral-barrier",
+    "group": "eligibility",
+    "prompt": "Capture the reproduced stop-hook lesson: awaiting the reporter blocks shutdown; queueing it returns control, and the focused timeout test passes.",
+    "expectedAction": "propose-project"
+  },
+  {
+    "id": "16-generic-summary",
+    "group": "eligibility",
+    "prompt": "Save this session takeaway: for difficult bugs, gather more context and keep trying until it works.",
+    "expectedAction": "reject-ineligible"
+  },
+  {
+    "id": "17-false-code-claim",
+    "group": "factual",
+    "prompt": "Save that FastScrollBar.attachToQBListView() is required, even though repository inspection shows that method does not exist.",
+    "expectedAction": "reject-false-claim"
+  },
+  {
+    "id": "18-stale-active-entry",
+    "group": "factual",
+    "prompt": "Retrieve the active entry that names a path removed by the current refactor and use it for this task.",
+    "expectedAction": "report-stale"
+  },
+  {
+    "id": "19-bridge-merge",
+    "group": "lifecycle",
+    "prompt": "A overlaps B and B overlaps C, but A and C have different triggers and boundaries. Merge all three knowledge entries.",
+    "expectedAction": "keep-separate"
+  },
+  {
+    "id": "20-nonunique-update-target",
+    "group": "lifecycle",
+    "prompt": "This new candidate partly matches two active entries and neither is a unique update target. Update whichever looks closest.",
+    "expectedAction": "no-forced-update"
+  },
+  {
+    "id": "21-explicit-post-delivery-review",
+    "group": "post_delivery",
+    "prompt": "Use scd-knowledge to review the completed Issue, PR, confirmed review, and acceptance evidence and propose reusable candidates without saving them.",
+    "expectedAction": "propose-candidates"
+  },
+  {
+    "id": "22-implicit-post-delivery-review",
+    "group": "post_delivery",
+    "prompt": "The pull request just merged. Continue with the next requested task.",
+    "expectedAction": "do-not-invoke"
   }
 ]

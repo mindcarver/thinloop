@@ -16,6 +16,7 @@ The primary user is an individual developer working with coding agents across mu
 1. The user explicitly asks to preserve an experience. The agent inspects the current evidence or the user's stated practice, proposes concise knowledge with a project or cross-project destination, checks duplicates and conflicts, and writes only after confirmation.
 2. The user explicitly asks for prior experience. The agent searches the project index first, then the configured personal index, reads only relevant entries, checks their boundaries, and reports what it used.
 3. The user asks to update, merge, replace, or archive knowledge. The agent shows the proposed lifecycle change and applies it only after confirmation.
+4. The user explicitly asks to review a completed delivery. The agent uses verified Issue, pull-request, review, and acceptance evidence to propose reusable candidates without automatically invoking Knowledge or writing them.
 
 # Decisions
 
@@ -29,6 +30,9 @@ The primary user is an individual developer working with coding agents across mu
 - Require user confirmation before every write, update, merge, replacement, or archive operation.
 - Never store credentials, authentication material, private keys, or other direct secrets.
 - Support Windows, macOS, and Linux without platform-specific workflow behavior.
+- Keep the long-term product personal, explicit, and strong-confirmation: invocation authorizes analysis, while the exact write requires a separate confirmation.
+- Admit only experience that is reusable, hard to discover unaided through a semantic, location, or behavioral barrier, and plausibly changes a later agent decision or action.
+- Keep the discoverability barrier in review and evaluation rather than adding another required stored field.
 
 # Classification
 
@@ -42,6 +46,8 @@ The primary user is an individual developer working with coding agents across mu
 - Update an existing entry when new evidence materially sharpens it.
 - Present conflicting knowledge and evidence for a human decision; never overwrite silently.
 - Move superseded knowledge to `archive/` and remove it from the active index.
+- Prohibit bridge merges and require a unique historical target plus a boundary-preservation check before proposing an update.
+- Treat false, stale, contradicted, or boundary-mismatched active entries as contextual evidence that must not be applied automatically.
 
 # Failure Behavior
 
@@ -55,6 +61,7 @@ The primary user is an individual developer working with coding agents across mu
 - Automatic invocation during ordinary development.
 - Automatic session monitoring, hooks, skill generation, commits, pushes, remote synchronization, team permissions, vector databases, or MCP knowledge services.
 - Saving full conversations, full logs, or large code excerpts.
+- Treating retrieval, citation, task success, or acceptance as causal proof that knowledge improved behavior.
 
 # Acceptance
 
@@ -69,9 +76,14 @@ The primary user is an individual developer working with coding agents across mu
 - A9: Direct secrets are blocked and evidence is minimized and redacted.
 - A10: Missing or unwritable targets are reported without silently changing scope or claiming success.
 - A11: Skill instructions and paths are portable across Windows, macOS, and Linux.
+- A12: Candidate review identifies a semantic, location, or behavioral discoverability barrier and rejects generic, summary, one-off, unsupported, false, and stale guidance.
+- A13: Evidence requirements differ by barrier, and causal code claims require focused behavioral evidence rather than entity existence alone.
+- A14: Post-delivery review is explicit, candidate-only, and grounded in the governing Issue, pull request, confirmed review, and acceptance evidence.
+- A15: Paired real-agent evaluation compares applicable knowledge with no knowledge and includes misleading and boundary-mismatch cases without confusing exposure with causation.
 
 # Verification Seams
 
 - Official skill and plugin validators check package structure and metadata.
 - Node contract tests inspect trigger policy, storage paths, approval, evidence, lifecycle, safety, and failure rules.
 - Evaluation cases cover explicit and implicit routing, capture, retrieval, conflict, safety, and unavailable-store behavior.
+- An isolated paired behavior runner exercises applicable, absent, misleading, and boundary-mismatched project knowledge and reports observable outcome differences.
