@@ -19,6 +19,7 @@ const DEFAULT_REGISTRY = path.join(
 const RESULT_ORDER = ["PASS", "FAIL", "UNVERIFIED", "MANUAL"];
 const READ_ONLY_PROBES = new Map([
   ["claude-code", ["claude", "plugin", "list", "--json"]],
+  ["codewhale", ["codewhale", "doctor", "--json"]],
 ]);
 const MANUAL_PROBES = new Map([
   ["opencode", ["opencode", "debug", "skill"]],
@@ -159,6 +160,18 @@ function validateRegistry(registry) {
         throw new Error(`Platform ${platform.id} has an unsafe manual probe`);
       }
     }
+    const runtimeDiscovery = platform.verification.runtimeDiscovery;
+    if (runtimeDiscovery) {
+      const allowed = READ_ONLY_PROBES.get(platform.id);
+      if (
+        platform.id !== "codewhale" ||
+        !allowed ||
+        runtimeDiscovery.checkerEligible !== true ||
+        JSON.stringify(runtimeDiscovery.command) !== JSON.stringify(allowed)
+      ) {
+        throw new Error(`Platform ${platform.id} has an unsafe runtime probe`);
+      }
+    }
   }
 }
 
@@ -196,6 +209,9 @@ function resolveSkillRoot(platform, homeDir, environment) {
   const override = platform.installation.skillRootOverride;
   const overrideRoot = override && environment[override.environment];
   if (typeof overrideRoot === "string" && overrideRoot.length > 0) {
+    if (override.direct === true) {
+      return path.resolve(overrideRoot);
+    }
     return resolveFrom(path.resolve(overrideRoot), override.suffix);
   }
   return resolveFrom(homeDir, platform.installation.skillRoot);
@@ -329,6 +345,86 @@ function defaultRunCommand(command, { homeDir, environment } = {}) {
     timeout: 10_000,
     windowsHide: true,
   });
+}
+
+function inspectCodeWhaleRuntime(platform, expected, runCommand, context) {
+  const runtime = platform.verification.runtimeDiscovery;
+  const commandResult = runCommand(runtime.command, context);
+  if (commandResult.error || commandResult.status === null) {
+    const detail =
+      commandResult.error?.code === "ENOENT"
+        ? "codewhale is unavailable"
+        : commandResult.error?.message || "CodeWhale doctor did not complete";
+    return makeCheck("runtime-discovery", "UNVERIFIED", detail);
+  }
+  if (commandResult.status !== 0) {
+    return makeCheck(
+      "runtime-discovery",
+      "UNVERIFIED",
+      `codewhale doctor exited ${commandResult.status}`,
+    );
+  }
+
+  let report;
+  try {
+    report = JSON.parse(commandResult.stdout);
+  } catch {
+    return makeCheck(
+      "runtime-discovery",
+      "UNVERIFIED",
+      "codewhale doctor returned invalid JSON",
+    );
+  }
+  if (report?.status === "error") {
+    return makeCheck(
+      "runtime-discovery",
+      "UNVERIFIED",
+      `codewhale doctor reported ${report.error?.kind || "an error"}`,
+    );
+  }
+
+  const reported = report?.skills?.global;
+  const expectedRoot = resolveSkillRoot(
+    platform,
+    context.homeDir,
+    context.environment,
+  );
+  const failures = [];
+  if (typeof reported?.path !== "string") {
+    failures.push("global Skill root missing");
+  } else if (path.resolve(reported.path) !== expectedRoot) {
+    failures.push(`global Skill root ${reported.path}; ${expectedRoot} expected`);
+  }
+  if (reported?.present !== true) {
+    failures.push("global Skill root not present");
+  }
+  if (
+    typeof reported?.count !== "number" ||
+    reported.count < expected.skillNames.length
+  ) {
+    failures.push(
+      `global Skill count ${reported?.count ?? "unknown"}; at least ${expected.skillNames.length} expected`,
+    );
+  }
+  if (failures.length > 0) {
+    return makeCheck("runtime-discovery", "FAIL", failures.join("; "));
+  }
+  if (
+    typeof report.version !== "string" ||
+    report.api_connectivity?.checked !== false
+  ) {
+    return makeCheck(
+      "runtime-discovery",
+      "UNVERIFIED",
+      "CodeWhale version or network-free doctor evidence is missing",
+    );
+  }
+
+  return makeCheck(
+    "runtime-discovery",
+    "PASS",
+    `CodeWhale ${report.version} reports ${reported.path} with ${reported.count} skills; live API probe skipped`,
+  );
 }
 
 function inspectInstalledSkills(installPath, platform, expected) {
@@ -621,6 +717,12 @@ export function inspectInstallations({
             "MANUAL",
             platform.verification.manualRuntime.summary,
           ),
+        );
+        result.status = resultStatus(result.checks);
+      }
+      if (platform.verification.runtimeDiscovery) {
+        result.checks.push(
+          inspectCodeWhaleRuntime(platform, expected, runCommand, context),
         );
         result.status = resultStatus(result.checks);
       }
