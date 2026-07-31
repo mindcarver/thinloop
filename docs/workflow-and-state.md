@@ -15,6 +15,7 @@ GitHub Delivery Issue 保存切片边界和验收；多交付项目由 Initiativ
 | 从 0 到 1，或多个上游产品决定仍会改变结果 | 用 Discovery 一次解决一个关键决定；新产品批准后形成轻量 PRD |
 | 已批准目标跨越多个独立交付 | 用 Project 从 PRD/产品契约创建 Initiative、Delivery Issues 和依赖 DAG；不启动执行 loop |
 | 已批准 Initiative 需要开始、继续、恢复或完成 | 用 Execute 复核实时 DAG，默认执行当前所有安全 READY Issues，也接受单 Issue、串行或并发上限覆盖 |
+| 不清楚当前进度、未完成工作、阻塞或下一步 | 用 Next 只读检查实时 Issue、PR、Initiative DAG 和验收证据，给出唯一建议下一步和责任 Skill |
 | 现有系统需要项目级重构或跨技术栈重新实现 | 用 Reengineering 固定上游、兼容边界和目标方向，再通过 Execute 消费批准的 Project DAG |
 | 体验或技术边界仍影响交付 | 按需调用 UIUX 或 Architecture，不设固定关卡 |
 | 实现完成 | Agent 验证、自审并提交任务内变更 |
@@ -26,9 +27,9 @@ GitHub Delivery Issue 保存切片边界和验收；多交付项目由 Initiativ
 并报告 READY/BLOCKED，不启动 Agent、worktree 或长期 loop；Execute 消费批准
 的图，把安全独立的 READY Issues 分配到隔离 QuickDev lanes，并让硬依赖和临时
 协调冲突串行。Reengineering 在 Execute 外增加源码、兼容性、receipt、parity
-和 cutover 门禁。QuickDev 每个 lane 只固定使用一个独立审查与验收 Agent，其
-实现请求包含任务内 Issue、分支、提交、推送、PR 与合资格合并；高风险合并和
-生产部署仍需明确授权。
+和 cutover 门禁。Next 不修改上述图或启动实现，只在调用时从实时证据重建状态。
+QuickDev 每个 lane 只固定使用一个独立审查与验收 Agent，其实现请求包含任务内
+Issue、分支、提交、推送、PR 与合资格合并；高风险合并和生产部署仍需明确授权。
 
 ## 工作闭环
 
@@ -39,6 +40,7 @@ GitHub Delivery Issue 保存切片边界和验收；多交付项目由 Initiativ
 多交付项目 → 批准 PRD/产品契约 → Project → Initiative + Delivery Issue DAG
 批准 Initiative → Execute → 当前安全 READY 波次 → 隔离 QuickDev lanes → 重算 DAG
 已选 READY Delivery Issue ────────────────────────────────────→ QuickDev
+不知道下一步 → Next → 实时状态分类 → 唯一建议 → Project / Execute / QuickDev / 其他责任 Skill
 项目级重构/重写 → Reengineering → 基线与兼容边界 → Project DAG → Execute → QuickDev lanes
 QuickDev → 分支 → 开发与工程验收 → 独立代码审查 → 独立行为验收 → PR → main → 关闭 Issue
 主动调用 → Maintenance / Knowledge
@@ -49,6 +51,7 @@ QuickDev → 分支 → 开发与工程验收 → 独立代码审查 → 独立�
 选择一个 READY Issue 时直接进入 QuickDev；用户说“开始/继续/恢复这个项目”时，
 Execute 默认选择当前所有安全 READY 节点，并允许用户指定单 Issue、串行或最大
 并发数。Reengineering 复用 Execute 的通用编排，但保留再工程专属门禁。
+Next 只读回答“现在到哪、还有什么、接下来做什么”，不是后台提醒服务。
 Maintenance、Knowledge 和 Evolve 只在用户主动要求时出现。
 
 ## 最小项目状态
@@ -81,6 +84,7 @@ Delivery Issues 和 DAG 位于 GitHub，不创建本地项目 Wiki、永久实�
 - [Discovery 产物契约](../skills/scd-discovery/references/artifacts.md)
 - [Project 项目契约](../skills/scd-project/references/project-contract.md)
 - [Execute 执行契约](../skills/scd-execute/references/execution-contract.md)
+- [Next 状态导航契约](../skills/scd-next/references/status-contract.md)
 - [QuickDev Issue 交付契约](../skills/scd-quickdev/references/issue-delivery-contract.md)
 - [QuickDev 连续性契约](../skills/scd-quickdev/references/continuity-contract.md)
 - [Architecture 契约](../skills/scd-architecture/references/architecture-contract.md)

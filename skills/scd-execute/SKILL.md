@@ -33,10 +33,11 @@ Do not use Execute when:
 
 - one Delivery Issue is selected; use `scd-quickdev`;
 - the Initiative, child contracts, or graph still need creation or revision;
-  use `scd-project`;
+  re-enter `scd-project`;
 - product or shared technical decisions remain open; return to their owning
   Thinloop skill;
-- the request is only to report readiness; re-enter `scd-project`;
+- the request is only to report current progress, readiness, unfinished work, or
+  the recommended continuation; use `scd-next`;
 - a reengineering program has not completed its source, direction,
   compatibility, and graph-approval gates; remain in `scd-reengineering`.
 

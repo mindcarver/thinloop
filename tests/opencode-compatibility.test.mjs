@@ -13,6 +13,7 @@ const expectedSkills = [
   "scd-execute",
   "scd-knowledge",
   "scd-maintenance",
+  "scd-next",
   "scd-project",
   "scd-quickdev",
   "scd-reengineering",

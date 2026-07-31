@@ -1,7 +1,7 @@
 {
   "name": "thinloop",
-  "version": "0.10.1",
-  "description": "Simplify complex development with Issue-backed discovery, risk-adaptive Web experience and architecture design, non-executing multi-Issue project decomposition into dependency DAGs, bounded READY-wave execution, project-scale refactoring and cross-stack reimplementation, autonomous single-Issue PR delivery, evidence-backed maintenance, concise experiential knowledge, and human-approved skill evolution.",
+  "version": "0.11.0",
+  "description": "Simplify complex development with Issue-backed discovery, risk-adaptive Web experience and architecture design, non-executing multi-Issue project decomposition into dependency DAGs, bounded READY-wave execution, read-only project-status navigation, project-scale refactoring and cross-stack reimplementation, autonomous single-Issue PR delivery, evidence-backed maintenance, concise experiential knowledge, and human-approved skill evolution.",
   "author": {
     "name": "mindcarver"
   },
@@ -21,6 +21,7 @@
     "project-decomposition",
     "dependency-graph",
     "ready-wave-execution",
+    "project-status",
     "software-reengineering",
     "reimplementation",
     "refactoring",
