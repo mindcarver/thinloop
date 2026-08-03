@@ -77,6 +77,28 @@ Do not announce these path names unless the user asks. A new product,
 application, plugin, service, or system normally takes Discovery; one isolated
 ambiguity does not.
 
+## Re-select the path when scope shifts mid-flight
+
+Path selection is not a one-time gate. While diagnosing or implementing one
+delivery, re-evaluate whenever the work in front of you is no longer bounded by
+the selected Issue:
+
+- you are repeatedly fixing adjacent problems outside the Issue's acceptance
+  (different root cause, different layer, different component);
+- the user supplies their own design or architecture proposal, or asks you to
+  restructure the flow rather than repair the reported defect;
+- evidence shows the real change spans several independently verifiable
+  deliveries, or depends on product decisions the Issue does not authorize.
+
+When any of these is true, stop widening the current branch. Name the new
+boundary out loud, point the user at `scd-discovery` (open product decisions)
+or `scd-project` (multiple deliveries with hard dependencies), and let the
+already-selected Issue finish or be explicitly superseded. A bug fix that turns
+into a redesign is a new path, not a larger bug fix.
+
+This check is about *recognizing* the shift, not adding ceremony. If the
+in-flight change still fits the Issue's acceptance, keep going.
+
 An explicit request to implement or use QuickDev authorizes the ordinary
 task-local Issue, branch, push, pull request, eligible merge, and cleanup steps
 in the named repository. It does not authorize high-risk merge, production
