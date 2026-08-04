@@ -10,6 +10,7 @@
 | OpenCode | 把十一个 Skill 链接到 `~/.config/opencode/skills` | 重启 OpenCode |
 | Pi | 把十一个 Skill 链接到 `~/.pi/agent/skills` | 新会话或执行 `/reload` |
 | CodeWhale | 把十一个 Skill 链接到 `~/.codewhale/skills` | 新会话 |
+| Reasonix | 把十一个 Skill 链接到 `~/.reasonix/skills` | 新会话 |
 | Claude Code | 安装完整插件 | 更新后重启或重新加载插件 |
 | WorkBuddy | 安装完整插件 | 更新后重启 WorkBuddy |
 | ZCode | 安装完整插件 | 更新后新建会话 |
@@ -18,7 +19,7 @@ Skill 链接随源码仓库更新，但不启用连续性 Hook；Claude Code、W
 ZCode 的完整插件会额外启用各自支持的 Hook。不要在同一个 Agent 中同时安装
 完整插件和个人 Skill 链接，以免重复暴露同名能力。
 
-## Codex、OpenCode、Pi 与 CodeWhale
+## Codex、OpenCode、Pi、CodeWhale 与 Reasonix
 
 ### Windows · Junction
 
@@ -33,7 +34,8 @@ $skillRoots = @(
   "$env:USERPROFILE\.codex\skills",
   "$env:USERPROFILE\.config\opencode\skills",
   "$env:USERPROFILE\.pi\agent\skills",
-  $codeWhaleSkillRoot
+  $codeWhaleSkillRoot,
+  "$env:USERPROFILE\.reasonix\skills"
 )
 $skillNames = @(
   "scd-discovery", "scd-uiux", "scd-architecture",
@@ -75,6 +77,7 @@ skill_roots=(
   "${XDG_CONFIG_HOME:-$HOME/.config}/opencode/skills"
   "${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}/skills"
   "${CODEWHALE_SKILLS_DIR:-$HOME/.codewhale/skills}"
+  "$HOME/.reasonix/skills"
 )
 skills=(
   scd-discovery scd-uiux scd-architecture
@@ -117,6 +120,10 @@ CodeWhale 会在新会话发现这些 Skill，可用 `/skills` 查看并用
 `/skill scd-next` 激活。Thinloop 只安装标准 `SKILL.md`，不安装 CodeWhale
 Plugin Bundle 或连续性 Hook；当前 CodeWhale 的 Bundle 兼容层尚未提供 Hook
 适配器。
+
+Reasonix 会在新会话发现 `~/.reasonix/skills` 下的标准 `SKILL.md` 目录；可直接
+输入 `/scd-next` 激活。Thinloop 当前不为 Reasonix 写入 Hook 配置，避免把
+Reasonix 已有的全局或项目 Hook 与未经验证的连续性阻断语义混合。
 
 ## Evolve 权威源码
 
@@ -195,7 +202,7 @@ git -C /path/to/thinloop pull --ff-only
 随后按安装方式刷新：
 
 ```bash
-# Codex / OpenCode / Pi / CodeWhale：重新运行上面的链接脚本，然后新建任务或会话、重启或 /reload
+# Codex / OpenCode / Pi / CodeWhale / Reasonix：重新运行上面的链接脚本，然后新建任务或会话、重启或 /reload
 
 # Claude Code 完整插件
 claude plugin update thinloop@thinloop --scope user
@@ -219,8 +226,8 @@ node scripts/verify-install.mjs
 
 检查器从
 [`config/platform-capabilities.json`](../config/platform-capabilities.json)
-读取七个平台的能力契约，遵循 `CODEX_HOME`、`XDG_CONFIG_HOME`、
-`PI_CODING_AGENT_DIR/skills` 与 `CODEWHALE_SKILLS_DIR`，只读取 Skill
+读取八个平台的能力契约，遵循 `CODEX_HOME`、`XDG_CONFIG_HOME`、
+`PI_CODING_AGENT_DIR/skills`、`CODEWHALE_SKILLS_DIR` 与 `~/.reasonix/skills`，只读取 Skill
 链接、CodeWhale 的无网络 `doctor --json` 报告、Claude Code 插件清单及本地
 插件内容；
 不安装、修复、覆盖、重启或重新加载任何 Agent。状态和退出码见
@@ -251,6 +258,10 @@ CodeWhale：使用 /skill scd-quickdev 按 Issue 开发、验证并合并。
 CodeWhale：使用 /skill scd-project 从批准的 PRD 分解 multi-Issue 项目 DAG，不执行 Issues。
 CodeWhale：使用 /skill scd-execute 继续已批准的 Initiative，按安全 READY 波次执行。
 CodeWhale：使用 /skill scd-next 只读检查当前项目进度和下一步。
+Reasonix：使用 /scd-quickdev 按 Issue 开发、验证并合并 main。
+Reasonix：使用 /scd-project 从批准的 PRD 分解 multi-Issue 项目 DAG，不执行 Issues。
+Reasonix：使用 /scd-execute 继续已批准的 Initiative，按安全 READY 波次执行。
+Reasonix：使用 /scd-next 只读检查当前项目进度和下一步。
 WorkBuddy 完整插件：/thinloop:scd-quickdev
 ZCode：使用 $scd-quickdev 按 Issue 开发、验证并合并。
 ZCode：使用 $scd-project 分解 multi-Issue 项目并验证依赖 DAG，不启动执行 loop。

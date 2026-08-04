@@ -184,7 +184,7 @@ function resultMap(report) {
   );
 }
 
-test("platform registry is the seven-platform capability contract", () => {
+test("platform registry is the eight-platform capability contract", () => {
   assert.equal(registry.schemaVersion, 1);
   assert.deepEqual(
     registry.platforms.map((entry) => entry.id),
@@ -193,6 +193,7 @@ test("platform registry is the seven-platform capability contract", () => {
       "opencode",
       "pi",
       "codewhale",
+      "reasonix",
       "claude-code",
       "workbuddy",
       "zcode",
@@ -255,6 +256,7 @@ test("read-only checker verifies complete automatic installs", () => {
     linkSkills(homeDir, "opencode");
     linkSkills(homeDir, "pi");
     linkSkills(homeDir, "codewhale");
+    linkSkills(homeDir, "reasonix");
     const report = inspectInstallations({
       registryPath,
       sourceRoot: root,
@@ -279,6 +281,7 @@ test("read-only checker verifies complete automatic installs", () => {
     assert.equal(results.opencode.status, "MANUAL");
     assert.equal(results.pi.status, "PASS");
     assert.equal(results.codewhale.status, "PASS");
+    assert.equal(results.reasonix.status, "PASS");
     assert.equal(results["claude-code"].status, "PASS");
     assert.equal(results.workbuddy.status, "MANUAL");
     assert.equal(results.zcode.status, "MANUAL");
@@ -299,6 +302,7 @@ test("checker reports missing, partial, stale, and hook-mismatched installs", ()
     linkSkills(homeDir, "opencode", expectedSkills.slice(0, -1));
     linkSkills(homeDir, "pi");
     linkSkills(homeDir, "codewhale", expectedSkills.slice(0, -1));
+    linkSkills(homeDir, "reasonix");
     const report = inspectInstallations({
       registryPath,
       sourceRoot: root,
@@ -322,6 +326,7 @@ test("checker reports missing, partial, stale, and hook-mismatched installs", ()
     assert.equal(results.opencode.status, "FAIL");
     assert.equal(results.pi.status, "PASS");
     assert.equal(results.codewhale.status, "FAIL");
+    assert.equal(results.reasonix.status, "PASS");
     assert.equal(results["claude-code"].status, "FAIL");
     assert.equal(results.workbuddy.status, "MANUAL");
     assert.equal(results.zcode.status, "MANUAL");
@@ -351,6 +356,7 @@ test("unavailable automatic plugin CLI stays unverified instead of failing", () 
     linkSkills(homeDir, "opencode");
     linkSkills(homeDir, "pi");
     linkSkills(homeDir, "codewhale");
+    linkSkills(homeDir, "reasonix");
     const report = inspectInstallations({
       registryPath,
       sourceRoot: root,
@@ -371,6 +377,7 @@ test("unavailable automatic plugin CLI stays unverified instead of failing", () 
     assert.equal(results.opencode.status, "MANUAL");
     assert.equal(results.pi.status, "PASS");
     assert.equal(results.codewhale.status, "UNVERIFIED");
+    assert.equal(results.reasonix.status, "PASS");
     assert.equal(results["claude-code"].status, "UNVERIFIED");
     assert.equal(results.workbuddy.status, "MANUAL");
     assert.equal(results.zcode.status, "MANUAL");
@@ -386,6 +393,7 @@ test("missing plugin evidence stays unverified instead of being guessed", () => 
     linkSkills(homeDir, "opencode");
     linkSkills(homeDir, "pi");
     linkSkills(homeDir, "codewhale");
+    linkSkills(homeDir, "reasonix");
     const report = inspectInstallations({
       registryPath,
       sourceRoot: root,
@@ -416,6 +424,7 @@ test("checker has a dedicated not-installed fixture", () => {
     linkSkills(homeDir, "opencode");
     linkSkills(homeDir, "pi");
     linkSkills(homeDir, "codewhale");
+    linkSkills(homeDir, "reasonix");
     const report = inspectInstallations({
       registryPath,
       sourceRoot: root,
@@ -454,6 +463,7 @@ test("checker honors skill-root environment overrides independently", () => {
     linkSkills(homeDir, "opencode", expectedSkills, environment);
     linkSkills(homeDir, "pi", expectedSkills, environment);
     linkSkills(homeDir, "codewhale", expectedSkills, environment);
+    linkSkills(homeDir, "reasonix", expectedSkills, environment);
     const report = inspectInstallations({
       registryPath,
       sourceRoot: root,
@@ -476,6 +486,7 @@ test("checker honors skill-root environment overrides independently", () => {
     assert.equal(results.opencode.status, "MANUAL");
     assert.equal(results.pi.status, "PASS");
     assert.equal(results.codewhale.status, "PASS");
+    assert.equal(results.reasonix.status, "PASS");
     assert.match(
       results.codex.checks.find((check) => check.name === "skills").detail,
       /custom-codex/,
@@ -508,6 +519,7 @@ test("checker rejects unexpected legacy skills", () => {
     linkSkills(homeDir, "opencode");
     linkSkills(homeDir, "pi");
     linkSkills(homeDir, "codewhale");
+    linkSkills(homeDir, "reasonix");
     const legacyPath = path.join(
       fixtureSkillRoot(homeDir, "codex"),
       "scd-dev-loop",
@@ -564,6 +576,7 @@ test("checker rejects broken plugin manifest and hook wiring", () => {
     linkSkills(homeDir, "opencode");
     linkSkills(homeDir, "pi");
     linkSkills(homeDir, "codewhale");
+    linkSkills(homeDir, "reasonix");
     const report = inspectInstallations({
       registryPath,
       sourceRoot: root,
@@ -608,6 +621,7 @@ test("checker never executes probes registered as manual", () => {
     linkSkills(homeDir, "opencode");
     linkSkills(homeDir, "pi");
     linkSkills(homeDir, "codewhale");
+    linkSkills(homeDir, "reasonix");
     const report = inspectInstallations({
       registryPath,
       sourceRoot: root,
@@ -663,6 +677,9 @@ test("checker source and registered probes are read-only", () => {
     platform("codewhale").verification.runtimeDiscovery.checkerEligible,
     true,
   );
+  assert.equal(platform("reasonix").verification.mode, "skill-links");
+  assert.deepEqual(platform("reasonix").capabilities.hooks, []);
+  assert.equal(platform("reasonix").installation.skillRoot, ".reasonix/skills");
   assert.deepEqual(platform("opencode").verification.manualRuntime.command, [
     "opencode",
     "debug",
@@ -704,6 +721,33 @@ test("checker can target Pi without probing unrelated platforms", () => {
     assert.equal(report.exitCode, 0);
     assert.deepEqual(report.results.map((result) => result.id), ["pi"]);
     assert.equal(report.results[0].status, "PASS");
+  } finally {
+    fs.rmSync(homeDir, { recursive: true, force: true });
+  }
+});
+
+test("checker can target Reasonix without probing its CLI", () => {
+  const homeDir = makeFixture();
+  try {
+    linkSkills(homeDir, "reasonix");
+    const report = inspectInstallations({
+      registryPath,
+      sourceRoot: root,
+      homeDir,
+      environment: {},
+      platformId: "reasonix",
+      runCommand: () => {
+        throw new Error("targeted Reasonix verification must not run a CLI probe");
+      },
+    });
+
+    assert.equal(report.exitCode, 0);
+    assert.deepEqual(report.results.map((result) => result.id), ["reasonix"]);
+    assert.equal(report.results[0].status, "PASS");
+    assert.deepEqual(
+      report.results[0].checks.map((check) => check.name),
+      ["skills", "version", "hooks"],
+    );
   } finally {
     fs.rmSync(homeDir, { recursive: true, force: true });
   }
