@@ -108,6 +108,23 @@
       }
     },
     {
+      "id": "reasonix",
+      "displayName": "Reasonix",
+      "installation": {
+        "mode": "skill-links",
+        "skillRoot": ".reasonix/skills",
+        "summary": "把十一个 Skill 链接到 `~/.reasonix/skills`",
+        "takesEffect": "新会话"
+      },
+      "capabilities": {
+        "hooks": []
+      },
+      "verification": {
+        "mode": "skill-links",
+        "summary": "十一个 Skill 链接均指向当前源码；新会话可通过 `/scd-next`、`/scd-execute`、`/scd-project` 与 `/scd-quickdev` 调用"
+      }
+    },
+    {
       "id": "claude-code",
       "displayName": "Claude Code",
       "installation": {

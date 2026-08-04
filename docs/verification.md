@@ -40,6 +40,7 @@ node evals/knowledge/runner/run.mjs --mode full
 | OpenCode | 十一个 Skill 链接均指向当前源码；运行时需确认 `scd-next`、`scd-execute`、`scd-project` 与其他 Skill 均被发现 |
 | Pi | 十一个 Skill 链接均指向当前源码；Pi RPC `get_commands` 可发现十一个 `/skill:scd-*` 命令 |
 | CodeWhale | 十一个 Skill 链接均指向当前源码；`codewhale doctor --json` 确认全局 Skill 根、数量且跳过实时 API 探测 |
+| Reasonix | 十一个 Skill 链接均指向当前源码；新会话可通过 `/scd-next`、`/scd-execute`、`/scd-project` 与 `/scd-quickdev` 调用 |
 | Claude Code | `claude plugin list --json` 提供版本、enabled 与安装路径；检查器从该路径核对十一个 Skill 和两个 Hook，包括 `scd-next` 与 `scd-execute` |
 | WorkBuddy | 插件页显示当前仓库版本、enabled、十一个 Skill 和两个 Hook，包括 `scd-next` 与 `scd-execute` |
 | ZCode | Settings → Plugins 显示当前仓库版本、11 Skills、2 Hooks；Skills 中存在 `scd-next`、`scd-execute`、`scd-project` 与 `scd-quickdev` |
@@ -51,6 +52,7 @@ node scripts/verify-install.mjs
 node scripts/verify-install.mjs --format json
 node scripts/verify-install.mjs --platform pi
 node scripts/verify-install.mjs --platform codewhale
+node scripts/verify-install.mjs --platform reasonix
 ```
 
 检查器从
@@ -66,8 +68,9 @@ node scripts/verify-install.mjs --platform codewhale
 
 退出码 `0` 表示没有确认失败，但仍可能包含 `UNVERIFIED` 或 `MANUAL`；
 退出码 `1` 表示至少存在一个确认失败；退出码 `2` 表示参数、注册表或源码
-仓库无效。Codex、OpenCode、Pi 与 CodeWhale 检查分别遵循 `CODEX_HOME`、
-`XDG_CONFIG_HOME`、`PI_CODING_AGENT_DIR` 与 `CODEWHALE_SKILLS_DIR`。
+仓库无效。Codex、OpenCode、Pi、CodeWhale 与 Reasonix 检查分别遵循 `CODEX_HOME`、
+`XDG_CONFIG_HOME`、`PI_CODING_AGENT_DIR`、`CODEWHALE_SKILLS_DIR` 与
+`~/.reasonix/skills`。
 检查器不会安装、更新、覆盖、重启或重新加载任何 Agent。
 
 CodeWhale 的链接通过后，检查器会自动运行无网络的结构化诊断：
@@ -106,5 +109,9 @@ OpenCode、Pi 与 CodeWhale 当前都不声明连续性阻断能力，因为尚�
 Claude Code、WorkBuddy、ZCode Stop Hook 等价的可取消完成协议；CodeWhale
 当前的 Plugin Bundle 兼容层也没有 Hook 适配器。ZCode 当前安装不提供可依赖的
 `zcode` CLI，所以以实际 Settings 界面作为安装验证边界。
+
+Reasonix 的 `reasonix doctor --json` 用于本地诊断，不输出 Skill 清单，不能作为
+Skill 发现证据。安装链接通过后，必须在新 Reasonix 会话中输入 `/scd-next` 做
+运行时发现核对；Reasonix 也尚未在 Thinloop 中声明连续性阻断能力。
 
 完整评测方法、历史证据和限制见 [EVALUATION.md](../EVALUATION.md)。
