@@ -63,6 +63,23 @@ acceptance item. Then walk both directions:
 Do not manufacture a screen to close the table. Return a missing product
 decision to Discovery.
 
+### Global shell and cross-route components
+
+The surface inventory must explicitly cover cross-route global components —
+shell, header, footer, primary and mobile navigation, theme, and any shared
+banner — not only route-family screens. These components appear on every route
+but belong to no single route family, so a route-family-only audit leaves them
+in a gap where every node treats them as "out of scope" and no node owns them.
+
+For each global component the audit must either:
+
+- assign it to the surface family that governs its visual treatment, or
+- record an explicit "no change needed" decision with a one-line reason.
+
+When the audit feeds `scd-project`, every global component that needs change
+must appear in at least one delivery node's in-scope enumeration; "will be
+fixed incidentally by some node" is not an assignment.
+
 ## State and interaction contract
 
 For each important surface or reusable component, cover only applicable states:

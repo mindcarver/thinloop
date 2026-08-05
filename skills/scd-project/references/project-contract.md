@@ -160,6 +160,17 @@ Delivery Issue when:
 Return those gaps to Discovery. Do not reinterpret or silently repair the
 product contract during decomposition or implementation.
 
+### Global shell and cross-route component assignment
+
+Cross-route global components — shell, header, footer, primary and mobile
+navigation, theme, and shared banners — appear on every route but belong to no
+single route-family delivery. When an Initiative changes visual treatment,
+shared layout, or global chrome, each affected global component must be
+explicitly named in at least one delivery node's in-scope enumeration. "Some
+node will fix it incidentally" is not an assignment and produces gaps where no
+node takes ownership. If a global component needs no change, record that
+decision explicitly rather than omitting it.
+
 ## Graph snapshot
 
 Validate this JSON shape with `scripts/validate-project-graph.mjs`:
