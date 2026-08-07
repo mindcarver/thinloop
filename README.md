@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <kbd>v0.13.1</kbd>
+  <kbd>v0.13.3</kbd>
   &nbsp;
   <kbd>ISSUE-DRIVEN</kbd>
   &nbsp;
@@ -67,7 +67,7 @@ QuickDev 会先判断任务是否足够清楚，而不是要求用户选择流�
 
 <a id="capabilities"></a>
 
-## 十一块能力 / CAPABILITIES
+## 十二块能力 / CAPABILITIES
 
 <table width="100%">
   <tr>
@@ -143,6 +143,12 @@ QuickDev 会先判断任务是否足够清楚，而不是要求用户选择流�
       <p>只读扫描实时 Issue、PR、Initiative DAG 和验收状态，给出唯一下一步。</p>
       <p><strong>适合：</strong>查看当前进度、未完成工作、阻塞原因或恢复入口。</p>
     </td>
+    <td width="33%" valign="top">
+      <img src="./assets/retro-interview.svg" alt="SCD Interview 复古工程图标" width="92">
+      <h3><a href="./skills/scd-interview/SKILL.md">12 · SCD Interview</a></h3>
+      <p>回顾对话，提炼带参考答案的面试题，确认后存到个人题库。</p>
+      <p><strong>适合：</strong>备考复习、面试准备、把开发讨论沉淀成题目。</p>
+    </td>
   </tr>
 </table>
 
@@ -166,7 +172,7 @@ Execute 消费普通已批准 Initiative 的 READY 波次；Reengineering 在此
 
 <a id="skill-flows"></a>
 
-## 十一个技能如何工作 / SKILL FLOWS
+## 十二个技能如何工作 / SKILL FLOWS
 
 <p><img src="./assets/flows/scd-discovery.svg" alt="SCD Discovery 流程：从用户问题和 MVP 边界到批准后的轻量 PRD 或 Delivery Issue" width="100%"></p>
 <p><img src="./assets/flows/scd-uiux.svg" alt="SCD UIUX 流程：从稳定产品核心到可交付的体验设计" width="100%"></p>
@@ -179,6 +185,7 @@ Execute 消费普通已批准 Initiative 的 READY 波次；Reengineering 在此
 <p><img src="./assets/flows/scd-evolve.svg" alt="SCD Evolve 流程：从可见证据和归因到人工批准的可回滚试验" width="100%"></p>
 <p><img src="./assets/flows/scd-reengineering.svg" alt="SCD Reengineering 流程：从固定上游和行为基线到可验证的重构或重新实现" width="100%"></p>
 <p><img src="./assets/flows/scd-next.svg" alt="SCD Next 流程：从实时 Issue、PR、Initiative DAG 和验收证据到唯一建议下一步" width="100%"></p>
+<p><img src="./assets/flows/scd-interview.svg" alt="SCD Interview 流程：从显式请求和对话回顾到确认后的面试题写入或检索" width="100%"></p>
 
 每张图只保留该 Skill 的五个关键节点；完整触发条件、分支和安全边界仍以对应
 `SKILL.md` 为准。

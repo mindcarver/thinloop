@@ -1,0 +1,4 @@
+interface:
+  display_name: "SCD Interview Questions"
+  short_description: "Capture and retrieve interview questions from conversations"
+  default_prompt: "Use $scd-interview to extract interview questions from the current conversation and save approved ones to a personal store."

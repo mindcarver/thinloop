@@ -89,6 +89,7 @@ Delivery Issues 和 DAG 位于 GitHub，不创建本地项目 Wiki、永久实�
 - [QuickDev 连续性契约](../skills/scd-quickdev/references/continuity-contract.md)
 - [Architecture 契约](../skills/scd-architecture/references/architecture-contract.md)
 - [Knowledge 存储契约](../skills/scd-knowledge/references/storage-contract.md)
+- [Interview 面试题契约](../skills/scd-interview/references/interview-contract.md)
 - [Evolve 历史契约](../skills/scd-evolve/references/source-and-history-contract.md)
 - [Reengineering 再工程契约](../skills/scd-reengineering/references/reengineering-contract.md)
 - [Reengineering 执行契约](../skills/scd-reengineering/references/execution-contract.md)

@@ -199,7 +199,7 @@ test("platform registry is the eight-platform capability contract", () => {
       "zcode",
     ],
   );
-  assert.equal(expectedSkills.length, 11);
+  assert.equal(expectedSkills.length, 12);
   assert.ok(expectedSkills.includes("scd-execute"));
   assert.ok(expectedSkills.includes("scd-next"));
   assert.ok(expectedSkills.includes("scd-project"));
