@@ -2,15 +2,15 @@
 
 [返回 README](../README.md)
 
-十一个 Skill 遵循同一目录契约。推荐安装方式如下：
+十二个 Skill 遵循同一目录契约。推荐安装方式如下：
 
 | Agent | 推荐安装 | 更新生效 |
 |---|---|---|
-| Codex | 把十一个 Skill 链接到 `~/.codex/skills` | 新任务 |
-| OpenCode | 把十一个 Skill 链接到 `~/.config/opencode/skills` | 重启 OpenCode |
-| Pi | 把十一个 Skill 链接到 `~/.pi/agent/skills` | 新会话或执行 `/reload` |
-| CodeWhale | 把十一个 Skill 链接到 `~/.codewhale/skills` | 新会话 |
-| Reasonix | 把十一个 Skill 链接到 `~/.reasonix/skills` | 新会话 |
+| Codex | 把十二个 Skill 链接到 `~/.codex/skills` | 新任务 |
+| OpenCode | 把十二个 Skill 链接到 `~/.config/opencode/skills` | 重启 OpenCode |
+| Pi | 把十二个 Skill 链接到 `~/.pi/agent/skills` | 新会话或执行 `/reload` |
+| CodeWhale | 把十二个 Skill 链接到 `~/.codewhale/skills` | 新会话 |
+| Reasonix | 把十二个 Skill 链接到 `~/.reasonix/skills` | 新会话 |
 | Claude Code | 安装完整插件 | 更新后重启或重新加载插件 |
 | WorkBuddy | 安装完整插件 | 更新后重启 WorkBuddy |
 | ZCode | 安装完整插件 | 更新后新建会话 |
@@ -41,6 +41,7 @@ $skillNames = @(
   "scd-discovery", "scd-uiux", "scd-architecture",
   "scd-project", "scd-execute", "scd-quickdev", "scd-knowledge", "scd-maintenance",
   "scd-next",
+  "scd-interview",
   "scd-evolve", "scd-reengineering"
 )
 
@@ -81,7 +82,7 @@ skill_roots=(
 )
 skills=(
   scd-discovery scd-uiux scd-architecture
-  scd-project scd-execute scd-quickdev scd-knowledge scd-maintenance scd-next scd-evolve
+  scd-project scd-execute scd-quickdev scd-knowledge scd-maintenance scd-next scd-interview scd-evolve
   scd-reengineering
 )
 
@@ -106,7 +107,7 @@ for root in "${skill_roots[@]}"; do
 done
 ```
 
-上面的脚本只移除明确的旧链接 `scd-dev-loop`，并修复十一个 Thinloop Skill
+上面的脚本只移除明确的旧链接 `scd-dev-loop`，并修复十二个 Thinloop Skill
 链接；遇到同名的真实文件或目录会跳过，不会覆盖用户内容。OpenCode 也能读取
 `~/.claude/skills`，Pi 也能读取 `~/.agents/skills`；CodeWhale 使用
 `~/.codewhale/skills`，并允许 `CODEWHALE_SKILLS_DIR` 直接覆盖整个 Skill
@@ -172,7 +173,7 @@ claude plugin install thinloop@thinloop --scope user
 
 WorkBuddy 5.3.5 内置的 CodeBuddy 运行时读取
 `.codebuddy-plugin/marketplace.json` 与 `.codebuddy-plugin/plugin.json`。
-完整插件会注册十一个 Skill，并在 `PreCompact` 与 `Stop` 时通过
+完整插件会注册十二个 Skill，并在 `PreCompact` 与 `Stop` 时通过
 `CODEBUDDY_PLUGIN_ROOT` 运行连续性检查；状态不完整时返回原生
 `continue: false`，让 Agent 先补齐恢复信息。
 
@@ -186,7 +187,7 @@ WorkBuddy 5.3.5 内置的 CodeBuddy 运行时读取
 3. 自定义 Marketplace 会显示在 Personal 筛选下；切换到 Personal 后，在
    `thinloop` 卡片点击 Install，并保持插件启用。
 
-完整插件会注册十一个 Skill；`Stop` 发现激活状态不可恢复时会让主 Agent 继续
+完整插件会注册十二个 Skill；`Stop` 发现激活状态不可恢复时会让主 Agent 继续
 补齐，最多连续三次；压缩后的 `SessionStart(compact)` 会把缺失状态作为恢复
 上下文注入。ZCode 不支持 Codex 专用的 `PreCompact` 事件，因此当前运行时会
 记录一条 warning 并只跳过该事件，不影响上述两个 ZCode Hook。
@@ -216,6 +217,8 @@ codebuddy plugin update thinloop@thinloop --scope user
 - ZCode：Settings → Plugins → Refresh → `thinloop` → Update；更新后新建会话。
 - 升级到 v0.13.1：确认当前列表中存在 `scd-knowledge`、`scd-next`、`scd-execute`、`scd-reengineering`、`scd-project` 与 `scd-quickdev`，
   并且插件版本与当前源码仓库一致。Knowledge 仍只在用户显式调用时工作，写入前仍需确认具体草稿和目标。
+- 升级到 v0.13.3：确认当前列表中存在十二个 Skill，包括新增的 `scd-interview`；个人面试题默认存到
+  `~/.scd/interview-questions/`，可用用户级 `.scd/config.json` 的 `interview_root` 覆盖。
 - 若从 v0.6.x 升级，另确认旧 `scd-dev-loop` 已消失。
 
 更新后可以在 Thinloop 源码仓库运行只读检查器：

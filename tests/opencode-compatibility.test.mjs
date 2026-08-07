@@ -11,6 +11,7 @@ const expectedSkills = [
   "scd-discovery",
   "scd-evolve",
   "scd-execute",
+  "scd-interview",
   "scd-knowledge",
   "scd-maintenance",
   "scd-next",

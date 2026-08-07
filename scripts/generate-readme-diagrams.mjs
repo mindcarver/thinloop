@@ -173,6 +173,19 @@ const skillFlows = [
       ["交接", "责任技能"],
     ],
   },
+  {
+    slug: "interview",
+    index: "12",
+    title: "SCD 面试题沉淀",
+    subtitle: "对话技术内容 → 可复习的面试题",
+    stages: [
+      ["显式", "请求"],
+      ["回顾", "对话"],
+      ["提炼", "候选题目"],
+      ["确认", "草稿"],
+      ["写入", "或检索"],
+    ],
+  },
 ];
 
 function svgFrame({ title, subtitle, index, body, height = 280 }) {

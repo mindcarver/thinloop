@@ -36,14 +36,14 @@ node evals/knowledge/runner/run.mjs --mode full
 
 | Agent | 安装后检查 |
 |---|---|
-| Codex | 十一个链接都能读取 `SKILL.md`；新任务可发现 `$scd-next`、`$scd-execute`、`$scd-project` 与 `$scd-quickdev` |
-| OpenCode | 十一个 Skill 链接均指向当前源码；运行时需确认 `scd-next`、`scd-execute`、`scd-project` 与其他 Skill 均被发现 |
-| Pi | 十一个 Skill 链接均指向当前源码；Pi RPC `get_commands` 可发现十一个 `/skill:scd-*` 命令 |
-| CodeWhale | 十一个 Skill 链接均指向当前源码；`codewhale doctor --json` 确认全局 Skill 根、数量且跳过实时 API 探测 |
-| Reasonix | 十一个 Skill 链接均指向当前源码；新会话可通过 `/scd-next`、`/scd-execute`、`/scd-project` 与 `/scd-quickdev` 调用 |
-| Claude Code | `claude plugin list --json` 提供版本、enabled 与安装路径；检查器从该路径核对十一个 Skill 和两个 Hook，包括 `scd-next` 与 `scd-execute` |
-| WorkBuddy | 插件页显示当前仓库版本、enabled、十一个 Skill 和两个 Hook，包括 `scd-next` 与 `scd-execute` |
-| ZCode | Settings → Plugins 显示当前仓库版本、11 Skills、2 Hooks；Skills 中存在 `scd-next`、`scd-execute`、`scd-project` 与 `scd-quickdev` |
+| Codex | 十二个链接都能读取 `SKILL.md`；新任务可发现 `$scd-next`、`$scd-execute`、`$scd-project` 与 `$scd-quickdev` |
+| OpenCode | 十二个 Skill 链接均指向当前源码；运行时需确认 `scd-next`、`scd-execute`、`scd-project` 与其他 Skill 均被发现 |
+| Pi | 十二个 Skill 链接均指向当前源码；Pi RPC `get_commands` 可发现十二个 `/skill:scd-*` 命令 |
+| CodeWhale | 十二个 Skill 链接均指向当前源码；`codewhale doctor --json` 确认全局 Skill 根、数量且跳过实时 API 探测 |
+| Reasonix | 十二个 Skill 链接均指向当前源码；新会话可通过 `/scd-next`、`/scd-execute`、`/scd-project` 与 `/scd-quickdev` 调用 |
+| Claude Code | `claude plugin list --json` 提供版本、enabled 与安装路径；检查器从该路径核对十二个 Skill 和两个 Hook，包括 `scd-next` 与 `scd-execute` |
+| WorkBuddy | 插件页显示当前仓库版本、enabled、十二个 Skill 和两个 Hook，包括 `scd-next` 与 `scd-execute` |
+| ZCode | Settings → Plugins 显示当前仓库版本、12 Skills、2 Hooks；Skills 中存在 `scd-next`、`scd-execute`、`scd-project` 与 `scd-quickdev` |
 
 在 Thinloop 源码仓库运行统一的只读检查：
 
@@ -80,7 +80,7 @@ codewhale doctor --json \
   | jq '{version, global: .skills.global, api_checked: .api_connectivity.checked}'
 ```
 
-全局路径必须等于当前 CodeWhale Skill 根，数量至少为十一，且
+全局路径必须等于当前 CodeWhale Skill 根，数量至少为十二，且
 `api_checked` 必须为 `false`。该证据证明 CodeWhale 实际选择了正确的全局
 Skill 根，不会调用模型或实时 API；它不证明存在 Thinloop 连续性 Hook。
 
@@ -99,7 +99,7 @@ printf '%s\n' '{"type":"get_commands"}' \
       | {name, path: .sourceInfo.path}]'
 ```
 
-结果应恰好包含十一个 `skill:scd-*` 命令，路径均位于当前 Pi Skill 根。该检查
+结果应恰好包含十二个 `skill:scd-*` 命令，路径均位于当前 Pi Skill 根。该检查
 只证明 Skill 发现，不证明 Pi 存在 Thinloop 的连续性 Hook。
 
 WorkBuddy 的 `codebuddy plugin list --json` 实测会写客户端日志，因此统一
