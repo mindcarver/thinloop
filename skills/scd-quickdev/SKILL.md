@@ -136,10 +136,13 @@ For a bug:
 1. record the observed symptom and expected behavior;
 2. reproduce the symptom through the narrowest reliable path;
 3. form competing hypotheses and inspect the causal path;
-4. identify the causal root cause rather than patching the visible effect;
-5. add or identify a regression test that fails for the defect;
-6. implement the smallest coherent fix;
-7. rerun the same path plus proportionate surrounding checks.
+4. when the causal path enters a framework or dependency, search its
+   official issue tracker for matching reports before concluding the
+   defect is in application code;
+5. identify the causal root cause rather than patching the visible effect;
+6. add or identify a regression test that fails for the defect;
+7. implement the smallest coherent fix;
+8. rerun the same path plus proportionate surrounding checks.
 
 If reproduction is impossible, keep root cause `Unconfirmed`, state the missing
 evidence, and do not represent correlation as causation. A cause supplied by the
