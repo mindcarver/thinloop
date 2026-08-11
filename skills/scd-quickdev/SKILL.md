@@ -77,6 +77,31 @@ Do not announce these path names unless the user asks. A new product,
 application, plugin, service, or system normally takes Discovery; one isolated
 ambiguity does not.
 
+## Resolve planning confirmation before writing the Issue
+
+Before creating or updating the governing Issue or starting implementation,
+ask one concise question unless the current request or an approved upstream
+handoff already states the preference: does the user want to review and confirm
+the complete Issue draft, implementation approach, and task checklist for this
+delivery before work proceeds?
+
+- If the user says no, record planning confirmation as `Waived`, create or
+  update the Issue, and continue through the normal autonomous delivery flow.
+- If the user says yes, first perform the read-only repository inspection needed
+  to make the proposal concrete. Then present the complete proposed Issue body,
+  including the implementation approach and verifiable tasks, and wait for
+  explicit confirmation. Until confirmation, do not create or update the Issue,
+  modify the repository, or start implementation.
+- For an existing Issue, show the exact proposed edits together with the
+  implementation approach and tasks. After confirmation, write the confirmed
+  contract to the Issue before implementing it.
+- If later evidence materially changes the confirmed approach, tasks, scope, or
+  acceptance, present the delta and obtain confirmation again before proceeding.
+
+This is a per-delivery process preference, not a second product approval and not
+a reason to create `plan.md`. The Issue remains the durable plan and task source
+of truth.
+
 ## Re-select the path when scope shifts mid-flight
 
 Path selection is not a one-time gate. While diagnosing or implementing one
