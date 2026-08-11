@@ -24,6 +24,26 @@ If the repository has no GitHub remote or authenticated write path, stop before
 implementation and report the blocker. A clear user request may authorize the
 ordinary Issue write, but it cannot create missing access.
 
+## Planning confirmation preference
+
+Before any Issue mutation or implementation, ask whether the user wants to
+review and confirm the complete Issue draft, implementation approach, and task
+checklist for this delivery, unless the current request or approved upstream
+handoff already gives that answer. Read-only repository inspection is allowed
+before this decision and is required before presenting a confirmation-ready
+draft.
+
+- `No`: proceed autonomously and record `Required: No`, `Status: Waived`.
+- `Yes`: present the complete proposed Issue body and wait. Do not create or
+  update the Issue, change repository files, or implement until the user
+  explicitly confirms it. Then record `Required: Yes`, `Status: Confirmed`.
+
+For an existing Issue, present its exact proposed edits rather than an abstract
+summary. Material changes to a confirmed implementation approach, task list,
+scope, or acceptance require another explicit confirmation before those changes
+are written or implemented. This preference does not create a local `plan.md`;
+the confirmed Issue remains the sole durable delivery plan.
+
 ## Issue body
 
 For a feature or change, preserve this minimum structure:
@@ -45,11 +65,20 @@ For a feature or change, preserve this minimum structure:
 
 ## Confirmed decisions
 
+## Planning confirmation
+
+- Required: Yes, or No
+- Status: Confirmed, or Waived
+
 ## Failure and edge cases
 
 ## Acceptance
 
 - [ ] A1: <observable behavior>
+
+## Implementation approach
+
+- <concrete technical direction and affected seams>
 
 ## Implementation tasks
 
