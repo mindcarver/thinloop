@@ -221,6 +221,8 @@ codebuddy plugin update thinloop@thinloop --scope user
   `~/.scd/interview-questions/`，可用用户级 `.scd/config.json` 的 `interview_root` 覆盖。
 - 升级到 v0.13.4：QuickDev 在工程检查后直接进入独立行为验收；一个新鲜上下文 Agent 返回
   `PASS`、`FAIL` 或 `BLOCKED`。
+- 升级到 v0.13.5：确认 QuickDev 会先询问是否需要审核完整 Issue、实施方案和 tasks；其创建或
+  更新的 Issue 使用中文，命令、路径和机器状态标识保持规范原值。
 - 若从 v0.6.x 升级，另确认旧 `scd-dev-loop` 已消失。
 
 更新后可以在 Thinloop 源码仓库运行只读检查器：
