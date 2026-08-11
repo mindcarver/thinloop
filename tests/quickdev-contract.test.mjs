@@ -48,6 +48,39 @@ test("quickdev separates product PRD authority from delivery Issue authority", (
   assert.doesNotMatch(skill, /\.scd\/specs/);
 });
 
+test("quickdev lets the user choose whether to confirm the Issue plan and tasks", () => {
+  const skill = read("skills/scd-quickdev/SKILL.md");
+  const issueContract = read(
+    "skills/scd-quickdev/references/issue-delivery-contract.md",
+  );
+  const combined = `${skill}\n${issueContract}`;
+
+  assert.match(
+    skill,
+    /ask one concise question[\s\S]*complete Issue draft, implementation approach, and task checklist/i,
+  );
+  assert.match(
+    skill,
+    /user says no[\s\S]*`Waived`[\s\S]*normal autonomous delivery flow/i,
+  );
+  assert.match(
+    skill,
+    /user says yes[\s\S]*read-only repository inspection[\s\S]*wait for\s+explicit confirmation/i,
+  );
+  assert.match(
+    skill,
+    /Until confirmation, do not create or update the Issue,[\s\S]*modify the repository,[\s\S]*start implementation/i,
+  );
+  assert.match(skill, /materially changes[\s\S]*obtain confirmation again/i);
+  assert.match(issueContract, /## Planning confirmation/);
+  assert.match(issueContract, /## Implementation approach/);
+  assert.match(issueContract, /## Implementation tasks/);
+  assert.match(issueContract, /Required: Yes, or No/);
+  assert.match(issueContract, /Status: Confirmed, or Waived/);
+  assert.match(combined, /not a second product approval/i);
+  assert.match(combined, /not\s+(?:a reason to create|create a local) `plan\.md`/i);
+});
+
 test("quickdev diagnoses bugs and requires regression evidence", () => {
   const skill = read("skills/scd-quickdev/SKILL.md");
   const issueContract = read(
