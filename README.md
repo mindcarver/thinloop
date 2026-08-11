@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <kbd>v0.13.3</kbd>
+  <kbd>v0.13.4</kbd>
   &nbsp;
   <kbd>ISSUE-DRIVEN</kbd>
   &nbsp;
@@ -57,7 +57,7 @@ QuickDev 会先判断任务是否足够清楚，而不是要求用户选择流�
 | 对现有项目做大型重构或跨语言、跨架构重新实现 | 调用 Reengineering 固定上游与兼容边界，再执行批准的 Project 任务图 |
 | UI 或系统边界会显著影响实现 | 按需组合 UIUX 或 Architecture |
 | 工程验证通过 | Agent 自审并提交任务内变更 |
-| 工程验证完成 | 一个独立 Agent 优先通过 Open Code Review 审查 diff，通过后执行真实环境验收；只有 `REVIEW_PASS` 和验收 `PASS` 才能交付 |
+| 工程验证完成 | 一个独立 Agent 执行真实环境行为验收；只有验收 `PASS` 才能交付 |
 | 生产部署、认证支付、破坏性数据等高风险工作 | 在高风险动作前停下并请求明确批准 |
 
 新产品的 `.scd/product/prd.md` 保存产品级 why/what、MVP、`FR-*` 需求和成功
@@ -167,7 +167,7 @@ Execute 消费普通已批准 Initiative 的 READY 波次；Reengineering 在此
 增加源码、兼容性和集成门禁。清晰单交付不制造本地 Spec；新产品只保留一个
 批准的轻量 PRD。Next 在用户不知道如何继续时只读重建当前进度并把工作交给
 正确的责任 Skill。默认不强制 TDD、角色系统或固定阶段；Project 自身不执行
-工程 loop，QuickDev 每个 lane 只固定使用一个独立审查与验收 Agent。完整的
+工程 loop，QuickDev 每个 lane 只固定使用一个独立验收 Agent。完整的
 路由、状态与契约说明见[工作流与项目状态](./docs/workflow-and-state.md)。
 
 <a id="skill-flows"></a>
@@ -179,7 +179,7 @@ Execute 消费普通已批准 Initiative 的 READY 波次；Reengineering 在此
 <p><img src="./assets/flows/scd-architecture.svg" alt="SCD Architecture 流程：从仓库事实到领域边界和机器可读契约" width="100%"></p>
 <p><img src="./assets/flows/scd-project.svg" alt="SCD Project 流程：从批准的 PRD 或产品契约到 Initiative、Delivery Issues 和就绪依赖图" width="100%"></p>
 <p><img src="./assets/flows/scd-execute.svg" alt="SCD Execute 流程：从批准的 Initiative DAG 到安全 READY 波次、隔离 QuickDev lanes 和集成验收" width="100%"></p>
-<p><img src="./assets/flows/scd-quickdev.svg" alt="SCD QuickDev 流程：从 GitHub Issue 到独立代码审查与验收、合并 main 并关闭 Issue" width="100%"></p>
+<p><img src="./assets/flows/scd-quickdev.svg" alt="SCD QuickDev 流程：从 GitHub Issue 到独立行为验收、合并 main 并关闭 Issue" width="100%"></p>
 <p><img src="./assets/flows/scd-knowledge.svg" alt="SCD Knowledge 流程：从显式请求和证据到确认后的知识写入或检索" width="100%"></p>
 <p><img src="./assets/flows/scd-maintenance.svg" alt="SCD Maintenance 流程：从仓库信号到证据确认和有边界的修复" width="100%"></p>
 <p><img src="./assets/flows/scd-evolve.svg" alt="SCD Evolve 流程：从可见证据和归因到人工批准的可回滚试验" width="100%"></p>

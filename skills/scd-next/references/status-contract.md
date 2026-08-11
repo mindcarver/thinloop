@@ -12,7 +12,7 @@ Use evidence in this order:
    tracker;
 3. the current approved Initiative graph revision and Delivery Issue
    acceptance contracts;
-4. required checks, independent review and acceptance records, and named human
+4. required checks, independent acceptance records, and named human
    gates;
 5. the synchronized default branch;
 6. Issue-linked branches, worktrees, commits, and local Thinloop resume state.

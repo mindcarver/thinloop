@@ -1,6 +1,6 @@
 ---
 name: scd-quickdev
-description: "Drive one delivery Issue from request to verified merged code whenever a coding agent is asked to change a repository: fix a bug, add a feature, refactor code, change configuration, perform a migration, or resume unfinished implementation work. Route underdefined product work through scd-discovery and multi-delivery projects through scd-project; accept exactly one approved READY Issue selected directly or by an scd-execute wave, use that GitHub Delivery Issue as the delivery boundary and acceptance source of truth, consume an approved greenfield PRD when one governs product scope, diagnose bugs before fixing them, isolate meaningful work, verify the diff and observed behavior through an independent review and acceptance subagent, create a pull request, merge eligible changes into main, and close the Issue only after both gates pass. Do not trigger for advice-only questions, explanations, read-only reviews, Initiative Issues, PLANNED placeholders, or BLOCKED project nodes."
+description: "Drive one delivery Issue from request to verified merged code whenever a coding agent is asked to change a repository: fix a bug, add a feature, refactor code, change configuration, perform a migration, or resume unfinished implementation work. Route underdefined product work through scd-discovery and multi-delivery projects through scd-project; accept exactly one approved READY Issue selected directly or by an scd-execute wave, use that GitHub Delivery Issue as the delivery boundary and acceptance source of truth, consume an approved greenfield PRD when one governs product scope, diagnose bugs before fixing them, isolate meaningful work, verify observed behavior through an independent acceptance subagent, create a pull request, merge eligible changes into main, and close the Issue only after acceptance passes. Do not trigger for advice-only questions, explanations, read-only reviews, Initiative Issues, PLANNED placeholders, or BLOCKED project nodes."
 ---
 
 # SCD QuickDev
@@ -52,8 +52,8 @@ Do not generate or redefine a PRD during implementation. Consume the approved
 greenfield PRD when Discovery produced one; clear isolated changes and bugs
 remain Issue-only. Do not generate a project wiki, permanent implementation
 plan, role system, command suite, worktree, extra subagent ceremony, or TDD
-ceremony merely to satisfy this skill. The independent reviewer and acceptance
-verifier required below is the only default subagent role.
+ceremony merely to satisfy this skill. The independent acceptance verifier
+required below is the only default subagent role.
 
 ## Select the lightest sufficient path
 
@@ -179,38 +179,15 @@ Before delivery, review the complete issue-specific diff for correctness,
 security, acceptance coverage, unintended files, and regression risk. Fix
 in-scope findings and record verification on the Issue and pull request.
 
-After implementation and the parent agent's engineering checks, delegate
-independent code review and final acceptance to one separate fresh-context subagent.
-It must independently read the governing Issue, acceptance items, repository
-instructions, and actual issue-specific diff. It must not rely only on the
-implementing agent's summary and must not modify product code.
+After implementation and the parent agent's engineering checks, delegate final
+acceptance to one separate fresh-context subagent. The verifier must independently
+read the governing Issue, acceptance items, repository instructions, and actual
+issue-specific diff. It must run the strongest practical checks that directly
+exercise the changed behavior, including browser, real-model, or produced-artifact
+validation when relevant. It must not rely only on the implementing agent's
+summary and must not modify product code.
 
-The verifier performs two ordered gates:
-
-1. **Independent code review.** For reviewable code changes, prefer the
-   `open-code-review-delegate` skill when it is discoverable. Otherwise, when
-   `command -v ocr` succeeds, use `ocr delegate preview` for the exact base and
-   target refs, then `ocr delegate rule` for the returned files. If neither
-   capability is available, perform a normal fresh-context diff review and
-   record `OCR_UNAVAILABLE`; do not install or configure OCR as part of
-   QuickDev. If OCR invocation fails, preserve the exact error and use the same
-   manual fallback without claiming OCR success. Validate every OCR finding
-   against the actual code and requirement context, discard false positives,
-   and return `REVIEW_PASS` or `REVIEW_FAIL` with confirmed findings. A review
-   failure returns to implementation and must be repeated after repair.
-2. **Behavioral acceptance.** Only after `REVIEW_PASS`, run the strongest
-   practical checks that directly exercise each acceptance item, including
-   browser, real-model, or produced-artifact validation when relevant. A
-   documentation-only or otherwise non-code diff still needs proportional
-   independent inspection, but must not invent code findings.
-
-Provider-backed `ocr review` is not required; delegation uses the host agent's
-model. The independent verifier only reports findings. The parent implementing
-agent validates the returned evidence, applies in-scope fixes, and requests a
-fresh review.
-
-After both gates, the verifier returns exactly one evidence-backed acceptance
-outcome:
+The verifier returns exactly one evidence-backed acceptance outcome:
 
 - **PASS:** every acceptance item has direct observed evidence;
 - **FAIL:** changed behavior violates an acceptance item; return the findings to
@@ -218,10 +195,9 @@ outcome:
 - **BLOCKED:** required verification cannot run; record the blocker and keep the
   Issue open.
 
-Only `REVIEW_PASS` followed by acceptance `PASS` authorizes delivery and later
-Issue closure. A passing unrelated suite, static prompt inspection for a
-real-model behavior, or a fake runtime for a real-environment acceptance item
-cannot produce `PASS`.
+Only `PASS` authorizes delivery and later Issue closure. A passing unrelated
+suite, static prompt inspection for a real-model behavior, or a fake runtime for
+a real-environment acceptance item cannot produce `PASS`.
 
 Read `references/evidence-contract.md` when selecting checks or reporting
 incomplete evidence.
