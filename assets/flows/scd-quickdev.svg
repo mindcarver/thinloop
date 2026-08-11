@@ -60,8 +60,8 @@
       <circle cx="765" cy="148" r="13" fill="#f8edcf" stroke="#c55c2f" stroke-width="2"/>
       <text x="765" y="153" fill="#17313b" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="11" font-weight="800">04</text>
       <text x="827" y="168" fill="#f8edcf" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="15" font-weight="800" letter-spacing="0.8">
-        <tspan x="827" dy="0">独立审查</tspan>
-        <tspan x="827" dy="20">与验收</tspan>
+        <tspan x="827" dy="0">独立</tspan>
+        <tspan x="827" dy="20">行为验收</tspan>
       </text>
     </g>
 

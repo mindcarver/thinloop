@@ -71,8 +71,8 @@ Every parallel lane has:
 - the current Initiative and graph revision;
 - applicable product and technical contracts;
 - one `scd-quickdev` invocation;
-- its own pull request, repository checks, independent `REVIEW_PASS`, and
-  behavioral acceptance `PASS`.
+- its own pull request, repository checks, and independent behavioral
+  acceptance `PASS`.
 
 A lane must not implement sibling Issues, stage another lane's files, weaken
 acceptance, push directly to the default branch, mutate production, or infer

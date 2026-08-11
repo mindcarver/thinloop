@@ -50,6 +50,8 @@ test("execute launches one isolated QuickDev lane per selected Issue", () => {
   assert.match(combined, /sibling agents may be active/i);
   assert.match(combined, /must not implement sibling Issues/i);
   assert.match(combined, /Detached\s+background work/i);
+  assert.match(combined, /independent behavioral\s+acceptance `PASS`/i);
+  assert.doesNotMatch(combined, /REVIEW_PASS/);
 });
 
 test("execute develops concurrently but merges and unlocks serially", () => {

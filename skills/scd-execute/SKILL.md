@@ -100,8 +100,8 @@ For every selected node:
 5. invoke `scd-quickdev` with the Initiative, current graph revision, selected
    Delivery Issue, worktree, and applicable product, UX, architecture, and
    machine contracts;
-6. require the normal task-local checks, complete diff review, pull request,
-   independent fresh-context review, and behavioral acceptance;
+6. require the normal task-local checks, pull request, and independent
+   fresh-context behavioral acceptance;
 7. prohibit sibling Issue implementation, cross-lane staging, acceptance
    weakening, direct default-branch pushes, production mutation, or unapproved
    scope changes.
@@ -120,8 +120,8 @@ time:
 
 1. confirm the lane still targets the selected Issue and approved graph
    revision;
-2. require QuickDev's `REVIEW_PASS` and acceptance `PASS`, plus repository
-   checks and any human gate;
+2. require QuickDev's acceptance `PASS`, plus repository checks and any human
+   gate;
 3. merge one eligible pull request;
 4. synchronize the base branch;
 5. safely update or rebase remaining worktrees;
