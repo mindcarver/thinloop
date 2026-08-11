@@ -1,91 +1,67 @@
-# Maintenance audit contract
+# 维护审计契约
 
-Use this contract for broad repository audits and any claim that code,
-documentation, specifications, or architecture disagree.
+广泛仓库审计，以及声称代码、文档、规格或架构不一致时使用本契约。
 
-## Establish authority
+## 建立权威方向
 
-Classify each side of a conflict before recommending a repair:
+建议修复前，分类冲突双方：
 
-1. **Normative contract:** the governing GitHub Issue or another explicitly approved product contract,
-   public schema, compatibility policy, ADR, security rule, or regulatory
-   requirement. This states what must be true.
-2. **Executable behavior:** runtime behavior, tests, manifests, generated
-   schemas, migrations, and tool output. This proves what is currently true.
-3. **Descriptive material:** READMEs, tutorials, examples, diagrams,
-   screenshots, and explanatory comments. This claims what is true.
+1. **规范契约：** 作为依据的 GitHub Issue 或其他明确已确认产品契约、公共模式、兼容性策略、ADR、安全规则或监管要求。它规定必须是什么。
+2. **可执行行为：** 运行时行为、测试、清单、生成模式、迁移和工具输出。它证明当前是什么。
+3. **说明性材料：** README、教程、示例、图表、截图和解释性注释。它声称是什么。
 
-A newer or executable artifact is not automatically authoritative. Code can
-violate an approved specification; a test can preserve a bug; a document can
-describe intended behavior that has not been implemented. When authority
-cannot be resolved from repository evidence, report the conflict and request a
-product decision before repair.
+更新或可执行的产物不会自动成为权威。代码可能违反已确认规格；测试可能保留缺陷；文档可能描述尚未实施的预期行为。无法从仓库证据确定权威时，报告冲突，并在修复前请求产品决策。
 
-## Use the smallest useful taxonomy
+## 使用最小有效分类
 
-- `behavior-drift` - approved or documented behavior differs from observed
-  behavior.
-- `interface-drift` - API, CLI, configuration, schema, migration, or
-  environment contracts disagree.
-- `documentation-drift` - instructions, examples, links, screenshots, or
-  named symbols no longer match the product.
-- `architecture-drift` - actual dependencies, ownership, or data flow violate
-  an explicit architecture rule.
-- `verification-debt` - a material contract has no credible automated or
-  named manual verification path.
-- `dead-artifact` - code, dependency, document, feature flag, compatibility
-  path, or generated artifact is provably unreferenced or obsolete.
-- `maintenance-risk` - an explicit debt marker, unsupported dependency,
-  recurring failure, duplication, or complexity has observable maintenance
-  cost but does not fit a stronger category.
+- `behavior-drift`：已确认或书面行为与观察行为不同。
+- `interface-drift`：API、CLI、配置、模式、迁移或环境契约不一致。
+- `documentation-drift`：说明、示例、链接、截图或具名符号不再匹配产品。
+- `architecture-drift`：真实依赖、所有权或数据流违反明确架构规则。
+- `verification-debt`：重要契约没有可信自动或具名人工验证路径。
+- `dead-artifact`：代码、依赖、文档、功能开关、兼容路径或生成产物已被证明无人引用或过时。
+- `maintenance-risk`：明确债务标记、不受支持依赖、反复失败、重复或复杂性存在可观察维护成本，但不符合更强类别。
 
-Do not invent a category merely to make a report look comprehensive.
+不要为了让报告显得全面而发明类别。
 
-## Assign severity
+## 分配严重程度
 
-- **Critical:** credible immediate risk of data loss, security compromise,
-  irreversible behavior, or unusable recovery instructions.
-- **High:** public behavior, compatibility, permissions, migration safety, or a
-  primary user journey is materially wrong.
-- **Medium:** maintainers or users are likely to waste time, choose a wrong
-  integration, or preserve a significant structural violation.
-- **Low:** confirmed local debt with limited current impact.
+- **Critical：** 存在可信的即时数据丢失、安全破坏、不可逆行为或恢复说明不可用风险。
+- **High：** 公共行为、兼容性、权限、迁移安全或主要用户旅程存在实质错误。
+- **Medium：** 维护者或用户很可能浪费时间、选择错误集成或保留重大结构违规。
+- **Low：** 已确认的局部债务，当前影响有限。
 
-Severity measures impact, not cleanup effort. A large refactor can be Low; a
-one-line dangerous instruction can be Critical.
+严重程度衡量影响，不衡量清理工作量。大型重构可以是 Low，一行危险说明可以是 Critical。
 
-## Assign confidence
+## 分配置信度
 
-- **Confirmed:** directly reproduced or proven by a deterministic check.
-- **High:** multiple repository facts support the conclusion with no material
-  contradiction.
-- **Medium:** plausible and actionable, but one authority or reachability fact
-  remains unverified.
-- **Lead:** worth investigating but not eligible for a repair claim.
+- **Confirmed：** 已直接复现或由确定性检查证明。
+- **High：** 多个仓库事实支持，且没有实质矛盾。
+- **Medium：** 合理且可行动，但一个权威或可达性事实未验证。
+- **Lead：** 值得调查，但不能作为修复声明。
 
-Keep leads out of confirmed finding counts.
+调查线索不计入已确认发现数量。
 
-## Require evidence
+## 证据要求
 
-Support a finding with at least one of:
+每个发现至少由以下一项支持：
 
-- an observed failing command or runtime interaction;
-- a parser, compiler, linter, schema, dependency, or documentation check;
-- a direct comparison of two named artifacts;
-- a reachability or reference result from an appropriate repository tool;
-- an explicit repository policy plus the violating code.
+- 已观察失败命令或运行时交互；
+- 解析器、编译器、检查器、模式、依赖或文档检查；
+- 两个具名产物的直接比较；
+- 适当仓库工具提供的可达性或引用结果；
+- 明确仓库策略和违反它的代码。
 
-File age, commit age, model opinion, and "this could be cleaner" are not
-evidence of debt.
+文件年龄、提交年龄、模型意见和“可以更整洁”不是债务证据。
 
-## Keep scans bounded
+## 保持扫描有边界
 
-For a large repository:
+大型仓库：
 
-1. start with public and normative surfaces;
-2. inspect changed or high-churn areas when the user supplied a range;
-3. follow references to direct producers and consumers;
-4. run language-specific tools only where their manifests apply;
-5. state excluded packages and checks that were unavailable.
+1. 从公共和规范表面开始；
+2. 用户提供范围时检查变更或高频变化区域；
+3. 沿引用检查直接生产者和消费者；
+4. 只在相应清单适用处运行语言专属工具；
+5. 写明排除的包和不可用检查。
 
-Never hide a partial scan behind the phrase "repository-wide".
+不得用“全仓库”掩盖部分扫描。

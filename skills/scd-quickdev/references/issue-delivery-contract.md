@@ -1,85 +1,57 @@
-# Issue delivery contract
+# Issue 交付契约
 
-Use this reference for GitHub Issue creation, task isolation, pull requests,
-merge decisions, and independent agent acceptance.
+创建 GitHub Issue、隔离任务、创建拉取请求、决定合并和独立 Agent 验收时使用本参考。
 
-## Source of truth
+## 事实来源
 
-For repository delivery, the GitHub Issue is the sole source of truth for the
-selected delivery boundary, acceptance, and verification seams. The pull
-request holds implementation and verification evidence. Local SCD state is
-temporary recovery data only.
+对于仓库交付，中文 GitHub Issue 是选中交付边界、验收和验证衔接点的唯一事实来源。拉取请求保存实施与验证证据。本地 SCD 状态只用于临时恢复。
 
-For a greenfield product with an approved `.scd/product/prd.md`, that PRD
-remains authoritative for product-level why, users, problem, MVP scope,
-`FR-*` requirements, and success metrics. The Delivery Issue references the
-approved version and requirements it implements; it does not duplicate or
-silently override the PRD.
+全新产品存在已确认 `.scd/product/prd.md` 时，该 PRD 继续负责产品级原因、用户、问题、MVP 范围、`FR-*` 需求和成功指标。Delivery Issue 引用已确认版本和它实施的需求，不复制或悄悄覆盖 PRD。
 
-Do not silently replace a Delivery Issue with a local implementation
-specification. Do not treat an unapproved or uncommitted PRD as shared product
-authority.
+不得悄悄用本地实施规格替代 Delivery Issue。不得把未确认或未提交 PRD 当作共享产品权威。
 
-If the repository has no GitHub remote or authenticated write path, stop before
-implementation and report the blocker. A clear user request may authorize the
-ordinary Issue write, but it cannot create missing access.
+仓库没有 GitHub 远程或已认证写入路径时，在实施前停止并报告阻塞。清晰用户请求可以授权普通 Issue 写入，但不能创造缺失权限。
 
-## Planning confirmation preference
+## 方案确认偏好
 
-Before any Issue mutation or implementation, ask whether the user wants to
-review and confirm the complete Issue draft, implementation approach, and task
-checklist for this delivery, unless the current request or approved upstream
-handoff already gives that answer. Read-only repository inspection is allowed
-before this decision and is required before presenting a confirmation-ready
-draft.
+修改 Issue 或实施前，询问用户是否要先评审并确认本次交付的完整 Issue 草案、实施方案和任务清单；当前请求或已确认上游交接已经给出答案时不用重复询问。决定前允许且在展示可确认草案前必须进行只读仓库检查。
 
-- `否`: proceed autonomously and record `需要确认: 否`, `状态: 已放弃`.
-- `是`: present the complete proposed Issue body and wait. Do not create or
-  update the Issue, change repository files, or implement until the user
-  explicitly confirms it. Then record `需要确认: 是`, `状态: 已确认`.
+- `否`：自主继续，并记录 `需要确认：否`、`状态：已放弃`。
+- `是`：展示完整中文 Issue 正文草案并等待。用户明确确认前，不得创建或更新 Issue、修改仓库文件或实施。确认后记录 `需要确认：是`、`状态：已确认`。
 
-For an existing Issue, present its exact proposed edits rather than an abstract
-summary. Material changes to a confirmed implementation approach, task list,
-scope, or acceptance require another explicit confirmation before those changes
-are written or implemented. This preference does not create a local `plan.md`;
-the confirmed Issue remains the sole durable delivery plan.
+对于现有 Issue，展示精确拟修改内容，而不是抽象摘要。已确认实施方案、任务清单、范围或验收发生实质变化时，写入或实施前必须再次明确确认。此偏好不会创建本地 `plan.md`；已确认 Issue 继续作为唯一持久交付计划。
 
-## Issue output language
+## Issue 输出语言
 
-Write all QuickDev-created or updated Issue output in Chinese, including the
-title, body, acceptance items, implementation approach, task checklist,
-verification updates, status notes, and Issue comments. Keep code identifiers,
-commands, paths, filenames, protocol fields, and machine status tokens in their
-canonical form when translation would change behavior or make evidence harder
-to reproduce.
+QuickDev 创建或更新的全部 Issue 输出必须使用中文，包括标题、正文、验收项、实施方案、任务清单、验证更新、状态说明和 Issue 评论。代码标识、命令、路径、文件名、协议字段和机器状态令牌在翻译会改变行为或降低证据复现性时保持规范形式。
 
-## Issue body
+## Issue 正文
 
-For a feature or change, preserve this minimum structure:
+功能或变更至少保留以下结构：
 
 ```markdown
 ## 结果
 
 ## 用户问题
 
-## 产品追踪
+## 产品追溯
 
 - PRD：`.scd/product/prd.md`，或不适用
-- 已批准版本：<正整数>，或不适用
-- 需求：`FR-001`、...，或不适用
+- 已确认版本：<正整数>，或不适用
+- 需求：`FR-001`、……，或不适用
 
 ## 范围内
 
 ## 范围外
 
-## 已确认决定
+## 已确认决策
 
 ## 方案确认
 
 - 需要确认：是，或否
 - 状态：已确认，或已放弃
 
-## 失败与边界情况
+## 失败与边界场景
 
 ## 验收条件
 
@@ -95,23 +67,18 @@ For a feature or change, preserve this minimum structure:
 
 ## 验证
 
-- A1：未运行
+- A1：尚未执行
 
 ## 未知项
 
 - 无
 ```
 
-Discovery owns the approved product sections. QuickDev adds or updates the
-implementation tasks and verification after inspecting the repository. Do not
-store hidden reasoning, secrets, or speculative future work.
+Discovery 负责已确认产品章节。QuickDev 检查仓库后添加或更新实施任务和验证。不得保存隐藏推理、密钥或臆测性未来工作。
 
-When Product traceability is applicable, QuickDev must confirm that the exact
-approved PRD version is reachable from the default branch and every named
-`FR-*` identifier exists. A missing, stale, contradictory, or widened reference
-returns to Discovery and cannot be implemented as a READY delivery.
+适用产品追溯时，QuickDev 必须确认精确的已确认 PRD 版本可从默认分支访问，且每个具名 `FR-*` 标识存在。缺失、陈旧、矛盾或扩大范围的引用返回 Discovery，不能作为 READY 交付实施。
 
-For a bug, also record:
+缺陷还要记录：
 
 ```markdown
 ## 已观察症状
@@ -126,96 +93,71 @@ For a bug, also record:
 
 ## 回归证据
 
-- 未运行
+- 尚未执行
 ```
 
-Change `Unconfirmed` to `Confirmed` only when code or runtime evidence supports
-the causal path.
+只有代码或运行时证据支持因果路径时，才能把 `Unconfirmed` 改为 `Confirmed`。
 
-## Branch and worktree isolation
+## 分支与工作树隔离
 
-Every meaningful repository task gets a unique branch. Use an issue-linked name
-such as:
+每项有意义的仓库任务都使用唯一分支，例如：
 
-- `fix/<issue>-<slug>` for a bug;
-- `feat/<issue>-<slug>` for a feature;
-- `chore/<issue>-<slug>` for maintenance or configuration.
+- 缺陷：`fix/<issue>-<slug>`；
+- 功能：`feat/<issue>-<slug>`；
+- 维护或配置：`chore/<issue>-<slug>`。
 
-Never reuse generic branches such as `bug-fix` or `feature`.
+不得复用 `bug-fix` 或 `feature` 等通用分支。
 
-Use a worktree only when:
+只有以下情况使用工作树：
 
-- the current checkout contains unrelated changes that must remain untouched;
-- another task or agent is proceeding in parallel;
-- the task must survive across sessions without occupying the main checkout;
-- risk, tooling, or repository instructions require physical isolation.
+- 当前检出包含必须保持不动的无关变更；
+- 另一个任务或 Agent 正在并行；
+- 任务必须跨会话存活且不能占用主检出；
+- 风险、工具或仓库说明要求物理隔离。
 
-For one clean sequential task, create the branch in the current worktree.
-Before editing, verify the branch starts from the intended `main` revision.
+单个干净串行任务在当前工作树创建分支。编辑前验证分支来自预期 `main` 版本。
 
-## Pull request and engineering gate
+## 拉取请求与工程门
 
-The agent owns engineering acceptance:
+Agent 负责工程验收：
 
-1. map every Issue acceptance item to direct evidence, `UNVERIFIED`, or a
-   blocker;
-2. review the full issue-specific diff and exclude unrelated files;
-3. commit and push the issue branch;
-4. create the pull request with `Refs #<issue>`, scope summary, risk, and
-   acceptance evidence;
-5. wait for required CI, tests, builds, and repository checks;
-6. repair only in-scope failures and repeat affected checks;
-7. merge into `main` when all required checks pass and no human merge gate
-   applies.
+1. 把每个 Issue 验收项映射到直接证据、`UNVERIFIED` 或阻塞；
+2. 评审完整 Issue 专属差异并排除无关文件；
+3. 提交并推送 Issue 分支；
+4. 创建拉取请求，正文使用 `Refs #<issue>`，并写入中文范围摘要、风险和验收证据；
+5. 等待必需 CI、测试、构建和仓库检查；
+6. 只修复范围内失败并重新运行受影响检查；
+7. 所有必需检查通过且没有人工合并门时，合并到 `main`。
 
-Do not use `Closes #<issue>` before independent acceptance passes.
+独立验收通过前不得使用 `Closes #<issue>`。
 
-After merge, synchronize local `main`. Remove the merged branch or temporary
-worktree only when it contains no uncommitted state.
+合并后同步本地 `main`。已合并分支或临时工作树只有不含未提交状态时才删除。
 
-## Human merge gates
+## 人工合并门
 
-Require explicit human approval before merging changes involving:
+以下变更合并前需要明确人工确认：
 
-- authentication or authorization;
-- payments or billing;
-- destructive data or schema changes;
-- secrets, privacy, legal, or compliance boundaries;
-- production infrastructure or irreversible external actions;
-- any repository rule that requires human review.
+- 身份验证或授权；
+- 支付或计费；
+- 破坏性数据或模式变更；
+- 密钥、隐私、法律或合规边界；
+- 生产基础设施或不可逆外部操作；
+- 仓库规则要求的人工评审。
 
-Create the pull request and present evidence while waiting. Do not weaken branch
-protection or approval rules.
+等待时可以创建拉取请求并展示证据。不得弱化分支保护或确认规则。
 
-Merge authorization does not authorize deployment. If merging `main`
-automatically deploys to production, treat the merge as a production action and
-obtain the required explicit human approval. Prefer Preview or Staging for
-pre-production evidence when available.
+合并权限不等于部署权限。如果合并 `main` 会自动部署生产环境，把合并视为生产操作并取得所需明确人工确认。可用时优先使用 Preview 或 Staging 收集生产前证据。
 
-## Independent acceptance
+## 独立验收
 
-After implementation and engineering checks, launch one separate fresh-context
-subagent as the acceptance verifier. Give it the governing Issue, repository
-location, and exact acceptance target: base and target refs for committed
-changes, or the workspace state before commit. Do not give it the implementing
-agent's conclusions. The verifier must:
+实施和工程检查后，启动一个独立的新上下文子 Agent 作为验收者。向它提供作为依据的 Issue、仓库位置和精确验收目标：已提交变更提供基准与目标引用，未提交变更提供提交前工作区状态。不要提供实施 Agent 的结论。验收者必须：
 
-1. read the Issue acceptance items and applicable repository instructions;
-2. inspect the actual issue-specific diff;
-3. run directly relevant checks and real-environment
-   paths, including browser, real-model, or produced-artifact validation when
-   the changed behavior depends on them;
-4. avoid modifying product code;
-5. return acceptance `PASS`, `FAIL`, or `BLOCKED` with reproducible evidence
-   mapped to every acceptance item.
+1. 阅读 Issue 验收项和适用仓库说明；
+2. 检查真实 Issue 专属差异；
+3. 运行直接相关检查和真实环境路径，包括变更依赖它们时的浏览器、真实模型或生成产物验证；
+4. 不修改产品代码；
+5. 返回 `PASS`、`FAIL` 或 `BLOCKED`，提供可复现证据并映射每个验收项。
 
-`PASS` authorizes eligible merge and explicit Issue closure after the merged
-revision is confirmed. `FAIL` returns the evidence to implementation, keeps the
-Issue open, and requires another independent verification after repair.
-`BLOCKED` records the missing environment or dependency and keeps the Issue
-open. If merge, deployment, or environment state can change the observed result,
-rerun the affected acceptance path on `main` before closing.
+`PASS` 授权符合条件的合并，以及确认合并版本后显式关闭 Issue。`FAIL` 把证据返回实施，保持 Issue 开放，并要求修复后再次独立验收。`BLOCKED` 记录缺失环境或依赖并保持 Issue 开放。合并、部署或环境状态可能改变观察结果时，关闭前在 `main` 上重新运行受影响验收路径。
 
-The parent agent owns delivery orchestration. The independent verifier owns the
-acceptance verdict. Human approval remains required only for the high-risk
-boundaries listed above or a repository-enforced human gate.
+父 Agent 负责交付编排，独立验收者负责验收结论。只有上述高风险边界或仓库强制人工门仍需人工确认。

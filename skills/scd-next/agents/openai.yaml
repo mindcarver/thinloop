@@ -1,4 +1,4 @@
 interface:
-  display_name: "SCD Next"
-  short_description: "Inspect project status and recommend what to do next"
-  default_prompt: "Use $scd-next to inspect this repository's live Issues, pull requests, Initiative DAG, and acceptance state, then report what is done, in flight, ready, planned, blocked, or unverified and recommend the single next action."
+  display_name: "SCD 下一步"
+  short_description: "检查项目状态并建议下一步行动"
+  default_prompt: "使用 $scd-next 检查这个仓库的实时 Issues、拉取请求、Initiative DAG 和验收状态，报告哪些工作已完成、进行中、已就绪、已计划、受阻或未验证，并建议唯一的下一步行动。"

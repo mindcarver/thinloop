@@ -1,4 +1,4 @@
 interface:
-  display_name: "SCD Architecture"
-  short_description: "Design systems and contracts without ceremony"
-  default_prompt: "Use $scd-architecture to turn this stable product behavior into a ready system, domain, and interface design before implementation."
+  display_name: "SCD 架构设计"
+  short_description: "直接设计系统与契约"
+  default_prompt: "使用 $scd-architecture，在实施前将这项稳定的产品行为转化为可执行的系统、领域与接口设计。"

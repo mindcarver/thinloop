@@ -1,46 +1,46 @@
-# Source and History Contract
+# 来源与历史契约
 
-## Authoritative Source
+## 权威来源
 
-Resolve the source root in this order:
+按以下顺序解析来源根目录：
 
-1. an absolute path explicitly supplied for the current invocation;
-2. `thinloop_source_root` in `<user-home>/.scd/config.json`.
+1. 本次调用明确提供的绝对路径；
+2. `<user-home>/.scd/config.json` 中的 `thinloop_source_root`。
 
-Require an absolute path. Resolve symlinks before checking authority. A valid root must contain:
+要求绝对路径。检查权威前解析符号链接。有效根目录必须包含：
 
-- `.git` as a file or directory;
-- `.codex-plugin/plugin.json` with `name` equal to `thinloop`;
-- `skills/scd-evolve/SKILL.md`.
+- 文件或目录形式的 `.git`；
+- `.codex-plugin/plugin.json`，且 `name` 等于 `thinloop`；
+- `skills/scd-evolve/SKILL.md`。
 
-Reject any requested or resolved path with a `plugins/cache` segment. Do not accept an installed Skill directory, copied plugin directory, package-manager cache, or consumer repository.
+拒绝任何包含 `plugins/cache` 路径段的请求或解析路径。不得接受已安装 Skill 目录、复制插件目录、包管理器缓存或消费者仓库。
 
-If config is absent, invalid JSON, or missing the key, report the exact issue and request an explicit source root. Do not create or overwrite config implicitly. If the user asks to save the key, show the proposed config change, require approval, preserve every unrelated key, and read it back after writing.
+配置不存在、JSON 无效或缺少键时，报告精确问题并请求明确来源根目录。不得隐式创建或覆盖配置。用户要求保存键时，展示拟配置变更、要求确认、保留全部无关键，并在写入后回读。
 
-## Repository Boundary
+## 仓库边界
 
-Before a trial:
+试验前：
 
-- inspect branch and Git status;
-- map every candidate operation to owned files;
-- stop on overlapping uncommitted changes;
-- preserve unrelated uncommitted and untracked files;
-- never use broad reset, checkout, restore, or clean operations;
-- keep rollback snapshots outside the repository and delete them only after a verified terminal event.
+- 检查分支和 Git 状态；
+- 把每个候选操作映射到它拥有的文件；
+- 存在重叠未提交变更时停止；
+- 保留无关未提交和未跟踪文件；
+- 绝不使用宽泛 reset、checkout、restore 或 clean 操作；
+- 回滚快照保存在仓库外，只有达到已验证终止事件后才删除。
 
-Source authority establishes where a write may occur. It does not authorize a write; candidate-ID approval is still required.
+来源权威只决定可以在哪里写，不授权写入；仍需候选 ID 确认。
 
-## History Location
+## 历史位置
 
-Store events at:
+事件存储在：
 
 ```text
 .scd/evolution/history.jsonl
 ```
 
-The file is append-only and eligible for version control. Do not create a synthetic baseline record. Each line is one event conforming to `contracts/evolution-history.schema.json`.
+文件只追加，可以进入版本控制。不得创建合成基线记录。每行是一个符合 `contracts/evolution-history.schema.json` 的事件。
 
-Allowed statuses and transitions:
+允许的状态与转换：
 
 ```text
 null → proposed
@@ -48,34 +48,34 @@ proposed → trial | rejected
 trial → accepted | rejected | reverted | trial-unverified
 ```
 
-Terminal states do not transition further. Reusing a candidate ID after a terminal event is invalid.
+终止状态不能继续转换。终止事件后复用候选 ID 无效。
 
-## Persisted Data
+## 持久化数据
 
-Persist only:
+只持久化：
 
-- event, candidate, and run identifiers;
-- timestamp, status, previous status, and schema version;
-- Thinloop target skill names, root-cause abstraction, coupling rationale, and change kinds;
-- coverage, candidate grade, attribution class, and short abstract rationale;
-- matched and unmatched signal abstractions;
-- evidence types, a short sanitized summary, SHA-256 fingerprint, and redaction flag;
-- repository-relative add/delete/replace operation summaries;
-- validation names, outcomes, and abstract evidence;
-- before and after semantic versions;
-- self-evolution flag and prior source run ID.
+- 事件、候选项和运行标识；
+- 时间戳、状态、前一状态和模式版本；
+- Thinloop 目标技能名、根因抽象、耦合理由和变更种类；
+- 覆盖范围、候选等级、归因类别和简短抽象理由；
+- 匹配和未匹配信号抽象；
+- 证据类型、简短脱敏摘要、SHA-256 指纹和脱敏标志；
+- 仓库相对 add/delete/replace 操作摘要；
+- 验证名称、结果和抽象证据；
+- 前后语义版本；
+- 自演进标志和此前来源运行 ID。
 
-Never persist:
+绝不持久化：
 
-- raw or quoted conversation, prompt, log, or tool output;
-- consumer-project name, repository name, branch name, or absolute path;
-- source code, code fence, code snippet, patch body, user data, or personal identifier;
-- credentials, tokens, private keys, authentication material, or secret-like values.
+- 原始或引用的对话、提示词、日志或工具输出；
+- 消费者项目名、仓库名、分支名或绝对路径；
+- 源码、代码围栏、代码片段、补丁正文、用户数据或个人标识；
+- 凭据、令牌、私钥、身份验证材料或类似密钥值。
 
-Set `evidence_redacted: true` whenever private evidence was minimized or transformed. The fingerprint identifies evidence without retaining its contents; it is not proof that the underlying interpretation is correct.
+私有证据被最小化或转换时设置 `evidence_redacted: true`。指纹只在不保留内容的情况下标识证据，不证明解释正确。
 
-## History Tool
+## 历史工具
 
-Use `evolution-history.mjs validate` before relying on an existing history. Use `append --root <authoritative-root>` only after candidate approval; the CLI revalidates source authority and derives the history path instead of accepting an arbitrary write destination. The tool validates record shape, privacy patterns, lifecycle transitions, batch identity, self-evolution provenance, accepted patch increments, and validation-kind requirements.
+依赖现有历史前使用 `evolution-history.mjs validate`。只有候选项确认后才能使用 `append --root <authoritative-root>`；CLI 会重新验证来源权威并派生历史路径，不接受任意写入目标。工具验证记录结构、隐私模式、生命周期转换、批次身份、自演进来源、accepted 补丁递增和验证种类要求。
 
-Keep the sanitized input record outside the repository and remove it after the append result is known. The tool writes through a lock and same-directory temporary file before rename. A validation or write failure leaves the existing history unchanged and must be reported without claiming persistence.
+脱敏输入记录保存在仓库外，追加结果确定后删除。工具通过锁和同目录临时文件写入后重命名。验证或写入失败会保持现有历史不变；必须报告，且不得声称已持久化。

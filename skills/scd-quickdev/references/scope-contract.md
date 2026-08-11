@@ -1,102 +1,82 @@
-# QuickDev scope contract
+# QuickDev 范围契约
 
-Use this reference only when the requested outcome or boundary may be
-ambiguous.
+只有请求结果或边界可能存在歧义时使用本参考。
 
-## Material ambiguity test
+## 实质歧义测试
 
-Ask the user only when choosing without them could change one of:
+只有在无用户参与的选择可能改变以下内容时才提问：
 
-- visible product behavior;
-- public API or persisted data;
-- architecture or compatibility;
-- security or privacy posture;
-- an irreversible or external action;
-- which independent requirement is in scope.
+- 可见产品行为；
+- 公共 API 或持久数据；
+- 架构或兼容性；
+- 安全或隐私态势；
+- 不可逆或外部操作；
+- 哪个独立需求属于范围内。
 
-Do not ask merely because several implementations are valid. Inspect the
-repository, choose the smallest convention-aligned approach, and continue.
+不要仅因多种实施都有效而提问。检查仓库，选择符合现有惯例的最小方案并继续。
 
-## Scope derivation
+## 派生范围
 
-Before editing, establish:
+编辑前确定：
 
-1. **Outcome** — what becomes observably true.
-2. **Boundary** — the most likely tempting expansion that remains out of scope.
-3. **Acceptance** — how the outcome can be checked.
-4. **Location** — where repository evidence says the change belongs.
+1. **结果：** 哪项事实会变得可观察。
+2. **边界：** 最可能诱发扩张、但明确属于范围外的内容。
+3. **验收：** 如何检查结果。
+4. **位置：** 仓库证据表明变更属于何处。
 
-Keep this in conversation for ordinary work. Put the approved delivery boundary
-and acceptance contract in the GitHub Issue. When an approved greenfield PRD
-governs the product, reference its version and applicable `FR-*` identifiers
-instead of copying or redefining the product baseline.
+普通工作只在对话中保留这些内容。把已确认交付边界和验收契约写入中文 GitHub Issue。产品受已确认全新产品 PRD 管理时，引用其版本和适用 `FR-*` 标识，不复制或重新定义产品基线。
 
-## Discovery handoff
+## Discovery 交接
 
-Use full discovery for a greenfield product, application, plugin, service, or
-system, or when several dependent product decisions remain. One isolated
-ambiguity needs only one concise clarification.
+全新产品、应用、插件、服务、系统，或多个相互依赖产品决策仍未确定时，使用完整 Discovery。一个孤立歧义只需一次简短澄清。
 
-When a governing Issue exists:
+存在作为依据的 Issue 时：
 
-1. treat its delivery outcome, boundaries, decisions, and acceptance as
-   authoritative;
-2. when it references an approved PRD, treat that PRD as authoritative for
-   product-level scope and confirm its version and `FR-*` traceability;
-3. preserve stable acceptance identifiers;
-4. choose reversible implementation details without another approval;
-5. update the PRD and Issue through Discovery before changing any
-   product-visible contract.
+1. 把交付结果、边界、决策和验收视为权威；
+2. 它引用已确认 PRD 时，把 PRD 视为产品级范围权威，并确认版本和 `FR-*` 追溯；
+3. 保留稳定验收标识；
+4. 对可逆实施细节自主选择，无需再次确认；
+5. 改变任何产品可见契约前，通过 Discovery 更新 PRD 和 Issue。
 
-If a complete Issue was already approved with the implementation request, do
-not ask the user to approve it twice.
+完整 Issue 已随实施请求确认时，不要让用户重复确认。
 
-Return to discovery only when new evidence changes:
+只有新证据改变以下内容时才返回 Discovery：
 
-- outcome or visible behavior;
-- in-scope or out-of-scope behavior;
-- public API, persisted data, privacy, or permissions;
-- an irreversible or expensive-to-reverse external choice;
-- an approved acceptance item.
+- 结果或可见行为；
+- 范围内或范围外行为；
+- 公共 API、持久数据、隐私或权限；
+- 不可逆或难以逆转的高成本外部选择；
+- 已确认验收项。
 
-Clarifying wording, replacing an internal dependency, reorganizing modules, or
-changing a test layout does not reopen discovery when observable behavior
-remains intact.
+可观察行为不变时，文字澄清、替换内部依赖、重组模块或调整测试布局不会重新打开 Discovery。
 
-## Technical documents
+## 技术文档
 
-The approved greenfield PRD owns product requirements; the Issue owns one
-delivery boundary and acceptance. Existing repository architecture, ADR, UX,
-and machine-contract homes may still own technical design:
+已确认全新产品 PRD 负责产品需求；Issue 负责一个交付边界和验收。仓库现有架构、ADR、UX 和机器契约位置仍可负责技术设计：
 
-- one evolving `.scd/architecture.md` only when no repository-native home
-  exists;
-- `.scd/ux/<slug>.md` for a substantial design-bearing Web experience;
-- `.scd/designs/<feature>.md` for consequential feature-local technical design;
-- a visible root `contracts/` directory for new shared machine-readable
-  contracts when no repository convention exists.
+- 没有仓库原生位置时，一份持续演进的 `.scd/architecture.md`；
+- 重要且承载设计决策的 Web 体验使用 `.scd/ux/<slug>.md`；
+- 影响重大的功能局部技术设计使用 `.scd/designs/<feature>.md`；
+- 没有仓库惯例时，新的共享机器可读契约放在可见根目录 `contracts/`。
 
-Do not create a permanent implementation plan. Keep the task checklist on the
-Issue and temporary resume state in `.scd/tasks/current.md` only when needed.
+不要创建永久实施计划。任务清单保存在 Issue；只有需要时才把临时恢复状态保存在 `.scd/tasks/current.md`。
 
-## Search funnel
+## 搜索漏斗
 
-Use the least context needed:
+使用最少所需上下文：
 
-1. repository instructions, Issue, and top-level structure;
-2. likely module and nearby patterns;
-3. targeted symbol search and code intelligence;
-4. implementations, call sites, and focused tests;
-5. broader exploration only if evidence remains conflicting.
+1. 仓库说明、Issue 和顶层结构；
+2. 可能的模块和附近模式；
+3. 针对性符号搜索和代码智能；
+4. 实施、调用位置和聚焦测试；
+5. 只有证据仍矛盾时才广泛探索。
 
-Use association to search, but repository evidence to decide. A plausible name
-is a candidate, not implementation authority.
+可以根据关联关系搜索，但必须根据仓库证据决策。合理名称只是候选，不是实施权威。
 
-## Scope-change handling
+## 处理范围变化
 
-When implementation evidence contradicts the original interpretation:
+实施证据与原解释冲突时：
 
-- update the plan instead of following it mechanically;
-- update the Issue and request a decision only when the new path changes the
-  product result or authority boundary;
-- leave unrelated defects and cleanup as observations, not silent additions.
+- 更新方案，不要机械执行原方案；
+- 只有新路径改变产品结果或权限边界时才更新 Issue 并请求决策；
+- 无关缺陷和清理作为观察报告，不得悄悄加入范围。

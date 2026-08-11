@@ -1,296 +1,175 @@
 ---
 name: scd-quickdev
-description: "Drive one delivery Issue from request to verified merged code whenever a coding agent is asked to change a repository: fix a bug, add a feature, refactor code, change configuration, perform a migration, or resume unfinished implementation work. Route underdefined product work through scd-discovery and multi-delivery projects through scd-project; accept exactly one approved READY Issue selected directly or by an scd-execute wave, use that GitHub Delivery Issue as the delivery boundary and acceptance source of truth, consume an approved greenfield PRD when one governs product scope, diagnose bugs before fixing them, isolate meaningful work, verify observed behavior through an independent acceptance subagent, create a pull request, merge eligible changes into main, and close the Issue only after acceptance passes. Do not trigger for advice-only questions, explanations, read-only reviews, Initiative Issues, PLANNED placeholders, or BLOCKED project nodes."
+description: "编码 Agent 被要求修改仓库时，把一个交付 Issue 从请求推进到经过验证并合并的代码：修复缺陷、增加功能、重构代码、修改配置、执行迁移或恢复未完成实施。定义不足的产品工作先交给 scd-discovery，多交付项目交给 scd-project；只接受用户直接选择或 scd-execute 波次选择的一个已确认 READY Issue；以该 GitHub Delivery Issue 作为交付边界和验收事实来源；存在已确认全新产品 PRD 时按其约束产品范围；先诊断缺陷再修复；隔离实质工作；通过独立验收子 Agent 验证观察行为；创建拉取请求；把符合条件的变更合并到 main；只有验收通过后才关闭 Issue。不适用于仅建议、解释、只读评审、Initiative Issues、PLANNED 占位节点或 BLOCKED 项目节点。"
 ---
 
-# SCD QuickDev
+# SCD 快速开发
 
-Move clear repository work through the shortest safe path from intent to merged
-code. Keep process invisible when it adds no decision value, but preserve the
-delivery boundary and evidence.
+让清晰的仓库工作沿最短安全路径从意图到合并代码。流程不产生决策价值时保持隐形，但始终保留交付边界和证据。
 
-Maintain four contracts:
+维护以下契约：
 
-- the requested outcome, boundary, and acceptance must be clear;
-- one GitHub Issue is the source of truth for the selected delivery boundary and
-  acceptance;
-- an approved greenfield PRD remains authoritative for product-level why,
-  users, problem, MVP scope, `FR-*` requirements, and success metrics;
-- implementation and completion claims must match observed evidence;
-- merge and deployment authority must respect risk.
+- 请求的结果、边界和验收必须清晰；
+- 一个中文 GitHub Issue 是选中交付边界与验收的事实来源；
+- 已确认的全新产品 PRD 继续负责产品级原因、用户、问题、MVP 范围、`FR-*` 需求和成功指标；
+- 实施与完成声明必须匹配观察证据；
+- 合并和部署权限必须与风险匹配。
 
-## Start from repository truth
+## 从仓库事实出发
 
-1. Read applicable `AGENTS.md`, `CLAUDE.md`, and nearby repository instructions.
-2. Inspect the branch, worktrees, remotes, and working tree; preserve unrelated
-   user changes.
-3. Reuse existing documentation, tests, naming, and implementation patterns.
-4. Search and read targeted code before proposing a new abstraction.
-5. Resume an existing QuickDev task note before starting overlapping work.
-6. Find the governing GitHub Issue when one exists and treat it as the product
-   contract.
-7. When the request follows UIUX, read the relevant `.scd/ux/<slug>.md`, require
-   `status: ready`, inspect its retained visual references, and use the shared
-   interface contract rather than treating UX interface needs as an API.
-8. When the request follows Architecture, read the relevant
-   `.scd/architecture.md` or `.scd/designs/<feature>.md`, require `status:
-   ready`, and parse the canonical machine-readable contracts with the same
-   format-aware evidence used by their producers.
-9. When the request follows Project, read the Initiative and selected Delivery
-   Issue, confirm the node is an approved `READY` Issue in the current graph
-   revision, and use only that Delivery Issue as the implementation contract.
-10. When the Issue references a product PRD, read the exact approved version
-    from the default branch, confirm every named `FR-*` identifier exists, and
-    stop if the Issue contradicts or silently widens the product contract.
+1. 阅读适用的 `AGENTS.md`、`CLAUDE.md` 和附近仓库说明。
+2. 检查分支、工作树、远程仓库和工作区；保留用户无关变更。
+3. 复用现有文档、测试、命名和实施模式。
+4. 提议新抽象前，先搜索并阅读目标代码。
+5. 开始重叠工作前，先恢复现有 QuickDev 任务记录。
+6. 存在作为依据的 GitHub Issue 时找到它，并视为产品契约。
+7. 请求来自 UIUX 时，阅读相关 `.scd/ux/<slug>.md`，要求 `status: ready`，检查保留的视觉参考，并使用共享接口契约；不得把 UX 接口需求当成 API。
+8. 请求来自 Architecture 时，阅读相关 `.scd/architecture.md` 或 `.scd/designs/<feature>.md`，要求 `status: ready`，并使用与生产者相同的格式感知证据解析规范机器可读契约。
+9. 请求来自 Project 时，阅读 Initiative 和选中的 Delivery Issue，确认节点在当前图版本中是已确认的 `READY` Issue，并且只把该 Delivery Issue 用作实施契约。
+10. Issue 引用产品 PRD 时，从默认分支读取精确的已确认版本，确认每个具名 `FR-*` 标识存在；Issue 与产品契约矛盾或悄悄扩大范围时停止。
 
-Treat a ready UX contract as the experience handoff, not as product approval or
-frontend architecture. If it conflicts with the Issue, retained visuals, or an
-unreconciled shared interface decision, return only that gap before
-implementation.
+已就绪 UX 契约是体验交接，不是产品确认或前端架构。它与 Issue、保留视觉产物或尚未统一的共享接口决策冲突时，实施前只返回该缺口。
 
-Do not generate or redefine a PRD during implementation. Consume the approved
-greenfield PRD when Discovery produced one; clear isolated changes and bugs
-remain Issue-only. Do not generate a project wiki, permanent implementation
-plan, role system, command suite, worktree, extra subagent ceremony, or TDD
-ceremony merely to satisfy this skill. The independent acceptance verifier
-required below is the only default subagent role.
+实施期间不得生成或重新定义 PRD。Discovery 生成已确认全新产品 PRD 时消费它；清晰的孤立变更和缺陷继续只使用 Issue。不得仅为满足本技能而生成项目 Wiki、永久实施计划、角色系统、命令套件、工作树、额外子 Agent 仪式或 TDD 仪式。下方要求的独立验收者是唯一默认子 Agent 角色。
 
-## Select the lightest sufficient path
+## 选择最轻量且充分的路径
 
-Derive the outcome, boundary, and observable acceptance from the request and
-repository, then choose internally:
+从请求和仓库派生结果、边界和可观察验收，然后在内部选择：
 
-- **Direct:** outcome, boundary, and observable acceptance are clear. Create or
-  confirm the GitHub Issue and proceed without extra product questions.
-- **Clarify:** one answer can make the task executable. Ask that one material
-  question, update the Issue, and proceed.
-- **Project:** the request spans several independently verifiable deliveries,
-  each needing its own Issue and delivery lane, or has hard cross-Issue
-  dependencies. Use `scd-project`; do not treat the Initiative or a project
-  checklist as one QuickDev task. Several pull requests caused only by
-  implementation size do not trigger Project.
-- **Discovery:** several dependent product decisions or a high-cost product
-  boundary remain open. Use `scd-discovery`, obtain explicit approval, and
-  continue from its resulting Delivery Issue or `scd-project` handoff.
+- **直接实施：** 结果、边界和可观察验收清晰。创建或确认 GitHub Issue，不追加产品问题，直接继续。
+- **单点澄清：** 一个答案即可使任务可执行。询问该实质性问题，更新 Issue，然后继续。
+- **项目规划：** 请求跨越多个可独立验证交付，每个都需要自己的 Issue 和交付通道，或存在跨 Issue 硬依赖。使用 `scd-project`；不得把 Initiative 或项目清单当成一个 QuickDev 任务。仅因实施规模而需要多个拉取请求，不会触发 Project。
+- **需求发现：** 多个依赖的产品决策或高成本产品边界仍未确定。使用 `scd-discovery`，取得明确确认，然后从其 Delivery Issue 或 `scd-project` 交接继续。
 
-Do not announce these path names unless the user asks. A new product,
-application, plugin, service, or system normally takes Discovery; one isolated
-ambiguity does not.
+除非用户询问，否则不公布路径名称。新产品、应用、插件、服务或系统通常使用 Discovery；一个孤立歧义无需完整 Discovery。
 
-## Resolve planning confirmation before writing the Issue
+## 写入 Issue 前解决方案确认偏好
 
-Before creating or updating the governing Issue or starting implementation,
-ask one concise question unless the current request or an approved upstream
-handoff already states the preference. Ask in Chinese: `本次交付是否需要你先确认完整的
-Issue 草案、实施方案和任务清单？`
+创建或更新作为依据的 Issue、或开始实施前，除非当前请求或已确认上游交接已经说明偏好，否则用中文简短询问：`本次交付是否需要你先确认完整的 Issue 草案、实施方案和任务清单？`
 
-- If the user says no, record planning confirmation as `已放弃`, create or
-  update the Issue, and continue through the normal autonomous delivery flow.
-- If the user says yes, first perform the read-only repository inspection needed
-  to make the proposal concrete. Then present the complete proposed Issue body,
-  including the implementation approach and verifiable tasks, and wait for
-  explicit confirmation. Until confirmation, do not create or update the Issue,
-  modify the repository, or start implementation.
-- For an existing Issue, show the exact proposed edits together with the
-  implementation approach and tasks. After confirmation, write the confirmed
-  contract to the Issue before implementing it.
-- If later evidence materially changes the confirmed approach, tasks, scope, or
-  acceptance, present the delta and obtain confirmation again before proceeding.
+- 用户回答不需要时，把方案确认记录为 `已放弃`，创建或更新中文 Issue，然后继续普通自主交付流程。
+- 用户回答需要时，先完成让方案具体化所需的只读仓库检查；然后展示完整的中文 Issue 正文草案，其中必须包含实施方案和可验证任务，并等待明确确认。确认前不得创建或更新 Issue、修改仓库或开始实施。
+- 对现有 Issue，展示精确的拟修改内容、实施方案和任务。确认后先把已确认契约写回 Issue，再实施。
+- 后续证据实质改变已确认的方案、任务、范围或验收时，展示差异并再次取得确认后才能继续。
 
-This is a per-delivery process preference, not a second product approval and not
-a reason to create `plan.md`. The Issue remains the durable plan and task source
-of truth.
+这是每次交付的流程偏好，不是第二次产品确认，也不是创建 `plan.md` 的理由。Issue 继续作为持久方案与任务事实来源。
 
-Write every QuickDev-created or updated Issue title and body in Chinese,
-including acceptance, implementation tasks, verification updates, and status
-notes. Preserve code identifiers, commands, paths, filenames, protocol fields,
-and machine status tokens when translating them would change their meaning.
+QuickDev 创建或更新的每个 Issue 标题和正文都必须使用中文，包括验收、实施任务、验证更新和状态说明。代码标识、命令、路径、文件名、协议字段和机器状态令牌在翻译会改变含义时保持原样。
 
-## Re-select the path when scope shifts mid-flight
+## 执行中范围变化时重新选择路径
 
-Path selection is not a one-time gate. While diagnosing or implementing one
-delivery, re-evaluate whenever the work in front of you is no longer bounded by
-the selected Issue:
+路径选择不是一次性门。诊断或实施一个交付期间，只要面前工作不再受选中 Issue 约束，就重新评估：
 
-- you are repeatedly fixing adjacent problems outside the Issue's acceptance
-  (different root cause, different layer, different component);
-- the user supplies their own design or architecture proposal, or asks you to
-  restructure the flow rather than repair the reported defect;
-- evidence shows the real change spans several independently verifiable
-  deliveries, or depends on product decisions the Issue does not authorize.
+- 反复修复 Issue 验收之外的相邻问题，例如不同根因、层或组件；
+- 用户提供自己的设计或架构方案，或要求重构流程而不是修复报告缺陷；
+- 证据表明真实变更跨越多个可独立验证交付，或依赖 Issue 未授权的产品决策。
 
-When any of these is true, stop widening the current branch. Name the new
-boundary out loud, point the user at `scd-discovery` (open product decisions)
-or `scd-project` (multiple deliveries with hard dependencies), and let the
-already-selected Issue finish or be explicitly superseded. A bug fix that turns
-into a redesign is a new path, not a larger bug fix.
+出现任一情况时，停止扩大当前分支。明确说出新边界，把开放产品决策交给 `scd-discovery`，把有硬依赖的多交付工作交给 `scd-project`；让已选 Issue 完成或被明确取代。缺陷修复演变为重新设计时，应切换新路径，而不是把缺陷修复做大。
 
-This check is about *recognizing* the shift, not adding ceremony. If the
-in-flight change still fits the Issue's acceptance, keep going.
+这项检查用于识别变化，不用于增加仪式。进行中的变更仍符合 Issue 验收时继续执行。
 
-An explicit request to implement or use QuickDev authorizes the ordinary
-task-local Issue, branch, push, pull request, eligible merge, and cleanup steps
-in the named repository. It does not authorize high-risk merge, production
-deployment, live migration, unrelated changes, or access beyond that
-repository.
+用户明确要求实施或使用 QuickDev，会授权指定仓库内普通的任务局部 Issue、分支、推送、拉取请求、符合条件的合并和清理步骤。它不授权高风险合并、生产部署、在线迁移、无关变更或仓库以外访问。
 
-When another Thinloop skill delegates a bounded implementation, its narrower
-delivery boundary wins. Do not expand a local trial or selected repair into the
-standalone QuickDev Issue-to-merge flow. In particular, an `scd-evolve` trial
-does not authorize commit, push, pull request, or merge because Evolve retains
-those actions behind separate user authorization.
+其他 Thinloop 技能委派有边界的实施时，以其更窄交付边界为准。不得把局部试验或选中修复扩大成独立 QuickDev 的 Issue 到合并流程。特别是 `scd-evolve` 试验不授权提交、推送、拉取请求或合并，因为 Evolve 把这些操作保留在单独用户授权之后。
 
-`scd-project` does not authorize implementation of every project node. Accept
-only one explicitly selected, approved `READY` Delivery Issue. Selection may
-come directly from the user or from an approved `scd-execute` wave whose exact
-Initiative graph revision remains current. A Reengineering wave reaches
-QuickDev through Execute after its additional fail-closed gates pass. Refuse an
-Initiative, PLANNED placeholder, BLOCKED node, stale graph revision, or a
-request to absorb sibling Issues, and return the exact project gap instead of
-creating a branch.
+`scd-project` 不授权实施所有项目节点。只接受一个明确选中、已确认的 `READY` Delivery Issue。它可以由用户直接选择，也可以来自精确 Initiative 图版本仍有效的已确认 `scd-execute` 波次。Reengineering 波次通过额外的故障关闭门后，经 Execute 进入 QuickDev。拒绝 Initiative、PLANNED 占位节点、BLOCKED 节点、陈旧图版本或吸收兄弟 Issues 的请求，并在创建分支前返回精确项目缺口。
 
-For a PRD-governed product, also refuse a missing, draft, uncommitted,
-superseded, or contradictory PRD reference and an Issue whose named `FR-*`
-identifiers do not exist in the approved version. Return that product-contract
-gap to Discovery rather than guessing the intended scope.
+对 PRD 管理产品，还要拒绝缺失、草稿、未提交、已被取代或相互矛盾的 PRD 引用，以及具名 `FR-*` 标识不在已确认版本中的 Issue。把产品契约缺口返回 Discovery，不得猜测预期范围。
 
-Read `references/scope-contract.md` when ambiguity or scope expansion is
-plausible. Read `references/issue-delivery-contract.md` before creating or
-updating an Issue, branch, worktree, pull request, merge, or UAT handoff.
+可能存在歧义或范围扩张时阅读 `references/scope-contract.md`。创建或更新 Issue、分支、工作树、拉取请求、合并或 UAT 交接前阅读 `references/issue-delivery-contract.md`。
 
-## Diagnose bugs before changing behavior
+## 先诊断缺陷，再改变行为
 
-For a bug:
+对于缺陷：
 
-1. record the observed symptom and expected behavior;
-2. reproduce the symptom through the narrowest reliable path;
-3. form competing hypotheses and inspect the causal path;
-4. when the causal path enters a framework or dependency, search its
-   official issue tracker for matching reports before concluding the
-   defect is in application code;
-5. identify the causal root cause rather than patching the visible effect;
-6. add or identify a regression test that fails for the defect;
-7. implement the smallest coherent fix;
-8. rerun the same path plus proportionate surrounding checks.
+1. 记录观察症状和预期行为；
+2. 通过最窄且可靠的路径复现；
+3. 形成竞争性假设并检查因果路径；
+4. 因果路径进入框架或依赖时，在认定应用代码有缺陷前，搜索其官方 Issue 跟踪器中的匹配报告；
+5. 找到因果根因，而不是修补可见表象；
+6. 添加或找出能针对该缺陷失败的回归测试；
+7. 实施最小且连贯的修复；
+8. 重新运行同一路径和与风险匹配的周边检查。
 
-If reproduction is impossible, keep root cause `Unconfirmed`, state the missing
-evidence, and do not represent correlation as causation. A cause supplied by the
-user is a hypothesis until repository or runtime evidence supports it.
+无法复现时，根因保持 `Unconfirmed`，说明缺失证据，不得把相关性表述为因果。用户提供的原因仍是假设，直到仓库或运行时证据支持。
 
-## Implement the smallest coherent change
+## 实施最小且连贯的变更
 
-- Add the implementation checklist to the governing Issue after targeted code
-  inspection; do not duplicate it in a local specification.
-- Implement directly when the path is clear.
-- Use a short conversational plan only for dependent work that benefits from
-  sequencing.
-- Follow existing tests and architecture unless they cause the defect.
-- Keep unrelated cleanup outside the branch and pull request.
-- Update the Issue before proceeding when evidence changes product-visible
-  behavior, scope, data or privacy boundaries, permissions, irreversible
-  actions, or acceptance. Obtain approval again only for the affected product
-  decision.
+- 针对性检查代码后，把中文实施清单加入作为依据的 Issue；不得复制到本地规格。
+- 路径清晰时直接实施。
+- 只有有依赖顺序的工作确实获益时，才使用简短对话计划。
+- 遵循现有测试与架构，除非它们正是缺陷原因。
+- 无关清理留在分支和拉取请求之外。
+- 证据改变产品可见行为、范围、数据或隐私边界、权限、不可逆操作或验收时，先更新 Issue 再继续。只有受影响的产品决策需要再次确认。
 
-Escalate process only after evidence reveals actual risk.
+只有证据显示真实风险时才提升流程。
 
-## Verify engineering acceptance
+## 验证工程验收
 
-Before claiming success, run the strongest practical evidence for the changed
-behavior. Prefer:
+声明成功前，对变更行为运行可行的最强证据。优先顺序：
 
-1. focused behavior or regression tests;
-2. relevant typecheck, lint, build, or broader tests;
-3. runtime, API, or UI exercise with observable output;
-4. static inspection only when execution is unavailable.
+1. 聚焦行为测试或回归测试；
+2. 相关类型检查、代码检查、构建或更广测试；
+3. 带可观察输出的运行时、API 或 UI 操作；
+4. 只有执行不可用时才使用静态检查。
 
-Inspect exit codes and meaningful output. Map every item to observed evidence,
-`UNVERIFIED`, or a named blocker. Never use an unrelated passing check as
-evidence.
+检查退出码和有意义的输出。把每个验收项映射到已观察证据、`UNVERIFIED` 或具名阻塞。不得用不相关的绿色检查当证据。
 
-Before delivery, review the complete issue-specific diff for correctness,
-security, acceptance coverage, unintended files, and regression risk. Fix
-in-scope findings and record verification on the Issue and pull request.
+交付前，审查完整的 Issue 专属差异，检查正确性、安全、验收覆盖、意外文件和回归风险。修复范围内发现，并把验证记录到中文 Issue 和拉取请求。
 
-After implementation and the parent agent's engineering checks, delegate final
-acceptance to one separate fresh-context subagent. The verifier must independently
-read the governing Issue, acceptance items, repository instructions, and actual
-issue-specific diff. It must run the strongest practical checks that directly
-exercise the changed behavior, including browser, real-model, or produced-artifact
-validation when relevant. It must not rely only on the implementing agent's
-summary and must not modify product code.
+实施和父 Agent 工程检查完成后，把最终验收委派给一个独立的新上下文子 Agent。验收者必须独立阅读作为依据的 Issue、验收项、仓库说明和真实 Issue 专属差异；必须运行直接练习变更行为的可行最强检查，包括适用时的浏览器、真实模型或生成产物验证；不得只依赖实施 Agent 摘要，也不得修改产品代码。
 
-The verifier returns exactly one evidence-backed acceptance outcome:
+验收者只返回一个有证据支持的结果：
 
-- **PASS:** every acceptance item has direct observed evidence;
-- **FAIL:** changed behavior violates an acceptance item; return the findings to
-  implementation, repair them, and repeat independent verification;
-- **BLOCKED:** required verification cannot run; record the blocker and keep the
-  Issue open.
+- **PASS：** 每个验收项都有直接观察证据；
+- **FAIL：** 变更行为违反验收项；把发现返回实施，修复后重复独立验收；
+- **BLOCKED：** 必需验证无法运行；记录阻塞并保持 Issue 开放。
 
-Only `PASS` authorizes delivery and later Issue closure. A passing unrelated
-suite, static prompt inspection for a real-model behavior, or a fake runtime for
-a real-environment acceptance item cannot produce `PASS`.
+只有 `PASS` 授权交付和后续关闭 Issue。不相关测试套件通过、用静态提示词检查代替真实模型行为，或用假运行时验证真实环境验收项，都不能产生 `PASS`。
 
-Read `references/evidence-contract.md` when selecting checks or reporting
-incomplete evidence.
+选择检查或报告不完整证据时，阅读 `references/evidence-contract.md`。
 
-## Deliver through the pull request
+## 通过拉取请求交付
 
-When implementation and engineering verification pass:
+实施和工程验证通过后：
 
-1. commit only the issue-specific diff and push its branch;
-2. create the pull request with `Refs #<issue>` and acceptance evidence;
-3. wait for required CI and repository checks;
-4. resolve in-scope failures and repeat the affected verification;
-5. when the delivery contract permits, merge it into `main`;
-6. synchronize local `main` and safely remove the merged branch or temporary
-   worktree;
-7. confirm the merged revision is the independently verified change, rerunning
-   acceptance on `main` when merge, deployment, or environment state can change
-   the result;
-8. attach the verifier evidence and close the Issue.
+1. 只提交 Issue 专属差异并推送任务分支；
+2. 创建拉取请求，正文使用 `Refs #<issue>` 并提供验收证据；
+3. 等待必需 CI 和仓库检查；
+4. 解决范围内失败并重新运行受影响验证；
+5. 交付契约允许时合并到 `main`；
+6. 同步本地 `main`，并安全删除已合并分支或临时工作树；
+7. 确认已合并版本就是独立验证过的变更；合并、部署或环境状态可能改变结果时，在 `main` 上重新验收；
+8. 附加验收证据并关闭 Issue。
 
-Do not close the Issue at merge time or through pull-request auto-close syntax.
-Close it explicitly only after independent acceptance returns `PASS`. On
-`FAIL`, record the observed result on the same Issue and re-enter QuickDev. On
-`BLOCKED`, record the missing evidence and leave the Issue open.
+不得在合并时关闭 Issue，也不得使用拉取请求自动关闭语法。只有独立验收返回 `PASS` 后，才显式关闭。`FAIL` 时把观察结果记录到同一 Issue 并重新进入 QuickDev；`BLOCKED` 时记录缺失证据并保持 Issue 开放。
 
-## Preserve continuity only when needed
+## 只在需要时保留连续性
 
-Use durable local state only when the task may cross a session or compaction,
-has multiple independent acceptance paths, contains a consequential handoff
-decision, or is paused.
+只有任务可能跨会话或上下文压缩、存在多条独立验收路径、包含重要交接决策或已暂停时，才使用持久本地状态。
 
-The GitHub Issue remains authoritative. If local recovery state is necessary,
-create `.scd/tasks/current.md` from `assets/current-task.md`, reference the
-Issue, and store only the resume delta. Maintain at most one fallback note per
-worktree.
+GitHub Issue 继续是权威来源。确实需要本地恢复状态时，从 `assets/current-task.md` 创建 `.scd/tasks/current.md`，引用 Issue，并只保存恢复所需增量。每个工作树最多保留一份后备记录。
 
-Before stopping or compaction, keep its status, evidence, and one next action
-current. On successful merge, remove the fallback note without staging it.
+停止或上下文压缩前，及时更新其状态、证据和一个下一行动。成功合并后删除后备记录，不要把它暂存到提交中。
 
-Read `references/continuity-contract.md` before creating, updating, resuming, or
-removing fallback state.
+创建、更新、恢复或删除后备状态前，阅读 `references/continuity-contract.md`。
 
-## Hand off naturally
+## 自然交接
 
-For ordinary tasks, report only:
+普通任务只报告：
 
-- merged outcome and pull request;
-- important changed locations;
-- observed engineering verification;
-- independent acceptance result and Issue status;
-- remaining risk or unverified work.
+- 已合并结果和拉取请求；
+- 重要变更位置；
+- 已观察工程验证；
+- 独立验收结果和 Issue 状态；
+- 剩余风险或未验证工作。
 
-Do not print contract names, stage labels, or a workflow recap unless escalation
-occurred or the user asks.
+除非发生流程升级或用户询问，否则不要打印契约名称、阶段标签或工作流回顾。
 
-## Resources
+## 资源
 
-- `references/scope-contract.md` - material ambiguity and scope control.
-- `references/issue-delivery-contract.md` - Issue, isolation, PR, merge, and
-  independent acceptance rules.
-- `references/evidence-contract.md` - risk-adaptive verification and completion
-  language.
-- `references/continuity-contract.md` - fallback state schema and lifecycle.
-- `assets/current-task.md` - fallback recovery template.
+- `references/scope-contract.md`：实质歧义与范围控制。
+- `references/issue-delivery-contract.md`：中文 Issue、隔离、PR、合并和独立验收规则。
+- `references/evidence-contract.md`：风险自适应验证与完成表述。
+- `references/continuity-contract.md`：后备状态结构与生命周期。
+- `assets/current-task.md`：后备恢复模板。

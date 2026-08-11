@@ -1,3 +1,3 @@
-# Interview question index
+# 面试题索引
 
-- [Question title](questions/slug.md) - tag, tag
+- [问题标题](questions/slug.md) - 标签，标签

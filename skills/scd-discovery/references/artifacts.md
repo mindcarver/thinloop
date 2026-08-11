@@ -1,29 +1,22 @@
-# Discovery artifacts
+# Discovery 产物
 
-Create the minimum artifact that preserves continuing value. An approved
-greenfield product uses `.scd/product/prd.md` for the product baseline. A clear
-change to an existing product keeps one GitHub Issue as the sole requirement
-and acceptance source of truth. For an approved multi-delivery project,
-`scd-project` creates one Initiative plus separate Delivery Issues; do not
-force the project into one Issue.
+只创建能够持续产生价值的最小产物。已确认的全新产品使用 `.scd/product/prd.md` 保存产品基线。现有产品的一项清晰变更只保留一个 GitHub Issue，作为需求与验收的唯一事实来源。已确认的多交付项目由 `scd-project` 创建一个 Initiative 和多个独立 Delivery Issues；不要强行塞进一个 Issue。
 
-## Authority boundaries
+## 权威边界
 
-| Artifact | Authoritative for |
+| 产物 | 权威范围 |
 |---|---|
-| `.scd/product/prd.md` | Greenfield product vision, users, problem, MVP scope, `FR-*` requirements, and success metrics |
-| Initiative Issue | Delivery topology, shared coordination decisions, graph revision, and project integration acceptance |
-| Delivery Issue | One slice's boundary, acceptance, verification seams, and PRD traceability |
-| UX and Architecture artifacts | Experience and technical design within the approved product contract |
-| Pull request and verifier evidence | Implementation and observed delivery proof |
+| `.scd/product/prd.md` | 全新产品愿景、用户、问题、MVP 范围、`FR-*` 需求和成功指标 |
+| Initiative Issue | 交付拓扑、共享协调决策、图版本和项目集成验收 |
+| Delivery Issue | 一个切片的边界、验收、验证衔接点和 PRD 追溯 |
+| UX 与 Architecture 产物 | 已确认产品契约内的体验与技术设计 |
+| 拉取请求和验收证据 | 实施与已观察交付证明 |
 
-Do not duplicate the full PRD into tracker Issues or let design artifacts
-silently redefine product scope.
+不要把完整 PRD 复制进跟踪器 Issues，也不要让设计产物悄悄重新定义产品范围。
 
-## Temporary discovery state
+## 临时 Discovery 状态
 
-Do not create state for a short same-session discussion. When continuity is
-necessary, use `.scd/tasks/current.md`:
+同一会话中的简短讨论不创建状态。确实需要连续性时，使用 `.scd/tasks/current.md`：
 
 ```yaml
 ---
@@ -33,30 +26,24 @@ updated_at: 2026-07-27T12:34:56+08:00
 ---
 ```
 
-Allowed statuses are `active` and `blocked`. Keep non-empty sections:
+允许的状态为 `active` 和 `blocked`。保留非空章节：
 
-- `## Outcome`
-- `## Boundaries` with `In` and `Out`
-- `## Acceptance`
-- `## Decisions`
-- `## Evidence`
-- `## Next action`
+- `## 结果`
+- `## 边界`，包含“范围内”和“范围外”
+- `## 验收条件`
+- `## 决策`
+- `## 证据`
+- `## 下一步行动`
 
-Acceptance may contain provisional checklist items. Distinguish confirmed,
-assumed, deferred, and open decisions. Keep exactly one next decision or
-investigation. When the GitHub Issue exists, add its URL to the note and retain
-only the delta required to resume.
+验收条件可以包含临时清单项。区分已确认、假设、延期和待定决策。只保留一个下一决策或调查。GitHub Issue 存在后，在记录中加入其 URL，并只保留恢复所需增量。
 
-Remove temporary discovery state after handoff. Never keep a second current task
-in the same worktree.
+交接后删除临时 Discovery 状态。同一工作树不得保留第二个当前任务。
 
-## Greenfield product PRD
+## 全新产品 PRD
 
-After explicit approval of a greenfield product requested as repository work,
-create `.scd/product/prd.md` from `../assets/product-prd.md`. Do not create a
-permanent draft before approval.
+用户明确确认将全新产品落实为仓库工作后，从 `../assets/product-prd.md` 创建 `.scd/product/prd.md`。确认前不得创建永久草稿。
 
-Use this frontmatter:
+使用以下 frontmatter：
 
 ```yaml
 ---
@@ -68,137 +55,103 @@ approved_at: 2026-07-30T12:34:56+08:00
 ---
 ```
 
-The PRD must contain:
+PRD 必须包含：
 
-- product vision;
-- primary users;
-- user problem and current alternative;
-- MVP goals and non-goals;
-- core user journeys;
-- functional requirements with unique, stable `FR-*` identifiers;
-- rules and failure cases;
-- data, permissions, and integrations;
-- success metrics;
-- assumptions and risks;
-- open questions;
-- approval status and approved version.
+- 产品愿景；
+- 主要用户；
+- 用户问题和当前替代方案；
+- MVP 目标与非目标；
+- 核心用户旅程；
+- 使用唯一且稳定 `FR-*` 标识的功能需求；
+- 规则和失败场景；
+- 数据、权限和集成；
+- 成功指标；
+- 假设和风险；
+- 待确认问题；
+- 确认状态和已确认版本。
 
-A material change to product behavior, MVP scope, permissions, data boundaries,
-or success criteria requires renewed approval and a version increment. Wording
-clarifications may update `updated_at` without changing the version. Never
-renumber an existing requirement merely because ordering changes; retire or
-replace it explicitly.
+产品行为、MVP 范围、权限、数据边界或成功标准发生实质变化时，必须重新确认并递增版本。纯文字澄清可以更新 `updated_at` 而不改变版本。不得仅因排序变化重编号现有需求；应明确停用或替换。
 
-Use the repository's normal low-risk document-delivery path so the approved PRD
-version is reachable from the default branch before Project reports an
-implementing node READY or QuickDev begins product implementation. If that
-cannot be established, report the downstream handoff as blocked.
+使用仓库普通的低风险文档交付路径，使已确认 PRD 版本可以从默认分支访问。只有此后 Project 才能报告实施节点 READY，QuickDev 才能开始产品实施。无法证明时，报告下游交接受阻。
 
 ## GitHub Issue
 
-After a single-delivery combined contract is ready, present it to the user for
-explicit approval. Then create or update one GitHub Issue:
+单交付合并契约就绪后，先向用户展示并取得明确确认，然后创建或更新一个中文 GitHub Issue：
 
 ```markdown
-## Outcome
+## 结果
 
-## Users and problem
+## 用户与问题
 
-## Shared language
+## 共享语言
 
-## User scenarios
+## 用户场景
 
-## Product traceability
+## 产品追溯
 
-- PRD: `.scd/product/prd.md`, or Not applicable
-- Approved version: <positive integer>, or Not applicable
-- Requirements: `FR-001`, ..., or Not applicable
+- PRD：`.scd/product/prd.md`，或不适用
+- 已确认版本：<正整数>，或不适用
+- 需求：`FR-001`、……，或不适用
 
-## Confirmed decisions
+## 已确认决策
 
-## Failure and edge cases
+## 失败与边界场景
 
-## Constraints
+## 约束
 
-## In scope
+## 范围内
 
-## Out of scope
+## 范围外
 
-## Acceptance
+## 验收条件
 
-- [ ] A1: <observable behavior>
+- [ ] A1：<可观察行为>
 
-## Verification seams
+## 验证衔接点
 
-## Assumptions
+## 假设
 
-## Deferred decisions
+## 延期决策
 
-## Implementation tasks
+## 实施任务
 
-- [ ] To be refined by QuickDev after repository inspection
+- [ ] QuickDev 检查仓库后细化
 
-## Verification
+## 验证
 
-- A1: Not run
+- A1：尚未执行
 
-## Unknowns
+## 未知项
 
-- None
+- 无
 ```
 
-Omit optional empty sections instead of filling them with boilerplate. Preserve
-stable acceptance identifiers. Do not put hidden reasoning or secrets in the
-Issue.
+空的可选章节直接省略，不要填充套话。保留稳定验收标识。Issue 中不得包含隐藏推理或密钥。
 
-For greenfield work, Discovery owns the approved PRD and the Delivery Issue
-owns the approved delivery slice. `scd-quickdev` may refine implementation
-tasks and evidence, but must return product-visible changes to Discovery,
-update the PRD when the product contract changes, and update the Issue before
-proceeding. For an existing-product change without a PRD, the Issue remains the
-complete product and delivery contract.
+对于全新产品，Discovery 负责已确认 PRD，Delivery Issue 负责已确认交付切片。`scd-quickdev` 可以细化实施任务和证据，但产品可见变更必须返回 Discovery；产品契约变化时先更新 PRD 和 Issue，再继续。现有产品没有 PRD 时，Issue 继续作为完整产品与交付契约。
 
-When the approved contract spans multiple independently verifiable deliveries,
-do not use this single-Issue template for the entire project. Hand the shared
-project core to `scd-project`, whose Initiative owns project topology while
-each Delivery Issue owns one slice's requirements and acceptance.
+已确认契约跨越多个可独立验证交付时，不要用上述单 Issue 模板承载整个项目。把共享项目核心交给 `scd-project`；其 Initiative 负责项目拓扑，每个 Delivery Issue 负责一个切片的需求和验收。
 
-If the repository has no GitHub remote, authenticated write path, or
-repository-authoritative equivalent tracker, stop after the approved summary
-and report the blocker. Do not silently create a local specification.
+仓库没有 GitHub 远程、已认证写入路径或仓库权威的等价跟踪器时，在已确认摘要后停止并报告阻塞。不得悄悄创建本地规格替代。
 
-## Technical documents
+## 技术文档
 
-The approved greenfield PRD owns product requirements; the Issue owns one
-delivery slice and its acceptance. Keep design documents only when their
-complexity justifies them:
+已确认的全新产品 PRD 负责产品需求；Issue 负责一个交付切片及其验收。只有复杂度确有必要时才保留设计文档：
 
-- one evolving `.scd/architecture.md` when no repository-native architecture
-  home exists;
-- `.scd/ux/<slug>.md` for a substantial design-bearing Web experience;
-- `.scd/designs/<feature>.md` for consequential feature-local architecture;
-- repository ADRs for irreversible cross-cutting technical decisions;
-- a visible root `contracts/` directory for new shared machine-readable
-  contracts when no repository convention exists.
+- 没有仓库原生架构位置时，一份持续演进的 `.scd/architecture.md`；
+- 重要且承载设计决策的 Web 体验使用 `.scd/ux/<slug>.md`；
+- 影响重大的功能局部架构使用 `.scd/designs/<feature>.md`；
+- 不可逆横切技术决策使用仓库 ADR；
+- 没有仓库惯例时，新的共享机器可读契约放在可见根目录 `contracts/`。
 
-Do not create a permanent `implementation-plan.md`; keep task breakdown in the
-Issue and use `.scd/tasks/current.md` only for temporary recovery.
+不要创建永久 `implementation-plan.md`；任务拆解保存在 Issue 中，`.scd/tasks/current.md` 只用于临时恢复。
 
-Architecture and technical design do not add fixed approval gates. Return to
-discovery only when a design choice changes the approved outcome, visible
-behavior, scope, data or privacy boundary, permissions, irreversible action, or
-acceptance.
+架构和技术设计不增加固定确认门。只有设计选择改变已确认结果、可见行为、范围、数据或隐私边界、权限、不可逆操作或验收时，才返回 Discovery。
 
-## Contract changes after approval
+## 确认后的契约变更
 
-- **Implementation change:** update Issue tasks or verification without another
-  approval.
-- **Wording clarification without behavior change:** update the Issue and note
-  it in the handoff.
-- **Product contract change:** update the affected Issue sections, discuss only
-  the affected decisions, update and version the greenfield PRD when one
-  governs the product, and obtain explicit approval before implementation
-  continues.
+- **实施变更：** 更新 Issue 任务或验证，无需再次确认。
+- **不改变行为的文字澄清：** 更新 Issue，并在交接中说明。
+- **产品契约变更：** 更新受影响 Issue 章节，只讨论受影响决策；存在全新产品 PRD 时更新并递增其版本；实施继续前取得明确确认。
 
-Promote repeated shared terminology to `.scd/context.md` only when it causes
-recurring cross-Issue ambiguity.
+只有反复共享的术语确实造成跨 Issue 歧义时，才提升到 `.scd/context.md`。

@@ -1,66 +1,50 @@
-# Visual evidence
+# 视觉证据
 
-Read this reference before creating or validating a wireframe, mockup, or
-prototype.
+创建或验证线框图、视觉稿或原型前阅读本参考。
 
-## Choose fidelity by decision risk
+## 根据决策风险选择保真度
 
-| Situation | Smallest useful artifact |
+| 情形 | 最小有效产物 |
 |---|---|
-| Clear copy, token, spacing, or local component delta | Written or annotated delta |
-| Unclear hierarchy, navigation, form grouping, or responsive reflow | Low-fidelity wireframe |
-| Stateful interaction, multi-step task, or recovery behavior | Clickable or runnable lightweight prototype |
-| Brand, visual language, data density, or component appearance is acceptance-critical | High-fidelity key screens and states |
+| 清晰的文案、令牌、间距或局部组件增量 | 书面或标注的增量说明 |
+| 层级、导航、表单分组或响应式重排不清晰 | 低保真线框图 |
+| 有状态交互、多步骤任务或恢复行为 | 可点击或可运行的轻量原型 |
+| 品牌、视觉语言、数据密度或组件外观属于关键验收 | 高保真关键界面和状态 |
 
-Fidelity is not project status. A 0-to-1 product may still need only a
-wireframe; a focused redesign may need high fidelity.
+保真度不是项目状态。0 到 1 产品仍可能只需要线框图；聚焦改版也可能需要高保真。
 
-## Select tools from the environment
+## 从环境中选择工具
 
-Use the user's existing design source when available. Otherwise choose the
-least expensive tool that makes the decision reviewable:
+用户已有设计来源时直接使用。否则选择成本最低且能让决策可评审的工具：
 
-- a diagram or wireframe for structure;
-- static mockups for visual comparison;
-- Figma or another editable design tool when collaborative editing matters;
-- a local HTML prototype when responsive behavior or interaction must be
-  exercised.
+- 用图表或线框图表达结构；
+- 用静态视觉稿比较视觉方案；
+- 协作编辑重要时使用 Figma 或其他可编辑设计工具；
+- 必须练习响应式行为或交互时使用本地 HTML 原型。
 
-Do not require a particular vendor. Do not add a production framework merely
-to create a prototype.
+不强制指定供应商。不要仅为创建原型而加入生产框架。
 
-## Keep prototypes non-production
+## 保持原型非生产
 
-Place prototypes in an existing design workspace or beside the UX artifact in
-an explicitly non-production location. Avoid importing them into application
-entry points, production builds, or runtime dependencies. Use representative,
-non-sensitive sample data.
+原型放在现有设计工作区，或 UX 产物旁明确的非生产位置。不要导入应用入口、生产构建或运行时依赖。使用有代表性且不敏感的样例数据。
 
-A prototype may demonstrate behavior but does not define backend endpoints,
-security, persistence, or production architecture.
+原型可以演示行为，但不定义后端端点、安全、持久化或生产架构。
 
-## Inspect instead of assuming
+## 通过检查而非假设验证
 
-After producing or receiving a visual:
+生成或收到视觉产物后：
 
-1. render or open it at the intended desktop and narrow Web viewports;
-2. inspect hierarchy, clipping, wrapping, overflow, focus, contrast, and
-   representative states;
-3. exercise interactive paths when the artifact supports them;
-4. compare it with the UX contract and source product behavior;
-5. record observed gaps and revise the artifact or contract;
-6. link the retained artifact from the relevant contract section.
+1. 在目标桌面和窄屏 Web 视口渲染或打开；
+2. 检查层级、裁切、换行、溢出、焦点、对比度和代表性状态；
+3. 产物支持交互时练习交互路径；
+4. 与 UX 契约和产品行为来源比较；
+5. 记录观察到的缺口并修订产物或契约；
+6. 从相关契约章节链接保留的产物。
 
-Do not claim a visual has been reviewed because its file exists or a render
-command exited successfully.
+文件存在或渲染命令成功，不代表视觉已经审查。
 
-## Preserve decisions, not galleries
+## 保留决策，不保留图库
 
-Retain a visual only when it communicates layout, hierarchy, behavior, or
-appearance that downstream work needs. Name what each retained artifact proves.
-Remove or clearly mark superseded alternatives so frontend work does not choose
-between conflicting references.
+只有视觉产物传达下游所需的布局、层级、行为或外观时才保留。说明每份保留产物证明什么。删除或明确标记已被取代的方案，避免前端在冲突参考之间自行选择。
 
-The written UX contract is authoritative when a visual contains incidental or
-stale details. Update both when the visual exposes a genuine product or
-experience decision.
+视觉产物包含偶然或陈旧细节时，以书面 UX 契约为准。视觉产物暴露真实产品或体验决策时，同时更新二者。

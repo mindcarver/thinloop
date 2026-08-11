@@ -1,83 +1,74 @@
-# Maintenance repair contract
+# 维护修复契约
 
-Use this contract before repairing multiple findings or deleting code,
-documentation, dependencies, configuration, or compatibility paths.
+修复多个发现，或删除代码、文档、依赖、配置或兼容路径前使用本契约。
 
-## Select a bounded batch
+## 选择有边界批次
 
-Use the exact findings selected by the user. If the user gives a broad cleanup
-request without selecting findings, recommend and repair at most three that
-share one verification surface. Prefer:
+使用用户精确选中的发现。用户给出宽泛清理请求但没有选择发现时，推荐并修复最多三个共享同一验证表面的发现。优先：
 
-1. critical or high-severity correctness and safety drift;
-2. deterministic repairs with strong verification;
-3. one coherent subsystem over unrelated easy edits.
+1. Critical 或 High 的正确性与安全漂移；
+2. 有强验证的确定性修复；
+3. 一个连贯子系统，而不是无关的容易编辑。
 
-Do not mix a behavior change, dependency migration, architecture rewrite, and
-documentation cleanup into one maintenance batch.
+不要把行为改变、依赖迁移、架构重写和文档清理混入一个维护批次。
 
-## Revalidate before editing
+## 编辑前重新验证
 
-For every finding:
+对每个发现：
 
-- confirm that the evidence still exists in the current worktree;
-- inspect unrelated user changes around the target;
-- name the authority that the repair will restore;
-- identify direct producers, consumers, tests, examples, and documents;
-- identify rollback or compatibility consequences.
+- 确认当前工作区仍存在证据；
+- 检查目标周围用户无关变更；
+- 具名说明修复将恢复的权威来源；
+- 识别直接生产者、消费者、测试、示例和文档；
+- 识别回滚或兼容性后果。
 
-Drop stale findings instead of forcing a planned cleanup.
+陈旧发现应删除，不得强行执行计划清理。
 
-## Protect deletions
+## 保护删除操作
 
-Before deleting an artifact, use the strongest available evidence:
+删除产物前使用可用最强证据：
 
-- language-aware reachability or dependency tooling;
-- repository-wide references including dynamic registration conventions;
-- build, test, packaging, and deployment configuration;
-- public API and compatibility commitments;
-- runtime discovery, reflection, plugin, migration, and fixture behavior.
+- 语言感知的可达性或依赖工具；
+- 全仓库引用，包括动态注册惯例；
+- 构建、测试、打包和部署配置；
+- 公共 API 和兼容性承诺；
+- 运行时发现、反射、插件、迁移和测试数据行为。
 
-Text search alone does not prove that dynamically loaded code is dead. If
-reachability remains uncertain, deprecate, isolate, or report the candidate
-instead of deleting it.
+仅文本搜索不能证明动态加载代码已死。可达性仍不确定时，弃用、隔离或报告候选项，不得删除。
 
-## Keep coupled truth together
+## 同步维护耦合事实
 
-When repairing drift, update every directly coupled surface in the same change:
+修复漂移时，在同一变更更新每个直接耦合表面：
 
-- implementation and regression test;
-- schema and migration;
-- CLI behavior and help output;
-- API implementation and machine-readable contract;
-- configuration key, example, validation, and documentation;
-- architecture rule and its executable enforcement;
-- tutorial step and the runtime action that proves it.
+- 实施与回归测试；
+- 模式与迁移；
+- CLI 行为与帮助输出；
+- API 实施与机器可读契约；
+- 配置键、示例、验证与文档；
+- 架构规则及其可执行约束；
+- 教程步骤与证明它的运行时操作。
 
-Do not update descriptive documentation to conceal a violation of a normative
-contract.
+不得通过更新说明性文档掩盖规范契约违规。
 
-## Verify per finding
+## 按发现验证
 
-Map each finding identifier to observed evidence:
+把每个发现标识映射到观察证据：
 
-- focused regression, contract, architecture, or documentation test;
-- relevant typecheck, lint, build, or package check;
-- runtime, API, CLI, migration rehearsal, or UI exercise;
-- static re-inspection only when execution is unavailable.
+- 聚焦回归、契约、架构或文档测试；
+- 相关类型检查、代码检查、构建或打包检查；
+- 运行时、API、CLI、迁移演练或 UI 操作；
+- 只有执行不可用时才静态重新检查。
 
-If a check was already failing before the repair, distinguish that baseline
-failure from the new result. If verification is blocked, state the blocker and
-leave the finding partially verified.
+检查在修复前已经失败时，区分基线失败和新结果。验证受阻时写明阻塞，并把发现保留为部分验证。
 
-## Stop on expanded authority
+## 权限扩大时停止
 
-Return to the user before continuing when evidence reveals:
+证据暴露以下任一事项时，继续前返回用户：
 
-- a product behavior or compatibility choice;
-- an irreversible data or migration decision;
-- a permission, privacy, or security boundary change;
-- a cross-system architecture decision;
-- a repair larger than the selected batch.
+- 产品行为或兼容性选择；
+- 不可逆数据或迁移决策；
+- 权限、隐私或安全边界变化；
+- 跨系统架构决策；
+- 超出选中批次的修复。
 
-Do not use maintenance work as implicit authorization for those changes.
+不得用维护工作暗示授权这些变更。

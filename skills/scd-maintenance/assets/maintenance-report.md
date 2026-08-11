@@ -1,32 +1,32 @@
 ---
 managed_by: scd-maintenance
-scope: <inspected repository scope>
-revision: <git revision or working-tree description>
+scope: <已检查的仓库范围>
+revision: <Git 版本或工作区说明>
 status: audit
 ---
 
-# Maintenance audit
+# 维护审计
 
-## Checks run
+## 已执行检查
 
-- <command or inspection and observed result>
+- <命令或检查以及观察到的结果>
 
-## Confirmed findings
+## 已确认发现
 
-### MAINT-<stable-id> — <title>
+### MAINT-<stable-id> — <标题>
 
-- Category: <category>
-- Severity: <critical | high | medium | low>
-- Confidence: <confirmed | high | medium>
-- Evidence: <file, line, symbol, command, or runtime result>
-- Authority: <normative contract | executable behavior | descriptive material>
-- Repair: <smallest justified change>
-- Verification: <focused check>
+- 类别：<类别>
+- 严重程度：<critical | high | medium | low>
+- 置信度：<confirmed | high | medium>
+- 证据：<文件、行号、符号、命令或运行时结果>
+- 权威来源：<normative contract | executable behavior | descriptive material>
+- 修复方案：<有充分理由的最小变更>
+- 验证：<针对性检查>
 
-## Investigation leads
+## 调查线索
 
-- <unconfirmed signal and missing evidence>
+- <尚未确认的信号与缺失证据>
 
-## Blind spots
+## 检查盲区
 
-- <excluded scope, unavailable tool, or unverified surface>
+- <排除的范围、不可用的工具或未验证的表面>

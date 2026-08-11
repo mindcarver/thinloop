@@ -13,11 +13,11 @@ function read(relativePath) {
 test("discovery routes greenfield work without burdening clear changes", () => {
   const skill = read("skills/scd-discovery/SKILL.md");
 
-  assert.match(skill, /greenfield products[\s\S]*Discovery by default/i);
-  assert.match(skill, /\*\*Direct:\*\*/);
-  assert.match(skill, /\*\*Clarify:\*\*/);
-  assert.match(skill, /without discovery artifacts or extra questions/i);
-  assert.match(skill, /fast path/i);
+  assert.match(skill, /全新产品[\s\S]*默认走完整 Discovery/);
+  assert.match(skill, /\*\*直接实施：\*\*/);
+  assert.match(skill, /\*\*单点澄清：\*\*/);
+  assert.match(skill, /不创建 Discovery 产物、不追加问题/);
+  assert.match(skill, /就绪快速路径/);
 });
 
 test("discovery requires one-decision interviewing and explicit approval", () => {
@@ -29,11 +29,11 @@ test("discovery requires one-decision interviewing and explicit approval", () =>
     "skills/scd-discovery/references/readiness-review.md",
   );
 
-  assert.match(skill, /Ask one decision at a time/);
-  assert.match(skill, /must explicitly approve/i);
-  assert.match(interviewing, /Ask upstream questions before their consequences/);
-  assert.match(readiness, /Silent adversarial review/);
-  assert.match(readiness, /A1:/);
+  assert.match(skill, /一次只询问一个决策/);
+  assert.match(skill, /必须明确确认/);
+  assert.match(interviewing, /先问上游问题，再问其后果/);
+  assert.match(readiness, /静默对抗式审查/);
+  assert.match(readiness, /A1：/);
 });
 
 test("discovery persists approved greenfield PRD without burdening clear changes", () => {
@@ -43,36 +43,36 @@ test("discovery persists approved greenfield PRD without burdening clear changes
 
   assert.match(artifacts, /\.scd\/tasks\/current\.md/);
   assert.match(artifacts, /managed_by: scd-discovery/);
-  assert.match(skill, /approved greenfield product/i);
+  assert.match(skill, /已确认的全新产品/);
   assert.match(skill, /\.scd\/product\/prd\.md/);
-  assert.match(skill, /clear change to an existing\s+product/i);
-  assert.match(artifacts, /Do not create a\s+permanent draft before approval/i);
-  assert.match(artifacts, /reachable from the default\s+branch/i);
+  assert.match(skill, /现有产品的清晰变更/);
+  assert.match(artifacts, /确认前不得创建永久草稿/);
+  assert.match(artifacts, /默认分支访问/);
   assert.match(prd, /status: draft/);
   assert.match(prd, /version: 1/);
-  assert.match(prd, /## Product vision/);
-  assert.match(prd, /## Primary users/);
-  assert.match(prd, /## User problem and current alternative/);
-  assert.match(prd, /## MVP goals/);
-  assert.match(prd, /## Non-goals/);
-  assert.match(prd, /## Core user journeys/);
+  assert.match(prd, /## 产品愿景/);
+  assert.match(prd, /## 主要用户/);
+  assert.match(prd, /## 用户问题与当前替代方案/);
+  assert.match(prd, /## MVP 目标/);
+  assert.match(prd, /## 非目标/);
+  assert.match(prd, /## 核心用户旅程/);
   assert.match(prd, /FR-001:/);
-  assert.match(prd, /## Rules and failure cases/);
-  assert.match(prd, /## Data, permissions, and integrations/);
-  assert.match(prd, /## Success metrics/);
-  assert.match(prd, /## Assumptions and risks/);
-  assert.match(prd, /## Open questions/);
-  assert.match(prd, /## Approval/);
+  assert.match(prd, /## 规则与失败场景/);
+  assert.match(prd, /## 数据、权限与集成/);
+  assert.match(prd, /## 成功指标/);
+  assert.match(prd, /## 假设与风险/);
+  assert.match(prd, /## 待确认问题/);
+  assert.match(prd, /## 确认/);
   assert.match(artifacts, /GitHub Issue/);
   assert.match(
     artifacts,
-    /clear\s+change to an existing product keeps one GitHub Issue as the sole requirement/i,
+    /现有产品的一项清晰变更只保留一个 GitHub Issue/,
   );
   assert.doesNotMatch(artifacts, /\.scd\/specs\/<slug>\.md/);
-  assert.match(artifacts, /## Acceptance/);
-  assert.match(artifacts, /A1:/);
+  assert.match(artifacts, /## 验收条件/);
+  assert.match(artifacts, /A1：/);
   assert.match(artifacts, /\.scd\/architecture\.md/);
-  assert.match(artifacts, /Do not create a permanent `implementation-plan\.md`/);
+  assert.match(artifacts, /不要创建永久 `implementation-plan\.md`/);
 });
 
 test("downstream skills consume PRD authority and delivery evidence", () => {
@@ -83,12 +83,12 @@ test("downstream skills consume PRD authority and delivery evidence", () => {
     "skills/scd-quickdev/references/evidence-contract.md",
   );
 
-  assert.match(skill, /Delivery Issue.*delivery boundary and acceptance source of truth/i);
-  assert.match(skill, /approved greenfield PRD remains authoritative/i);
-  assert.match(skill, /confirm every named `FR-\*` identifier exists/i);
-  assert.match(uiux, /exact approved `.scd\/product\/prd\.md` version/i);
-  assert.match(architecture, /exact approved `.scd\/product\/prd\.md` version/i);
-  assert.match(skill, /Map every item to observed evidence,\s+`UNVERIFIED`/);
+  assert.match(skill, /GitHub Delivery Issue 作为交付边界和验收事实来源/);
+  assert.match(skill, /已确认的全新产品 PRD 继续负责产品级/);
+  assert.match(skill, /确认每个具名 `FR-\*` 标识存在/);
+  assert.match(uiux, /已确认 `.scd\/product\/prd\.md` 精确版本/);
+  assert.match(architecture, /已确认 `.scd\/product\/prd\.md` 精确版本/);
+  assert.match(skill, /把每个验收项映射到已观察证据、`UNVERIFIED`/);
   assert.match(evidence, /A1 PASS/);
-  assert.match(evidence, /return that decision to discovery/i);
+  assert.match(evidence, /把决策返回 Discovery/);
 });

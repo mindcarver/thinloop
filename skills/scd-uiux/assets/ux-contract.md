@@ -2,31 +2,31 @@
 managed_by: scd-uiux
 status: draft
 sources:
-  - <repository-relative path or stable URL>
+  - <仓库相对路径或稳定 URL>
 ---
 
-# Outcome and boundary
+# 结果与边界
 
-## Key journeys
+## 关键旅程
 
-## Surfaces and navigation
+## 界面与导航
 
-## Flow and state contracts
+## 流程与状态契约
 
-## Interaction and content patterns
+## 交互与内容模式
 
-## Responsive and accessibility
+## 响应式与无障碍
 
-## Visual direction and system delta
+## 视觉方向与系统增量
 
-## Engineering seam
+## 工程衔接点
 
-### Interface needs
+### 接口需求
 
-### Shared contract references
+### 共享契约引用
 
-## Visual references
+## 视觉参考
 
-## Acceptance mapping
+## 验收映射
 
-## Open decisions
+## 待定决策

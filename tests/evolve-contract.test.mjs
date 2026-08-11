@@ -89,12 +89,12 @@ test("evolve is explicit-only and diagnosis is read-only before candidate-ID app
   const diagnosis = read("skills/scd-evolve/references/diagnosis-contract.md");
   const trial = read("skills/scd-evolve/references/trial-contract.md");
 
-  assert.match(skill, /Use only when the user explicitly invokes/i);
-  assert.match(skill, /Do not invoke automatically during ordinary development/i);
-  assert.match(skill, /Do not search platform session stores or logs/i);
-  assert.match(skill, /Make no repository write, including history, before approval/i);
-  assert.match(trial, /user explicitly approves its stable candidate ID/i);
-  assert.match(trial, /Generic agreement without the candidate ID is insufficient/i);
+  assert.match(skill, /只有用户明确调用 `scd-evolve`/);
+  assert.match(skill, /普通开发期间[\s\S]*不得自动调用/);
+  assert.match(skill, /不得搜索平台会话存储或日志/);
+  assert.match(skill, /确认前不得写入仓库，包括历史/);
+  assert.match(trial, /用户明确确认其稳定候选 ID/);
+  assert.match(trial, /不含候选 ID 的一般同意不充分/);
   assert.match(diagnosis, /full-transcript/);
   assert.match(diagnosis, /visible-context/);
   assert.match(diagnosis, /partial/);
@@ -105,17 +105,17 @@ test("evolve limits attribution and one candidate to Thinloop skills actually us
   const diagnosis = read("skills/scd-evolve/references/diagnosis-contract.md");
   const candidate = read("skills/scd-evolve/assets/evolution-candidate.md");
 
-  assert.match(skill, /skills demonstrably used in the interaction/i);
-  assert.match(skill, /at most one same-root-cause batch/i);
-  assert.match(skill, /Multiple Thinloop targets require an explicit coupling rationale/i);
-  assert.match(diagnosis, /A Thinloop skill is editable only when/i);
-  assert.match(diagnosis, /One signal may support a candidate/i);
+  assert.match(skill, /有证据证明确实使用的 Thinloop 技能/);
+  assert.match(skill, /最多提出一个同根因批次/);
+  assert.match(skill, /多个 Thinloop 目标必须有明确耦合理由/);
+  assert.match(diagnosis, /只有交互显示某个 Thinloop 技能已加载、明确调用/);
+  assert.match(diagnosis, /一个信号即可支持候选项/);
   assert.match(diagnosis, /exploratory/);
   assert.match(diagnosis, /supported/);
   assert.match(diagnosis, /confirmed/);
-  assert.match(candidate, /Matched signals/);
-  assert.match(candidate, /Unmatched signals/);
-  assert.match(candidate, /Possible misattribution/);
+  assert.match(candidate, /匹配信号/);
+  assert.match(candidate, /未匹配信号/);
+  assert.match(candidate, /可能的错误归因/);
   assert.match(candidate, /`add`/);
   assert.match(candidate, /`delete`/);
   assert.match(candidate, /`replace`/);

@@ -1,18 +1,18 @@
 ---
 status: active
-tags: [tag-one, tag-two]
+tags: [标签一, 标签二]
 difficulty: basic | medium | advanced
 created: YYYY-MM-DD
-source: SHORT_SOURCE_CONTEXT
+source: 简短来源上下文
 ---
 
-# QUESTION
+# 问题
 
-**Answer**
+**参考答案**
 
-REFERENCE_ANSWER
+参考答案正文
 
-**Key points an interviewer listens for**
+**面试官关注的要点**
 
-- POINT_ONE
-- POINT_TWO
+- 要点一
+- 要点二

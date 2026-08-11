@@ -1,176 +1,104 @@
 ---
 name: scd-architecture
-description: "Design or validate domain models, system boundaries, data ownership, and shared machine-readable interface contracts before production implementation. Use for 0-to-1 products after the product core is stable; new services, modules, public APIs, events, or integrations; consequential data, permission, transaction, concurrency, compatibility, migration, rollback, or reliability decisions; architecture evolution in an existing repository; or an explicit architecture, domain-model, or interface-design request. Compose it with scd-discovery, scd-uiux, and scd-quickdev. Do not use for a clear local implementation, a trivial endpoint already governed by existing contracts, pure UI/UX work, or production coding, migration execution, and deployment."
+description: "在生产实施前设计或验证领域模型、系统边界、数据所有权和共享的机器可读接口契约。适用于产品核心稳定后的 0 到 1 产品；新增服务、模块、公共 API、事件或集成；涉及数据、权限、事务、并发、兼容性、迁移、回滚或可靠性的重要决策；现有仓库的架构演进；或明确的架构、领域模型或接口设计请求。与 scd-discovery、scd-uiux 和 scd-quickdev 组合使用。不适用于清晰的局部实现、已受现有契约约束的简单端点、纯 UI/UX 工作，也不负责生产编码、迁移执行和部署。"
 ---
 
-# SCD Architecture
+# SCD 架构设计
 
-Turn approved product behavior into a coherent technical design and verifiable
-shared contracts without making architecture a mandatory stage for every
-change. Design and validate; leave production implementation to
-`scd-quickdev`.
+把已确认的产品行为转化为一致的技术设计和可验证的共享契约，但不把架构设计变成每次变更的必经阶段。本技能负责设计与验证；生产实施交给 `scd-quickdev`。
 
-## Select the lightest sufficient path
+## 选择最轻量且充分的路径
 
-Inspect the request and repository, then choose internally:
+检查请求和仓库后，在内部选择：
 
-- **Direct:** the change fits existing boundaries and contracts. Hand it to
-  `scd-quickdev` without architecture questions or artifacts.
-- **Focused:** one interface, domain rule mapping, module boundary, data
-  ownership decision, or technical trade-off needs design.
-- **Product:** a 0-to-1 system needs a domain, system, and interface baseline
-  after its product core is stable.
-- **Evolution:** an existing system needs an architectural delta. Preserve the
-  baseline and document only durable boundary changes or activated feature
-  risks.
-- **Validate:** existing architecture or contracts need a read-only coherence,
-  compatibility, or implementation-readiness audit.
+- **直接实施：** 变更符合现有边界和契约。不提架构问题、不创建架构产物，直接交给 `scd-quickdev`。
+- **聚焦设计：** 需要设计一个接口、领域规则映射、模块边界、数据所有权决策或技术取舍。
+- **产品架构：** 0 到 1 系统在产品核心稳定后，需要建立领域、系统和接口基线。
+- **架构演进：** 现有系统需要架构增量。保留基线，只记录持久的边界变化或已触发的功能风险。
+- **架构验证：** 对现有架构或契约执行只读的一致性、兼容性或实施就绪度审计。
 
-Do not announce these path names unless the user asks about the method. Project
-size alone does not justify Product work, and one new endpoint does not justify
-rewriting the architecture.
+除非用户询问方法，否则不要公布这些路径名称。项目规模本身不足以证明需要“产品架构”，新增一个端点也不足以证明需要重写架构。
 
-## Start from product and repository truth
+## 从产品事实和仓库事实出发
 
-Read applicable repository instructions, the governing GitHub Issue,
-the exact approved `.scd/product/prd.md` version when one governs the product,
-ready UX contracts when activated, existing architecture and ADRs, interface
-contracts, schemas, code boundaries, runtime configuration, tests, and
-deployment topology before asking questions. Inspect actual code and
-machine-readable contracts; filenames and diagrams are only candidates.
+提问前，阅读适用的仓库说明、作为依据的 GitHub Issue、确实约束该产品的已确认 `.scd/product/prd.md` 精确版本、已启用且就绪的 UX 契约、现有架构与 ADR、接口契约、模式、代码边界、运行时配置、测试和部署拓扑。检查实际代码与机器可读契约；文件名和图表只能作为候选证据。
 
-For Product work, require the product core to establish users, outcome,
-business behavior, permissions, boundaries, and acceptance. The approved PRD
-owns product-level business decisions when one exists; otherwise the governing
-Issue owns them. Architecture may translate approved rules into entities,
-states, invariants, commands, events, and ownership, but must not invent
-missing product behavior. Return material gaps to `scd-discovery`.
+进行“产品架构”时，产品核心必须已经明确用户、结果、业务行为、权限、边界和验收条件。存在已确认 PRD 时，由 PRD 负责产品级业务决策；否则由作为依据的 Issue 负责。架构可以把已确认规则转化为实体、状态、不变量、命令、事件和所有权，但不得发明缺失的产品行为。实质性缺口返回 `scd-discovery`。
 
-After the product core stabilizes, architecture may proceed in parallel with
-`scd-uiux`. Neither waits for the other to finish, but both must reconcile
-operations, data, errors, permissions, and terminology through the shared
-interface contract before independent frontend and backend implementation.
+产品核心稳定后，架构设计可以与 `scd-uiux` 并行进行。二者互不等待完成，但前后端独立实施前，必须通过共享接口契约统一操作、数据、错误、权限和术语。
 
-## Establish the design slice
+## 确定设计切片
 
-Identify the smallest complete architectural outcome and the acceptance
-behaviors it supports. Expand only activated concerns:
+找出最小但完整的架构结果，以及它支持的验收行为。只展开已触发的关注点：
 
-- domain model, lifecycle, invariants, permissions, or business transactions;
-- component boundaries, responsibilities, dependencies, and data ownership;
-- runtime and data flow, consistency, concurrency, retries, and failure;
-- shared API, event, file, CLI, plugin, or internal module contracts;
-- security, privacy, latency, capacity, audit, retention, and observability;
-- compatibility, migration, rollout, rollback, and external integrations.
+- 领域模型、生命周期、不变量、权限或业务事务；
+- 组件边界、职责、依赖和数据所有权；
+- 运行时与数据流、一致性、并发、重试和失败；
+- 共享 API、事件、文件、CLI、插件或内部模块契约；
+- 安全、隐私、延迟、容量、审计、保留和可观测性；
+- 兼容性、迁移、发布、回滚和外部集成。
 
-Ask one material decision at a time only when repository evidence and approved
-constraints cannot answer it. Give a recommendation and rationale. Choose
-reversible, convention-aligned technical details autonomously. Request a user
-decision when vendor lock-in, public compatibility, security or privacy
-boundaries, destructive migration, or another expensive-to-reverse choice is
-at stake.
+只有仓库证据和已确认约束无法回答时，才一次询问一个实质性决策，并给出建议和理由。对可逆且符合惯例的技术细节自主决策。涉及供应商锁定、公共兼容性、安全或隐私边界、破坏性迁移，或其他难以逆转且成本高的选择时，请用户决策。
 
-## Model domain and system responsibilities
+## 建模领域与系统职责
 
-Read `references/architecture-contract.md` for Product work, Evolution work,
-durable artifacts, or architecture readiness review.
+进行产品架构、架构演进、持久产物编写或架构就绪审查时，阅读 `references/architecture-contract.md`。
 
-Map approved business rules to technical responsibility:
+把已确认的业务规则映射到技术职责：
 
-- name the owner of each state transition and invariant;
-- place transaction and consistency boundaries deliberately;
-- distinguish authoritative data from projections, caches, and UI state;
-- make permission enforcement and trust boundaries explicit;
-- define failure containment, retry, idempotency, and recovery where activated;
-- trace components and flows to product acceptance.
+- 明确每个状态转换和不变量的所有者；
+- 有意识地设置事务与一致性边界；
+- 区分权威数据、投影、缓存和 UI 状态；
+- 明确权限执行和信任边界；
+- 在需要时定义故障隔离、重试、幂等与恢复；
+- 将组件和流程追溯到产品验收。
 
-Keep the ordinary domain model in `.scd/architecture.md`. Split
-`.scd/domain.md` only when ownership, lifecycle, permissions, audit,
-cross-entity invariants, synchronization, settlement, or migration makes the
-domain independently complex.
+普通领域模型保存在 `.scd/architecture.md`。只有所有权、生命周期、权限、审计、跨实体不变量、同步、结算或迁移使领域本身足够复杂时，才拆出 `.scd/domain.md`。
 
-For an existing system, update `.scd/architecture.md` only when a durable
-component responsibility, data owner, runtime flow, trust boundary, or
-cross-cutting constraint changes. Use `.scd/designs/<feature>.md` for
-consequential feature-local coordination, transactions, concurrency,
-integration, migration, rollback, or alternative analysis.
+对于现有系统，只有持久的组件职责、数据所有者、运行时流程、信任边界或横切约束发生变化时，才更新 `.scd/architecture.md`。重要的功能局部协调、事务、并发、集成、迁移、回滚或方案分析放入 `.scd/designs/<feature>.md`。
 
-## Produce shared machine-readable contracts
+## 生成共享的机器可读契约
 
-Read `references/interface-contract.md` whenever work crosses a frontend,
-service, plugin, event, file, or module boundary.
+工作跨越前端、服务、插件、事件、文件或模块边界时，阅读 `references/interface-contract.md`。
 
-Prefer the repository's existing contract location and format. When none
-exists, use the visible root `contracts/` directory. Choose a format that the
-actual consumers can parse, such as OpenAPI, GraphQL SDL, AsyncAPI, JSON Schema,
-Protocol Buffers, or a language-level schema with runtime validation.
+优先使用仓库现有的契约位置和格式。没有现成位置时，使用根目录中可见的 `contracts/`。选择实际消费者能够解析的格式，例如 OpenAPI、GraphQL SDL、AsyncAPI、JSON Schema、Protocol Buffers，或带运行时验证的语言级模式。
 
-Architecture facilitates contract convergence but does not own it alone and
-must not unilaterally finalize the interface. Use approved product behavior for
-business semantics, UX interface needs for observable states, and frontend and
-backend constraints for the final shared contract. Do not copy field tables
-into architecture prose.
+架构设计负责推动契约收敛，但不独占契约所有权，也不得单方面定稿接口。业务语义来自已确认的产品行为，可观察状态来自 UX 接口需求，最终共享契约还必须纳入前后端约束。不要把字段表复制到架构说明中。
 
-Markdown may hold rationale or an early interface sketch, but a boundary that
-enables independent implementation cannot become `ready` until its canonical
-contract is machine-readable, parses with a real tool, and includes the
-activated operations, types, errors, permissions, and representative examples.
+Markdown 可以承载理由或早期接口草图，但支持独立实施的边界，只有在规范契约机器可读、经过真实工具解析，并覆盖已触发的操作、类型、错误、权限和代表性示例后，才能进入 `ready`。
 
-## Validate with the smallest real evidence
+## 用最小真实证据验证
 
-Read `references/readiness-review.md` before setting an architecture or feature
-design to `ready`, declaring a contract ready, or completing Validate work.
+把架构或功能设计设为 `ready`、宣布契约就绪或完成“架构验证”前，阅读 `references/readiness-review.md`。
 
-Run the strongest available checks against the actual artifacts:
+针对真实产物运行可用的最强检查：
 
-- parse, lint, or compile every machine-readable contract with a format-aware
-  tool;
-- validate representative examples and generated types or mocks when practical;
-- inspect breaking changes and consumer compatibility;
-- verify acceptance, UX states, domain behavior, and contract operations map
-  consistently;
-- exercise an isolated technical spike when feasibility cannot be established
-  from repository evidence.
+- 使用格式感知工具解析、检查或编译每个机器可读契约；
+- 在可行时验证代表性示例、生成类型或模拟对象；
+- 检查破坏性变更和消费者兼容性；
+- 验证验收、UX 状态、领域行为和契约操作的映射是否一致；
+- 仅在仓库证据无法确认可行性时，执行隔离的技术探针。
 
-An isolated spike may create disposable, non-production code to answer one
-named question. Record its setup, observed result, and limitation. Do not merge
-it into application entry points or dependencies. This skill must not write
-production business code, execute a real data migration, alter live
-infrastructure, or deploy.
+隔离探针可以创建一次性非生产代码，只回答一个具名问题。记录设置、观察结果和限制。不得把探针并入应用入口或生产依赖。本技能不得编写生产业务代码、执行真实数据迁移、修改在线基础设施或部署。
 
-If a required parser or consumer check cannot run, keep the relevant artifact
-`draft` and report the exact unverified boundary.
+如果必须的解析器或消费者检查无法运行，相关产物必须保持 `draft`，并报告确切的未验证边界。
 
-## Preserve only durable design
+## 只保留持久设计
 
-Keep short advice and clear local decisions in conversation. Prefer existing
-repository documentation and contract locations. When no suitable architecture
-home exists:
+简短建议和清晰的局部决策只保留在对话中。优先使用仓库现有文档和契约位置。没有合适的架构位置时：
 
-- create or evolve `.scd/architecture.md` from
-  `assets/architecture-contract.md` for the system baseline;
-- create `.scd/designs/<feature>.md` from `assets/feature-design.md` for a
-  consequential feature-local design;
-- create `.scd/domain.md` from `assets/domain-contract.md` only after the
-  complexity threshold is met;
-- place new machine contracts under root `contracts/`.
+- 从 `assets/architecture-contract.md` 创建或演进 `.scd/architecture.md`，作为系统基线；
+- 从 `assets/feature-design.md` 创建 `.scd/designs/<feature>.md`，记录重要的功能局部设计；
+- 只有达到复杂度阈值后，才从 `assets/domain-contract.md` 创建 `.scd/domain.md`；
+- 新的机器契约放在根目录 `contracts/` 下。
 
-Use `status: draft` while a material design or shared-contract decision remains
-and `status: ready` after readiness review. `ready` is mechanical and semantic
-readiness, not a second product approval. Do not create PRDs, sprint files,
-frontend architecture documents, duplicated API prose, or permanent
-implementation plans.
+存在重要设计或共享契约决策未定时使用 `status: draft`；通过就绪审查后使用 `status: ready`。`ready` 表示机械与语义就绪，不是第二次产品确认。不要创建 PRD、Sprint 文件、前端架构文档、重复的 API 说明或永久实施计划。
 
-## Route changes and hand off
+## 路由变更并交接
 
-- Return changed user behavior, business rules, permissions, data or privacy
-  boundaries, irreversible actions, or acceptance to `scd-discovery`.
-- Return changed journeys, surfaces, interaction feedback, responsive behavior,
-  accessibility, or visual direction to `scd-uiux`.
-- Resolve internal, reversible architecture decisions here.
-- Coordinate non-product breaking interface changes with every affected
-  consumer and design compatibility, migration, and rollback before handoff.
+- 用户行为、业务规则、权限、数据或隐私边界、不可逆操作或验收条件发生变化时，返回 `scd-discovery`。
+- 旅程、界面、交互反馈、响应式行为、无障碍或视觉方向发生变化时，返回 `scd-uiux`。
+- 内部且可逆的架构决策在本技能内解决。
+- 对不改变产品行为但会破坏接口的变更，交接前必须与所有受影响消费者协调，并设计兼容性、迁移和回滚。
 
-For production implementation, hand the approved GitHub Issue, ready
-UX contract when present, ready architecture or feature design, canonical
-machine contracts, and observed validation evidence to `scd-quickdev`.
+交给生产实施时，向 `scd-quickdev` 提供：已确认的 GitHub Issue、存在时已就绪的 UX 契约、已就绪的架构或功能设计、规范的机器契约，以及已观察到的验证证据。

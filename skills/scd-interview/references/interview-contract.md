@@ -1,81 +1,58 @@
-# Interview-question contract
+# 面试题契约
 
-Use this reference while deciding what is eligible, how answers should be
-grounded, and how existing questions change.
+判断题目是否合格、答案如何建立依据，以及现有题目如何变化时使用本参考。
 
-## Purpose
+## 目的
 
-The store is study material for the human: interview questions with reference
-answers. This differs from `scd-knowledge`, which captures lessons that change a
-later agent decision. A capture may draw on the same conversation, but the two
-stores never share an entry.
+题库是给用户学习的材料：带参考答案的面试题。它不同于 `scd-knowledge`，后者保存会改变后续 Agent 决策的经验。两者可以来自同一对话，但绝不共享一个条目。
 
-## Eligibility
+## 准入条件
 
-A candidate must satisfy both tests:
+候选题必须通过两个测试：
 
-1. **Askability:** an interviewer could reasonably ask this about the discussed
-   material, and the question tests understanding rather than plain recall.
-2. **Grounding:** the reference answer is supported by what the conversation
-   actually discussed or decided, or by a named artifact (code, test, run) that
-   was in view.
+1. **可提问性：** 面试官可能针对讨论材料合理提出，且问题测试理解而不是简单记忆。
+2. **依据：** 参考答案由对话真实讨论或决定的内容支持，或由当时可见的具名产物（代码、测试、运行）支持。
 
-Sources that usually yield candidates:
+常见候选来源：
 
-- a decision with tradeoffs ("Why X over Y?");
-- a root cause and the diagnosis path that found it;
-- a mechanism, architecture, or design pattern explained or applied;
-- a failure mode, edge case, or performance/security consideration surfaced;
-- a tooling or framework gotcha the conversation hit.
+- 带取舍的决策，例如“为什么选择 X 而不是 Y？”；
+- 根因以及找到它的诊断路径；
+- 已解释或应用的机制、架构或设计模式；
+- 已暴露的失败模式、边界场景或性能/安全考虑；
+- 对话遇到的工具或框架陷阱。
 
-Reject:
+拒绝：
 
-- plain facts an interviewer would not probe and the conversation did not deepen;
-- pure process narration or conversation summaries;
-- unsupported claims — an answer the conversation could not support;
-- personal, private, or confidential content;
-- generic advice that names no mechanism.
+- 面试官不会深入、且对话也没有深入的普通事实；
+- 纯流程叙述或对话摘要；
+- 无支持声明，即对话无法支持答案；
+- 个人、私密或机密内容；
+- 没有具名机制的通用建议。
 
-## Reference answers
+## 参考答案
 
-- Ground every answer in what was actually said, decided, or observed. Where the
-  conversation only touched a topic, say so and give the entry point rather than
-  fabricating depth.
-- Capture the mechanism, the tradeoff, or the evidence — the part an interviewer
-  listens for — not the full transcript.
-- Preserve the human's own explanation when they gave one; it is an attributable
-  source.
-- Mark genuinely uncertain or version-dependent behavior as such instead of
-  asserting it.
+- 每个答案都必须以真实陈述、决策或观察为依据。对话只浅谈主题时，直接说明并给出切入点，不得编造深度。
+- 提取面试官关注的机制、取舍或证据，不保存完整转录。
+- 用户给出自己的解释时保留其含义，并标为可归属来源。
+- 真正不确定或依赖版本的行为应明确标记，不得断言。
 
-## Tags and difficulty
+## 标签与难度
 
-- Tags: 1-4 technology topics (`python`, `async`, `postgres`, `git`, ...).
-- Difficulty: `basic`, `medium`, or `advanced`, judged by what the conversation
-  showed.
+- 标签：1 到 4 个技术主题，例如 `python`、`async`、`postgres`、`git`。
+- 难度：`basic`、`medium` 或 `advanced`，按对话展示的深度判断。
 
-## Deduplication and conflict
+## 去重与冲突
 
-Compare the question's substance, not its wording.
+比较问题实质，而不是措辞。
 
-- Same substance already saved -> skip the duplicate.
-- Near-duplicate differing only in phrasing -> propose a single edited entry.
-- Same mechanism, different or conflicting answer -> surface the conflict and let
-  the user choose, rather than silently overwriting.
+- 相同实质已保存：跳过重复。
+- 仅表达不同的近重复：建议编辑为一个条目。
+- 相同机制但答案不同或冲突：呈现冲突并让用户选择，不得悄悄覆盖。
 
-## Safety
+## 安全
 
-Before presenting or writing a draft, remove credentials, tokens, passwords,
-cookies, authentication headers, private keys, secret environment values,
-sensitive connection strings, direct personal contact or identity data, and
-irrelevant absolute user paths. Retain variable names, placeholders, and
-repository-relative paths. If sanitization removes the point of the question,
-reject the write and explain why.
+展示或写入草稿前，删除凭据、令牌、密码、Cookie、身份验证头、私钥、秘密环境值、敏感连接字符串、直接个人联系方式或身份数据，以及无关用户绝对路径。保留变量名、占位符和仓库相对路径。脱敏会移除问题意义时，拒绝写入并解释原因。
 
-## Storage
+## 存储
 
-The personal root defaults to `<user-home>/.scd/interview-questions/`,
-overridable by `interview_root` in `<user-home>/.scd/config.json` or by an
-explicit path in the request. A question entry is one Markdown file; `INDEX.md`
-keeps one line per active entry; superseded entries move to `archive/` and leave
-`INDEX.md`. Never stage, commit, or push the personal store.
+个人根目录默认为 `<user-home>/.scd/interview-questions/`，可以通过 `<user-home>/.scd/config.json` 的 `interview_root` 或请求中的明确路径覆盖。一个题目对应一个 Markdown 文件；`INDEX.md` 每个活跃条目一行；被取代条目移到 `archive/` 并从 `INDEX.md` 删除。不得暂存、提交或推送个人题库。

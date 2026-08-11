@@ -1,4 +1,4 @@
 interface:
-  display_name: "SCD Discovery"
-  short_description: "Clarify product intent into an approved Issue"
-  default_prompt: "Use $scd-discovery to turn this product idea into an approved, testable GitHub Issue before implementation."
+  display_name: "SCD 需求发现"
+  short_description: "将产品意图澄清为已确认的 Issue"
+  default_prompt: "使用 $scd-discovery，在实施前将这个产品想法转化为已确认且可测试的 GitHub Issue。"

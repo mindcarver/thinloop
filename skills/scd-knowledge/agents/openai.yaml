@@ -1,4 +1,4 @@
 interface:
-  display_name: "SCD Knowledge"
-  short_description: "Capture and retrieve proven dev knowledge"
-  default_prompt: "Use $scd-knowledge to capture or retrieve concise, evidence-backed development knowledge."
+  display_name: "SCD 开发知识"
+  short_description: "沉淀和检索经过验证的开发知识"
+  default_prompt: "使用 $scd-knowledge 沉淀或检索简洁且有证据支持的开发知识。"

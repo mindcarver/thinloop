@@ -1,44 +1,35 @@
-# Reengineering execution contract
+# 再工程执行契约
 
-This contract adds Reengineering's source, compatibility, receipt, parity, and
-cutover gates to the generic READY-wave mechanics owned by `scd-execute`.
-Together they consume an approved `scd-project` graph without changing Project
-into a scheduler or widening one QuickDev lane across multiple Delivery Issues.
+本契约在 `scd-execute` 负责的通用 READY 波次机制上增加再工程的来源、兼容性、收据、等价和切换门。二者共同消费已确认 `scd-project` 依赖图，同时不把 Project 变成调度器，也不让一条 QuickDev 通道跨越多个 Delivery Issues。
 
-## Execution authority
+## 执行权限
 
-Execution may start only when:
+只有满足以下条件才能开始执行：
 
-- the user approved the exact Initiative graph revision and materialized
-  Delivery Issue contracts;
-- the live graph validates;
-- at least one node is READY;
-- the compatibility envelope, target contracts, and required architecture are
-  ready for those nodes;
-- license, security, privacy, data, and production human gates do not block the
-  selected work.
+- 用户已确认精确 Initiative 图版本和已实例化 Delivery Issue 契约；
+- 实时依赖图验证通过；
+- 至少一个节点 READY；
+- 这些节点的兼容性边界、目标契约和必需架构已就绪；
+- 许可证、安全、隐私、数据和生产人工门不阻塞选中工作。
 
-Direction approval or Initiative creation alone does not authorize execution of
-unspecified nodes.
+仅方向确认或创建 Initiative 不授权执行未具体说明的节点。
 
-## Non-substitution rules
+## 不可替代规则
 
-The following evidence classes are not interchangeable:
+以下证据类别不能互相替代：
 
-- session-local tasks, todos, or checklists are not GitHub Issues;
-- a local plan, memory, or receipt is not the Initiative;
-- an implementation package list is not a validated dependency DAG;
-- a commit or direct default-branch push is not a QuickDev lane or pull request;
-- local engineering checks are not fresh-context acceptance;
-- an implementer's completion summary is not integration evidence.
+- 会话局部任务、待办或清单不是 GitHub Issues；
+- 本地计划、记忆或收据不是 Initiative；
+- 实施包列表不是经过验证的依赖 DAG；
+- 提交或直接推送默认分支不是 QuickDev 通道或拉取请求；
+- 本地工程检查不是新上下文验收；
+- 实施者完成摘要不是集成证据。
 
-If a required tracker or Thinloop dependency is unavailable, classify the
-affected transition as `BLOCKED`. Do not substitute a weaker local artifact.
+必需跟踪器或 Thinloop 依赖不可用时，把受影响转换分类为 `BLOCKED`。不得用更弱的本地产物替代。
 
-## Validate the pre-execution receipt
+## 验证执行前收据
 
-Immediately before the first implementation edit or commit, construct this
-transient snapshot from re-read live tracker evidence:
+首次实施编辑或提交前，重新读取实时跟踪器证据并构建临时快照：
 
 ```json
 {
@@ -51,10 +42,10 @@ transient snapshot from re-read live tracker evidence:
   "graphRevision": 3,
   "trackerVerified": true,
   "graphValidated": true,
-  "directionApproval": "direct user approval evidence",
+  "directionApproval": "用户直接确认的证据",
   "graphApproval": {
     "revision": 3,
-    "evidence": "direct approval of graph revision 3"
+    "evidence": "对图版本 3 的直接确认"
   },
   "requiredSkills": {
     "scdProject": "available",
@@ -73,123 +64,99 @@ transient snapshot from re-read live tracker evidence:
 }
 ```
 
-Run:
+运行：
 
 ```bash
 node skills/scd-reengineering/scripts/validate-execution-receipt.mjs \
   --file <transient-receipt.json>
 ```
 
-The validator proves only that the receipt is structurally executable. The
-executor must obtain every field from live URLs, the graph validator, available
-skill discovery, and direct approval; never fill a field from assumption. Do
-not commit the receipt or persist it as a second execution database.
+验证器只证明收据结构上可执行。执行者必须从实时 URL、图验证器、可用技能发现和直接确认取得每个字段，不得根据假设填写。不得提交收据或持久化为第二执行数据库。
 
-Any validation error is fail-closed. Report `BLOCKED`, preserve the exact
-error, and return to the owning state. Rebuild and revalidate the receipt before
-each new READY wave because graph and Issue state may have changed.
+任何验证错误都故障关闭。报告 `BLOCKED`，保留精确错误并返回负责状态。每个新 READY 波次前重建并重新验证收据，因为依赖图和 Issue 状态可能已经变化。
 
-## Build a READY wave
+## 构建 READY 波次
 
-Recompute states from live GitHub evidence. Begin with the deterministic READY
-set from `scd-project`, then apply temporary coordination constraints:
+从实时 GitHub 证据重新计算状态。先取得 `scd-project` 的确定性 READY 集合，再应用临时协调约束：
 
-- overlapping file or module ownership;
-- shared generated files or lockfiles;
-- one mutable fixture, database, service, device, or external environment;
-- likely merge conflicts that would make concurrent evidence unreliable;
-- host concurrency limits.
+- 文件或模块所有权重叠；
+- 共享生成文件或锁文件；
+- 单一可变测试数据、数据库、服务、设备或外部环境；
+- 会使并发证据不可靠的合并冲突风险；
+- 主机并发限制。
 
-Coordination constraints may serialize otherwise READY nodes, but they are not
-hard causal dependencies and must not be written into the Project DAG as fake
-edges.
+协调约束可以串行化原本 READY 的节点，但不是硬因果依赖，不得作为伪造边写入 Project DAG。
 
-Choose the smallest useful wave. Serial execution is valid when isolation is
-unavailable.
+选择最小有效波次。无法隔离时允许串行执行。
 
-## Launch isolated lanes
+## 启动隔离通道
 
-For every node in a parallel wave:
+对并行波次中的每个节点：
 
-1. create a dedicated branch and isolated worktree from the synchronized base;
-2. assign exactly one Delivery Issue;
-3. state explicit file or module ownership;
-4. tell the worker that other agents are active and it must preserve and adapt
-   to their changes rather than reverting them;
-5. invoke `scd-quickdev` with the Initiative, graph revision, Issue, ready
-   architecture/contracts, and baseline fixtures;
-6. require task-local tests, complete diff review, a pull request, and the
-   normal independent fresh-context verifier;
-7. prohibit sibling Issue implementation, cross-lane staging, production
-   mutation, acceptance weakening, or direct pushes to the default branch.
+1. 从已同步基准创建专用分支和隔离工作树；
+2. 只分配一个 Delivery Issue；
+3. 明确文件或模块所有权；
+4. 告知执行 Agent 有其他 Agent 同时工作，必须保留并适配他人变更，不得回退；
+5. 调用 `scd-quickdev`，传入 Initiative、图版本、Issue、已就绪架构/契约和基线测试数据；
+6. 要求任务局部测试、完整差异评审、拉取请求和普通独立新上下文验收者；
+7. 禁止实施兄弟 Issue、跨通道暂存、修改生产环境、弱化验收或直接推送默认分支。
 
-Bound the wave by available agent slots and repository policy. Do not spawn
-background work that the parent cannot observe and reconcile.
+波次受可用 Agent 槽和仓库策略约束。不得启动父进程无法观察和协调的后台工作。
 
-## Merge and unlock
+## 合并并解锁
 
-Pull requests may be developed in parallel, but merge them one at a time:
+拉取请求可以并行开发，但必须逐个合并：
 
-1. confirm the lane still targets the current Issue and graph revision;
-2. wait for required checks and independent acceptance;
-3. merge an eligible pull request;
-4. synchronize the base branch;
-5. update or rebase remaining worktrees safely;
-6. rerun checks affected by the merged shared state;
-7. close the Delivery Issue only under its QuickDev acceptance contract;
-8. rebuild and validate the Project graph to compute the next READY wave.
+1. 确认通道仍对应当前 Issue 和图版本；
+2. 等待必需检查和独立验收；
+3. 合并一个符合条件的拉取请求；
+4. 同步基准分支；
+5. 安全更新或变基剩余工作树；
+6. 重新运行受已合并共享状态影响的检查；
+7. 只按 QuickDev 验收契约关闭 Delivery Issue；
+8. 重建并验证 Project 依赖图，计算下一 READY 波次。
 
-A merge that invalidates a sibling's assumptions pauses that lane for rebase,
-reinspection, and reverification. Do not treat concurrent green checks against
-different base commits as assembled-system evidence.
+一次合并使兄弟通道假设失效时，暂停该通道，重新变基、检查和验证。不得把针对不同基准提交的并发绿色检查当作组装系统证据。
 
-## Failure and replanning
+## 失败与重新规划
 
-Classify each lane:
+对每条通道分类：
 
-- `PASS` - independent acceptance passed and delivery can complete;
-- `FAIL` - acceptance was exercised and failed;
-- `BLOCKED` - required evidence, authority, dependency, or environment is
-  unavailable.
+- `PASS`：独立验收通过，交付可以完成；
+- `FAIL`：验收已经练习并失败；
+- `BLOCKED`：必需证据、权限、依赖或环境不可用。
 
-On FAIL or BLOCKED:
+出现 FAIL 或 BLOCKED 时：
 
-- stop downstream nodes;
-- keep unrelated READY lanes running only when their contracts and evidence are
-  unaffected;
-- record the direct evidence on the Delivery Issue;
-- return changed behavior to Discovery, changed boundaries to Architecture, and
-  changed nodes or edges to Project;
-- require a new approved graph revision when topology or product contracts
-  change.
+- 停止下游节点；
+- 只有契约与证据不受影响时才继续无关 READY 通道；
+- 把直接证据记录到中文 Delivery Issue；
+- 行为变化返回 Discovery，边界变化返回 Architecture，节点或边变化返回 Project；
+- 拓扑或产品契约变化时，要求新的已确认图版本。
 
-Do not add retries, broaden scope, or weaken parity automatically.
+不得自动增加重试、扩大范围或弱化等价标准。
 
-## Integration and parity gate
+## 集成与等价门
 
-Use a dedicated integration Delivery Issue whenever independently accepted
-children do not prove the assembled outcome. It normally depends on all target
-leaf capabilities and owns:
+独立验收的子节点无法证明组装结果时，使用专门集成 Delivery Issue。它通常依赖全部目标叶能力，并负责：
 
-- assembled build and runtime evidence;
-- cross-capability workflows;
-- differential baseline replay;
-- migration and coexistence checks;
-- rollback rehearsal where activated;
-- the final capability-by-capability PASS/FAIL/UNVERIFIED/BLOCKED report.
+- 组装后的构建和运行时证据；
+- 跨能力工作流；
+- 差分基线重放；
+- 迁移与共存检查；
+- 已触发时的回滚演练；
+- 最终按能力列出的 PASS/FAIL/UNVERIFIED/BLOCKED 报告。
 
-The integration verifier must use the assembled current base, not child branch
-artifacts or the implementer's summary.
+集成验收者必须使用组装后的当前基准，不能使用子分支产物或实施者摘要。
 
-## Resume after interruption
+## 中断后恢复
 
-Reconstruct execution state from:
+从以下事实重建执行状态：
 
-- the Initiative and validated graph revision;
-- live Delivery Issue state and acceptance evidence;
-- open and merged pull requests;
-- current branches and worktrees;
-- compatibility and integration evidence in authoritative Issues.
+- Initiative 和已验证图版本；
+- 实时 Delivery Issue 状态和验收证据；
+- 开放和已合并拉取请求；
+- 当前分支和工作树；
+- 权威 Issues 中的兼容性与集成证据。
 
-Do not infer DONE from a branch, commit, checked implementation task, or merged
-pull request alone. Do not create a second long-lived execution database.
+不得从分支、提交、已勾选实施任务或已合并拉取请求单独推断 DONE。不要创建第二个长期执行数据库。

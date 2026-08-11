@@ -1,4 +1,4 @@
 interface:
-  display_name: "SCD Project"
-  short_description: "Decompose projects into a validated Issue DAG"
-  default_prompt: "Use $scd-project to turn this approved multi-delivery project into an Initiative, Delivery Issues, and a validated readiness DAG without starting an execution loop."
+  display_name: "SCD 项目规划"
+  short_description: "将项目拆解为经过验证的 Issue DAG"
+  default_prompt: "使用 $scd-project 将这个已确认的多交付项目转化为 Initiative、Delivery Issues 和经过验证的就绪 DAG，但不启动执行循环。"

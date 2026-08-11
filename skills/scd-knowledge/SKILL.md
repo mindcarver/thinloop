@@ -1,23 +1,23 @@
 ---
 name: scd-knowledge
-description: "Capture evidence-backed development experience as concise, approved project or personal cross-project Markdown knowledge, and retrieve, update, merge, or archive that knowledge on request. Use only when the user explicitly asks to capture, review, save, search, update, or manage development experience or knowledge. Do not invoke automatically during ordinary development."
+description: "把有证据支持的开发经验沉淀为简洁、经过确认的项目 Markdown 知识或个人跨项目 Markdown 知识，并按请求检索、更新、合并或归档。只有用户明确要求沉淀、评审、保存、搜索、更新或管理开发经验或知识时使用。普通开发期间不得自动调用。"
 ---
 
-# SCD Knowledge
+# SCD 开发知识
 
-Preserve proven experience without turning every conversation into permanent context. Operate only on an explicit user request and require confirmation before changing knowledge. A capture request authorizes candidate analysis, not persistence; write only after the user confirms the exact draft, scope, destination, and create or update action.
+保留经过验证的经验，但不把每次对话都变成永久上下文。只有用户明确请求时运行，并且修改知识前必须确认。沉淀请求只授权分析候选项，不授权持久化；用户确认精确草稿、范围、目标位置以及创建或更新操作后才能写入。
 
-## Select the requested operation
+## 选择请求的操作
 
-- **Capture:** extract one or more lessons from the current work or from experience the user states.
-- **Retrieve:** search prior project and personal knowledge for the user's current problem.
-- **Maintain:** update, merge, replace, or archive existing knowledge.
+- **沉淀：** 从当前工作或用户陈述的经验中提取一条或多条经验。
+- **检索：** 为用户当前问题搜索既有项目知识和个人知识。
+- **维护：** 更新、合并、替换或归档现有知识。
 
-Do not monitor ordinary development, create speculative knowledge, or modify another Skill, rule, ADR, or Hook. Recommend a better carrier when appropriate and let the user start that separate change.
+不要监控普通开发、创建臆测知识，或修改其他 Skill、规则、ADR 或 Hook。更适合其他载体时给出建议，让用户单独启动该变更。
 
-## Resolve the stores
+## 解析知识库
 
-Use the repository root for project knowledge:
+项目知识使用仓库根目录：
 
 ```text
 .scd/knowledge/
@@ -26,56 +26,56 @@ Use the repository root for project knowledge:
 `-- archive/
 ```
 
-Resolve personal knowledge from an explicit absolute path for this invocation, then from `knowledge_root` in the user-level `<user-home>/.scd/config.json`. When the user first supplies a personal root, merge that value into the user-level config without changing unrelated keys. Resolve the home directory with the current runtime; never hardcode an operating-system path.
+个人知识根目录先取本次调用明确提供的绝对路径，再取用户级 `<user-home>/.scd/config.json` 中的 `knowledge_root`。用户首次提供个人根目录时，把该值合并进用户级配置，不改变无关字段。通过当前运行时解析主目录，绝不硬编码操作系统路径。
 
-Read `references/storage-contract.md` before configuring a root, creating a store, or handling an unavailable path.
+配置根目录、创建知识库或处理不可用路径前阅读 `references/storage-contract.md`。
 
-## Capture knowledge
+## 沉淀知识
 
-1. Inspect the focused conversation, relevant repository state, and observed checks. A conclusion produced by the agent must have supporting evidence. Explicit human practice is itself an attributable source.
-2. Admit a candidate only when it is reusable, plausibly changes a later agent decision or action, and is hard to discover unaided because of at least one barrier:
-   - **Semantic:** project language, abbreviation, or meaning cannot be derived from the words alone.
-   - **Location:** the authoritative entry point or responsibility is not on the intuitive search path.
-   - **Behavioral:** a counterintuitive mechanism, constraint, or failure mode is not safely derivable from ordinary reasoning.
-   Use the barrier during review and evaluation; do not add it as a required persisted field.
-3. Reject generic advice, ordinary facts, task narration, conversation summaries, transient state, personal preference presented as team practice, one-off instructions, unsupported inference, and guidance that does not tell a later agent what to do.
-4. Match evidence to the claim. Semantic knowledge needs an attributable human definition or approved source. Location knowledge needs the named path or symbol and its responsibility verified. Behavioral knowledge needs the smallest observed failure, mechanism, correction, and focused test or runtime result that supports the causal claim.
-5. Verify every named path, symbol, method, command, configuration key, and version against the current repository or authoritative tool output. Source search can disprove a claim but does not by itself prove runtime behavior. Do not present an unverified or stale code-dependent claim as established knowledge.
-6. Reduce each candidate to a trigger, guidance, boundary, minimal sufficient evidence, and source. Do not save a transcript, full log, or large code excerpt.
-7. Recommend **project** scope when the conclusion depends on repository names, paths, architecture, private infrastructure, team conventions, or a project-specific version. Recommend **cross-project** scope when it remains actionable outside this repository and names its technology, platform, or situational boundary. Prefer project scope when portability is uncertain.
-8. Search both active indexes and any plausible matching entries. Compare trigger, guidance, and boundary. Skip duplicates; propose an edit for a material refinement; surface a conflict instead of overwriting it. Never bridge-merge entries merely because A overlaps B and B overlaps C.
-9. When the user explicitly asks to review a completed delivery, use the verified Issue boundary, pull request, confirmed findings, and acceptance evidence as candidate sources. A merged PR, passing suite, or acceptance `PASS` alone does not prove a reusable lesson. This review never starts automatically and never authorizes a write.
-10. Redact direct secrets and unnecessary personal paths. If redaction removes the evidence needed for the conclusion, do not propose the entry.
-11. Show the concise draft, discoverability barrier, behavior expected to change, scope rationale, exact destination, evidence, and whether it will create or update files. Request one explicit confirmation.
-12. After confirmation, replace every template placeholder, write the entry from `assets/knowledge-entry.md`, update the active index from `assets/knowledge-index.md`, and report the exact files changed. Never stage, commit, or push.
+1. 检查聚焦对话、相关仓库状态和观察到的检查。Agent 得出的结论必须有支持证据。用户明确陈述的实践本身可以作为有归属来源。
+2. 候选知识必须可复用、很可能改变后续 Agent 决策或行动，并且因至少一个障碍而难以自行发现：
+   - **语义障碍：** 项目语言、缩写或含义无法只从字面推导。
+   - **位置障碍：** 权威入口或职责不在直观搜索路径上。
+   - **行为障碍：** 反直觉机制、约束或失败模式无法通过普通推理安全推导。
+   障碍用于评审与评估，不是必需持久字段。
+3. 拒绝通用建议、普通事实、任务叙述、对话摘要、临时状态、被当作团队实践的个人偏好、一次性指令、无支持推断，以及不能告诉后续 Agent 应做什么的说明。
+4. 证据必须与声明匹配。语义知识需要可归属的人类定义或已确认来源；位置知识需要验证具名路径或符号及其职责；行为知识需要支持因果声明的最小观察失败、机制、修正和聚焦测试或运行时结果。
+5. 根据当前仓库或权威工具输出验证每个具名路径、符号、方法、命令、配置键和版本。源码搜索可以证伪，但不能单独证明运行时行为。不得把未验证或陈旧的代码依赖声明表述为确定知识。
+6. 把每个候选项压缩为触发条件、指引、边界、最小充分证据和来源。不要保存对话转录、完整日志或大段代码。
+7. 结论依赖仓库名称、路径、架构、私有基础设施、团队惯例或项目特定版本时，建议**项目**范围。结论在仓库外仍可行动，并明确技术、平台或情境边界时，建议**跨项目**范围。可移植性不确定时优先项目范围。
+8. 搜索两个活跃索引和可能匹配的条目。比较触发条件、指引和边界。重复则跳过；实质改进则建议编辑；冲突则呈现，不得覆盖。不能仅因 A 与 B 重叠、B 与 C 重叠就桥接合并。
+9. 用户明确要求评审已完成交付时，以经过验证的 Issue 边界、拉取请求、已确认发现和验收证据作为候选来源。已合并 PR、测试套件通过或验收 `PASS` 本身都不能证明可复用经验。此评审不得自动开始，也不授权写入。
+10. 删除直接密钥和不必要个人路径。脱敏会移除结论所需证据时，不建议该条目。
+11. 展示简洁草稿、可发现性障碍、预期改变的行为、范围理由、精确目标位置、证据，以及会创建还是更新文件。请求一次明确确认。
+12. 确认后，替换每个模板占位符，从 `assets/knowledge-entry.md` 写入条目，从 `assets/knowledge-index.md` 更新活跃索引，并报告精确变更文件。不得暂存、提交或推送。
 
-A single well-supported project experience may be cross-project knowledge; repeated occurrence is not required.
+一条证据充分的项目经验可以直接成为跨项目知识，不要求重复发生。
 
-Read `references/knowledge-contract.md` before classifying, deduplicating, redacting, or proposing a write.
+分类、去重、脱敏或建议写入前，阅读 `references/knowledge-contract.md`。
 
-## Retrieve knowledge
+## 检索知识
 
-1. Search the project `INDEX.md` first, then the personal `INDEX.md` when configured and available.
-2. Select the smallest relevant set, normally no more than three entries. Do not read `archive/` unless the user asks for history or conflict analysis.
-3. Read only those entries, check their triggers and boundaries against the current task, and prefer the more specific project guidance. Treat an active entry as contextual evidence, not unquestionable authority.
-4. Before applying a code-dependent entry, verify its named repository facts when practical. If a source, path, symbol, version, or behavior is stale, false, contradicted, or outside the current boundary, do not apply it; report the reason and offer a separately confirmed maintenance action.
-5. Return the applicable action and name the entries used. If nothing fits, say so and continue without manufacturing advice.
+1. 先搜索项目 `INDEX.md`，再在已配置且可用时搜索个人 `INDEX.md`。
+2. 选择最小相关集合，通常不超过三个条目。除非用户要求历史或冲突分析，否则不读取 `archive/`。
+3. 只读取这些条目，根据当前任务检查触发条件和边界，并优先更具体的项目指引。活跃条目是上下文证据，不是不可质疑的权威。
+4. 应用代码依赖条目前，在可行时验证其具名仓库事实。来源、路径、符号、版本或行为陈旧、错误、矛盾或超出当前边界时，不应用；报告理由，并提供需要单独确认的维护操作。
+5. 返回适用行动并列出使用的条目。没有匹配时直接说明，继续工作但不制造建议。
 
-If one store is unavailable, report it and continue with the other. Do not describe a partial search as a search of both stores.
+一个知识库不可用时报告并继续另一个。不得把部分搜索描述为已搜索两者。
 
-## Maintain knowledge
+## 维护知识
 
-- **Duplicate:** make no write.
-- **Refinement:** require one uniquely appropriate target, then present a concise edit that preserves the original trigger, boundary, mechanism, and safest specific guidance. When several entries are plausible targets, do not force an update.
-- **Conflict:** show the old conclusion, new evidence, and likely boundary difference; let the user choose whether to narrow, replace, or retain conditional variants.
-- **Archive:** move the inactive entry to `archive/`, mark it archived or superseded, and remove it from `INDEX.md`.
+- **重复：** 不写入。
+- **改进：** 必须存在唯一合适目标；展示保留原触发条件、边界、机制和最安全具体指引的简洁编辑。多个条目都可能是目标时，不强制更新。
+- **冲突：** 展示旧结论、新证据和可能的边界差异；让用户选择缩小、替换或保留条件化变体。
+- **归档：** 把非活跃条目移至 `archive/`，标记为已归档或被取代，并从 `INDEX.md` 删除。
 
-Require confirmation before every update, merge, replacement, or archive. Ordinary retrieval is read-only and needs no write confirmation.
+每次更新、合并、替换或归档前都要确认。普通检索只读，无需写入确认。
 
-## Enforce completion boundaries
+## 强制完成边界
 
-- Never write a credential, password, token, cookie, authentication header, private key, secret environment value, or sensitive connection string, even if ordinary confirmation is given.
-- A missing or unwritable destination blocks that write. Do not change project/cross-project scope as a fallback.
-- A failed write may return the approved Markdown draft, but must not claim persistence.
-- Keep Markdown compact. When a method needs substantial steps or exceptions, recommend promotion to a dedicated Skill instead of expanding the entry.
-- Do not claim that retrieval, citation, task success, or later acceptance proves the knowledge caused a better outcome. Attribute behavior improvement only through a controlled comparison or an explicit human judgment.
+- 即使普通确认已给出，也绝不写入凭据、密码、令牌、Cookie、身份验证头、私钥、秘密环境值或敏感连接字符串。
+- 目标缺失或不可写会阻塞写入。不得改变项目/跨项目范围作为降级方案。
+- 写入失败可以返回已确认 Markdown 草稿，但不得声称已持久化。
+- Markdown 保持紧凑。方法需要大量步骤或例外时，建议提升为专门 Skill，不要扩张条目。
+- 不得声称检索、引用、任务成功或后续验收证明知识导致了更好结果。只有受控比较或用户明确判断才能归因行为改进。

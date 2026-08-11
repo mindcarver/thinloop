@@ -19,58 +19,58 @@ function read(relativePath) {
 test("maintenance is explicitly invoked and supports audit and repair", () => {
   const skill = read("skills/scd-maintenance/SKILL.md");
 
-  assert.match(skill, /Use when the user explicitly asks/i);
-  assert.match(skill, /Do not invoke automatically during ordinary feature work/i);
-  assert.match(skill, /\*\*Audit:\*\*/);
-  assert.match(skill, /\*\*Repair:\*\*/);
-  assert.match(skill, /\*\*Focused:\*\*/);
-  assert.match(skill, /first batch of no more\s+than three findings/i);
-  assert.match(skill, /Use `scd-reengineering` instead/i);
-  assert.match(skill, /does not own\s+the reengineering direction or execution graph/i);
+  assert.match(skill, /适用于用户明确要求检查、清理、统一、现代化或减少/);
+  assert.match(skill, /普通功能开发[\s\S]*不得自动调用/);
+  assert.match(skill, /\*\*审计：\*\*/);
+  assert.match(skill, /\*\*修复：\*\*/);
+  assert.match(skill, /\*\*聚焦：\*\*/);
+  assert.match(skill, /第一批不超过三个发现/);
+  assert.match(skill, /改用 `scd-reengineering`/);
+  assert.match(skill, /不负责再工程方向或执行图/);
 });
 
 test("maintenance resolves authority instead of assuming code is correct", () => {
   const skill = read("skills/scd-maintenance/SKILL.md");
   const audit = read("skills/scd-maintenance/references/audit-contract.md");
 
-  assert.match(skill, /Never infer that code is automatically correct/i);
-  assert.match(audit, /\*\*Normative contract:\*\*/);
-  assert.match(audit, /\*\*Executable behavior:\*\*/);
-  assert.match(audit, /\*\*Descriptive material:\*\*/);
-  assert.match(audit, /newer or executable artifact is not automatically authoritative/i);
+  assert.match(skill, /代码可以执行不代表代码自动正确/);
+  assert.match(audit, /\*\*规范契约：\*\*/);
+  assert.match(audit, /\*\*可执行行为：\*\*/);
+  assert.match(audit, /\*\*说明性材料：\*\*/);
+  assert.match(audit, /更新或可执行的产物不会自动成为权威/);
 });
 
 test("maintenance findings require evidence and avoid speculative cleanup", () => {
   const skill = read("skills/scd-maintenance/SKILL.md");
   const audit = read("skills/scd-maintenance/references/audit-contract.md");
 
-  assert.match(skill, /exact file, line, symbol, command, or runtime evidence/);
-  assert.match(skill, /Separate confirmed debt from investigation leads/);
-  assert.match(skill, /Do not report style\s+preferences/);
-  assert.match(audit, /File age, commit age, model opinion/);
-  assert.match(audit, /Never hide a partial scan/);
+  assert.match(skill, /精确文件、行号、符号、命令或运行时证据/);
+  assert.match(skill, /区分已确认债务和调查线索/);
+  assert.match(skill, /不得把风格偏好/);
+  assert.match(audit, /文件年龄、提交年龄、模型意见/);
+  assert.match(audit, /不得用“全仓库”掩盖部分扫描/);
 });
 
 test("maintenance repairs are bounded, coupled, and verified", () => {
   const skill = read("skills/scd-maintenance/SKILL.md");
   const repair = read("skills/scd-maintenance/references/repair-contract.md");
 
-  assert.match(skill, /hand the bounded change to `scd-quickdev`/);
-  assert.match(skill, /Do not stage, commit, push, publish, deploy/);
-  assert.match(repair, /repair at most three/);
-  assert.match(repair, /Text search alone does not prove/);
-  assert.match(repair, /update every directly coupled surface/);
-  assert.match(repair, /Map each finding identifier to observed evidence/);
+  assert.match(skill, /把有边界的变更交给 `scd-quickdev`/);
+  assert.match(skill, /不得自行暂存、提交、推送、发布、部署/);
+  assert.match(repair, /修复最多三个/);
+  assert.match(repair, /仅文本搜索不能证明/);
+  assert.match(repair, /更新每个直接耦合表面/);
+  assert.match(repair, /把每个发现标识映射到观察证据/);
 });
 
 test("maintenance report template preserves evidence and blind spots", () => {
   const report = read("skills/scd-maintenance/assets/maintenance-report.md");
 
   assert.match(report, /managed_by: scd-maintenance/);
-  assert.match(report, /## Checks run/);
-  assert.match(report, /## Confirmed findings/);
-  assert.match(report, /## Investigation leads/);
-  assert.match(report, /## Blind spots/);
+  assert.match(report, /## 已执行检查/);
+  assert.match(report, /## 已确认发现/);
+  assert.match(report, /## 调查线索/);
+  assert.match(report, /## 检查盲区/);
 });
 
 test("collector finds deterministic drift and keeps valid references quiet", () => {
