@@ -55,6 +55,10 @@ test("quickdev diagnoses bugs and requires regression evidence", () => {
   );
 
   assert.match(skill, /reproduce the symptom/i);
+  assert.match(
+    skill,
+    /framework or dependency[\s\S]*official issue tracker[\s\S]*application code/i,
+  );
   assert.match(skill, /causal root cause/i);
   assert.match(skill, /regression test/i);
   assert.match(issueContract, /Observed symptom/);
