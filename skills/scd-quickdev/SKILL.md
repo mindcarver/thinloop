@@ -81,11 +81,10 @@ ambiguity does not.
 
 Before creating or updating the governing Issue or starting implementation,
 ask one concise question unless the current request or an approved upstream
-handoff already states the preference: does the user want to review and confirm
-the complete Issue draft, implementation approach, and task checklist for this
-delivery before work proceeds?
+handoff already states the preference. Ask in Chinese: `本次交付是否需要你先确认完整的
+Issue 草案、实施方案和任务清单？`
 
-- If the user says no, record planning confirmation as `Waived`, create or
+- If the user says no, record planning confirmation as `已放弃`, create or
   update the Issue, and continue through the normal autonomous delivery flow.
 - If the user says yes, first perform the read-only repository inspection needed
   to make the proposal concrete. Then present the complete proposed Issue body,
@@ -101,6 +100,11 @@ delivery before work proceeds?
 This is a per-delivery process preference, not a second product approval and not
 a reason to create `plan.md`. The Issue remains the durable plan and task source
 of truth.
+
+Write every QuickDev-created or updated Issue title and body in Chinese,
+including acceptance, implementation tasks, verification updates, and status
+notes. Preserve code identifiers, commands, paths, filenames, protocol fields,
+and machine status tokens when translating them would change their meaning.
 
 ## Re-select the path when scope shifts mid-flight
 
