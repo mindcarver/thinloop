@@ -24,44 +24,82 @@ If the repository has no GitHub remote or authenticated write path, stop before
 implementation and report the blocker. A clear user request may authorize the
 ordinary Issue write, but it cannot create missing access.
 
+## Planning confirmation preference
+
+Before any Issue mutation or implementation, ask whether the user wants to
+review and confirm the complete Issue draft, implementation approach, and task
+checklist for this delivery, unless the current request or approved upstream
+handoff already gives that answer. Read-only repository inspection is allowed
+before this decision and is required before presenting a confirmation-ready
+draft.
+
+- `否`: proceed autonomously and record `需要确认: 否`, `状态: 已放弃`.
+- `是`: present the complete proposed Issue body and wait. Do not create or
+  update the Issue, change repository files, or implement until the user
+  explicitly confirms it. Then record `需要确认: 是`, `状态: 已确认`.
+
+For an existing Issue, present its exact proposed edits rather than an abstract
+summary. Material changes to a confirmed implementation approach, task list,
+scope, or acceptance require another explicit confirmation before those changes
+are written or implemented. This preference does not create a local `plan.md`;
+the confirmed Issue remains the sole durable delivery plan.
+
+## Issue output language
+
+Write all QuickDev-created or updated Issue output in Chinese, including the
+title, body, acceptance items, implementation approach, task checklist,
+verification updates, status notes, and Issue comments. Keep code identifiers,
+commands, paths, filenames, protocol fields, and machine status tokens in their
+canonical form when translation would change behavior or make evidence harder
+to reproduce.
+
 ## Issue body
 
 For a feature or change, preserve this minimum structure:
 
 ```markdown
-## Outcome
+## 结果
 
-## User problem
+## 用户问题
 
-## Product traceability
+## 产品追踪
 
-- PRD: `.scd/product/prd.md`, or Not applicable
-- Approved version: <positive integer>, or Not applicable
-- Requirements: `FR-001`, ..., or Not applicable
+- PRD：`.scd/product/prd.md`，或不适用
+- 已批准版本：<正整数>，或不适用
+- 需求：`FR-001`、...，或不适用
 
-## In scope
+## 范围内
 
-## Out of scope
+## 范围外
 
-## Confirmed decisions
+## 已确认决定
 
-## Failure and edge cases
+## 方案确认
 
-## Acceptance
+- 需要确认：是，或否
+- 状态：已确认，或已放弃
 
-- [ ] A1: <observable behavior>
+## 失败与边界情况
 
-## Implementation tasks
+## 验收条件
 
-- [ ] <small verifiable task>
+- [ ] A1：<可观察行为>
 
-## Verification
+## 实施方案
 
-- A1: Not run
+- <具体技术方向和受影响边界>
 
-## Unknowns
+## 实施任务
 
-- None
+- [ ] <小而可验证的任务>
+
+## 验证
+
+- A1：未运行
+
+## 未知项
+
+- 无
 ```
 
 Discovery owns the approved product sections. QuickDev adds or updates the
@@ -76,19 +114,19 @@ returns to Discovery and cannot be implemented as a READY delivery.
 For a bug, also record:
 
 ```markdown
-## Observed symptom
+## 已观察症状
 
-## Expected behavior
+## 预期行为
 
-## Reproduction
+## 复现步骤
 
-## Diagnosis
+## 诊断
 
-- Root cause: `Unconfirmed`
+- 根因：`Unconfirmed`
 
-## Regression evidence
+## 回归证据
 
-- Not run
+- 未运行
 ```
 
 Change `Unconfirmed` to `Confirmed` only when code or runtime evidence supports

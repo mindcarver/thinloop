@@ -77,6 +77,35 @@ Do not announce these path names unless the user asks. A new product,
 application, plugin, service, or system normally takes Discovery; one isolated
 ambiguity does not.
 
+## Resolve planning confirmation before writing the Issue
+
+Before creating or updating the governing Issue or starting implementation,
+ask one concise question unless the current request or an approved upstream
+handoff already states the preference. Ask in Chinese: `本次交付是否需要你先确认完整的
+Issue 草案、实施方案和任务清单？`
+
+- If the user says no, record planning confirmation as `已放弃`, create or
+  update the Issue, and continue through the normal autonomous delivery flow.
+- If the user says yes, first perform the read-only repository inspection needed
+  to make the proposal concrete. Then present the complete proposed Issue body,
+  including the implementation approach and verifiable tasks, and wait for
+  explicit confirmation. Until confirmation, do not create or update the Issue,
+  modify the repository, or start implementation.
+- For an existing Issue, show the exact proposed edits together with the
+  implementation approach and tasks. After confirmation, write the confirmed
+  contract to the Issue before implementing it.
+- If later evidence materially changes the confirmed approach, tasks, scope, or
+  acceptance, present the delta and obtain confirmation again before proceeding.
+
+This is a per-delivery process preference, not a second product approval and not
+a reason to create `plan.md`. The Issue remains the durable plan and task source
+of truth.
+
+Write every QuickDev-created or updated Issue title and body in Chinese,
+including acceptance, implementation tasks, verification updates, and status
+notes. Preserve code identifiers, commands, paths, filenames, protocol fields,
+and machine status tokens when translating them would change their meaning.
+
 ## Re-select the path when scope shifts mid-flight
 
 Path selection is not a one-time gate. While diagnosing or implementing one

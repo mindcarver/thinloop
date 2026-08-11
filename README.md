@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <kbd>v0.13.4</kbd>
+  <kbd>v0.13.5</kbd>
   &nbsp;
   <kbd>ISSUE-DRIVEN</kbd>
   &nbsp;
@@ -46,6 +46,12 @@ Thinloop 不接管开发过程，只守住容易在长任务里丢失的结果�
 ```
 
 QuickDev 会先判断任务是否足够清楚，而不是要求用户选择流程：
+
+每个 QuickDev 交付在写入 Issue 或开始实现前，都会先确认你是否希望审核完整的
+Issue 草案、实施方案和任务清单。回答“不需要”时继续自动交付；回答“需要”时，
+Agent 必须先展示完整草案并等待你明确确认，后续发生实质性变化还要再次确认。
+确认后的 Issue 就是持久计划，不额外生成 `plan.md`。QuickDev 创建或更新的 Issue
+标题、正文、实施任务和验证记录统一使用中文；命令、路径和机器状态标识保持原样。
 
 | 当前情况 | 默认路径 |
 |---|---|
@@ -179,7 +185,7 @@ Execute 消费普通已批准 Initiative 的 READY 波次；Reengineering 在此
 <p><img src="./assets/flows/scd-architecture.svg" alt="SCD Architecture 流程：从仓库事实到领域边界和机器可读契约" width="100%"></p>
 <p><img src="./assets/flows/scd-project.svg" alt="SCD Project 流程：从批准的 PRD 或产品契约到 Initiative、Delivery Issues 和就绪依赖图" width="100%"></p>
 <p><img src="./assets/flows/scd-execute.svg" alt="SCD Execute 流程：从批准的 Initiative DAG 到安全 READY 波次、隔离 QuickDev lanes 和集成验收" width="100%"></p>
-<p><img src="./assets/flows/scd-quickdev.svg" alt="SCD QuickDev 流程：从 GitHub Issue 到独立行为验收、合并 main 并关闭 Issue" width="100%"></p>
+<p><img src="./assets/flows/scd-quickdev.svg" alt="SCD QuickDev 流程：先选择是否确认 Issue 方案与任务，再实现、独立行为验收、合并 main 并关闭 Issue" width="100%"></p>
 <p><img src="./assets/flows/scd-knowledge.svg" alt="SCD Knowledge 流程：从显式请求和证据到确认后的知识写入或检索" width="100%"></p>
 <p><img src="./assets/flows/scd-maintenance.svg" alt="SCD Maintenance 流程：从仓库信号到证据确认和有边界的修复" width="100%"></p>
 <p><img src="./assets/flows/scd-evolve.svg" alt="SCD Evolve 流程：从可见证据和归因到人工批准的可回滚试验" width="100%"></p>
