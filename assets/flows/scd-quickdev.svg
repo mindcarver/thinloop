@@ -30,8 +30,8 @@
       <circle cx="78" cy="148" r="13" fill="#f8edcf" stroke="#c55c2f" stroke-width="2"/>
       <text x="78" y="153" fill="#17313b" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="11" font-weight="800">01</text>
       <text x="140" y="168" fill="#f8edcf" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="15" font-weight="800" letter-spacing="0.8">
-        <tspan x="140" dy="0">GITHUB</tspan>
-        <tspan x="140" dy="20">任务单</tspan>
+        <tspan x="140" dy="0">确认偏好</tspan>
+        <tspan x="140" dy="20">或自动继续</tspan>
       </text>
     </g>
 <path d="M 465 167 H 502" fill="none" stroke="#c55c2f" stroke-width="3" marker-end="url(#arrow)"/>
@@ -40,8 +40,8 @@
       <circle cx="307" cy="148" r="13" fill="#f8edcf" stroke="#c55c2f" stroke-width="2"/>
       <text x="307" y="153" fill="#17313b" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="11" font-weight="800">02</text>
       <text x="369" y="168" fill="#f8edcf" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="15" font-weight="800" letter-spacing="0.8">
-        <tspan x="369" dy="0">诊断</tspan>
-        <tspan x="369" dy="20">与实现</tspan>
+        <tspan x="369" dy="0">任务单</tspan>
+        <tspan x="369" dy="20">方案与任务</tspan>
       </text>
     </g>
 <path d="M 694 167 H 731" fill="none" stroke="#c55c2f" stroke-width="3" marker-end="url(#arrow)"/>
@@ -50,8 +50,8 @@
       <circle cx="536" cy="148" r="13" fill="#f8edcf" stroke="#c55c2f" stroke-width="2"/>
       <text x="536" y="153" fill="#17313b" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="11" font-weight="800">03</text>
       <text x="598" y="168" fill="#f8edcf" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="15" font-weight="800" letter-spacing="0.8">
-        <tspan x="598" dy="0">工程</tspan>
-        <tspan x="598" dy="20">检查</tspan>
+        <tspan x="598" dy="0">诊断实现</tspan>
+        <tspan x="598" dy="20">工程检查</tspan>
       </text>
     </g>
 <path d="M 923 167 H 960" fill="none" stroke="#c55c2f" stroke-width="3" marker-end="url(#arrow)"/>
