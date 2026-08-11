@@ -34,17 +34,17 @@ test("quickdev separates product PRD authority from delivery Issue authority", (
     /sole source of truth for the\s+selected delivery boundary/i,
   );
   assert.match(issueContract, /approved `.scd\/product\/prd\.md`/i);
-  assert.match(issueContract, /## Product traceability/);
-  assert.match(issueContract, /Requirements: `FR-001`/);
+  assert.match(issueContract, /## 产品追踪/);
+  assert.match(issueContract, /需求：`FR-001`/);
   assert.match(issueContract, /reachable from the default branch/i);
   assert.match(skill, /Do not generate or redefine a PRD during implementation/i);
   assert.match(skill, /clear isolated changes and bugs\s+remain Issue-only/i);
-  assert.match(issueContract, /## Outcome/);
-  assert.match(issueContract, /## In scope/);
-  assert.match(issueContract, /## Out of scope/);
-  assert.match(issueContract, /## Acceptance/);
-  assert.match(issueContract, /## Implementation tasks/);
-  assert.match(issueContract, /## Verification/);
+  assert.match(issueContract, /## 结果/);
+  assert.match(issueContract, /## 范围内/);
+  assert.match(issueContract, /## 范围外/);
+  assert.match(issueContract, /## 验收条件/);
+  assert.match(issueContract, /## 实施任务/);
+  assert.match(issueContract, /## 验证/);
   assert.doesNotMatch(skill, /\.scd\/specs/);
 });
 
@@ -57,11 +57,11 @@ test("quickdev lets the user choose whether to confirm the Issue plan and tasks"
 
   assert.match(
     skill,
-    /ask one concise question[\s\S]*complete Issue draft, implementation approach, and task checklist/i,
+    /ask one concise question[\s\S]*本次交付是否需要你先确认完整的[\s\S]*Issue 草案、实施方案和任务清单？/i,
   );
   assert.match(
     skill,
-    /user says no[\s\S]*`Waived`[\s\S]*normal autonomous delivery flow/i,
+    /user says no[\s\S]*`已放弃`[\s\S]*normal autonomous delivery flow/i,
   );
   assert.match(
     skill,
@@ -72,13 +72,34 @@ test("quickdev lets the user choose whether to confirm the Issue plan and tasks"
     /Until confirmation, do not create or update the Issue,[\s\S]*modify the repository,[\s\S]*start implementation/i,
   );
   assert.match(skill, /materially changes[\s\S]*obtain confirmation again/i);
-  assert.match(issueContract, /## Planning confirmation/);
-  assert.match(issueContract, /## Implementation approach/);
-  assert.match(issueContract, /## Implementation tasks/);
-  assert.match(issueContract, /Required: Yes, or No/);
-  assert.match(issueContract, /Status: Confirmed, or Waived/);
+  assert.match(issueContract, /## 方案确认/);
+  assert.match(issueContract, /## 实施方案/);
+  assert.match(issueContract, /## 实施任务/);
+  assert.match(issueContract, /需要确认：是，或否/);
+  assert.match(issueContract, /状态：已确认，或已放弃/);
   assert.match(combined, /not a second product approval/i);
   assert.match(combined, /not\s+(?:a reason to create|create a local) `plan\.md`/i);
+});
+
+test("quickdev writes Issue output in Chinese without translating machine identifiers", () => {
+  const skill = read("skills/scd-quickdev/SKILL.md");
+  const issueContract = read(
+    "skills/scd-quickdev/references/issue-delivery-contract.md",
+  );
+  const combined = `${skill}\n${issueContract}`;
+
+  assert.match(combined, /Issue title and body in Chinese/i);
+  assert.match(
+    issueContract,
+    /all QuickDev-created or updated Issue output in Chinese/i,
+  );
+  assert.match(
+    combined,
+    /code identifiers, commands, paths, filenames, protocol fields,[\s\S]*machine status tokens/i,
+  );
+  assert.match(issueContract, /## 实施方案/);
+  assert.match(issueContract, /## 实施任务/);
+  assert.match(issueContract, /根因：`Unconfirmed`/);
 });
 
 test("quickdev diagnoses bugs and requires regression evidence", () => {
@@ -94,10 +115,10 @@ test("quickdev diagnoses bugs and requires regression evidence", () => {
   );
   assert.match(skill, /causal root cause/i);
   assert.match(skill, /regression test/i);
-  assert.match(issueContract, /Observed symptom/);
-  assert.match(issueContract, /Expected behavior/);
-  assert.match(issueContract, /Root cause: `Unconfirmed`/);
-  assert.match(issueContract, /Regression evidence/);
+  assert.match(issueContract, /已观察症状/);
+  assert.match(issueContract, /预期行为/);
+  assert.match(issueContract, /根因：`Unconfirmed`/);
+  assert.match(issueContract, /回归证据/);
 });
 
 test("quickdev always isolates meaningful work on a branch and uses worktrees conditionally", () => {
