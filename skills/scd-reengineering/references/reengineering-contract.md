@@ -1,190 +1,155 @@
-# Reengineering contract
+# 再工程契约
 
-Use this contract to decide and describe a project-scale refactor or
-reimplementation without turning upstream implementation details into accidental
-requirements.
+决定和描述项目级重构或重新实施，同时避免把上游实施细节意外转化为需求时使用本契约。
 
-## Evidence authority
+## 证据权威
 
-| Evidence | What it can establish |
+| 证据 | 能够证明的内容 |
 |---|---|
-| Approved target outcome | Desired users, behavior, boundaries, and acceptance |
-| Pinned source repository | The exact implementation inspected |
-| Executed source behavior | What the pinned source did under the recorded environment and fixture |
-| Public machine contract | Promised API, CLI, event, file, plugin, or protocol behavior |
-| Maintained source test | Intended behavior only when scope and execution result are known |
-| Source code inspection | Implementation mechanism and investigation leads |
-| License and notice text | Terms that require review; not an automated legal conclusion |
+| 已确认目标结果 | 目标用户、行为、边界和验收 |
+| 固定的来源仓库 | 实际检查的精确实施 |
+| 已执行的来源行为 | 固定来源在记录环境和测试数据中的真实行为 |
+| 公共机器契约 | 承诺的 API、CLI、事件、文件、插件或协议行为 |
+| 维护中的来源测试 | 只有范围和执行结果已知时，才能表示预期行为 |
+| 源码检查 | 实施机制和调查线索 |
+| 许可证和通知正文 | 需要评审的条款，不是自动法律结论 |
 
-A README claim, passing source test, or observed behavior is not automatically
-the desired target contract. Resolve conflicts explicitly.
+README 声明、通过的来源测试或观察行为不会自动成为目标契约。冲突必须明确解决。
 
-## Pinned source record
+## 固定来源记录
 
-Add this compact record to the Initiative:
+把以下紧凑记录加入中文 Initiative：
 
 ```markdown
-## Source baseline
+## 来源基线
 
-- Repository: <canonical URL>
-- Commit: <full immutable SHA>
-- Tag or release label: <optional descriptive value>
-- Retrieved: <timestamp and method>
-- License files inspected: <paths at pinned SHA>
-- Notices or attribution: <paths at pinned SHA>
-- License conclusion: Not provided by Thinloop
-- Uncertainty or required review: <none or exact blocker>
-- Build/run environment: <toolchain, OS/container, dependency lock>
-- Baseline commands and fixtures: <exact references>
+- 仓库：<规范 URL>
+- 提交：<完整不可变 SHA>
+- 标签或发布标记：<可选说明值>
+- 获取时间与方法：<时间戳和方法>
+- 已检查许可证文件：<固定 SHA 下的路径>
+- 通知或署名：<固定 SHA 下的路径>
+- 许可证结论：Thinloop 不提供
+- 不确定性或必需评审：<无，或精确阻塞>
+- 构建/运行环境：<工具链、OS/容器、依赖锁>
+- 基线命令与测试数据：<精确引用>
 ```
 
-Do not store credentials, tokens, private source, personal data, or large
-captured outputs in the Issue.
+Issue 中不得保存凭据、令牌、私有源码、个人数据或大量捕获输出。
 
-## Compatibility envelope
+## 兼容性边界
 
-Use a compact table in the Initiative. Split a capability only when its
-acceptance can change independently.
+在 Initiative 中使用紧凑表格。只有验收可以独立变化时才拆分能力。
 
 ```markdown
-## Compatibility envelope
+## 兼容性边界
 
-| ID | Capability and seam | Decision | Source evidence | Target contract | Verification | Issue |
+| ID | 能力与衔接点 | 决策 | 来源证据 | 目标契约 | 验证 | Issue |
 |---|---|---|---|---|---|---|
-| CAP-001 | CLI converts one input file | keep | command + fixture | exact exit and output schema | differential fixture | #123 |
-| CAP-002 | Legacy admin screen | drop | observed route | none | absence from target scope | none |
-| CAP-003 | Export ordering | change | integration test | stable documented order | target integration test | #124 |
-| CAP-004 | Crash recovery | unverified | source would not run | pending decision | blocked | PLANNED |
+| CAP-001 | CLI 转换一个输入文件 | keep | 命令与测试数据 | 精确退出状态和输出模式 | 差分测试数据 | #123 |
+| CAP-002 | 旧管理界面 | drop | 已观察路由 | 无 | 确认不在目标范围 | 无 |
+| CAP-003 | 导出顺序 | change | 集成测试 | 稳定且有文档的顺序 | 目标集成测试 | #124 |
+| CAP-004 | 崩溃恢复 | unverified | 来源无法运行 | 等待决策 | blocked | PLANNED |
 ```
 
-Allowed decisions:
+允许的决策：
 
-- `keep` - target must satisfy the stated compatibility contract;
-- `change` - target intentionally differs and the approved delta is explicit;
-- `drop` - target intentionally omits the capability;
-- `unverified` - evidence or product decision is missing; the capability cannot
-  silently become READY.
+- `keep`：目标必须满足写明的兼容性契约；
+- `change`：目标有意不同，且已确认差异明确；
+- `drop`：目标有意省略该能力；
+- `unverified`：证据或产品决策缺失；能力不能悄悄进入 READY。
 
-Do not use vague entries such as "same functionality" or "feature parity."
+不要使用“功能相同”或“功能完全等价”等含糊条目。
 
-## Direction decision
+## 方向决策
 
-Record the comparison before approval:
+确认前记录比较：
 
 ```markdown
-## Reengineering direction
+## 再工程方向
 
-- Mode: refactor | reimplement
-- Target language/framework/runtime:
-- Incremental strategy: in-place | hybrid/strangler | replacement
-- Why this mode is necessary:
-- Evidence against the rejected direction:
-- Compatibility and migration cost:
-- Rollback strategy:
-- Confidence:
-- Unresolved risks:
+- 模式：refactor | reimplement
+- 目标语言/框架/运行时：
+- 增量策略：in-place | hybrid/strangler | replacement
+- 为什么必须使用该模式：
+- 反对未选方向的证据：
+- 兼容性与迁移成本：
+- 回滚策略：
+- 置信度：
+- 未解决风险：
 ```
 
-Refactor normally wins when the current implementation can satisfy the approved
-target and incremental improvement is verifiable. Reimplement may win when the
-required runtime, language, deployment boundary, security model, or retained
-capability subset makes continued modification more costly or unverifiable.
-Neither direction wins from style preference alone.
+当前实施能够满足已确认目标且增量改进可验证时，通常选择重构。必需运行时、语言、部署边界、安全模型或保留能力子集使继续修改成本更高或无法验证时，可以选择重新实施。仅风格偏好不能决定方向。
 
-## Initiative additions
+## Initiative 补充内容
 
-Use the normal `scd-project` Initiative contract and add only these
-reengineering-specific sections:
+使用普通 `scd-project` Initiative 契约，只添加以下再工程专属章节：
 
-- Source baseline
-- Reengineering direction
-- Compatibility envelope
-- Migration and coexistence strategy
-- Differential and target-only verification
-- License and attribution uncertainty
-- Cutover and retirement human gates
+- 来源基线
+- 再工程方向
+- 兼容性边界
+- 迁移与共存策略
+- 差分验证与仅目标验证
+- 许可证与署名不确定性
+- 切换与退役人工门
 
-The Initiative remains the project truth. Do not create a second local
-reengineering plan or parity database.
+Initiative 继续是项目事实。不得创建第二个本地再工程计划或等价数据库。
 
-## Delivery slicing
+## 交付切片
 
-Prefer capability slices that can be demonstrated at an external seam. Common
-nodes include:
+优先采用可以在外部衔接点演示的能力切片。常见节点包括：
 
-- executable baseline or contract harness;
-- shared target contract or platform foundation;
-- one independently usable vertical capability;
-- migration or coexistence mechanism;
-- assembled integration and parity;
-- cutover or old-system retirement when separately authorized.
+- 可执行基线或契约测试装置；
+- 共享目标契约或平台基础；
+- 一个可独立使用的垂直能力；
+- 迁移或共存机制；
+- 组装集成与等价；
+- 单独授权时的切换或旧系统退役。
 
-Do not create a Delivery Issue solely for every source directory or technical
-layer. A platform foundation is justified only when another slice cannot be
-implemented or verified without it.
+不得仅为每个来源目录或技术层创建 Delivery Issue。只有其他切片无法在缺少它时实施或验证，平台基础才合理。
 
-## Staged milestones
+## 分阶段里程碑
 
-A user may approve an initial milestone that delivers only part of the
-compatibility envelope. Treat that as delivery sequencing, not permission to
-erase the remaining contract.
+用户可以确认只交付部分兼容性边界的初始里程碑。这是交付顺序，不授权删除剩余契约。
 
-- Every deferred `keep` or `change` capability remains a visible `PLANNED` or
-  `BLOCKED` graph node with its target contract and verification seam.
-- A milestone may be called complete only for its explicitly approved slice.
-- While any retained capability is deferred, do not claim complete rewrite,
-  same product contract, full parity, or integration acceptance.
-- User-facing skills, commands, documentation, and examples shipped in that
-  milestone must not require an unavailable capability without an explicit
-  partial-state warning and an approved usable fallback.
-- The final integration Issue remains dependent on all retained leaf
-  capabilities, including those assigned to a later milestone.
+- 每个延期的 `keep` 或 `change` 能力继续作为可见的 `PLANNED` 或 `BLOCKED` 图节点，并保留目标契约和验证衔接点。
+- 里程碑只能针对明确确认切片称为完成。
+- 任何保留能力仍延期时，不得声称完成重写、相同产品契约、完全等价或集成验收。
+- 该里程碑交付的面向用户技能、命令、文档和示例不得依赖不可用能力，除非有明确部分状态警告和已确认可用降级。
+- 最终集成 Issue 继续依赖全部保留的叶能力，包括分配到后续里程碑的能力。
 
-## Recover an unmanaged prototype
+## 恢复未受管理的原型
 
-When implementation or default-branch commits already exist without the
-required Initiative, graph, Issue lanes, or acceptance evidence:
+实施或默认分支提交已经存在，但缺少必需 Initiative、依赖图、Issue 通道或验收证据时：
 
-1. stop adding features;
-2. classify the existing code as an unmanaged candidate, not DONE;
-3. audit its commits, tests, provenance, and external behavior without treating
-   the implementer's summary as acceptance;
-4. materialize the Initiative, compatibility envelope, Delivery Issues, and
-   integration gate through `scd-project`;
-5. attach existing code and test results only as candidate evidence to the
-   applicable Issues;
-6. run the remaining QuickDev and independent acceptance contracts from live
-   Issue state.
+1. 停止增加功能；
+2. 把现有代码分类为未受管理候选，而不是 DONE；
+3. 审计提交、测试、来源和外部行为，不把实施者摘要当作验收；
+4. 通过 `scd-project` 实例化 Initiative、兼容性边界、Delivery Issues 和集成门；
+5. 现有代码和测试结果只作为候选证据附到适用 Issues；
+6. 从实时 Issue 状态运行剩余 QuickDev 和独立验收契约。
 
-Do not rewrite history merely to imitate the missing lanes. Recovery restores
-authoritative contracts and evidence; it does not retroactively claim that the
-original unmanaged execution complied.
+不得为了模仿缺失通道而重写历史。恢复用于重新建立权威契约和证据，不会追溯性声称原未受管理执行合规。
 
-## License and clean-room boundary
+## 许可证与净室边界
 
-Thinloop records evidence and blockers; it does not determine whether a license
-permits the intended use.
+Thinloop 记录证据和阻塞，不判断许可证是否允许预期用途。
 
-- Pin the exact license and notice files with the source commit.
-- Preserve required notices only after the applicable requirement is confirmed.
-- Do not remove upstream attribution to make a derivative appear original.
-- If a clean-room implementation is required, define separate specification and
-  implementation roles, information barriers, allowed behavioral observations,
-  and provenance logs before implementation.
-- Any implementation agent exposure to restricted source invalidates an
-  unsupported clean-room claim; stop and report it.
+- 用来源提交固定精确许可证和通知文件。
+- 只有适用要求确认后才按要求保留通知。
+- 不得删除上游署名来让衍生作品看起来是原创。
+- 需要净室实施时，在实施前定义独立规格与实施角色、信息隔离、允许的行为观察和来源日志。
+- 实施 Agent 接触受限制源码会使没有支持的净室声明失效；停止并报告。
 
-## Baseline and parity evidence
+## 基线与等价证据
 
-For every `keep` or `change` capability, specify one or more:
+对每个 `keep` 或 `change` 能力，指定以下一项或多项：
 
-- source and target command using the same sanitized fixture;
-- schema-aware API, event, or file validation;
-- golden output with stable-field normalization justified by contract;
-- state transition or persistence check;
-- target-only acceptance where source behavior is intentionally changed;
-- performance or resource comparison only when the envelope activates it.
+- 来源和目标使用同一脱敏测试数据的命令；
+- 模式感知的 API、事件或文件验证；
+- 依据契约说明稳定字段规范化的黄金输出；
+- 状态转换或持久化检查；
+- 来源行为有意改变时的仅目标验收；
+- 只有兼容性边界触发时才做性能或资源比较。
 
-Record environment and nondeterminism. Do not hide missing parity behind
-aggregate pass percentages. Every capability ends as `PASS`, `FAIL`,
-`UNVERIFIED`, or `BLOCKED` with direct evidence.
+记录环境和非确定性。不得用汇总通过百分比隐藏缺失等价证据。每项能力都必须以 `PASS`、`FAIL`、`UNVERIFIED` 或 `BLOCKED` 结束，并附直接证据。

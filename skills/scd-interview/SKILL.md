@@ -1,43 +1,30 @@
 ---
 name: scd-interview
-description: "Review the current conversation on explicit request and extract interview questions worth saving for personal study — each with a reference answer, tags, difficulty, and source — present candidates for confirmation, then write the approved ones to a personal cross-project question store; also retrieve and survey saved questions on request. Use only when the user explicitly asks to capture, save, review, search, or manage interview questions. Do not invoke automatically during ordinary development."
+description: "根据明确请求评审当前对话，提取值得保存供个人学习的面试题；每题包含参考答案、标签、难度和来源；展示候选项供确认后，把已确认题目写入个人跨项目题库；也可按请求检索和浏览已保存题目。只有用户明确要求提取、保存、评审、搜索或管理面试题时使用。普通开发期间不得自动调用。"
 ---
 
-# SCD Interview Questions
+# SCD 面试题
 
-Turn the technical substance of a development conversation into a small personal
-collection of interview questions for study. Operate only on an explicit user
-request, and require confirmation before writing. A capture request authorizes
-candidate analysis, not persistence; write only after the user confirms the
-exact drafts, scope, and destination.
+把开发对话中的技术实质转化为少量个人学习面试题。只有用户明确请求时运行，写入前必须确认。提取请求只授权分析候选题，不授权持久化；用户确认精确草稿、范围和目标位置后才能写入。
 
-This skill serves the human's interview preparation, not the agent's memory. It
-is distinct from `scd-knowledge`, which saves lessons that change a later agent
-decision. A question may draw on the same conversation, but its purpose,
-eligibility, and stored shape differ.
+本技能服务于用户的面试准备，不是 Agent 记忆。它与 `scd-knowledge` 不同，后者保存会改变后续 Agent 决策的经验。题目可以来自同一对话，但目的、准入条件和保存结构不同。
 
-## Select the requested operation
+## 选择请求的操作
 
-- **Capture:** review the recent conversation and extract interview questions
-  worth saving.
-- **Retrieve:** search the saved questions by topic, level, or question.
+- **提取：** 评审最近对话并提取值得保存的面试题。
+- **检索：** 按主题、级别或问题搜索已保存题目。
 
-Do not monitor ordinary development, capture on your own initiative, or modify
-another Skill, rule, ADR, or Hook.
+不要监控普通开发、主动提取或修改其他 Skill、规则、ADR 或 Hook。
 
-## Resolve the store
+## 解析题库
 
-Resolve the personal question root for this invocation from the first that
-applies:
+按以下优先级解析本次调用的个人题库根目录：
 
-1. an explicit absolute path in the current request;
-2. `interview_root` in `<user-home>/.scd/config.json`;
-3. the default `<user-home>/.scd/interview-questions/`.
+1. 当前请求明确提供的绝对路径；
+2. `<user-home>/.scd/config.json` 中的 `interview_root`；
+3. 默认 `<user-home>/.scd/interview-questions/`。
 
-Resolve the home directory with the current runtime; never hardcode an
-operating-system path. When the user first supplies a personal root, merge that
-value into the user-level config without changing unrelated keys. If the
-existing config is invalid JSON, report it and do not overwrite it.
+通过当前运行时解析主目录，不硬编码操作系统路径。用户首次提供个人根目录时，把值合并进用户级配置，不改变无关键。现有配置不是有效 JSON 时报告错误，不得覆盖。
 
 ```text
 <root>/
@@ -46,69 +33,40 @@ existing config is invalid JSON, report it and do not overwrite it.
 `-- archive/
 ```
 
-## Capture questions
+## 提取题目
 
-1. Review the focused conversation for technical substance: decisions with
-   tradeoffs, root causes and diagnosis paths, mechanisms and architecture,
-   design patterns, failure modes and edge cases, performance or security
-   reasoning, and tooling or framework gotchas the conversation surfaced.
-2. For each distinct topic, phrase the question the way an interviewer would
-   ask it. Prefer questions that test understanding ("Why did we choose X over
-   Y?", "How does X behave under the failure you saw?", "What would you change
-   and why?") over plain recall of a fact.
-3. Admit a candidate only when both hold:
-   - an interviewer could reasonably ask it about the discussed material, and
-   - the reference answer is grounded in what was actually discussed or
-     decided.
-   Reject trivial recall, pure process narration, conversation summaries,
-   personal or private content, unsupported claims, and questions whose only
-   defensible answer would be fabricated.
-4. Build each candidate from `assets/question-entry.md`: question, concise
-   reference answer, tags, difficulty, and a short source pointer (what in the
-   conversation it came from — not a transcript).
-5. Deduplicate against the existing store: search `INDEX.md` and matching entry
-   bodies before proposing. Skip exact duplicates, propose an edit for a
-   near-duplicate that differs only in wording, and surface a conflict where two
-   saved questions about the same mechanism disagree.
-6. Present the candidates with their answers, tags, and source. The user selects
-   which to keep and may edit the wording. Request one explicit confirmation
-   covering the exact drafts and destination.
-7. After confirmation, write each approved entry to `questions/<slug>.md` from
-   `assets/question-entry.md`, replace every placeholder, add one line per entry
-   to `INDEX.md` from `assets/question-index.md`, and report the exact files
-   changed. Never stage, commit, or push.
+1. 评审聚焦对话中的技术实质：带取舍的决策、根因与诊断路径、机制与架构、设计模式、失败模式和边界场景、性能或安全推理，以及对话暴露的工具或框架陷阱。
+2. 对每个不同主题，用面试官会采用的方式提问。优先测试理解的问题，例如“为什么选择 X 而不是 Y？”“在观察到的失败下 X 如何工作？”“你会改变什么，为什么？”，而不是简单事实回忆。
+3. 候选题必须同时满足：
+   - 面试官可能针对讨论材料合理提出；
+   - 参考答案以真实讨论或决策为依据。
+   拒绝简单记忆、纯流程叙述、对话摘要、个人或私密内容、无支持声明，以及唯一可辩护答案只能靠编造的问题。
+4. 每个候选题使用 `assets/question-entry.md`：问题、简洁参考答案、标签、难度，以及简短来源指针；来源只说明对话中的出处，不保存转录。
+5. 与现有题库去重：建议前搜索 `INDEX.md` 和匹配条目正文。完全重复则跳过；仅措辞不同的近重复建议编辑；同一机制的两道已保存题答案冲突时呈现冲突。
+6. 展示候选题、答案、标签和来源。用户选择保留项并可编辑措辞。请求一次明确确认，覆盖精确草稿和目标位置。
+7. 确认后，从 `assets/question-entry.md` 把每个已确认条目写入 `questions/<slug>.md`，替换全部占位符；从 `assets/question-index.md` 向 `INDEX.md` 每题增加一行；报告精确变更文件。不得暂存、提交或推送。
 
-Create slugs with lowercase letters, digits, and hyphens. Do not derive a path
-directly from untrusted text.
+slug 只使用小写字母、数字和连字符。不得直接从不受信任文本派生路径。
 
-## Retrieve questions
+## 检索题目
 
-1. Search `INDEX.md` for the topic or level; read only the matching entries.
-2. Filter by the user's stated level, tag, or topic; prefer the most specific
-   match.
-3. Return the questions and answers. If nothing fits, say so and continue
-   without manufacturing advice.
-4. Do not read `archive/` unless the user asks for history.
+1. 按主题或级别搜索 `INDEX.md`，只读取匹配条目。
+2. 根据用户指定级别、标签或主题过滤；优先最具体匹配。
+3. 返回问题和答案。没有匹配时直接说明，不制造建议。
+4. 除非用户要求历史，否则不读取 `archive/`。
 
-Retrieval is read-only and needs no confirmation.
+检索只读，无需确认。
 
-## Enforce boundaries
+## 强制边界
 
-- Never write a credential, password, token, cookie, authentication header,
-  private key, secret environment value, or sensitive connection string, even
-  if ordinary confirmation is given. Redact personal or private content; if
-  redaction removes the point of the question, drop it.
-- A missing or unwritable destination blocks that write. Do not silently
-  substitute another directory.
-- Keep entries compact. A saved question is study material, not a transcript or
-  a design document.
-- Do not claim a question was "covered" unless its answer is present and
-  grounded in the conversation.
-- Never write to a project store unless the user explicitly names that path.
+- 即使普通确认已给出，也绝不写入凭据、密码、令牌、Cookie、身份验证头、私钥、秘密环境值或敏感连接字符串。脱敏个人或私密内容；脱敏会移除问题意义时，删除该题。
+- 目标缺失或不可写会阻塞写入。不得悄悄替换为其他目录。
+- 条目保持紧凑。保存题目是学习材料，不是对话转录或设计文档。
+- 只有答案存在且以对话为依据时，才能声称题目“已覆盖”。
+- 除非用户明确指定项目路径，否则不得写入项目知识库。
 
-## Resources
+## 资源
 
-- `references/interview-contract.md` - eligibility, answer grounding, dedup,
-  and safety rules.
-- `assets/question-entry.md` - entry template.
-- `assets/question-index.md` - index template.
+- `references/interview-contract.md`：准入、答案依据、去重和安全规则。
+- `assets/question-entry.md`：题目模板。
+- `assets/question-index.md`：索引模板。

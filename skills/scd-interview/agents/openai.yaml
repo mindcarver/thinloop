@@ -1,4 +1,4 @@
 interface:
-  display_name: "SCD Interview Questions"
-  short_description: "Capture and retrieve interview questions from conversations"
-  default_prompt: "Use $scd-interview to extract interview questions from the current conversation and save approved ones to a personal store."
+  display_name: "SCD 面试题"
+  short_description: "从对话中提取和检索面试题"
+  default_prompt: "使用 $scd-interview 从当前对话中提取面试题，并将已确认的题目保存到个人题库。"

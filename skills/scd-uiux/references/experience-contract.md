@@ -1,173 +1,143 @@
-# Experience contract
+# 体验契约
 
-Use this reference for Focused or Product design, for durable UX artifacts, and
-for readiness review. Cover activated concerns only; do not fill sections with
-generic advice.
+聚焦设计、产品体验、持久 UX 产物和就绪审查使用本参考。只覆盖已触发的关注点，不要用通用建议填满章节。
 
-## Contract boundary
+## 契约边界
 
-The UX contract owns how a person understands and operates the approved product
-behavior:
+UX 契约负责用户如何理解和操作已确认的产品行为：
 
-- journeys, navigation, surfaces, and information hierarchy;
-- visible states, transitions, feedback, prevention, and recovery;
-- content behavior and interaction patterns;
-- responsive, input, and accessibility requirements;
-- feature-specific visual direction or design-system deltas;
-- interface needs and traceability to product acceptance.
+- 旅程、导航、界面和信息层级；
+- 可见状态、转换、反馈、预防和恢复；
+- 内容行为和交互模式；
+- 响应式、输入方式和无障碍要求；
+- 功能特定的视觉方向或设计系统增量；
+- 接口需求以及对产品验收的追溯。
 
-It does not own product scope, backend architecture, transport schemas,
-persistence, deployment, or production frontend implementation. Reference
-those sources instead of copying them.
+它不负责产品范围、后端架构、传输模式、持久化、部署或生产前端实施。引用相应权威来源，不要复制。
 
-## Artifact policy
+## 产物策略
 
-For durable fallback storage, use:
+持久化后备位置：
 
 ```text
 .scd/ux/<slug>.md
 ```
 
-Start from `assets/ux-contract.md`. Allowed statuses are:
+从 `assets/ux-contract.md` 开始。允许的状态：
 
-- `draft` - one or more material experience decisions remain open;
-- `ready` - the readiness review passes and any remaining notes cannot change
-  visible behavior or acceptance.
+- `draft`：一个或多个重要体验决策仍未确定；
+- `ready`：就绪审查通过，剩余说明不会改变可见行为或验收。
 
-Use `sources` to link the governing GitHub Issue, design system,
-interface contract, research, or existing UI. Use repository-relative paths or
-stable URLs. The linked GitHub Issue owns approval; `status: ready` does
-not add an approval gate.
+使用 `sources` 链接作为依据的 GitHub Issue、设计系统、接口契约、研究或现有 UI。使用仓库相对路径或稳定 URL。关联的 GitHub Issue 负责确认；`status: ready` 不增加确认门。
 
-Prefer one feature UX contract. Put a shared visual system in the repository's
-existing design-system home, or split one only when it is reused by multiple
-deliveries and changes independently.
+优先保留一份功能 UX 契约。共享视觉系统放在仓库现有设计系统位置；只有它被多个交付复用并独立变化时才拆分。
 
-## Journey and surface closure
+## 旅程与界面闭合
 
-Name the actor and concrete goal. A journey should expose:
+明确参与者和具体目标。一个旅程应呈现：
 
-1. entry condition;
-2. numbered user and system steps;
-3. the decisive action or comprehension point;
-4. success feedback;
-5. the applicable failure or recovery path.
+1. 进入条件；
+2. 编号的用户与系统步骤；
+3. 决定性操作或理解点；
+4. 成功反馈；
+5. 适用的失败或恢复路径。
 
-Create a surface inventory that maps each surface to at least one journey or
-acceptance item. Then walk both directions:
+建立界面清单，把每个界面映射到至少一个旅程或验收项。然后双向检查：
 
-- every stated need reaches a surface or an intentional non-UI outcome;
-- every surface exists for a stated need;
-- navigation lets the user enter, continue, recover, and leave the journey.
+- 每项需求都到达一个界面或有意的非 UI 结果；
+- 每个界面都因一项已说明需求而存在；
+- 导航允许用户进入、继续、恢复和离开旅程。
 
-Do not manufacture a screen to close the table. Return a missing product
-decision to Discovery.
+不要为了补齐表格而制造界面。缺失的产品决策返回 Discovery。
 
-### Global shell and cross-route components
+### 全局壳层与跨路由组件
 
-The surface inventory must explicitly cover cross-route global components —
-shell, header, footer, primary and mobile navigation, theme, and any shared
-banner — not only route-family screens. These components appear on every route
-but belong to no single route family, so a route-family-only audit leaves them
-in a gap where every node treats them as "out of scope" and no node owns them.
+界面清单必须明确覆盖跨路由全局组件——壳层、页头、页脚、主导航与移动导航、主题和共享横幅——而不只覆盖路由族界面。这些组件出现在每条路由上，却不属于任何单一路由族；只按路由族审计会让每个节点都把它们视为“范围外”，最终无人负责。
 
-For each global component the audit must either:
+对每个全局组件，审计必须：
 
-- assign it to the surface family that governs its visual treatment, or
-- record an explicit "no change needed" decision with a one-line reason.
+- 把它分配给负责其视觉处理的界面族；或
+- 明确记录“无需变更”决策，并给出一句理由。
 
-When the audit feeds `scd-project`, every global component that needs change
-must appear in at least one delivery node's in-scope enumeration; "will be
-fixed incidentally by some node" is not an assignment.
+审计结果交给 `scd-project` 时，每个需要变更的全局组件必须出现在至少一个交付节点的范围内枚举中。“某个节点会顺手修复”不是有效分配。
 
-## State and interaction contract
+## 状态与交互契约
 
-For each important surface or reusable component, cover only applicable states:
+对每个重要界面或可复用组件，只覆盖适用状态：
 
-- initial or cold load;
-- loading or submitting;
-- populated or success;
-- empty or zero-data;
-- validation failure;
-- permission denied;
-- dependency or service failure;
-- partial success;
-- offline or stale data;
-- destructive confirmation, cancellation, undo, or retry;
-- focus, keyboard, hover, selected, disabled, and busy behavior.
+- 初始或冷启动；
+- 加载或提交；
+- 已填充或成功；
+- 空数据或零数据；
+- 验证失败；
+- 权限拒绝；
+- 依赖或服务失败；
+- 部分成功；
+- 离线或陈旧数据；
+- 破坏性确认、取消、撤销或重试；
+- 焦点、键盘、悬停、选中、禁用和忙碌行为。
 
-Record transitions as `state + action -> next state + feedback`. Preserve user
-input across recoverable failures unless the product rule forbids it. Make
-duplicate actions, stale responses, delayed completion, and navigation during
-pending work explicit when they can occur.
+用 `状态 + 操作 -> 下一状态 + 反馈` 记录转换。除非产品规则禁止，可恢复失败后保留用户输入。重复操作、陈旧响应、延迟完成和待处理期间导航确实可能发生时，必须明确处理。
 
-## Responsive and accessibility floor
+## 响应式与无障碍底线
 
-For responsive Web work, state:
+响应式 Web 工作应说明：
 
-- content priority when width decreases;
-- reflow, wrapping, overflow, and dense-data behavior;
-- pointer, touch, and keyboard interaction differences;
-- breakpoint behavior only where layout actually changes;
-- modal, drawer, menu, table, and form behavior on narrow screens.
+- 宽度缩小时的内容优先级；
+- 重排、换行、溢出和密集数据行为；
+- 指针、触控和键盘交互差异；
+- 只在布局真实变化处规定断点行为；
+- 窄屏上的模态框、抽屉、菜单、表格和表单行为。
 
-For accessibility, make relevant behavior testable:
+无障碍行为必须可测试：
 
-- semantic structure and accessible names;
-- keyboard order, operation, escape, and focus return;
-- visible focus and non-color status cues;
-- error association, announcements, and recovery;
-- contrast targets for load-bearing combinations;
-- reduced motion and zoom/reflow behavior;
-- alt text or equivalent meaning for informative media.
+- 语义结构和无障碍名称；
+- 键盘顺序、操作、退出和焦点返回；
+- 可见焦点以及不只依赖颜色的状态提示；
+- 错误关联、播报和恢复；
+- 关键颜色组合的对比度目标；
+- 减少动态效果与缩放/重排行为；
+- 信息性媒体的替代文本或等价含义。
 
-Use WCAG terminology where it clarifies a requirement, but do not paste a
-generic checklist into every contract.
+WCAG 术语能够澄清要求时可以使用，但不要把通用清单粘贴到每份契约中。
 
-## Visual and component discipline
+## 视觉与组件纪律
 
-Name the existing design system or component source when one exists. Describe
-only feature-specific additions or overrides. A component contract separates:
+存在设计系统或组件来源时写明。只描述功能特定的新增或覆盖。组件契约应区分：
 
-- purpose and allowed contexts;
-- content and anatomy;
-- interaction and state behavior;
-- visual tokens or inherited style;
-- responsive and accessibility behavior.
+- 用途与允许场景；
+- 内容与组成；
+- 交互与状态行为；
+- 视觉令牌或继承样式；
+- 响应式与无障碍行为。
 
-Do not encode one-off pixel values when an existing token or layout rule
-expresses the decision. Do not create a complete design system for one feature.
+现有令牌或布局规则能够表达决策时，不要写一次性像素值。不要为一个功能创建完整设计系统。
 
-## Engineering seam
+## 工程衔接点
 
-For each surface, list:
+对每个界面列出：
 
-- information displayed;
-- user operations;
-- states and error distinctions the UI must receive;
-- representative examples useful for mocks;
-- existing shared-contract operation identifiers, when available.
+- 显示的信息；
+- 用户操作；
+- UI 必须接收和区分的状态与错误；
+- 适合模拟的代表性示例；
+- 可用时列出现有共享契约操作标识。
 
-Label unresolved items as `Interface need`, not as a finalized API. The shared
-interface contract remains the common source for frontend and backend field,
-operation, permission, and error semantics.
+未解决项标记为“接口需求”，不要假装是已定稿 API。前后端字段、操作、权限和错误语义继续由共享接口契约统一负责。
 
-## Readiness review
+## 就绪审查
 
-Before setting `status: ready`, verify:
+设置 `status: ready` 前验证：
 
-- source paths resolve and approved terminology is preserved;
-- every acceptance behavior has UX coverage where it is user-facing;
-- every designed surface maps back to a journey or acceptance item;
-- applicable loading, empty, failure, permission, partial, and recovery states
-  are explicit;
-- interaction rules are internally consistent across surfaces;
-- responsive and accessibility requirements are observable;
-- visual references exist where prose cannot preserve a spatial or appearance
-  decision;
-- visual references and the written contract agree;
-- interface needs have stable shared-contract references or a named
-  reconciliation owner;
-- no open decision can materially change visible behavior or acceptance.
+- 来源路径可解析，已确认术语得到保留；
+- 每个面向用户的验收行为都有 UX 覆盖；
+- 每个设计界面映射回旅程或验收项；
+- 适用的加载、空数据、失败、权限、部分成功和恢复状态明确；
+- 跨界面的交互规则内部一致；
+- 响应式和无障碍要求可观察；
+- 文字无法保留空间或外观决策时存在视觉参考；
+- 视觉参考与书面契约一致；
+- 接口需求有稳定的共享契约引用或具名统一负责人；
+- 没有待定决策会实质改变可见行为或验收。
 
-If any final item fails, keep `status: draft` and report the exact blocker.
+任一项失败时，保持 `status: draft` 并报告确切阻塞。

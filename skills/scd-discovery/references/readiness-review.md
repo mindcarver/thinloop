@@ -1,89 +1,80 @@
-# Readiness and approval
+# 就绪与确认
 
-Use this reference before moving a full discovery from exploration to review.
+完整 Discovery 从探索进入评审前使用本参考。
 
-## Readiness gate
+## 就绪门
 
-The next delivery is ready for review only when:
+下一项交付只有满足以下条件才可评审：
 
-- the primary user, problem, and observable outcome are coherent;
-- the main journey can be described from trigger to result;
-- important failure and recovery behavior is decided;
-- in-scope and out-of-scope behavior is explicit;
-- no open decision can materially change the delivery contract;
-- deferred decisions do not block implementation;
-- every acceptance item is observable through a named verification seam;
-- shared terms do not carry conflicting meanings.
+- 主要用户、问题和可观察结果一致；
+- 主旅程能够从触发描述到结果；
+- 重要失败和恢复行为已经决定；
+- 范围内和范围外行为明确；
+- 没有待定决策会实质改变交付契约；
+- 延期决策不阻塞实施；
+- 每个验收项都能通过具名验证衔接点观察；
+- 共享术语不存在冲突含义。
 
-Readiness applies to the next delivery, not the product's entire future.
+就绪度只针对下一项交付，而不是产品的全部未来。
 
-For a greenfield product, the approved MVP baseline is also ready only when:
+全新产品的已确认 MVP 基线还必须满足：
 
-- every required PRD section has concrete content;
-- functional requirements have unique, stable `FR-*` identifiers;
-- success metrics are observable without prescribing implementation;
-- open questions contain no item that can materially change the MVP contract;
-- the proposed first delivery or Project handoff can name the requirements it
-  implements.
+- 每个必需 PRD 章节都有具体内容；
+- 功能需求使用唯一且稳定的 `FR-*` 标识；
+- 成功指标可观察，但不规定实施方式；
+- 待确认问题中没有会实质改变 MVP 契约的事项；
+- 首项交付或 Project 交接能够列出它实施的需求。
 
-## Silent adversarial review
+## 静默对抗式审查
 
-Before presenting the contract, look for:
+展示契约前检查：
 
-- vague words such as fast, intuitive, robust, support, secure, or smart without observable meaning;
-- a happy path with no failure, empty, duplicate, cancel, or recovery behavior;
-- conflicting confirmed decisions;
-- model assumptions written as user decisions;
-- missing ownership, privacy, permission, deletion, or retention rules;
-- hidden dependencies that expand the delivery;
-- acceptance items that prescribe implementation but cannot verify user behavior;
-- acceptance items with no practical evidence path;
-- irreversible or vendor-locking choices hidden as implementation details.
+- “快速、直观、健壮、支持、安全、智能”等词没有可观察含义；
+- 只有顺利路径，没有失败、空数据、重复、取消或恢复行为；
+- 已确认决策互相冲突；
+- 模型假设被写成用户决策；
+- 所有权、隐私、权限、删除或保留规则缺失；
+- 隐藏依赖扩大交付；
+- 验收项规定实施方式，却无法验证用户行为；
+- 验收项没有可行证据路径；
+- 不可逆或供应商锁定选择被隐藏为实施细节。
 
-Do not display a ceremonial checklist. If the review finds a real blocker, return to the single most upstream decision.
+不要展示形式化清单。发现真实阻塞时，回到最上游的一个决策。
 
-## Acceptance quality
+## 验收质量
 
-Give acceptance items stable identifiers:
+验收项使用稳定标识：
 
 ```markdown
-- A1: A valid PDF up to 10 MB can be imported.
-- A2: An oversized PDF is rejected before upload with the limit shown.
-- A3: Every generated answer links to at least one source passage.
+- A1：可以导入不超过 10 MB 的有效 PDF。
+- A2：超大 PDF 在上传前被拒绝，并显示大小限制。
+- A3：每个生成答案至少链接一段来源内容。
 ```
 
-An item should identify observable behavior, not a task such as "implement parser" or "add tests."
+验收项应描述可观察行为，而不是“实现解析器”或“添加测试”等任务。
 
-## Existing-Issue fast path
+## 现有 Issue 快速路径
 
-When the user supplies an existing GitHub Issue or product contract:
+用户提供现有 GitHub Issue 或产品契约时：
 
-1. inspect repository facts and the Issue;
-2. run the readiness and adversarial reviews;
-3. ask only about material gaps or contradictions;
-4. if none remain, present the compact shared-understanding summary immediately.
+1. 检查仓库事实和 Issue；
+2. 执行就绪与对抗式审查；
+3. 只询问实质缺口或矛盾；
+4. 没有缺口时立即展示紧凑的共同理解摘要。
 
-If the user already approved the Issue and explicitly requested implementation,
-that instruction can satisfy the approval requirement. Do not ask them to
-approve the same contract twice.
+如果用户已经确认 Issue 并明确要求实施，该指令可以满足确认要求。不要让用户重复确认同一契约。
 
-## Approval request
+## 确认请求
 
-Present:
+展示：
 
-- outcome;
-- core journey;
-- consequential decisions;
-- explicit exclusions;
-- acceptance summary;
-- deferred decisions and accepted assumptions.
+- 结果；
+- 核心旅程；
+- 重要决策；
+- 明确排除项；
+- 验收摘要；
+- 延期决策和已接受假设。
 
-Then ask one question: whether this combined contract is accurate and approved.
+然后只问一个问题：这份合并契约是否准确并得到确认。
 
-Only a clear affirmative answer authorizes persistence of the approved
-contract. For greenfield repository work, persist the approved PRD through the
-repository's normal document-delivery path and then create the applicable
-Delivery Issue or Project handoff. For an existing-product delivery, persist
-the approved contract to the GitHub Issue. If the user approves but says not to
-implement, persist only the approved artifacts they requested, clean temporary
-state, and stop.
+只有清晰的肯定回答才授权持久化已确认契约。全新产品的仓库工作应通过仓库普通文档交付路径持久化 PRD，再创建适用的 Delivery Issue 或 Project 交接。现有产品交付把已确认契约写入中文 GitHub Issue。用户确认但要求不实施时，只持久化用户要求的已确认产物，清理临时状态并停止。

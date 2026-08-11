@@ -1,72 +1,69 @@
-# QuickDev evidence contract
+# QuickDev 证据契约
 
-Use this reference to select proportional verification and describe incomplete results.
+选择与风险匹配的验证或描述不完整结果时使用本参考。
 
-## Evidence ladder
+## 证据阶梯
 
-Choose the strongest practical evidence that directly exercises the change:
+选择能够直接练习变更的可行最强证据：
 
-| Change | Minimum useful evidence | Strengthen when risk rises |
+| 变更 | 最小有效证据 | 风险升高时加强 |
 |---|---|---|
-| Documentation, naming, small config | targeted static or repository check | parse/build the affected artifact |
-| Local bug fix | focused regression or behavior test | relevant suite and type/build check |
-| Cross-layer feature | focused tests plus integration/build evidence | runtime or end-to-end path |
-| UI behavior | build plus rendered interaction or screenshot | visual comparison and logs |
-| Schema, migration, auth, security | dedicated checks in a safe environment | rollback, compatibility, or adversarial cases |
+| 文档、命名、小型配置 | 针对性静态或仓库检查 | 解析或构建受影响产物 |
+| 局部缺陷修复 | 聚焦回归或行为测试 | 相关测试套件和类型/构建检查 |
+| 跨层功能 | 聚焦测试加集成/构建证据 | 运行时或端到端路径 |
+| UI 行为 | 构建加渲染交互或截图 | 视觉比较和日志 |
+| 模式、迁移、身份验证、安全 | 安全环境中的专项检查 | 回滚、兼容性或对抗场景 |
 
-Repository-specific commands outrank generic guesses. Do not invent a new test framework for a trivial change.
+仓库专属命令优先于通用猜测。不要为简单变更新建测试框架。
 
-## Evidence quality
+## 证据质量
 
-Evidence is useful only when it records:
+有效证据必须记录：
 
-- the exact check or observable action;
-- whether it completed;
-- the exit status or result;
-- which acceptance behavior it supports.
+- 精确检查或可观察行动；
+- 是否完成；
+- 退出状态或结果；
+- 它支持哪项验收行为。
 
-A passing unrelated suite is not evidence for the changed behavior. A test that never reached the target path is not a regression test.
+不相关测试套件通过不是变更行为证据。没有到达目标路径的测试不是回归测试。
 
-## Acceptance mapping
+## 验收映射
 
-When the governing Issue assigns acceptance identifiers, retain them through implementation:
+作为依据的 Issue 分配验收标识时，在实施期间保留：
 
 ```markdown
-- A1 PASS - `node --test test/import.test.mjs`
-- A2 PASS - observed the oversized upload rejected before a request was sent
-- A3 UNVERIFIED - the current environment cannot exercise the external model outage
+- A1 PASS：`node --test test/import.test.mjs`
+- A2 PASS：观察到超大文件在发出请求前被拒绝
+- A3 UNVERIFIED：当前环境无法触发外部模型故障
 ```
 
-Each identifier must map to a directly relevant check, an explicit unverified boundary, or a named blocker. One check may support several acceptance items when it genuinely exercises them; do not duplicate or inflate evidence.
+每个标识必须映射到直接相关检查、明确未验证边界或具名阻塞。一个检查真实覆盖多个验收项时可以复用；不得重复或夸大证据。
 
-If implementation reveals that an acceptance item is impossible, contradictory,
-or would require a material product-contract change, do not quietly drop or
-rewrite it. Update the Issue and return that decision to discovery.
+如果实施发现验收项不可能、互相矛盾或需要实质产品契约变化，不得悄悄删除或改写。更新中文 Issue，并把决策返回 Discovery。
 
-The independent acceptance verifier produces one aggregate result:
+独立验收者产生一个汇总结果：
 
-- `PASS` only when every acceptance item has direct observed evidence;
-- `FAIL` when changed behavior violates any acceptance item;
-- `BLOCKED` when a required acceptance path cannot run.
+- 只有每个验收项都有直接观察证据时为 `PASS`；
+- 变更行为违反任一验收项时为 `FAIL`；
+- 必需验收路径无法运行时为 `BLOCKED`。
 
-The verifier must not promote `UNVERIFIED` or partially verified behavior to
-`PASS`.
+验收者不得把 `UNVERIFIED` 或部分验证行为提升为 `PASS`。
 
-## Failures and baselines
+## 失败与基线
 
-When a check fails:
+检查失败时：
 
-1. determine whether the failure is caused by the current change;
-2. fix in-scope regressions;
-3. do not silently repair unrelated baseline failures;
-4. report the failing check and evidence that separates baseline from regression when available.
+1. 判断失败是否由当前变更引起；
+2. 修复范围内回归；
+3. 不得悄悄修复无关基线失败；
+4. 报告失败检查；有证据时区分基线与回归。
 
-Limit self-repair when retries stop producing new information. Escalate a real blocker instead of cycling.
+重试不再产生新信息时限制自修复。报告真实阻塞，不要循环。
 
-## Completion language
+## 完成用语
 
-- **Verified:** acceptance behavior is supported by observed evidence.
-- **Partially verified:** implementation exists, but a named acceptance path remains unobserved.
-- **Blocked:** a required implementation or verification step cannot proceed.
+- **已验证：** 观察证据支持验收行为。
+- **部分验证：** 实施存在，但具名验收路径仍未观察。
+- **受阻：** 必需实施或验证步骤无法推进。
 
-Never use "done", "fixed", or "working" more broadly than the evidence permits.
+“完成”“已修复”或“可用”的范围不得超过证据允许范围。

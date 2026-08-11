@@ -1,3 +1,3 @@
-# Knowledge index
+# 知识索引
 
-- [Title](entries/slug.md) - trigger words or one short trigger phrase
+- [标题](entries/slug.md) - 触发词或一句简短的触发描述

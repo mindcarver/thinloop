@@ -1,286 +1,171 @@
 ---
 name: scd-reengineering
-description: "Reengineer an existing repository through evidence-backed project-scale refactoring or a new implementation that may change language, framework, architecture, storage, or runtime while preserving only explicitly selected behavior and compatibility. Use for requests to rewrite, reimplement, replace, port, modernize, or substantially refactor an open-source or internal project across multiple independently verifiable deliveries. Pin source and license evidence, establish executable baselines, define keep/change/drop boundaries, compose scd-discovery, scd-architecture, scd-project, scd-execute, and scd-quickdev, and execute approved READY Issue waves with bounded parallelism. Do not use for a small local refactor, ordinary maintenance, a new product with no source baseline, or an unapproved production cutover."
+description: "通过有证据支持的项目级重构或新实施，对现有仓库进行再工程；可以改变语言、框架、架构、存储或运行时，但只保留明确选中的行为和兼容性。适用于重写、重新实施、替换、移植、现代化或大幅重构开源或内部项目，且工作跨越多个可独立验证交付。固定来源和许可证证据，建立可执行基线，定义保留/改变/删除边界，组合 scd-discovery、scd-architecture、scd-project、scd-execute 和 scd-quickdev，并以有界并行执行已确认 READY Issue 波次。不适用于小型局部重构、普通维护、没有来源基线的新产品，或未确认的生产切换。"
 ---
 
-# SCD Reengineering
+# SCD 再工程
 
-Turn an existing system into a better implementation without confusing source
-code, observed behavior, product intent, or legal permission. Govern the
-reengineering program and its execution; reuse the existing Thinloop skills for
-product decisions, architecture, project decomposition, and one-Issue delivery.
+把现有系统转化为更好的实施，同时明确区分源代码、观察行为、产品意图和法律许可。由本技能管理再工程项目及其执行；产品决策、架构、项目拆解和单 Issue 交付复用现有 Thinloop 技能。
 
-Maintain these boundaries:
+维护以下边界：
 
-- upstream source and executable behavior are evidence, not automatically the
-  desired product contract;
-- the approved compatibility envelope owns what the target must keep, change,
-  drop, or leave unverified;
-- `scd-project` owns the Initiative, Delivery Issues, and hard dependency DAG;
-- `scd-execute` owns safe READY-wave selection, isolated lane launch, and
-  serial merge coordination after Reengineering's additional gates pass;
-- each `scd-quickdev` lane owns one READY Delivery Issue and pull request;
-- independent acceptance and an integration gate own completion evidence;
-- production cutover and other high-risk actions retain a human gate.
+- 上游源码和可执行行为是证据，不会自动成为目标产品契约；
+- 已确认兼容性边界负责目标必须保留、改变、删除或保持未验证的内容；
+- `scd-project` 负责 Initiative、Delivery Issues 和硬依赖 DAG；
+- 额外门通过后，`scd-execute` 负责安全 READY 波次选择、隔离通道启动和串行合并协调；
+- 每条 `scd-quickdev` 通道负责一个 READY Delivery Issue 和拉取请求；
+- 独立验收和集成门负责完成证据；
+- 生产切换和其他高风险操作继续保留人工门。
 
-## Follow the fail-closed state machine
+## 遵循故障关闭状态机
 
-Advance only through these states:
+只能按以下状态推进：
 
-1. `SOURCE_BASELINED` - pinned source, license evidence, and executable baseline
-   results or exact blockers are recorded.
-2. `DIRECTION_APPROVED` - the user approved the mode, target boundary,
-   compatibility envelope, and material uncertainties.
-3. `PROJECT_MATERIALIZED` - `scd-project` created or updated the live
-   Initiative, Delivery Issues, and validated graph revision.
-4. `GRAPH_APPROVED` - the user approved that exact live graph revision and its
-   READY wave.
-5. `EXECUTING` - one `scd-quickdev` lane is operating per selected READY Issue
-   under the execution contract.
-6. `INTEGRATION_ACCEPTED` - the assembled current base passed the integration
-   Issue and capability-level acceptance.
+1. `SOURCE_BASELINED`：已记录固定来源、许可证证据、可执行基线结果或精确阻塞。
+2. `DIRECTION_APPROVED`：用户已确认模式、目标边界、兼容性边界和实质不确定性。
+3. `PROJECT_MATERIALIZED`：`scd-project` 已创建或更新实时 Initiative、Delivery Issues 和经过验证的图版本。
+4. `GRAPH_APPROVED`：用户已确认该精确实时图版本及其 READY 波次。
+5. `EXECUTING`：每个选中 READY Issue 由一条 `scd-quickdev` 通道按执行契约运行。
+6. `INTEGRATION_ACCEPTED`：组装后的当前基准通过集成 Issue 和能力级验收。
 
-Do not skip or infer a state. A later state requires direct evidence for every
-earlier state. Direction approval does not imply Project materialization or
-graph approval. Before the first implementation edit or commit, and again
-before every later READY wave, build the transient receipt defined in
-`references/execution-contract.md` and run
-`scripts/validate-execution-receipt.mjs`. The receipt validates a live
-coordination snapshot; never commit it or use it as a second state database.
+不得跳过或推断状态。后续状态要求此前每个状态都有直接证据。方向确认不等于 Project 已实例化或图已确认。首次实施编辑或提交前，以及每个后续 READY 波次前，构建 `references/execution-contract.md` 定义的临时收据并运行 `scripts/validate-execution-receipt.mjs`。收据验证实时协调快照；不得提交，也不得作为第二状态数据库。
 
-If a required Thinloop skill, tracker, graph validator, approval, Issue
-contract, or verification environment is unavailable, report `BLOCKED` at the
-current state. Do not approximate the missing dependency or continue directly.
+必需 Thinloop 技能、跟踪器、图验证器、确认、Issue 契约或验证环境不可用时，在当前状态报告 `BLOCKED`。不得近似替代缺失依赖或直接继续。
 
-## Never substitute local activity for project evidence
+## 不得用本地活动替代项目证据
 
-- `TaskCreate`, `TodoWrite`, checklists, or another session-local task tool are
-  not an Initiative, Delivery Issue, or Project DAG.
-- A local plan, memory entry, scratch file, or generated receipt is not the
-  tracker-backed project truth.
-- A branch, commit, checked task, local test, or implementer summary is not
-  independent acceptance.
-- A direct push to the default branch is not a QuickDev delivery lane.
-- A list of capability packages or source files is not a graph of approved
-  vertical Delivery Issues.
+- `TaskCreate`、`TodoWrite`、清单或其他会话局部任务工具不是 Initiative、Delivery Issue 或 Project DAG。
+- 本地计划、记忆条目、草稿文件或生成收据不是跟踪器承载的项目事实。
+- 分支、提交、已勾选任务、本地测试或实施者摘要不是独立验收。
+- 直接推送默认分支不是 QuickDev 交付通道。
+- 能力包或源文件列表不是已确认垂直 Delivery Issues 的依赖图。
 
-Local task tracking may mirror the next action for convenience, but it cannot
-authorize work, replace live URLs and Issue contracts, or establish DONE.
+本地任务跟踪可以为了方便同步下一行动，但不能授权工作、替代实时 URL 和 Issue 契约，也不能建立 DONE。
 
-## Select the operation
+## 选择操作
 
-Choose the smallest operation supported by the requested outcome and repository
-evidence:
+根据请求结果和仓库证据选择最小操作：
 
-- **Refactor:** Continue from the existing implementation and preserve approved
-  external behavior while changing internal structure, boundaries, or
-  maintainability. Use this path only when the work spans several independently
-  verifiable deliveries; route a local refactor directly to `scd-quickdev`.
-- **Reimplement:** Build a new implementation from an explicit behavior and
-  compatibility envelope. This path may replace the language, framework,
-  architecture, storage, deployment shape, or runtime. Do not preserve an
-  upstream capability merely because it exists.
-- **Assess:** Compare Refactor and Reimplement using observed constraints,
-  delivery risk, migration cost, and verification feasibility before asking the
-  user to approve one direction. Keep this path read-only.
+- **重构：** 从现有实施继续，在改变内部结构、边界或可维护性的同时保留已确认外部行为。只有工作跨越多个可独立验证交付时使用；局部重构直接交给 `scd-quickdev`。
+- **重新实施：** 从明确的行为和兼容性边界构建新实施。可以替换语言、框架、架构、存储、部署形态或运行时。不能仅因上游存在某能力就保留它。
+- **评估：** 在让用户确认方向前，根据观察到的约束、交付风险、迁移成本和验证可行性比较“重构”与“重新实施”。保持只读。
 
-Hybrid or strangler replacement is an execution strategy, not a third product
-mode. Prefer it when old and new implementations can coexist behind stable
-contracts. A big-bang replacement requires evidence that incremental coexistence
-is infeasible and must keep rollback and cutover explicit.
+混合或绞杀式替换是执行策略，不是第三种产品模式。新旧实施可以在稳定契约后共存时优先使用。大爆炸替换必须有证据证明增量共存不可行，并明确保留回滚和切换。
 
-If the desired users, behavior, permissions, data boundaries, or acceptance
-substantially differ from the source project, use `scd-discovery` before
-reengineering. If there is no meaningful source behavior or compatibility
-baseline, treat the request as new-product work rather than Reengineering.
+目标用户、行为、权限、数据边界或验收与来源项目实质不同时，再工程前使用 `scd-discovery`。不存在有意义的来源行为或兼容性基线时，把请求视为新产品工作，而不是 Reengineering。
 
-## Start from source and repository truth
+## 从来源和仓库事实出发
 
-1. Read applicable `AGENTS.md`, `CLAUDE.md`, repository instructions, source
-   and target manifests, tests, public contracts, schemas, architecture,
-   release notes, deployment topology, and open Issues.
-2. Inspect every involved working tree, branch, remote, and existing Initiative.
-   Preserve unrelated user changes and do not create duplicate project state.
-3. Pin each upstream repository by canonical URL and immutable commit SHA. Record
-   any tag separately because tags can move.
-4. Inspect the exact license, notices, attribution files, generated-code rules,
-   and dependency licenses that apply to the pinned source. Record evidence and
-   uncertainty; do not provide a legal conclusion.
-5. Treat an unfamiliar upstream repository as untrusted. Inspect installation
-   and build entrypoints before executing them, use an isolated environment,
-   exclude credentials and personal data, and do not run privileged or
-   destructive commands.
-6. Build and run the pinned source when safely possible. Record exact commands,
-   environment, fixtures, outputs, and failures. Source inspection alone is not
-   an executable behavior baseline.
+1. 阅读适用的 `AGENTS.md`、`CLAUDE.md`、仓库说明、来源与目标清单、测试、公共契约、模式、架构、发行说明、部署拓扑和开放 Issues。
+2. 检查所有涉及的工作树、分支、远程仓库和现有 Initiative。保留用户无关变更，不创建重复项目状态。
+3. 用规范 URL 和不可变提交 SHA 固定每个上游仓库。标签可移动，因此单独记录。
+4. 检查适用于固定来源的精确许可证、通知、署名文件、生成代码规则和依赖许可证。记录证据和不确定性，不给出法律结论。
+5. 把陌生上游仓库视为不受信任。执行安装和构建入口前先检查，使用隔离环境，排除凭据与个人数据，不运行特权或破坏性命令。
+6. 安全可行时构建并运行固定来源。记录精确命令、环境、测试数据、输出和失败。仅检查源码不是可执行行为基线。
 
-If the license is missing, conflicting, or unclear for the intended copying,
-modification, distribution, or clean-room claim, stop that affected path for
-explicit user or qualified legal review. Do not call work clean-room if an
-implementation agent has inspected source code that the clean-room boundary was
-supposed to exclude.
+如果预期复制、修改、分发或净室声明所需许可证缺失、冲突或不清晰，停止受影响路径，等待用户或合格法律人员明确评审。如果实施 Agent 已检查本应由净室边界排除的源码，不得把工作称为净室实施。
 
-Read `references/reengineering-contract.md` before approving a direction,
-creating the Initiative, or implementing from third-party source.
+确认方向、创建 Initiative 或依据第三方来源实施前，阅读 `references/reengineering-contract.md`。
 
-## Establish the compatibility envelope
+## 建立兼容性边界
 
-Identify capabilities from executable behavior, public contracts, maintained
-tests, user evidence, and source inspection. For each material capability,
-record:
+从可执行行为、公共契约、维护中的测试、用户证据和源码检查识别能力。对每项重要能力记录：
 
-- stable capability ID and user-visible outcome;
-- source evidence and confidence;
-- `keep`, `change`, `drop`, or `unverified`;
-- target contract and allowed compatibility delta;
-- baseline command, fixture, or observation;
-- verification seam and owning Delivery Issue when materialized.
+- 稳定能力 ID 和用户可见结果；
+- 来源证据与置信度；
+- `keep`、`change`、`drop` 或 `unverified`；
+- 目标契约和允许的兼容性差异；
+- 基线命令、测试数据或观察；
+- 验证衔接点，以及实例化后的负责 Delivery Issue。
 
-Do not default to full parity. Preserve only behavior required by the approved
-target outcome, consumers, data, or compatibility promise. Separate:
+不要默认完全等价。只保留已确认目标结果、消费者、数据或兼容性承诺所需的行为。区分：
 
-- public API, CLI, event, file-format, plugin, and protocol compatibility;
-- data meaning, migration, ordering, error, timing, and performance behavior;
-- incidental implementation details and source defects that must not become
-  target requirements.
+- 公共 API、CLI、事件、文件格式、插件和协议兼容性；
+- 数据含义、迁移、顺序、错误、时序和性能行为；
+- 不应成为目标需求的偶然实施细节和来源缺陷。
 
-Return changed product behavior to `scd-discovery`. Use `scd-architecture` when
-the target changes durable domain ownership, system boundaries, shared machine
-contracts, transactions, concurrency, migration, reliability, or rollback.
-Architecture may be completely new for Reimplement mode; compatibility is
-measured at the approved external seams, not by copying the old structure.
+改变的产品行为返回 `scd-discovery`。目标改变持久领域所有权、系统边界、共享机器契约、事务、并发、迁移、可靠性或回滚时使用 `scd-architecture`。重新实施模式可以使用全新架构；兼容性在已确认外部衔接点度量，而不是通过复制旧结构度量。
 
-## Choose a direction with evidence
+## 用证据选择方向
 
-Compare Refactor and Reimplement against:
+根据以下因素比较“重构”与“重新实施”：
 
-- how much approved behavior is covered by executable baselines;
-- whether the current language and architecture can satisfy the target;
-- the proportion of source capability being kept;
-- public compatibility and data-migration cost;
-- incremental delivery and rollback feasibility;
-- security, performance, operational, and supply-chain constraints;
-- the team's ability to verify both implementations at the same seams.
+- 可执行基线覆盖多少已确认行为；
+- 当前语言和架构能否满足目标；
+- 保留来源能力的比例；
+- 公共兼容性和数据迁移成本；
+- 增量交付和回滚可行性；
+- 安全、性能、运维和供应链约束；
+- 团队能否在相同衔接点验证两种实施。
 
-Recommend one direction with confidence and unresolved risks. Do not justify a
-rewrite with code age, style preference, unfamiliarity, or an unsupported claim
-that a new language will be faster. Obtain explicit approval for the direction,
-compatibility envelope, target boundary, and any license uncertainty that
-requires user judgment.
+推荐一个方向，说明置信度和未解决风险。不得以代码年代、风格偏好、不熟悉，或没有证据的“新语言会更快”为重写理由。对方向、兼容性边界、目标边界和需要用户判断的许可证不确定性取得明确确认。
 
-## Materialize the reengineering project
+## 实例化再工程项目
 
-Use `scd-project` after the shared direction and compatibility envelope are
-approved:
+共享方向和兼容性边界确认后使用 `scd-project`：
 
-1. create or update one Initiative that includes the pinned source, mode,
-   compatibility envelope, shared target decisions, migration strategy, and
-   project-level parity acceptance;
-2. decompose vertical capabilities into independently verifiable Delivery
-   Issues instead of file, package, frontend, or backend task lists;
-3. add baseline, shared-contract, migration, or platform-foundation Issues only
-   when they produce independently verifiable prerequisites;
-4. encode only hard causal prerequisites in the Project DAG;
-5. add an integration or parity Issue whenever child acceptance cannot prove
-   assembled target behavior;
-6. validate and present the exact graph revision, READY wave, BLOCKED nodes,
-   coordination constraints, and human gates for approval.
+1. 创建或更新一个中文 Initiative，包含固定来源、模式、兼容性边界、共享目标决策、迁移策略和项目级等价验收；
+2. 把垂直能力拆解为可独立验证的中文 Delivery Issues，而不是文件、包、前端或后端任务列表；
+3. 只有基线、共享契约、迁移或平台基础 Issue 产生可独立验证前置条件时才添加；
+4. Project DAG 只编码硬因果前置条件；
+5. 子验收无法证明组装后目标行为时，增加集成或等价 Issue；
+6. 验证并展示精确图版本、READY 波次、BLOCKED 节点、协调约束和人工门供确认。
 
-`scd-project` remains a non-executing planner. Reengineering composes
-`scd-execute` as the external consumer only after its source, direction,
-compatibility, receipt, and graph-approval gates pass. Approval of the direction
-alone does not authorize unspecified Delivery Issues.
+`scd-project` 仍是不执行的规划器。只有来源、方向、兼容性、收据和图确认门通过后，Reengineering 才组合 `scd-execute` 作为外部消费者。只确认方向不授权未具体说明的 Delivery Issues。
 
-The handoff from direction to Project is mandatory. Invoke `scd-project`; do
-not reproduce or approximate it with local task tools. If `scd-project` cannot
-be invoked or the repository-authoritative tracker cannot be read and written,
-stop as `BLOCKED` after the approved direction summary.
+从方向到 Project 的交接是强制的。必须调用 `scd-project`，不得使用本地任务工具复制或近似替代。无法调用 `scd-project`，或无法读写仓库权威跟踪器时，在已确认方向摘要后以 `BLOCKED` 停止。
 
-## Execute approved READY waves
+## 执行已确认 READY 波次
 
-Read `references/execution-contract.md` and
-`../scd-execute/references/execution-contract.md` before launching
-implementation lanes.
+启动实施通道前，阅读 `references/execution-contract.md` 和 `../scd-execute/references/execution-contract.md`。
 
-After the user approves the exact executable graph revision, invoke
-`scd-execute` under these Reengineering-specific restrictions:
+用户确认精确可执行图版本后，在以下再工程限制下调用 `scd-execute`：
 
-1. re-read the live Initiative and Delivery Issues and validate the graph;
-2. create and validate the pre-execution receipt from live evidence;
-3. select only approved READY nodes;
-4. identify coordination constraints such as overlapping files, shared
-   generated artifacts, scarce environments, or likely merge conflicts without
-   adding false dependency edges;
-5. launch separate agents and isolated worktrees for safely independent nodes,
-   bounded by available concurrency and repository policy;
-6. give each agent explicit file or module ownership, tell it that other agents
-   are working concurrently, and hand it exactly one Delivery Issue through
-   `scd-quickdev`;
-7. keep dependent or coordination-conflicting nodes serial;
-8. serialize merges, synchronize remaining worktrees after each merge, and
-   rerun the affected focused and integration checks;
-9. rebuild the live Project graph after every PASS, FAIL, BLOCKED result, scope
-   change, or merged dependency.
+1. 重新读取实时 Initiative 和 Delivery Issues，并验证依赖图；
+2. 从实时证据创建并验证执行前收据；
+3. 只选择已确认 READY 节点；
+4. 识别重叠文件、共享生成产物、稀缺环境或可能合并冲突等协调约束，但不增加伪依赖边；
+5. 在可用并发和仓库策略范围内，为可安全独立执行的节点启动独立 Agent 和隔离工作树；
+6. 给每个 Agent 明确文件或模块所有权，说明有其他 Agent 并行工作，并通过 `scd-quickdev` 只交付一个 Delivery Issue；
+7. 依赖或协调冲突节点保持串行；
+8. 串行合并；每次合并后同步剩余工作树，重新运行受影响的聚焦与集成检查；
+9. 每次出现 PASS、FAIL、BLOCKED、范围变化或依赖合并后，重建实时 Project 依赖图。
 
-One Delivery Issue gets one QuickDev implementation lane and its required
-fresh-context acceptance verifier. A lane must not implement sibling Issues,
-weaken acceptance, or close its Issue on engineering checks alone.
+一个 Delivery Issue 只有一条 QuickDev 实施通道及其必需的新上下文验收者。通道不得实施兄弟 Issues、弱化验收或仅凭工程检查关闭 Issue。
 
-Invoking `scd-quickdev` is mandatory for each selected Issue. If it is
-unavailable, stop the affected lane as `BLOCKED`; do not implement the Issue in
-the parent session. Never commit or push implementation directly to the default
-branch.
+每个选中 Issue 都必须调用 `scd-quickdev`。它不可用时，将受影响通道以 `BLOCKED` 停止；父会话不得自行实施。绝不把实施直接提交或推送到默认分支。
 
-When one lane fails, block its downstream nodes and continue only unrelated
-READY work that remains safe. When evidence changes the compatibility envelope,
-product behavior, architecture, graph topology, or acceptance, stop the
-affected lanes and re-enter the owning Thinloop skill for review.
+一条通道失败时阻塞其下游节点，只继续仍安全的无关 READY 工作。证据改变兼容性边界、产品行为、架构、图拓扑或验收时，停止受影响通道，重新进入负责的 Thinloop 技能评审。
 
-## Prove parity and control cutover
+## 证明等价并控制切换
 
-Run the final integration or parity Issue against the assembled target:
+针对组装后的目标运行最终集成或等价 Issue：
 
-- replay representative baseline fixtures at the approved external seams;
-- compare exact output where compatibility requires equality and semantic
-  outcomes where the approved contract allows change;
-- exercise errors, migration, restart, concurrency, recovery, and performance
-  only where activated by the envelope;
-- map every kept or changed capability to observed evidence;
-- report dropped and unverified capabilities explicitly.
+- 在已确认外部衔接点重放代表性基线测试数据；
+- 兼容性要求完全相同时比较精确输出，已确认契约允许变化时比较语义结果；
+- 只练习兼容性边界触发的错误、迁移、重启、并发、恢复和性能；
+- 把每项保留或改变能力映射到观察证据；
+- 明确报告删除和未验证能力。
 
-Passing unit tests, compiling the target, or matching source structure does not
-prove reengineering completion. Refactor mode requires regression evidence at
-the preserved seams. Reimplement mode requires target evidence independent of
-the old code plus differential evidence where parity is promised.
+单元测试通过、目标编译成功或结构与来源一致，都不能证明再工程完成。重构模式要求在保留衔接点提供回归证据。重新实施模式要求独立于旧代码的目标证据；承诺等价处还要求差分证据。
 
-Keep deployment, production traffic changes, destructive data migration,
-authentication or authorization changes, payments, secrets, privacy or
-compliance decisions, unclear licensing, and irreversible retirement of the old
-system behind explicit human approval. Prepare rollback evidence before asking
-for cutover approval. Do not infer cutover authority from implementation
-approval.
+部署、生产流量变更、破坏性数据迁移、身份验证或授权变化、支付、密钥、隐私或合规决策、不清晰许可证，以及旧系统不可逆退役都必须等待明确人工确认。请求切换确认前准备回滚证据。不得从实施确认推断切换权限。
 
-## Hand off
+## 交接
 
-Report:
+报告：
 
-- pinned source and license evidence;
-- approved mode, target boundary, and compatibility envelope;
-- Initiative, graph revision, Delivery Issues, READY/BLOCKED state, and
-  execution waves;
-- merged delivery and independent acceptance evidence;
-- integration/parity results by capability ID;
-- remaining unverified behavior, migration, rollback, license, and cutover
-  gates.
+- 固定来源和许可证证据；
+- 已确认模式、目标边界和兼容性边界；
+- Initiative、图版本、Delivery Issues、READY/BLOCKED 状态和执行波次；
+- 已合并交付与独立验收证据；
+- 按能力 ID 记录的集成/等价结果；
+- 剩余未验证行为、迁移、回滚、许可证和切换门。
 
-Do not claim full parity, a clean-room implementation, license compliance, or
-production readiness beyond the exact evidence obtained.
+不得超出实际证据声称完全等价、净室实施、许可证合规或生产就绪。
 
-## Resources
+## 资源
 
-- `references/reengineering-contract.md` - source provenance, compatibility
-  envelope, direction approval, Initiative additions, and parity rules.
-- `references/execution-contract.md` - READY-wave scheduling, isolated lanes,
-  merge coordination, failure handling, integration, and resumption.
-- `scripts/validate-execution-receipt.mjs` - dependency-free validation of the
-  transient live pre-execution evidence gate.
+- `references/reengineering-contract.md`：来源出处、兼容性边界、方向确认、Initiative 补充内容和等价规则。
+- `references/execution-contract.md`：READY 波次调度、隔离通道、合并协调、失败处理、集成和恢复。
+- `scripts/validate-execution-receipt.mjs`：无依赖验证临时实时执行前证据门。

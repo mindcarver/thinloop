@@ -1,111 +1,96 @@
-# Architecture contract
+# 架构契约
 
-Use this reference for Product or Evolution work, durable architecture
-artifacts, domain splitting, and architecture readiness review.
+产品架构、架构演进、持久架构产物、领域拆分和架构就绪审查使用本参考。
 
-## Contents
+## 内容
 
-- [Responsibility boundary](#responsibility-boundary)
-- [Baseline and evolution](#baseline-and-evolution)
-- [Domain modeling](#domain-modeling)
-- [System model](#system-model)
-- [Activated quality concerns](#activated-quality-concerns)
-- [Artifact lifecycle](#artifact-lifecycle)
+- [职责边界](#职责边界)
+- [基线与演进](#基线与演进)
+- [领域建模](#领域建模)
+- [系统模型](#系统模型)
+- [已触发的质量关注点](#已触发的质量关注点)
+- [产物生命周期](#产物生命周期)
 
-## Responsibility boundary
+## 职责边界
 
-Architecture owns the technical model that supports approved behavior:
+Architecture 负责支撑已确认行为的技术模型：
 
-- domain concepts, state transitions, invariants, and technical ownership;
-- components, responsibilities, dependencies, and trust boundaries;
-- authoritative data, projections, caches, and lifecycle;
-- runtime and data flows, transactions, consistency, and failure containment;
-- cross-cutting security, privacy, reliability, performance, and observability;
-- integration, compatibility, migration, rollout, and rollback design;
-- references to canonical machine-readable interface contracts.
+- 领域概念、状态转换、不变量和技术所有权；
+- 组件、职责、依赖和信任边界；
+- 权威数据、投影、缓存和生命周期；
+- 运行时与数据流、事务、一致性和故障隔离；
+- 横切的安全、隐私、可靠性、性能和可观测性；
+- 集成、兼容性、迁移、发布和回滚设计；
+- 规范机器可读接口契约的引用。
 
-It does not own product scope, user-visible business decisions, interaction
-design, production code, migration execution, or deployment. Reference those
-sources instead of restating them.
+它不负责产品范围、用户可见的业务决策、交互设计、生产代码、迁移执行或部署。引用相应权威来源，不要重复陈述。
 
-## Baseline and evolution
+## 基线与演进
 
-For a 0-to-1 system, establish one concise baseline in
-`.scd/architecture.md`. Cover only the current coherent delivery and durable
-boundaries likely to survive its implementation.
+对于 0 到 1 系统，在 `.scd/architecture.md` 中建立一份简洁基线。只覆盖当前连贯交付，以及很可能在实施后继续有效的持久边界。
 
-For an existing system:
+对于现有系统：
 
-- investigate actual code, contracts, data stores, runtime, and ADRs first;
-- preserve the current baseline unless evidence shows it is wrong;
-- update the baseline only for a durable component responsibility, data owner,
-  runtime flow, trust boundary, or cross-cutting constraint;
-- use `.scd/designs/<feature>.md` for feature-local coordination, transaction,
-  concurrency, integration, migration, rollback, or alternative decisions;
-- do not rewrite the repository architecture to explain one endpoint or module.
+- 先调查真实代码、契约、数据存储、运行时和 ADR；
+- 除非证据证明错误，否则保留现有基线；
+- 只有持久组件职责、数据所有者、运行时流程、信任边界或横切约束变化时才更新基线；
+- 功能局部协调、事务、并发、集成、迁移、回滚或备选决策使用 `.scd/designs/<feature>.md`；
+- 不要为解释一个端点或模块而重写仓库架构。
 
-## Domain modeling
+## 领域建模
 
-Translate approved business behavior into a technical model:
+把已确认的业务行为转化为技术模型：
 
-- use the product language without renaming concepts casually;
-- identify entities, value objects, aggregates, policies, commands, queries,
-  events, and projections only where they clarify responsibility;
-- state lifecycle transitions and invariants in enforceable terms;
-- identify the authority that accepts or rejects each command;
-- separate business time, identity, money, quantity, and external identifiers
-  when their semantics differ;
-- place permission, audit, and transaction enforcement explicitly;
-- name cross-entity consistency and compensation rules.
+- 使用产品语言，不随意改名；
+- 只有实体、值对象、聚合、策略、命令、查询、事件和投影能够澄清职责时才引入；
+- 以可执行的形式陈述生命周期转换和不变量；
+- 明确接受或拒绝每个命令的权威主体；
+- 业务时间、身份、金额、数量和外部标识语义不同时应分开表示；
+- 明确放置权限、审计和事务执行；
+- 说明跨实体一致性和补偿规则。
 
-Keep this model inside `.scd/architecture.md` by default. Split
-`.scd/domain.md` only when at least one concern becomes independently complex:
+默认把该模型保存在 `.scd/architecture.md`。只有至少一个关注点本身足够复杂时，才拆分 `.scd/domain.md`：
 
-- multiple interacting lifecycles or aggregates;
-- approval, ledger, settlement, or entitlement rules;
-- multi-tenant ownership and permission matrices;
-- cross-entity invariants or long-running workflows;
-- synchronization, offline reconciliation, audit, or regulatory history;
-- schema evolution or migration that changes domain meaning.
+- 多个相互作用的生命周期或聚合；
+- 审批、账本、结算或授权规则；
+- 多租户所有权和权限矩阵；
+- 跨实体不变量或长期工作流；
+- 同步、离线对账、审计或监管历史；
+- 改变领域含义的模式演进或迁移。
 
-A split domain contract remains subordinate to approved product behavior. It is
-not permission to invent a missing rule.
+拆分后的领域契约仍从属于已确认产品行为，不授权发明缺失规则。
 
-## System model
+## 系统模型
 
-For each activated component, record:
+对每个已触发组件记录：
 
-- responsibility and explicit non-responsibility;
-- owned data and source of truth;
-- inbound and outbound dependencies;
-- trust and transaction boundaries;
-- synchronous, asynchronous, and batch flows;
-- failure containment, retry, idempotency, and recovery;
-- observable evidence that the component fulfills its responsibility.
+- 职责和明确的非职责；
+- 拥有的数据和事实来源；
+- 入站和出站依赖；
+- 信任与事务边界；
+- 同步、异步和批处理流程；
+- 故障隔离、重试、幂等和恢复；
+- 证明组件履行职责的可观察证据。
 
-Prefer a small component and flow diagram when relationships are hard to
-understand in prose. The prose owns decisions; diagrams illustrate them.
+关系难以用文字理解时，优先使用小型组件图和流程图。文字负责决策，图只负责说明。
 
-## Activated quality concerns
+## 已触发的质量关注点
 
-Do not paste a universal non-functional checklist. Expand only concerns that
-can change design or acceptance:
+不要粘贴通用非功能清单。只展开能够改变设计或验收的关注点：
 
-- authentication, authorization, tenant isolation, secrets, and audit;
-- personal or regulated data, retention, export, and deletion;
-- latency, throughput, capacity, cost, and backpressure;
-- consistency, concurrency, deduplication, ordering, and idempotency;
-- availability, retry budgets, timeout, circuit breaking, and degradation;
-- logs, metrics, traces, alerts, and diagnostic boundaries;
-- compatibility, versioning, migration, rollout, rollback, and disaster
-  recovery.
+- 身份验证、授权、租户隔离、密钥和审计；
+- 个人或受监管数据、保留、导出和删除；
+- 延迟、吞吐、容量、成本和背压；
+- 一致性、并发、去重、顺序和幂等；
+- 可用性、重试预算、超时、熔断和降级；
+- 日志、指标、追踪、告警和诊断边界；
+- 兼容性、版本、迁移、发布、回滚和灾难恢复。
 
-State a measurable target or explicit constraint when one exists. Otherwise
-state the architectural decision and the condition that would reopen it.
+存在可衡量目标或明确约束时写明。否则记录架构决策，以及会使其重新开放的条件。
 
-## Artifact lifecycle
+## 产物生命周期
 
-Fallback paths:
+后备路径：
 
 ```text
 .scd/
@@ -115,15 +100,11 @@ Fallback paths:
     └── <feature>.md
 ```
 
-Prefer repository-native locations when they exist. Start baseline and
-feature-local documents from the matching asset template.
+存在仓库原生位置时优先使用。基线和功能局部文档从对应资产模板开始。
 
-Allowed statuses:
+允许的状态：
 
-- `draft` - a material design or shared-contract decision remains open;
-- `ready` - readiness review passes and remaining notes cannot change
-  implementation boundaries or compatibility.
+- `draft`：重要设计或共享契约决策仍未确定；
+- `ready`：就绪审查通过，剩余说明不会改变实施边界或兼容性。
 
-`ready` is not a human approval gate. The linked approved GitHub Issue
-owns product approval. Expensive or irreversible decisions are confirmed when
-encountered rather than at a mandatory final ceremony.
+`ready` 不是人工确认门。产品确认由关联的已确认 GitHub Issue 负责。高成本或不可逆决策在遇到时确认，不另设强制终审仪式。

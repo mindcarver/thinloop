@@ -1,26 +1,22 @@
-# QuickDev continuity contract
+# QuickDev 连续性契约
 
-Use this reference only for work that must survive the current context.
+只有工作必须跨越当前上下文时使用本参考。
 
-## Carrier priority
+## 载体优先级
 
-Use the first suitable source:
+使用第一个适合的来源：
 
-1. the governing GitHub Issue for requirements, acceptance, tasks, and durable
-   delivery evidence;
-2. existing architecture, ADR, UX, or machine contracts for durable technical
-   decisions in their scope;
-3. `.scd/tasks/current.md` only as a local recovery fallback.
+1. 作为依据的 GitHub Issue，保存需求、验收、任务和持久交付证据；
+2. 现有架构、ADR、UX 或机器契约，保存其范围内的持久技术决策；
+3. `.scd/tasks/current.md` 只作为本地恢复后备。
 
-Never copy the entire Issue, conversation, source file, or command log into the
-fallback. Store only the delta needed to resume.
+不得把整个 Issue、对话、源文件或命令日志复制到后备记录。只保存恢复所需增量。
 
-## Fallback schema
+## 后备结构
 
-Copy `assets/current-task.md` to `.scd/tasks/current.md` and replace every
-placeholder.
+把 `assets/current-task.md` 复制到 `.scd/tasks/current.md` 并替换全部占位符。
 
-The frontmatter must contain:
+frontmatter 必须包含：
 
 ```yaml
 managed_by: scd-quickdev
@@ -29,49 +25,36 @@ status: active
 updated_at: 2026-07-27T12:34:56+08:00
 ```
 
-Allowed statuses are:
+允许的状态：
 
-- `active` — work can continue;
-- `blocked` — a named input or external condition is required.
+- `active`：工作可以继续；
+- `blocked`：需要具名输入或外部条件。
 
-The document must contain non-empty sections:
+文档必须包含非空章节：
 
-- `## Outcome`
-- `## Boundaries`
-- `## Acceptance`
-- `## Decisions`
-- `## Evidence`
-- `## Next action`
+- `## 结果`
+- `## 边界`
+- `## 验收条件`
+- `## 决策`
+- `## 证据`
+- `## 下一步行动`
 
-Reference Issue acceptance identifiers rather than copying their full text.
-Use exactly one concrete next action. Write `None yet` for decisions when no
-non-obvious decision exists. Evidence may say verification has not run yet, but
-must name the planned or blocked check.
+引用 Issue 验收标识，不复制全文。只写一个具体下一行动。没有非显然决策时写“暂无”。证据可以说明尚未验证，但必须写明计划或受阻的检查。
 
-## Lifecycle
+## 生命周期
 
-- Update the note after a material implementation decision, meaningful
-  evidence, or changed next action.
-- Before ending an incomplete turn, make the note sufficient for a new agent to
-  continue from the Issue and repository without the transcript.
-- When blocked, name the missing authority, input, or environment condition.
-- After merge, promote durable evidence to the Issue or pull request, then
-  delete the fallback note.
-- Never auto-stage, auto-commit, or add ignore rules for the note.
+- 重要实施决策、有意义证据或下一行动变化后更新记录。
+- 未完成回合结束前，让新 Agent 能够仅依赖 Issue、仓库和记录继续，无需对话转录。
+- 受阻时写明缺失权限、输入或环境条件。
+- 合并后把持久证据提升到 Issue 或拉取请求，再删除后备记录。
+- 不得自动暂存、自动提交记录，也不得为其增加忽略规则。
 
-## Hook boundary
+## Hook 边界
 
-The bundled `PreCompact` and `Stop` hook checks only
-`.scd/tasks/current.md` files marked `managed_by: scd-quickdev` or
-`managed_by: scd-discovery`. QuickDev state must reference its governing
-GitHub Issue.
+内置 `PreCompact` 和 `Stop` hook 只检查标记为 `managed_by: scd-quickdev` 或 `managed_by: scd-discovery` 的 `.scd/tasks/current.md`。QuickDev 状态必须引用作为依据的 GitHub Issue。
 
-Legacy `managed_by: scd-dev-loop` state is blocked with a migration message so
-unfinished work is not silently ignored after the rename.
+旧的 `managed_by: scd-dev-loop` 状态会被阻止并显示迁移信息，避免改名后悄悄忽略未完成工作。
 
-The hook validates structure and resumability. It does not decide whether the
-Issue is correct, whether evidence is semantically sufficient, or whether an
-ordinary task should have created local state.
+hook 验证结构和可恢复性。它不判断 Issue 是否正确、证据语义是否充分，也不判断普通任务是否应该创建本地状态。
 
-If the hook reports an incomplete note, update the note and let the lifecycle
-event run again. If the hook cannot inspect state, it fails open with a warning.
+hook 报告记录不完整时，更新记录并让生命周期事件重新运行。hook 无法检查状态时，发出警告并开放通过。

@@ -1,105 +1,97 @@
-# Decision-tree interviewing
+# 决策树访谈
 
-Use this reference for full discovery. Depth comes from resolving consequential decisions, not from asking a fixed number of questions.
+完整 Discovery 使用本参考。深度来自解决影响重大的决策，而不是固定提问数量。
 
-## Start from a provisional understanding
+## 从临时理解开始
 
-Open with:
+开场说明：
 
-- what the product appears to achieve;
-- facts already established from the repository or environment;
-- the single most upstream unresolved decision.
+- 产品看起来要实现什么；
+- 已从仓库或环境确认的事实；
+- 最上游的一个未解决决策。
 
-Do not ask broad prompts such as "What are all your requirements?" when a sharper decision is available.
+能够提出更精确决策时，不要询问“你的全部需求是什么？”之类宽泛问题。
 
-## Shape one decision
+## 组织一次决策
 
-A useful turn contains:
+一次有效互动包含：
 
-1. **Decision:** the one choice currently blocking downstream understanding.
-2. **Why now:** which later behavior depends on it.
-3. **Recommendation:** the preferred answer.
-4. **Rationale:** evidence, product trade-off, or reversibility.
-5. **Alternatives:** only choices that produce meaningfully different outcomes.
-6. **Question:** one decision requested from the user.
+1. **决策：** 当前阻塞下游理解的一个选择。
+2. **为何现在决定：** 哪些后续行为依赖它。
+3. **建议：** 首选答案。
+4. **理由：** 证据、产品取舍或可逆性。
+5. **备选项：** 只提供会产生实质不同结果的选择。
+6. **问题：** 只向用户请求一个决策。
 
-A turn may contain context and several facts, but it must request only one decision.
+一次互动可以包含上下文和多个事实，但只能请求一个决策。
 
-## Follow dependency order
+## 按依赖顺序推进
 
-Ask upstream questions before their consequences. For example:
+先问上游问题，再问其后果。例如：
 
 ```text
-single user or team
-├─ single user
-│  └─ local only or multi-device
-└─ team
-   ├─ organization membership
-   ├─ roles and permissions
-   └─ data ownership after departure
+单用户或团队
+├─ 单用户
+│  └─ 仅本地或多设备
+└─ 团队
+   ├─ 组织成员关系
+   ├─ 角色与权限
+   └─ 成员离开后的数据所有权
 ```
 
-Do not batch all branches before the parent decision exists.
+父决策尚不存在时，不要批量询问所有分支。
 
-## Cover activated surfaces
+## 覆盖已触发的表面
 
-Every delivery needs a clear outcome, primary user, main journey, boundary, and observable acceptance. Expand other surfaces only when activated:
+每项交付都需要清晰的结果、主要用户、主旅程、边界和可观察验收。其他表面只在触发时展开：
 
-- **Rules and states:** transitions, invariants, duplicate actions, cancellation.
-- **Failure and recovery:** empty states, partial success, retry, offline or dependency failure.
-- **Data:** source, owner, persistence, retention, deletion, migration.
-- **Permissions:** actor, visibility, authority, irreversible actions.
-- **Integrations:** trust boundary, rate limits, failure, fallback, vendor lock-in.
-- **Constraints:** platform, compatibility, privacy, latency, cost, regulation.
-- **Non-goals:** tempting adjacent capabilities excluded from this delivery.
-- **Verification:** the UI, API, CLI, file, database state, event, or other seam that proves behavior.
+- **规则与状态：** 转换、不变量、重复操作、取消。
+- **失败与恢复：** 空状态、部分成功、重试、离线或依赖失败。
+- **数据：** 来源、所有者、持久化、保留、删除、迁移。
+- **权限：** 参与者、可见性、权威、不可逆操作。
+- **集成：** 信任边界、速率限制、失败、降级、供应商锁定。
+- **约束：** 平台、兼容性、隐私、延迟、成本、监管。
+- **非目标：** 从本交付明确排除的相邻能力。
+- **验证：** 能证明行为的 UI、API、CLI、文件、数据库状态、事件或其他衔接点。
 
-Stop a branch when its answer would not change observable behavior, acceptance, irreversible risk, or an expensive-to-reverse choice.
+如果答案不会改变可观察行为、验收、不可逆风险或难以逆转的高成本选择，则停止该分支。
 
-## Keep epistemic state explicit
+## 明确认知状态
 
-- **Fact:** verified from the repository, environment, or an authoritative source.
-- **Confirmed decision:** explicitly chosen or accepted by the user.
-- **Assumption:** temporarily adopted with a named risk.
-- **Deferred decision:** excluded now with a condition for reopening it.
-- **Open decision:** unresolved and capable of changing the delivery contract.
+- **事实：** 已由仓库、环境或权威来源验证。
+- **已确认决策：** 用户明确选择或接受。
+- **假设：** 带具名风险临时采用。
+- **延期决策：** 当前排除，并记录重新开放条件。
+- **待定决策：** 尚未解决且能够改变交付契约。
 
-Never silently promote an inference into a user decision.
+不得悄悄把推断提升为用户决策。
 
-## Challenge without taking control
+## 质疑但不夺取控制权
 
-For a new product, confirm the user, problem, and desired change before treating the proposed solution as final. Challenge a questionable solution assumption once with a concrete reason and recommendation.
+对新产品，在把用户提出的解决方案视为最终方案前，先确认用户、问题和期望变化。对可疑的方案假设只质疑一次，并给出具体理由和建议。
 
-Do not demand market proof, force competitor research, or repeatedly ask "why." Once the user confirms the solution form, treat it as a constraint.
+不要要求市场证明、强制竞品研究或反复追问“为什么”。用户确认解决方案形态后，将其视为约束。
 
-The model owns investigation, dependency ordering, recommendations, and contradiction detection. The user owns product trade-offs.
+模型负责调查、依赖排序、建议和矛盾检测；用户负责产品取舍。
 
-## When a decision comes back unanswered
+## 决策没有得到回答时
 
-A skipped or non-substantive answer to a structured interview question is not a
-rejection and is not approval. Treat the strongest recommendation as a
-**provisional assumption** rather than re-asking the same question or halting
-the interview:
+用户跳过结构化访谈问题或没有给出实质回答，不代表拒绝，也不代表确认。不要重复追问或停止访谈；把最有力的建议作为**临时假设**：
 
-1. name the assumption explicitly, with the specific risk if it proves wrong;
-2. continue the dependent work it unblocks, still one decision per turn;
-3. never silently promote the assumption into a confirmed user decision; and
-4. let the final contract approval (see `SKILL.md` → Review readiness) confirm
-   or correct every accumulated provisional assumption in one pass.
+1. 明确说出假设，以及假设错误时的具体风险；
+2. 继续它所解锁的依赖工作，仍然每次只请求一个决策；
+3. 不得悄悄把假设提升为已确认用户决策；
+4. 在最终契约确认时一次性确认或修正所有累计临时假设，参见 `SKILL.md` 的“审查就绪度并请求确认”。
 
-This preserves the skill's one-decision-per-turn shape and keeps the interview
-moving, rather than degrading into a long unstructured recommendation turn. If
-two consecutive decisions come back unanswered, surface that as a blocker and
-ask the user directly whether to proceed on assumptions or pause — do not stack
-a third silent assumption.
+这样可保持每次一个决策的结构，让访谈继续推进，而不是退化成长篇无结构建议。如果连续两个决策都没有得到回答，将此情况作为阻塞明确呈现，直接询问用户是按假设继续还是暂停；不得叠加第三个静默假设。
 
-## Converge periodically
+## 定期收敛
 
-After three to five consequential decisions, summarize:
+每解决三到五个重要决策，简要汇总：
 
-- confirmed;
-- assumed;
-- deferred or out of scope;
-- the next unresolved decision.
+- 已确认；
+- 已假设；
+- 已延期或范围外；
+- 下一个未解决决策。
 
-Keep the summary short. It is a drift check, not another approval gate.
+摘要保持简短。它用于检查漂移，不是另一个确认门。

@@ -1,107 +1,84 @@
-# SCD Next status contract
+# SCD Next 状态契约
 
-This contract lets `scd-next` explain current progress and recommend a
-continuation without becoming another source of project state.
+本契约允许 `scd-next` 解释当前进展并建议继续行动，但不让它成为另一个项目状态来源。
 
-## Evidence authority
+## 证据权威顺序
 
-Use evidence in this order:
+按以下顺序使用证据：
 
-1. applicable repository instructions and explicit user scope;
-2. the repository-authoritative Issue, pull-request, milestone, and Initiative
-   tracker;
-3. the current approved Initiative graph revision and Delivery Issue
-   acceptance contracts;
-4. required checks, independent acceptance records, and named human
-   gates;
-5. the synchronized default branch;
-6. Issue-linked branches, worktrees, commits, and local Thinloop resume state.
+1. 适用仓库说明和用户明确范围；
+2. 仓库权威 Issue、拉取请求、里程碑和 Initiative 跟踪器；
+3. 当前已确认 Initiative 图版本和 Delivery Issue 验收契约；
+4. 必需检查、独立验收记录和具名人工门；
+5. 已同步默认分支；
+6. Issue 关联分支、工作树、提交和本地 Thinloop 恢复状态。
 
-Lower-ranked evidence can explain activity but cannot override contradictory
-higher-ranked evidence. A branch, commit, local task file, or implementer
-summary is never sufficient completion evidence.
+低级证据可以解释活动，但不能覆盖相互矛盾的高级证据。分支、提交、本地任务文件或实施者摘要永远不足以单独证明完成。
 
-Record the observation time and every authoritative source that could not be
-read. Do not turn an unavailable source into an empty result.
+记录观察时间和每个无法读取的权威来源。来源不可用不等于结果为空。
 
-## Scope resolution
+## 范围解析
 
-An explicit Initiative, Issue, pull request, or milestone always wins. Without
-one, use the current Issue-linked branch, active Thinloop task, or only open
-Initiative. Fall back to ordinary repository Issues and pull requests when no
-Initiative governs the work.
+明确的 Initiative、Issue、拉取请求或里程碑始终优先。没有时使用当前 Issue 关联分支、活跃 Thinloop 任务或唯一开放 Initiative。没有 Initiative 管理工作时，退回普通仓库 Issues 和拉取请求。
 
-If multiple scopes remain equally plausible, return their identifiers, titles,
-and direct state evidence, then ask one scope question. Recency, larger Issue
-number, and title similarity are not priority evidence.
+多个范围同样合理时，返回标识、标题和直接状态证据，然后只询问一个范围问题。最近时间、更大 Issue 编号和标题相似度都不是优先级证据。
 
-## State classification
+## 状态分类
 
-| State | Required evidence | Evidence that is not enough |
-| --- | --- | --- |
-| `DONE` | Governing Issue is complete under its delivery contract and all required acceptance or integration gates passed. | Commit, branch, checked task, implementer summary, or merged PR alone. |
-| `IN_FLIGHT` | Open PR or active Issue-linked lane with current direct activity evidence. | Stale branch or worktree alone. |
-| `READY` | Approved materialized Issue; all hard dependencies DONE; no open gate; valid current graph when governed by an Initiative. | Planned title, draft Issue, invalid graph, or inferred dependency. |
-| `PLANNED` | Named intended work without an approved executable Issue contract. | A fabricated placeholder Issue or guessed future slice. |
-| `BLOCKED` | Named dependency, decision, check, authority, environment, or human gate prevents progress. | Generic “not ready” without reason and owner. |
-| `UNVERIFIED` | Required source is unavailable, stale, invalid, or contradictory. | Treating missing remote data as no work. |
+| 状态 | 必需证据 | 不充分证据 |
+|---|---|---|
+| `DONE` | 作为依据的 Issue 已按交付契约完成，且全部必需验收或集成门通过。 | 单独的提交、分支、已勾选任务、实施者摘要或已合并 PR。 |
+| `IN_FLIGHT` | 开放 PR 或活跃 Issue 关联通道有当前直接活动证据。 | 单独的陈旧分支或工作树。 |
+| `READY` | 已确认且已实例化的 Issue；全部硬依赖 DONE；无开放门；受 Initiative 管理时当前图有效。 | 计划标题、草稿 Issue、无效图或推断依赖。 |
+| `PLANNED` | 已具名预期工作，但没有已确认可执行 Issue 契约。 | 伪造的占位 Issue 或猜测的未来切片。 |
+| `BLOCKED` | 具名依赖、决策、检查、权限、环境或人工门阻止进展。 | 没有原因和负责人的笼统“未就绪”。 |
+| `UNVERIFIED` | 必需来源不可用、陈旧、无效或互相矛盾。 | 把缺失远程数据解释为没有工作。 |
 
-An item appears in one class only. An Initiative's children and its integration
-gate remain separate. Exact item counts require a complete live scope; effort,
-time, and percentage completion are outside this contract.
+一个事项只能属于一个类别。Initiative 的子节点和集成门保持分开。只有完整实时范围才允许精确计数；工作量、时间和完成百分比不属于本契约。
 
-## Recommendation order
+## 建议顺序
 
-Choose one recommendation from observed authority:
+根据观察到的权威证据选择一个建议：
 
-1. expose a required human or external unblock when no useful work can proceed;
-2. continue safe approved READY Initiative work through `scd-execute`;
-3. deliver one explicitly selected READY Issue through `scd-quickdev`;
-4. materialize remaining PLANNED Initiative work through `scd-project`;
-5. resolve open product behavior through `scd-discovery`;
-6. resolve a shared technical boundary through `scd-architecture`;
-7. report complete when every required Issue and integration gate is DONE.
+1. 无有效工作可推进时，先暴露必需人工或外部解锁；
+2. 通过 `scd-execute` 继续安全且已确认的 READY Initiative 工作；
+3. 通过 `scd-quickdev` 交付一个明确选中的 READY Issue；
+4. 通过 `scd-project` 实例化剩余 PLANNED Initiative 工作；
+5. 通过 `scd-discovery` 解决开放的产品行为；
+6. 通过 `scd-architecture` 解决共享技术边界；
+7. 所有必需 Issue 和集成门 DONE 时报告完成。
 
-For ordinary repositories, explicit priority labels, milestones, dependencies,
-and user direction may identify the next Issue. If several candidates tie,
-report `priority not established` and ask the user to choose; do not guess.
+普通仓库中，明确优先级标签、里程碑、依赖和用户指令可以确定下一 Issue。多个候选并列时报告 `priority not established` 并让用户选择，不得猜测。
 
-The recommendation must distinguish:
+建议必须区分：
 
-- `Agent next` - work an agent can continue under the named skill;
-- `User action` - an exact decision, approval, credential, or external input;
-- `User action: none` - when the agent may safely continue without
-  intervention.
+- `Agent next`：Agent 可以在具名技能下继续的工作；
+- `User action`：精确的决策、确认、凭据或外部输入；
+- `User action: none`：Agent 可以安全继续且无需用户介入。
 
-## Output contract
+## 输出契约
 
-Every response includes:
+每次回复包含：
 
-- repository and governing Initiative, Issue, milestone, or graph revision;
-- observation time and authoritative sources checked;
-- every applicable state class with identifiers and direct evidence;
-- exactly one recommended next action, or an explicit completion result;
-- the evidence that makes this action next;
-- required user action, explicitly `none` when there is none;
-- one copy-ready continuation prompt for the owning Thinloop skill;
-- every unverified source or contradiction that could change the conclusion.
+- 仓库和作为依据的 Initiative、Issue、里程碑或图版本；
+- 观察时间和已检查权威来源；
+- 每个适用状态类别、标识和直接证据；
+- 只给一个建议下一行动，或明确完成结果；
+- 使该行动成为下一步的证据；
+- 所需用户行动；没有时明确写 `none`；
+- 一段交给负责 Thinloop 技能的可复制继续提示词；
+- 可能改变结论的每个未验证来源或矛盾。
 
-The copy-ready prompt identifies the repository and exact Initiative or Issue.
-For Project or Execute it also carries the current graph revision when known.
-It does not promise Issue creation, execution, merge, or approval outside the
-receiving skill's authority.
+可复制提示词必须标识仓库和精确 Initiative 或 Issue。交给 Project 或 Execute 时，还应携带已知当前图版本。不得承诺超出接收技能权限的 Issue 创建、执行、合并或确认。
 
-## Read-only boundary
+## 只读边界
 
-A Next inspection may read the tracker, repository, branches, worktrees,
-checks, and local resume hints. It must not:
+Next 检查可以读取跟踪器、仓库、分支、工作树、检查和本地恢复提示，但不得：
 
-- create or edit Issues, comments, labels, milestones, or project graphs;
-- create branches or worktrees, change files, commit, push, merge, or close;
-- start a QuickDev lane or Execute wave;
-- persist a second status database;
-- reinterpret an unavailable tracker as authoritative local state.
+- 创建或编辑 Issues、评论、标签、里程碑或项目图；
+- 创建分支或工作树、修改文件、提交、推送、合并或关闭；
+- 启动 QuickDev 通道或 Execute 波次；
+- 持久化第二状态数据库；
+- 把不可用跟踪器重新解释为权威本地状态。
 
-When the user explicitly asks to perform the recommendation, the named owning
-skill must establish its own authority and verification. Next's observation
-does not grant mutation authority.
+用户明确要求执行建议时，具名负责技能必须建立自己的权限和验证。Next 的观察不授予修改权限。

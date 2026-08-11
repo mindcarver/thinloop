@@ -1,38 +1,38 @@
-# Diagnosis Contract
+# 诊断契约
 
-## Coverage
+## 覆盖范围
 
-Choose exactly one label:
+只能选择一个标签：
 
-- `full-transcript`: the user deliberately supplied the complete interaction and the transcript boundaries are explicit.
-- `visible-context`: the agent can inspect the current visible conversation and visible tool results, but cannot prove that it is the complete session.
-- `partial`: the user supplied excerpts, compaction omitted relevant detail, or important tool or execution evidence is unavailable.
+- `full-transcript`：用户有意提供了完整交互，且转录边界明确。
+- `visible-context`：Agent 可以检查当前可见对话和可见工具结果，但不能证明它是完整会话。
+- `partial`：用户只提供摘录、上下文压缩遗漏相关细节，或重要工具/执行证据不可用。
 
-Do not call ordinary visible context a full transcript. State the missing evidence and how it limits attribution.
+不得把普通可见上下文称为完整转录。说明缺失证据及其如何限制归因。
 
-## Editable Target
+## 可编辑目标
 
-A Thinloop skill is editable only when the interaction shows that the skill was loaded, explicitly invoked, or its instructions were quoted and followed. A skill merely installed or mentioned is not demonstrably used.
+只有交互显示某个 Thinloop 技能已加载、明确调用，或其说明被引用并遵循时，该技能才可编辑。仅安装或提及不足以证明使用。
 
-If a non-Thinloop skill, agent rule, tool, environment, model, or requirement caused the problem, diagnose it but exclude it from candidate operations.
+如果问题由非 Thinloop 技能、Agent 规则、工具、环境、模型或需求引起，可以诊断，但必须排除在候选操作外。
 
-## Signals
+## 信号
 
-One signal may support a candidate:
+一个信号即可支持候选项：
 
-- documented trigger clearly matched but the skill was not invoked;
-- skill was invoked although its documented trigger did not match;
-- the agent repeatedly requested information already available in the interaction or skill;
-- skill instructions led to a dead end, unsafe action, privacy risk, scope expansion, or unverifiable completion claim;
-- the user corrected skill-driven behavior;
-- an isolated replay reproduced the instruction failure;
-- a deterministic skill script or format failed a reproducible test.
+- 文档触发条件清晰匹配，但技能未调用；
+- 技能已调用，但文档触发条件不匹配；
+- Agent 反复请求交互或技能中已有的信息；
+- 技能说明导致死路、不安全操作、隐私风险、范围扩大或不可验证完成声明；
+- 用户纠正技能驱动行为；
+- 隔离重放复现说明失败；
+- 确定性技能脚本或格式在可复现测试中失败。
 
-For every candidate, list both matched signals and relevant unmatched signals. Unmatched signals are counter-evidence, not empty ceremony.
+每个候选项都列出匹配信号，以及相关但未匹配信号。未匹配信号是反证，不是空洞仪式。
 
-## Attribution
+## 归因
 
-Select one primary attribution:
+选择一个主要归因：
 
 - `thinloop-skill`
 - `agent`
@@ -42,31 +42,31 @@ Select one primary attribution:
 - `third-party-skill`
 - `insufficient-evidence`
 
-State the causal chain supported by evidence, then state the strongest plausible misattribution. Observation alone does not prove causality. A user correction is strong evidence of a behavior problem but may not identify its source.
+先陈述证据支持的因果链，再陈述最有力的可能错误归因。单纯观察不能证明因果。用户纠正是行为问题的强证据，但未必能识别其来源。
 
-Only a Thinloop-skill attribution can reach `accepted`. Ambiguous evidence may still produce an exploratory candidate, but not an implemented trial unless the candidate change is explicitly framed as testing the causal hypothesis.
+只有 `thinloop-skill` 归因可以进入 `accepted`。证据含糊时仍可产生 exploratory 候选项，但除非候选变更被明确表述为检验因果假设，否则不能实施试验。
 
-## Candidate Grade
+## 候选等级
 
-- `exploratory`: one plausible signal with meaningful missing evidence or competing causes.
-- `supported`: multiple consistent observations or one reproducible observation with limited counter-evidence.
-- `confirmed`: a fresh isolated replay or deterministic failing test reproduces the skill-caused behavior and the proposed change removes it without regression.
+- `exploratory`：一个合理信号，但存在重要缺失证据或竞争原因。
+- `supported`：多个一致观察，或一个可复现观察且反证有限。
+- `confirmed`：新的隔离重放或确定性失败测试复现技能导致的行为，且拟议变更在无回归情况下消除它。
 
-Do not use frequency as a substitute for controlled evidence. A single reproducible failure can be stronger than repeated unstructured frustration.
+不得用发生频率替代受控证据。一次可复现失败可以强于反复但无结构的挫败。
 
-## Candidate Shape
+## 候选结构
 
-One candidate contains:
+一个候选项包含：
 
-- stable candidate ID;
-- coverage label;
-- one root cause;
-- one or more Thinloop target skills actually used;
-- coupling rationale when more than one target is necessary;
-- candidate grade;
-- matched and unmatched signals;
-- primary attribution, evidence, counter-evidence, and possible misattribution;
-- bounded `add`, `delete`, or `replace` operations with repository-relative files and exact intended text or behavior;
-- planned validation and rollback ownership.
+- 稳定候选 ID；
+- 覆盖范围标签；
+- 一个根因；
+- 一个或多个确实使用过的 Thinloop 目标技能；
+- 多个目标确有必要时的耦合理由；
+- 候选等级；
+- 匹配与未匹配信号；
+- 主要归因、证据、反证和可能错误归因；
+- 有边界的 `add`、`delete` 或 `replace` 操作，包含仓库相对文件和精确预期文字或行为；
+- 计划验证和回滚所有权。
 
-Propose one same-root-cause batch. Do not bundle unrelated improvements, speculative cleanup, version upgrades, or adjacent documentation repair unless directly coupled to the candidate.
+只建议一个同根因批次。除非与候选项直接耦合，否则不得混入无关改进、臆测清理、版本升级或相邻文档修复。

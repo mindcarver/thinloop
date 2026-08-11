@@ -2,27 +2,27 @@
 managed_by: scd-architecture
 status: draft
 sources:
-  - <governing GitHub Issue>
+  - <作为依据的 GitHub Issue>
 ---
 
-# System purpose and boundaries
+# 系统目标与边界
 
-## Domain model
+## 领域模型
 
-## Components and responsibilities
+## 组件与职责
 
-## Runtime and data flow
+## 运行时与数据流
 
-## Data ownership and lifecycle
+## 数据所有权与生命周期
 
-## Shared interface contracts
+## 共享接口契约
 
-## Security and trust boundaries
+## 安全与信任边界
 
-## Reliability and operations
+## 可靠性与运维
 
-## Compatibility, migration, and rollback
+## 兼容性、迁移与回滚
 
-## Verification boundaries
+## 验证边界
 
-## Decisions and open items
+## 决策与待定事项

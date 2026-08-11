@@ -13,13 +13,13 @@ function read(relativePath) {
 test("quickdev selects direct, clarify, project, or discovery without forcing ceremony", () => {
   const skill = read("skills/scd-quickdev/SKILL.md");
 
-  assert.match(skill, /\*\*Direct:\*\*/);
-  assert.match(skill, /\*\*Clarify:\*\*/);
-  assert.match(skill, /\*\*Project:\*\*/);
-  assert.match(skill, /\*\*Discovery:\*\*/);
-  assert.match(skill, /outcome, boundary, and observable acceptance/i);
-  assert.match(skill, /use `scd-discovery`/i);
-  assert.match(skill, /use `scd-project`/i);
+  assert.match(skill, /\*\*直接实施：\*\*/);
+  assert.match(skill, /\*\*单点澄清：\*\*/);
+  assert.match(skill, /\*\*项目规划：\*\*/);
+  assert.match(skill, /\*\*需求发现：\*\*/);
+  assert.match(skill, /结果、边界和可观察验收清晰/);
+  assert.match(skill, /使用 `scd-discovery`/);
+  assert.match(skill, /使用 `scd-project`/);
 });
 
 test("quickdev separates product PRD authority from delivery Issue authority", () => {
@@ -28,17 +28,17 @@ test("quickdev separates product PRD authority from delivery Issue authority", (
     "skills/scd-quickdev/references/issue-delivery-contract.md",
   );
 
-  assert.match(skill, /GitHub Issue.*source of truth for the selected delivery/i);
+  assert.match(skill, /中文 GitHub Issue 是选中交付边界与验收的事实来源/);
   assert.match(
     issueContract,
-    /sole source of truth for the\s+selected delivery boundary/i,
+    /选中交付边界、验收和验证衔接点的唯一事实来源/,
   );
-  assert.match(issueContract, /approved `.scd\/product\/prd\.md`/i);
-  assert.match(issueContract, /## 产品追踪/);
+  assert.match(issueContract, /已确认 `.scd\/product\/prd\.md`/);
+  assert.match(issueContract, /## 产品追溯/);
   assert.match(issueContract, /需求：`FR-001`/);
-  assert.match(issueContract, /reachable from the default branch/i);
-  assert.match(skill, /Do not generate or redefine a PRD during implementation/i);
-  assert.match(skill, /clear isolated changes and bugs\s+remain Issue-only/i);
+  assert.match(issueContract, /默认分支访问/);
+  assert.match(skill, /实施期间不得生成或重新定义 PRD/);
+  assert.match(skill, /清晰的孤立变更和缺陷继续只使用 Issue/);
   assert.match(issueContract, /## 结果/);
   assert.match(issueContract, /## 范围内/);
   assert.match(issueContract, /## 范围外/);
@@ -57,28 +57,28 @@ test("quickdev lets the user choose whether to confirm the Issue plan and tasks"
 
   assert.match(
     skill,
-    /ask one concise question[\s\S]*本次交付是否需要你先确认完整的[\s\S]*Issue 草案、实施方案和任务清单？/i,
+    /用中文简短询问[\s\S]*本次交付是否需要你先确认完整的 Issue 草案、实施方案和任务清单？/,
   );
   assert.match(
     skill,
-    /user says no[\s\S]*`已放弃`[\s\S]*normal autonomous delivery flow/i,
+    /用户回答不需要[\s\S]*`已放弃`[\s\S]*普通自主交付流程/,
   );
   assert.match(
     skill,
-    /user says yes[\s\S]*read-only repository inspection[\s\S]*wait for\s+explicit confirmation/i,
+    /用户回答需要[\s\S]*只读仓库检查[\s\S]*等待明确确认/,
   );
   assert.match(
     skill,
-    /Until confirmation, do not create or update the Issue,[\s\S]*modify the repository,[\s\S]*start implementation/i,
+    /确认前不得创建或更新 Issue、修改仓库或开始实施/,
   );
-  assert.match(skill, /materially changes[\s\S]*obtain confirmation again/i);
+  assert.match(skill, /实质改变[\s\S]*再次取得确认/);
   assert.match(issueContract, /## 方案确认/);
   assert.match(issueContract, /## 实施方案/);
   assert.match(issueContract, /## 实施任务/);
   assert.match(issueContract, /需要确认：是，或否/);
   assert.match(issueContract, /状态：已确认，或已放弃/);
-  assert.match(combined, /not a second product approval/i);
-  assert.match(combined, /not\s+(?:a reason to create|create a local) `plan\.md`/i);
+  assert.match(combined, /不是第二次产品确认/);
+  assert.match(combined, /不[会是]创建本地 `plan\.md`|不是创建 `plan\.md` 的理由/);
 });
 
 test("quickdev writes Issue output in Chinese without translating machine identifiers", () => {
@@ -88,14 +88,14 @@ test("quickdev writes Issue output in Chinese without translating machine identi
   );
   const combined = `${skill}\n${issueContract}`;
 
-  assert.match(combined, /Issue title and body in Chinese/i);
+  assert.match(combined, /Issue 标题和正文都必须使用中文/);
   assert.match(
     issueContract,
-    /all QuickDev-created or updated Issue output in Chinese/i,
+    /QuickDev 创建或更新的全部 Issue 输出必须使用中文/,
   );
   assert.match(
     combined,
-    /code identifiers, commands, paths, filenames, protocol fields,[\s\S]*machine status tokens/i,
+    /代码标识、命令、路径、文件名、协议字段和机器状态令牌/,
   );
   assert.match(issueContract, /## 实施方案/);
   assert.match(issueContract, /## 实施任务/);
@@ -108,13 +108,13 @@ test("quickdev diagnoses bugs and requires regression evidence", () => {
     "skills/scd-quickdev/references/issue-delivery-contract.md",
   );
 
-  assert.match(skill, /reproduce the symptom/i);
+  assert.match(skill, /复现/);
   assert.match(
     skill,
-    /framework or dependency[\s\S]*official issue tracker[\s\S]*application code/i,
+    /框架或依赖[\s\S]*应用代码[\s\S]*官方 Issue 跟踪器/,
   );
-  assert.match(skill, /causal root cause/i);
-  assert.match(skill, /regression test/i);
+  assert.match(skill, /因果根因/);
+  assert.match(skill, /回归测试/);
   assert.match(issueContract, /已观察症状/);
   assert.match(issueContract, /预期行为/);
   assert.match(issueContract, /根因：`Unconfirmed`/);
@@ -126,12 +126,12 @@ test("quickdev always isolates meaningful work on a branch and uses worktrees co
     "skills/scd-quickdev/references/issue-delivery-contract.md",
   );
 
-  assert.match(contract, /Every meaningful repository task gets a unique branch/i);
+  assert.match(contract, /每项有意义的仓库任务都使用唯一分支/);
   assert.match(contract, /fix\/<issue>-<slug>/);
   assert.match(contract, /feat\/<issue>-<slug>/);
-  assert.match(contract, /Use a worktree only when/i);
-  assert.match(contract, /parallel/i);
-  assert.match(contract, /unrelated changes/i);
+  assert.match(contract, /只有以下情况使用工作树/);
+  assert.match(contract, /并行/);
+  assert.match(contract, /无关变更/);
 });
 
 test("quickdev delegates acceptance to one independent verifier", () => {
@@ -148,26 +148,26 @@ test("quickdev delegates acceptance to one independent verifier", () => {
     read("docs/workflow-and-state.md"),
   ].join("\n");
 
-  assert.match(skill, /create the pull request/i);
-  assert.match(skill, /merge it into `main`/i);
+  assert.match(skill, /创建拉取请求/);
+  assert.match(skill, /合并到 `main`/);
   assert.match(contract, /`Refs #<issue>`/);
-  assert.match(contract, /Do not use `Closes #<issue>`/);
-  assert.match(skill, /one separate fresh-context\s+subagent/i);
+  assert.match(contract, /不得使用 `Closes #<issue>`/);
+  assert.match(skill, /独立的新上下文子 Agent/);
   assert.match(
     skill,
-    /must not rely only\s+on the\s+implementing\s+agent's\s+summary/i,
+    /不得只依赖实施 Agent 摘要/,
   );
-  assert.match(contract, /subagent as the acceptance verifier/i);
+  assert.match(contract, /子 Agent 作为验收者/);
   assert.match(
     contract,
-    /Do not give it\s+the implementing\s+agent's conclusions/i,
+    /不要提供实施 Agent 的结论/,
   );
-  assert.match(contract, /base and target\s+refs.*or the workspace state/is);
-  assert.match(contract, /browser,\s+real-model, or produced-artifact validation/i);
-  assert.match(contract, /`PASS`, `FAIL`, or `BLOCKED`/);
-  assert.match(contract, /`PASS` authorizes eligible merge/i);
-  assert.match(contract, /avoid modifying product code/i);
-  assert.match(evidence, /independent acceptance verifier produces one\s+aggregate result/i);
+  assert.match(contract, /基准与目标引用[\s\S]*工作区状态/);
+  assert.match(contract, /浏览器、真实模型或生成产物验证/);
+  assert.match(contract, /`PASS`、`FAIL` 或 `BLOCKED`/);
+  assert.match(contract, /`PASS` 授权符合条件的合并/);
+  assert.match(contract, /不修改产品代码/);
+  assert.match(evidence, /独立验收者产生一个汇总结果/);
   assert.match(guidance, /独立验收 Agent/);
   const combined = `${skill}\n${contract}\n${evidence}\n${guidance}`;
   assert.doesNotMatch(
@@ -183,20 +183,20 @@ test("quickdev keeps high-risk merge and production deployment behind human appr
     "skills/scd-quickdev/references/issue-delivery-contract.md",
   );
 
-  assert.match(contract, /authentication or authorization/i);
-  assert.match(contract, /payments or billing/i);
-  assert.match(contract, /destructive data or schema changes/i);
-  assert.match(contract, /production infrastructure/i);
-  assert.match(contract, /explicit human approval/i);
-  assert.match(contract, /merge authorization does not authorize deployment/i);
+  assert.match(contract, /身份验证或授权/);
+  assert.match(contract, /支付或计费/);
+  assert.match(contract, /破坏性数据或模式变更/);
+  assert.match(contract, /生产基础设施/);
+  assert.match(contract, /明确人工确认/);
+  assert.match(contract, /合并权限不等于部署权限/);
 });
 
 test("quickdev respects a composing skill's narrower delivery authority", () => {
   const skill = read("skills/scd-quickdev/SKILL.md");
 
-  assert.match(skill, /narrower\s+delivery boundary wins/i);
+  assert.match(skill, /以其更窄交付边界为准/);
   assert.match(
     skill,
-    /`scd-evolve` trial\s+does not authorize commit, push, pull request, or merge/i,
+    /`scd-evolve` 试验不授权提交、推送、拉取请求或合并/,
   );
 });

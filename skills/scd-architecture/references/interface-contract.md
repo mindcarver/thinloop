@@ -1,119 +1,101 @@
-# Shared interface contract
+# 共享接口契约
 
-Use this reference whenever independently implemented consumers cross a
-frontend, service, event, plugin, file, CLI, or module boundary.
+独立实施的消费者跨越前端、服务、事件、插件、文件、CLI 或模块边界时，使用本参考。
 
-## Contents
+## 内容
 
-- [Ownership](#ownership)
-- [Format and location](#format-and-location)
-- [Semantic coverage](#semantic-coverage)
-- [Examples and consumer use](#examples-and-consumer-use)
-- [Compatibility and evolution](#compatibility-and-evolution)
-- [Readiness](#readiness)
+- [所有权](#所有权)
+- [格式与位置](#格式与位置)
+- [语义覆盖](#语义覆盖)
+- [示例与消费者使用](#示例与消费者使用)
+- [兼容性与演进](#兼容性与演进)
+- [就绪条件](#就绪条件)
 
-## Ownership
+## 所有权
 
-The shared interface contract is the common source of truth for every producer
-and consumer. Architecture facilitates convergence; it does not invent product
-semantics or own the result alone.
+共享接口契约是所有生产者和消费者的共同事实来源。Architecture 推动收敛，但不发明产品语义，也不独占最终结果。
 
-- The governing GitHub Issue owns allowed behavior and business meaning.
-- Domain model owns invariants, lifecycle, and command authority.
-- UX contract contributes visible data, operation, state, and error needs.
-- Producers contribute feasibility, security, consistency, and operational
-  constraints.
-- Consumers confirm usability, examples, and compatibility.
+- 作为依据的 GitHub Issue 负责允许的行为和业务含义。
+- 领域模型负责不变量、生命周期和命令权威。
+- UX 契约提供可见数据、操作、状态和错误需求。
+- 生产者提供可行性、安全、一致性和运维约束。
+- 消费者确认可用性、示例和兼容性。
 
-Resolve conflicting terminology at the owning source. Do not keep two field or
-error definitions and rely on prose to explain the difference.
+术语冲突应在拥有该术语的权威来源解决。不要保留两套字段或错误定义，再依赖说明文字解释差异。
 
-## Format and location
+## 格式与位置
 
-Prefer the repository's existing contract format and location. When none
-exists, create a visible root `contracts/` directory.
+优先使用仓库现有契约格式和位置。没有时，创建可见的根目录 `contracts/`。
 
-Select a canonical machine-readable form that actual tooling can consume:
+选择真实工具能够消费的规范机器可读形式：
 
-| Boundary | Typical canonical form |
+| 边界 | 常用规范形式 |
 |---|---|
 | HTTP API | OpenAPI |
 | GraphQL | GraphQL SDL |
-| Events or messaging | AsyncAPI and/or JSON Schema |
-| Files or payloads | JSON Schema, XML Schema, Avro, or Protobuf |
-| RPC | Protobuf or the framework's IDL |
-| TypeScript module boundary | exported types plus runtime schema |
-| CLI or plugin protocol | declared command/argument and payload schema |
+| 事件或消息 | AsyncAPI 和/或 JSON Schema |
+| 文件或载荷 | JSON Schema、XML Schema、Avro 或 Protobuf |
+| RPC | Protobuf 或框架 IDL |
+| TypeScript 模块边界 | 导出类型加运行时模式 |
+| CLI 或插件协议 | 声明的命令、参数和载荷模式 |
 
-These are defaults, not mandates. Use the repository's working convention when
-it provides equal or stronger machine validation.
+以上是默认建议，不是强制要求。仓库已有惯例能够提供相同或更强的机器验证时，沿用该惯例。
 
-Architecture prose may explain rationale, trust, versioning, and trade-offs.
-It must link the canonical contract rather than duplicate every field.
+架构说明可以解释理由、信任、版本和取舍，但必须链接规范契约，不得复制每个字段。
 
-## Semantic coverage
+## 语义覆盖
 
-Cover only activated semantics, including:
+只覆盖已触发的语义，包括：
 
-- stable operation or message identifiers;
-- requests, responses, payloads, and field constraints;
-- authentication, authorization, and tenant context;
-- business and transport errors with stable machine identifiers;
-- pagination, filtering, ordering, idempotency, and correlation;
-- synchronous, asynchronous, partial, and delayed completion;
-- nullability, absence, defaults, time, money, units, and identifiers;
-- retries, duplicate delivery, ordering, and version where applicable.
+- 稳定的操作或消息标识；
+- 请求、响应、载荷和字段约束；
+- 身份验证、授权和租户上下文；
+- 带稳定机器标识的业务错误和传输错误；
+- 分页、过滤、排序、幂等和关联；
+- 同步、异步、部分和延迟完成；
+- 可空、缺失、默认值、时间、金额、单位和标识；
+- 适用时的重试、重复交付、顺序和版本。
 
-An HTTP status alone is rarely a sufficient business error. Preserve the
-distinction needed by approved behavior and UX recovery without leaking
-database or internal exception names.
+单独一个 HTTP 状态通常不足以表达业务错误。保留已确认行为和 UX 恢复所需的差异，但不要泄漏数据库或内部异常名称。
 
-## Examples and consumer use
+## 示例与消费者使用
 
-Add representative, non-sensitive examples for successful, empty, validation,
-permission, conflict, partial, and dependency-failure behavior when activated.
-Examples must validate against the canonical schema.
+对已触发的成功、空数据、验证失败、权限失败、冲突、部分成功和依赖失败行为，提供有代表性且不敏感的示例。示例必须通过规范模式验证。
 
-Use the contract for the strongest practical consumer evidence:
+使用契约取得可行的最强消费者证据：
 
-- generated types or clients;
-- mock servers or fixtures;
-- producer request and response validation;
-- consumer-driven or schema compatibility tests;
-- documentation generated from the canonical source.
+- 生成的类型或客户端；
+- 模拟服务器或测试数据；
+- 生产者请求和响应验证；
+- 消费者驱动或模式兼容性测试；
+- 从规范来源生成的文档。
 
-Generated artifacts are derivatives. Do not hand-edit them as a second source
-of truth.
+生成产物只是派生物，不得手工编辑为第二事实来源。
 
-## Compatibility and evolution
+## 兼容性与演进
 
-Before changing a shared contract:
+变更共享契约前：
 
-1. identify every known producer and consumer;
-2. classify the change as compatible, conditionally compatible, or breaking;
-3. preserve old and new behavior long enough for affected consumers when
-   necessary;
-4. design versioning, feature negotiation, rollout order, observability, and
-   rollback;
-5. make data backfill or semantic migration explicit;
-6. record removal conditions for deprecated behavior.
+1. 识别每个已知生产者和消费者；
+2. 将变更分类为兼容、条件兼容或破坏性；
+3. 必要时为受影响消费者保留足够长的新旧行为共存期；
+4. 设计版本、功能协商、发布顺序、可观测性和回滚；
+5. 明确数据回填或语义迁移；
+6. 记录弃用行为的删除条件。
 
-Do not call a change internal merely because the API is not public; another
-module, job, client, or test may still depend on it.
+API 不公开不代表变更属于内部；其他模块、任务、客户端或测试仍可能依赖它。
 
-## Readiness
+## 就绪条件
 
-A shared boundary is `ready` only when:
+共享边界只有满足以下全部条件才是 `ready`：
 
-- its canonical contract is machine-readable;
-- a format-aware tool actually parses, lints, or compiles it;
-- representative examples validate when the format supports validation;
-- operations, types, errors, permissions, and activated delivery semantics are
-  explicit;
-- approved product behavior and UX states map without contradiction;
-- producers and consumers use the same identifiers and meanings;
-- compatibility, migration, and rollback are resolved for breaking changes;
-- no material item remains only in Markdown.
+- 规范契约机器可读；
+- 格式感知工具真实解析、检查或编译过它；
+- 格式支持验证时，代表性示例已验证；
+- 操作、类型、错误、权限和已触发的交付语义明确；
+- 已确认产品行为和 UX 状态能够无矛盾映射；
+- 生产者和消费者使用相同标识与含义；
+- 破坏性变更的兼容性、迁移和回滚已经解决；
+- 没有实质内容只存在于 Markdown 中。
 
-If the required parser, generator, or consumer check is unavailable, keep the
-boundary `draft` and report it as unverified.
+必须的解析器、生成器或消费者检查不可用时，边界保持 `draft`，并报告为未验证。

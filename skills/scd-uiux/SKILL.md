@@ -1,176 +1,107 @@
 ---
 name: scd-uiux
-description: "Design or refine a Web product's user experience and interface needs before production implementation. Use for UI-heavy 0-to-1 products after the product core is stable, substantial new screens or journeys, unclear information architecture, interaction or state behavior, responsive and accessibility decisions, visual direction, UX validation, or an explicit UI/UX design request. Use independently for focused UX work or compose it with scd-discovery, scd-architecture, and scd-quickdev. Do not use for trivial copy, color, spacing, or obvious local UI changes; backend-only work; native mobile or desktop applications; or production frontend implementation."
+description: "在生产实施前设计或完善 Web 产品的用户体验和界面需求。适用于产品核心稳定后的重 UI 型 0 到 1 产品、重要的新界面或用户旅程、不清晰的信息架构、交互或状态行为、响应式和无障碍决策、视觉方向、UX 验证，或明确的 UI/UX 设计请求。可独立用于聚焦 UX 工作，也可与 scd-discovery、scd-architecture 和 scd-quickdev 组合。不适用于简单文案、颜色、间距或明显的局部 UI 变更；纯后端工作；原生移动或桌面应用；以及生产前端实施。"
 ---
 
-# SCD UIUX
+# SCD UIUX 设计
 
-Make a Web experience explicit enough to review and implement without turning
-every interface change into a design project. Design behavior and presentation;
-leave production code to `scd-quickdev`.
+让 Web 体验清晰到足以评审和实施，但不把每次界面变更都变成设计项目。本技能设计行为与呈现；生产代码交给 `scd-quickdev`。
 
-## Select the lightest sufficient path
+## 选择最轻量且充分的路径
 
-Inspect the request and repository, then choose internally:
+检查请求和仓库后，在内部选择：
 
-- **Direct:** the requested UI change and its observable result are already
-  clear. Hand it to `scd-quickdev` without UX questions or artifacts.
-- **Focused:** one journey, surface, or interaction needs design. Resolve only
-  that slice and preserve only the handoff it needs.
-- **Product:** a UI-heavy 0-to-1 delivery needs a coherent Web experience.
-  Require a stable product core, then cover the activated experience surfaces.
-- **Validate:** an existing UX contract or prototype needs a read-only
-  completeness, consistency, accessibility, or implementation-readiness audit.
+- **直接实施：** UI 变更及其可观察结果已经清晰。不提 UX 问题、不创建产物，直接交给 `scd-quickdev`。
+- **聚焦设计：** 一个旅程、界面或交互需要设计。只解决这一切片，并只保留它所需的交接内容。
+- **产品体验：** 重 UI 型 0 到 1 交付需要一致的 Web 体验。要求产品核心已经稳定，然后覆盖已触发的体验界面。
+- **体验验证：** 对现有 UX 契约或原型执行只读的完整性、一致性、无障碍或实施就绪度审计。
 
-Do not announce these path names unless the user asks about the method. A
-greenfield product does not make every visual decision high fidelity, and a
-small UI change does not inherit the Product path.
+除非用户询问方法，否则不要公布这些路径名称。全新产品不代表每项视觉决策都需要高保真，小型 UI 变更也不会因此进入“产品体验”路径。
 
-## Start from product and repository truth
+## 从产品事实和仓库事实出发
 
-Read applicable repository instructions, the governing GitHub Issue,
-the exact approved `.scd/product/prd.md` version when one governs the product,
-existing UI, design system or component library, interface contracts, and
-user-supplied visual references before asking questions. Inspect the running
-product when practical; do not infer current behavior from filenames alone.
+提问前，阅读适用的仓库说明、作为依据的 GitHub Issue、确实约束产品的已确认 `.scd/product/prd.md` 精确版本、现有 UI、设计系统或组件库、接口契约和用户提供的视觉参考。在可行时检查正在运行的产品；不要只根据文件名推断当前行为。
 
-For the Product path, require the product core to establish the primary user,
-problem, next delivery, business rules, boundaries, and observable acceptance.
-Use `scd-discovery` when several of those decisions remain open. Do not recreate
-the PRD or Issue product contract inside the UX contract.
+采用“产品体验”路径时，产品核心必须已经明确主要用户、问题、下一项交付、业务规则、边界和可观察验收。多个决策仍未确定时，使用 `scd-discovery`。不要在 UX 契约中重建 PRD 或 Issue 的产品契约。
 
-After that core is stable, UIUX may proceed in parallel with
-`scd-architecture`. Neither waits for the other to finish, but both must
-reconcile user operations, data, errors, permissions, and terminology through
-the shared interface contract before frontend and backend implementation
-begins.
+核心稳定后，UIUX 可以与 `scd-architecture` 并行进行。二者互不等待完成，但前后端实施开始前，必须通过共享接口契约统一用户操作、数据、错误、权限和术语。
 
-If UX work reveals a change to approved behavior, scope, permissions, data or
-privacy boundaries, irreversible actions, or acceptance, return only that
-change to `scd-discovery`. Visual and interaction choices that preserve the
-approved product contract remain UX decisions.
+如果 UX 工作发现已确认的行为、范围、权限、数据或隐私边界、不可逆操作或验收条件需要改变，只把该变更返回 `scd-discovery`。不改变已确认产品契约的视觉和交互选择，仍属于 UX 决策。
 
-This first version covers desktop and responsive mobile Web experiences. State
-the boundary and stop when the requested result requires native iOS, Android,
-Windows, or macOS platform design.
+此版本覆盖桌面和响应式移动 Web 体验。如果请求结果需要原生 iOS、Android、Windows 或 macOS 平台设计，说明边界并停止。
 
-## Establish the experience slice
+## 确定体验切片
 
-Identify the smallest complete user journey being designed and the acceptance
-behaviors it supports. Resolve only decisions that affect:
+找出正在设计的最小但完整用户旅程，以及它支持的验收行为。只解决影响以下内容的决策：
 
-- information architecture or navigation;
-- a surface, task flow, or state transition;
-- user feedback, recovery, or prevention of error;
-- responsive behavior or input modality;
-- accessibility or comprehension;
-- a repeated visual or component rule;
-- the data and operations the interface must consume.
+- 信息架构或导航；
+- 界面、任务流程或状态转换；
+- 用户反馈、恢复或错误预防；
+- 响应式行为或输入方式；
+- 无障碍或理解能力；
+- 重复使用的视觉或组件规则；
+- 界面必须消费的数据和操作。
 
-Ask one material decision at a time only when repository evidence cannot answer
-it. Give a recommendation and rationale. Propose sensible design defaults
-instead of asking the user to invent every pattern, but keep product and brand
-trade-offs with the user.
+只有仓库证据无法回答时，才一次询问一个实质性决策，并给出建议和理由。主动提出合理的设计默认值，不要让用户发明每个模式；产品和品牌取舍仍由用户决定。
 
-## Model behavior before polishing appearance
+## 先建模行为，再打磨外观
 
-For Focused and Product work, read
-`references/experience-contract.md`. Build the activated parts of the
-experience:
+进行聚焦设计和产品体验工作时，阅读 `references/experience-contract.md`。构建已触发的体验部分：
 
-1. key journeys and their success or recovery paths;
-2. surfaces, navigation, and information hierarchy;
-3. per-surface states and transitions;
-4. interaction, validation, feedback, and content behavior;
-5. responsive and accessibility behavior;
-6. visual direction and design-system deltas;
-7. engineering interface needs and acceptance traceability.
+1. 关键旅程及其成功或恢复路径；
+2. 界面、导航和信息层级；
+3. 每个界面的状态和转换；
+4. 交互、验证、反馈和内容行为；
+5. 响应式和无障碍行为；
+6. 视觉方向和设计系统增量；
+7. 工程接口需求和验收追溯。
 
-Every stated user need must land on a surface or deliberate non-UI behavior.
-Every designed surface must support a named journey or acceptance behavior.
-Do not add decorative screens, components, or states without a product reason.
+每项已说明的用户需求都必须落到一个界面或有意设计的非 UI 行为。每个设计界面都必须支持一个具名旅程或验收行为。不得在没有产品理由时添加装饰性界面、组件或状态。
 
-Reuse the repository's design system and components by default. Specify only
-the visual and behavioral delta. Create a broader visual system only when
-several surfaces need a new, reusable language and no suitable system exists.
+默认复用仓库现有设计系统和组件，只定义视觉与行为增量。只有多个界面确实需要新的可复用视觉语言，且没有合适系统时，才创建更广泛的视觉系统。
 
-## Use visual artifacts when seeing changes the decision
+## 只有视觉观察会改变决策时才创建视觉产物
 
-Read `references/visual-evidence.md` before creating or validating wireframes,
-mockups, or prototypes.
+创建或验证线框图、视觉稿或原型前，阅读 `references/visual-evidence.md`。
 
-- Use a concise interaction delta for obvious local changes.
-- Use a low-fidelity wireframe or lightweight prototype when layout,
-  hierarchy, navigation, or state transitions are ambiguous.
-- Use high-fidelity work only when brand, visual language, or precise component
-  appearance is part of acceptance.
+- 明显的局部变更使用简洁的交互增量说明。
+- 布局、层级、导航或状态转换存在歧义时，使用低保真线框图或轻量原型。
+- 只有品牌、视觉语言或精确组件外观属于验收条件时，才使用高保真设计。
 
-Do not require Figma or any single design tool. Prefer existing repository and
-user tools. Keep prototypes explicitly non-production. Inspect every produced
-visual at the relevant viewport sizes and extract load-bearing decisions into
-the UX contract; the contract wins when a visual artifact conflicts with it.
+不强制使用 Figma 或任何单一设计工具。优先使用仓库和用户已有工具。原型必须明确标记为非生产。每个生成的视觉产物都应在相关视口尺寸下检查，并把关键决策提取到 UX 契约；视觉产物与契约冲突时，以契约为准。
 
-## Reconcile the engineering seam
+## 统一工程衔接点
 
-Record what each surface needs to display, which user operations it invokes,
-the states it must distinguish, and representative examples. Reuse stable
-operation and field names from an existing shared interface contract.
+记录每个界面需要显示什么、会调用哪些用户操作、必须区分哪些状态，以及代表性示例。存在共享接口契约时，复用其中稳定的操作名和字段名。
 
-UIUX may propose interface needs, but it must not unilaterally finalize
-endpoints, transport schemas, persistence, or backend ownership.
-`scd-architecture` facilitates reconciliation with frontend and backend
-constraints without owning the contract alone. Frontend and backend are ready
-to work independently only after those needs converge in one shared interface
-contract that is machine-readable.
+UIUX 可以提出接口需求，但不得单方面定稿端点、传输模式、持久化或后端所有权。`scd-architecture` 推动需求与前后端约束收敛，但也不独占契约所有权。只有这些需求统一到一个共享的机器可读接口契约后，前后端才算能够独立工作。
 
-Before handoff, check:
+交接前检查：
 
-- every user action maps to a product rule and an interface operation or a
-  deliberate client-only behavior;
-- success, validation, permission, empty, partial, loading, and dependency
-  failure states are representable where activated;
-- terminology and identifiers do not drift between product, UX, and shared
-  interface contracts;
-- unresolved seam decisions are named as blockers, not hidden as UX
-  assumptions.
+- 每个用户操作都映射到产品规则，以及接口操作或有意设计的纯客户端行为；
+- 已触发的成功、验证、权限、空数据、部分成功、加载和依赖失败状态都可表达；
+- 产品、UX 和共享接口契约之间的术语与标识不漂移；
+- 未解决的衔接点决策明确标记为阻塞，不隐藏为 UX 假设。
 
-Do not duplicate the shared interface contract in the UX artifact.
+不要在 UX 产物中复制共享接口契约。
 
-## Preserve only useful design state
+## 只保留有用的设计状态
 
-Keep short discussion and clear local deltas in conversation. When repository
-work needs a durable review or implementation handoff, prefer an existing
-design documentation home. Otherwise create one `.scd/ux/<slug>.md` from
-`assets/ux-contract.md`.
+简短讨论和清晰的局部增量只保留在对话中。仓库工作需要持久评审或实施交接时，优先使用现有设计文档位置；否则从 `assets/ux-contract.md` 创建一份 `.scd/ux/<slug>.md`。
 
-Use `status: draft` while material UX decisions remain and `status: ready`
-after the readiness review. `ready` means the UX work is coherent; it is not a
-second product approval. When the UX belongs to Discovery, the linked delivery
-GitHub Issue carries the user's one combined approval.
+存在实质性 UX 决策未定时使用 `status: draft`，通过就绪审查后使用 `status: ready`。`ready` 表示 UX 工作一致，不是第二次产品确认。UX 属于 Discovery 组合时，由关联的 Delivery GitHub Issue 承载用户的一次合并确认。
 
-Keep one UX contract by default. Link visual artifacts rather than restating
-them. Split out a visual system only when it is reused across deliveries and
-evolves independently. Do not create PRDs, frontend architecture documents,
-stories, sprint state, or implementation plans.
+默认只保留一份 UX 契约。链接视觉产物，不要复述它们。只有视觉系统跨交付复用并独立演进时才拆分。不要创建 PRD、前端架构文档、用户故事、Sprint 状态或实施计划。
 
-## Review readiness and hand off
+## 审查就绪度并交接
 
-Read `references/experience-contract.md` before setting a durable UX contract
-to `ready` or declaring an existing design implementable. Report only real
-gaps. A handoff is ready when:
+把持久 UX 契约设为 `ready` 或宣布现有设计可实施前，阅读 `references/experience-contract.md`。只报告真实缺口。以下条件全部满足时，交接才就绪：
 
-- journey-to-surface coverage closes;
-- activated states, transitions, failure, and recovery behavior are explicit;
-- responsive and accessibility requirements are testable;
-- visual references cover the places where layout or appearance carries a
-  decision;
-- engineering interface needs are reconciled or clearly assigned to the
-  `scd-architecture` shared-contract step;
-- no open item can materially change visible behavior or acceptance.
+- 旅程到界面的覆盖闭合；
+- 已触发的状态、转换、失败和恢复行为明确；
+- 响应式和无障碍要求可测试；
+- 布局或外观承载决策之处有视觉参考；
+- 工程接口需求已经统一，或已明确分配给 `scd-architecture` 的共享契约步骤；
+- 没有待定事项会实质改变可见行为或验收。
 
-For a Discovery composition, return the ready UX conclusions and any
-product-contract changes for the single combined approval. For production
-implementation, hand the approved product contract, ready UX contract, visual
-references, ready architecture or feature design when activated, and shared
-interface contract to `scd-quickdev`. Do not implement production frontend code
-in this skill.
+与 Discovery 组合时，把就绪的 UX 结论和产品契约变更送回一次合并确认。交给生产实施时，向 `scd-quickdev` 提供：已确认的产品契约、已就绪的 UX 契约、视觉参考、已启用且就绪的架构或功能设计，以及共享接口契约。本技能不得实施生产前端代码。

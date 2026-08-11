@@ -1,95 +1,83 @@
-# Architecture readiness review
+# 架构就绪审查
 
-Use this review before marking a baseline or feature design `ready`, declaring
-a shared contract ready, or completing Validate work. Run it silently and
-surface only real findings.
+把基线或功能设计标为 `ready`、宣布共享契约就绪，或完成验证工作前使用本审查。静默运行，只呈现真实发现。
 
-## Trace behavior to responsibility
+## 把行为追溯到职责
 
-For each approved acceptance behavior:
+对每项已确认验收行为：
 
-- identify the domain rule or deliberate absence of one;
-- identify the component or actor responsible;
-- identify authoritative data and permission enforcement;
-- identify the interface operation, event, file, command, or internal seam;
-- identify how implementation can prove the behavior.
+- 找出领域规则，或确认有意不存在规则；
+- 找出负责的组件或参与者；
+- 找出权威数据和权限执行位置；
+- 找出接口操作、事件、文件、命令或内部衔接点；
+- 说明实施如何证明该行为。
 
-Flag behavior with no owner, multiple conflicting owners, or no verification
-seam.
+标记没有所有者、存在多个冲突所有者或没有验证衔接点的行为。
 
-## Check domain coherence
+## 检查领域一致性
 
-Verify:
+验证：
 
-- product terminology is preserved;
-- states and transitions do not contradict approved behavior;
-- invariants have one enforceable authority;
-- cross-entity consistency and compensation are explicit where needed;
-- identity, time, money, units, permissions, and tenant ownership are not
-  represented ambiguously;
-- caches, projections, and UI state are not mistaken for sources of truth.
+- 产品术语得到保留；
+- 状态和转换不与已确认行为矛盾；
+- 不变量只有一个可执行的权威主体；
+- 需要时明确跨实体一致性和补偿；
+- 身份、时间、金额、单位、权限和租户所有权没有歧义；
+- 缓存、投影和 UI 状态没有被误认为事实来源。
 
-Return missing business choices to Discovery. Do not repair them as technical
-assumptions.
+缺失的业务选择返回 Discovery，不得以技术假设替代。
 
-## Check system boundaries
+## 检查系统边界
 
-Verify:
+验证：
 
-- every component has one concise responsibility and explicit exclusions;
-- data ownership and trust boundaries are unambiguous;
-- synchronous and asynchronous flows preserve required semantics;
-- transaction, concurrency, ordering, retry, idempotency, timeout, and failure
-  behavior are covered where activated;
-- external dependencies have failure and fallback behavior;
-- cross-cutting requirements have a technical owner and observable evidence.
+- 每个组件只有一个简洁职责，并有明确排除项；
+- 数据所有权和信任边界无歧义；
+- 同步与异步流程保留所需语义；
+- 已触发的事务、并发、顺序、重试、幂等、超时和失败行为均已覆盖；
+- 外部依赖有失败与降级行为；
+- 横切要求有技术负责人和可观察证据。
 
-## Check shared contracts
+## 检查共享契约
 
-For each activated boundary:
+对每个已触发边界：
 
-1. resolve the canonical contract path;
-2. run a format-aware parser, linter, compiler, or generator;
-3. validate representative examples where supported;
-4. compare product terms, domain operations, UX states, errors, permissions,
-   and contract identifiers;
-5. inspect producer and consumer compatibility;
-6. record exact commands, exit codes, and meaningful output.
+1. 解析规范契约路径；
+2. 运行格式感知的解析器、检查器、编译器或生成器；
+3. 在支持时验证代表性示例；
+4. 比较产品术语、领域操作、UX 状态、错误、权限和契约标识；
+5. 检查生产者和消费者兼容性；
+6. 记录精确命令、退出码和有意义的输出。
 
-File existence, valid YAML syntax, or a rendered documentation page alone does
-not prove a usable contract.
+文件存在、YAML 语法有效或文档页可以渲染，都不能单独证明契约可用。
 
-## Check change safety
+## 检查变更安全性
 
-For existing systems, verify:
+对现有系统验证：
 
-- the design is an intentional delta rather than an unexplained rewrite;
-- affected producers, consumers, data, and operational dependencies are named;
-- compatibility and rollout order are explicit;
-- destructive or semantic data changes have migration, observation, and
-  rollback paths;
-- superseded decisions or contracts are clearly deprecated, replaced, or
-  removed.
+- 设计是有意的增量，而不是无法解释的重写；
+- 已列出受影响的生产者、消费者、数据和运维依赖；
+- 兼容性和发布顺序明确；
+- 破坏性或语义数据变更有迁移、观察和回滚路径；
+- 被取代的决策或契约已明确弃用、替换或删除。
 
-## Check artifact discipline
+## 检查产物纪律
 
-Verify:
+验证：
 
-- the governing GitHub Issue owns business behavior;
-- UX owns interaction behavior;
-- architecture owns technical responsibility;
-- machine contracts own cross-boundary syntax and semantics;
-- information is referenced rather than copied between sources;
-- `draft` remains wherever an open item can change boundaries,
-  compatibility, security, or acceptance;
-- `ready` is not presented as a second product approval.
+- 作为依据的 GitHub Issue 负责业务行为；
+- UX 负责交互行为；
+- Architecture 负责技术职责；
+- 机器契约负责跨边界语法和语义；
+- 信息在来源之间通过引用复用，而不是复制；
+- 任何待定事项可能改变边界、兼容性、安全或验收时，继续保持 `draft`；
+- `ready` 没有被表述为第二次产品确认。
 
-## Report
+## 报告
 
-Map each readiness claim to observed evidence, `UNVERIFIED`, or a named
-blocker. Name the smallest responsible next step:
+把每项就绪声明映射到已观察证据、`UNVERIFIED` 或具名阻塞，并指出最小责任步骤：
 
-- Discovery for product behavior;
-- UIUX for experience behavior;
-- Architecture for internal design or shared-contract convergence;
-- QuickDev only after the required handoff is ready.
+- 产品行为交给 Discovery；
+- 体验行为交给 UIUX；
+- 内部设计或共享契约收敛交给 Architecture；
+- 只有所需交接就绪后才交给 QuickDev。

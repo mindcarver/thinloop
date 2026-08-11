@@ -1,4 +1,4 @@
 interface:
-  display_name: "SCD Maintenance"
-  short_description: "Audit and repair repository drift"
-  default_prompt: "Use $scd-maintenance to audit this repository for technical debt and code-documentation drift, then repair only the findings I select."
+  display_name: "SCD 仓库维护"
+  short_description: "审计并修复仓库漂移"
+  default_prompt: "使用 $scd-maintenance 审计这个仓库的技术债务和代码文档漂移，然后只修复我选中的发现项。"

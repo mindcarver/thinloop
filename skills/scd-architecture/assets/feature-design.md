@@ -2,26 +2,26 @@
 managed_by: scd-architecture
 status: draft
 sources:
-  - <governing GitHub Issue>
-  - <architecture baseline>
+  - <作为依据的 GitHub Issue>
+  - <架构基线>
 ---
 
-# Outcome and boundary
+# 结果与边界
 
-## Existing context
+## 现有上下文
 
-## Domain and responsibility changes
+## 领域与职责变更
 
-## Flow and failure behavior
+## 流程与失败行为
 
-## Shared contract changes
+## 共享契约变更
 
-## Data, compatibility, and migration
+## 数据、兼容性与迁移
 
-## Security, reliability, and operations
+## 安全、可靠性与运维
 
-## Alternatives and decisions
+## 备选方案与决策
 
-## Verification
+## 验证
 
-## Open items
+## 待定事项

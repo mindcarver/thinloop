@@ -1,179 +1,121 @@
 ---
 name: scd-discovery
-description: "Turn an underdefined product idea into an explicitly approved, testable product or delivery contract before implementation. Use by default for a new product, application, plugin, service, or system; for a substantial feature with multiple dependent product decisions; or when data ownership, permissions, irreversible behavior, public interfaces, or external integrations remain undecided. Approved greenfield products receive a lightweight `.scd/product/prd.md`; clear isolated changes and bugs remain Issue-only. Also use when the user explicitly asks to clarify, challenge, or specify a product idea. Do not use for a clear local change with an observable outcome, boundary, and acceptance path; one isolated ambiguity can be clarified without full discovery. When the approved outcome spans multiple independently verifiable deliveries, hand project decomposition to scd-project instead of forcing one oversized Issue."
+description: "在实施前，把定义不足的产品想法转化为经过明确确认且可测试的产品契约或交付契约。默认用于新产品、应用、插件、服务或系统；含多个相互依赖产品决策的重要功能；或数据所有权、权限、不可逆行为、公共接口、外部集成仍未确定的工作。已确认的全新产品会得到轻量 `.scd/product/prd.md`；清晰的孤立变更和缺陷只使用 Issue。也用于用户明确要求澄清、质疑或定义产品想法的情形。不适用于结果、边界和验收路径均清晰的局部变更；一个孤立歧义无需完整 Discovery 即可澄清。已确认结果跨越多个可独立验证的交付时，把项目拆解交给 scd-project，不要强制塞入一个过大的 Issue。"
 ---
 
-# SCD Discovery
+# SCD 需求发现
 
-Resolve consequential product decisions before implementation without turning
-discovery into a fixed ceremony. For greenfield work, define the approved MVP
-product baseline. For an existing product, cover the next coherent delivery,
-not the product's entire future.
+在实施前解决影响重大的产品决策，但不把需求发现变成固定仪式。全新产品需要定义已确认的 MVP 产品基线；现有产品只覆盖下一项连贯交付，不规划产品的全部未来。
 
-Do not edit implementation code during full discovery. A user must explicitly approve the combined product contract before implementation begins.
+完整 Discovery 期间不得编辑实施代码。实施开始前，用户必须明确确认合并后的产品契约。
 
-## Select the lightest sufficient path
+## 选择最轻量且充分的路径
 
-Inspect the request and available repository context, then choose internally:
+检查请求和可用仓库上下文后，在内部选择：
 
-- **Direct:** outcome, boundary, and observable acceptance are already clear. Hand implementation to `scd-quickdev` without discovery artifacts or extra questions.
-- **Clarify:** one answer can make the work executable. Ask that one material question, then hand off.
-- **Discovery:** multiple dependent product decisions or a high-cost product boundary is unresolved. Follow the full workflow below.
+- **直接实施：** 结果、边界和可观察验收已经清晰。不创建 Discovery 产物、不追加问题，直接交给 `scd-quickdev`。
+- **单点澄清：** 一个答案即可使工作可执行。只询问这个实质性问题，然后交接。
+- **完整发现：** 多个相互依赖的产品决策，或高成本产品边界尚未解决。执行下方完整工作流。
 
-Treat greenfield products, applications, plugins, services, and systems as
-Discovery by default. Their approved result is a lightweight product PRD, not
-only an implementation Issue. If the user supplies a complete Issue or product
-contract, use the readiness fast path rather than manufacturing questions.
+全新产品、应用、插件、服务和系统默认走完整 Discovery。它们确认后应得到轻量产品 PRD，而不只是实施 Issue。用户已经提供完整 Issue 或产品契约时，走就绪快速路径，不要人为制造问题。
 
-When one approved outcome clearly requires several independently verifiable
-deliveries, stabilize the shared project core and hand decomposition to
-`scd-project`. Do not collapse a project into one Issue containing unrelated
-delivery checklists.
+一项已确认结果明确需要多个可独立验证的交付时，先稳定共享项目核心，再交给 `scd-project` 拆解。不要把包含无关交付清单的整个项目压进一个 Issue。
 
-Do not announce these path names unless the user asks about the method.
+除非用户询问方法，否则不要公布这些路径名称。
 
-## Investigate before asking
+## 先调查，再提问
 
-Read applicable repository instructions, existing Issues, architecture notes, tests, and relevant implementation before interviewing. Discover facts from the environment instead of asking the user to recall them.
+访谈前，阅读适用的仓库说明、现有 Issues、架构记录、测试和相关实施。从环境中发现事实，不要让用户回忆仓库里可以查到的信息。
 
-Keep facts, user decisions, working assumptions, and deferred decisions distinct. Research external standards or referenced products only when a current fact could materially change the decision; do not generate market or competitor analysis by default.
+明确区分事实、用户决策、工作假设和延期决策。只有当前外部事实可能实质影响决策时，才研究外部标准或用户提及的产品；默认不生成市场或竞品分析。
 
-## Establish the delivery slice
+## 确定交付切片
 
-For a new product, use at most two opening decisions to establish:
+对于新产品，开场最多通过两个决策确定：
 
-- the primary user;
-- the problem or current workaround;
-- the observable change the user wants.
+- 主要用户；
+- 用户问题或当前权宜方案；
+- 用户希望发生的可观察变化。
 
-Challenge an unconfirmed solution assumption when it may solve the wrong problem. Give the concern and a recommendation once. When the user confirms the product form is fixed, accept it as a constraint and continue.
+如果未经确认的解决方案假设可能解决错问题，提出一次质疑、风险和建议。用户确认产品形态固定后，将其作为约束继续推进。
 
-Define the next complete, independently verifiable delivery. Keep longer-term ideas visible only as deferred or out of scope.
+定义下一项完整且可独立验证的交付。长期想法只作为延期项或范围外内容保留可见性。
 
-For a greenfield product, stabilize the MVP before slicing delivery:
+对全新产品，切分交付前先稳定 MVP：
 
-- product vision, primary users, and the problem or current alternative;
-- MVP goals, non-goals, and core user journeys;
-- observable functional requirements with stable `FR-*` identifiers;
-- important rules, failure cases, data, permissions, and integrations;
-- measurable success criteria, assumptions, risks, and open questions.
+- 产品愿景、主要用户，以及问题或当前替代方案；
+- MVP 目标、非目标和核心用户旅程；
+- 使用稳定 `FR-*` 标识的可观察功能需求；
+- 重要规则、失败场景、数据、权限和集成；
+- 可衡量的成功标准、假设、风险和待确认问题。
 
-Do not expand the PRD into roadmap theater, implementation tasks, architecture,
-or a speculative future backlog.
+不要把 PRD 扩张成形式化路线图、实施任务、架构或臆测性的未来待办列表。
 
-If the user's requested outcome cannot be represented as one coherent delivery
-without hiding several independent acceptance boundaries, stop slicing at the
-shared project core. Confirm that core, then let `scd-project` create the
-Initiative and Delivery Issue DAG. Discovery does not plan implementation work
-or run a project execution loop.
+如果用户要求的结果无法表示为一项连贯交付，除非隐藏多个独立验收边界，则在共享项目核心处停止切分。先确认这个核心，再让 `scd-project` 创建 Initiative 和 Delivery Issue DAG。Discovery 不规划实施工作，也不运行项目执行循环。
 
-When that delivery is UI-heavy and its journey, surfaces, states, responsive
-behavior, accessibility, or visual direction remain design-bearing, compose
-with `scd-uiux` after the product core stabilizes. Bring product-visible UX
-decisions back into the same combined contract and approval. Do not invoke
-UIUX for clear local interface changes.
+如果交付以 UI 为主，且旅程、界面、状态、响应式行为、无障碍或视觉方向仍需设计，产品核心稳定后组合 `scd-uiux`。产品可见的 UX 决策必须回到同一个合并契约中统一确认。清晰的局部界面变更无需调用 UIUX。
 
-When that delivery creates a system or changes a durable component, data owner,
-trust boundary, public contract, event, or integration, compose with
-`scd-architecture` after the product core stabilizes. UIUX and Architecture may
-then proceed in parallel. Reconcile their operations, data, errors,
-permissions, and terminology into one shared machine-readable contract before
-independent frontend and backend implementation. Do not invoke Architecture
-for a clear local change that fits existing boundaries and contracts.
+如果交付创建新系统，或改变持久组件、数据所有者、信任边界、公共契约、事件或集成，产品核心稳定后组合 `scd-architecture`。此后 UIUX 与 Architecture 可以并行进行。前后端独立实施前，必须把二者的操作、数据、错误、权限和术语统一为一个共享的机器可读契约。符合现有边界与契约的清晰局部变更无需调用 Architecture。
 
-## Interview through the decision tree
+## 沿决策树访谈
 
-Ask one decision at a time. Include the reason it matters now, a recommendation with rationale, and only meaningful alternatives. Resolve upstream decisions before asking downstream questions.
+一次只询问一个决策。说明它为什么现在重要，给出有理由的建议，并只提供有实质差异的选项。先解决上游决策，再询问下游问题。
 
-Expand only the branches activated by the product: user journey, rules and states, failure and recovery, data lifecycle, permissions, integrations, constraints, non-goals, and observable verification.
+只展开产品实际触发的分支：用户旅程、规则和状态、失败与恢复、数据生命周期、权限、集成、约束、非目标和可观察验证。
 
-After three to five consequential decisions, give a short convergence summary of confirmed decisions, assumptions, exclusions, and the next unresolved branch. Do not demand approval at every checkpoint.
+每解决三到五个重要决策，给出一次简短收敛摘要，列出已确认决策、假设、排除项和下一个未解决分支。不要在每个检查点都要求确认。
 
-Read `references/interviewing.md` when full discovery begins.
+完整 Discovery 开始时，阅读 `references/interviewing.md`。
 
-A skipped or non-substantive answer to an interview question is not a
-rejection. Treat the strongest recommendation as a provisional assumption, name
-it, and continue dependent work; confirm accumulated assumptions at the final
-contract approval. See `references/interviewing.md` → When a decision comes
-back unanswered. This mirrors the approval-stage silence rule (below) so the
-interview stage is not asymmetrically unguided.
+用户跳过问题或没有给出实质回答，不代表拒绝。把最有力的建议作为具名的临时假设，继续依赖工作；在最终契约确认时统一确认累计假设。参见 `references/interviewing.md` 中“决策没有得到回答”部分。这与下方确认阶段的沉默规则一致，避免访谈阶段在无人引导时出现不对称处理。
 
-## Preserve continuity only when needed
+## 只在需要时保留连续性
 
-Keep short discovery in conversation. Do not create a file merely because the skill triggered.
+简短的需求发现只保留在对话中。不要仅因为技能触发就创建文件。
 
-When the discussion may cross a session or compaction, contains several dependent decisions, has multiple acceptance paths, or the user pauses, store only the resumable delta in `.scd/tasks/current.md` with `managed_by: scd-discovery`. Maintain at most one current task per worktree.
+讨论可能跨会话或上下文压缩、包含多个相互依赖决策、存在多条验收路径，或用户暂停时，只把可恢复的增量写入 `.scd/tasks/current.md`，并设置 `managed_by: scd-discovery`。每个工作树最多保留一个当前任务。
 
-Read `references/artifacts.md` before creating, updating, promoting, or removing discovery state.
+创建、更新、提升或删除 Discovery 状态前，阅读 `references/artifacts.md`。
 
-## Review readiness and request approval
+## 审查就绪度并请求确认
 
-When no high-impact branch appears open:
+没有高影响分支仍处于开放状态时：
 
-1. run the readiness and contradiction review silently;
-2. bring only real blockers back into the interview;
-3. identify the external seam through which each acceptance behavior will be verified;
-4. when UIUX was activated, require its experience handoff to be ready and name
-   any shared-interface reconciliation still required before implementation;
-5. when Architecture was activated, require its baseline or feature design and
-   shared machine-readable contract to be ready;
-6. for greenfield work, confirm the PRD has no product-blocking open question,
-   its `FR-*` identifiers are unique and stable, and its success metrics are
-   observable;
-7. present one compact shared-understanding summary;
-8. request one explicit approval of the combined contract.
+1. 静默执行就绪度和矛盾审查；
+2. 只把真实阻塞带回访谈；
+3. 明确每项验收行为将通过哪个外部衔接点验证；
+4. 已启用 UIUX 时，要求体验交接就绪，并指出实施前仍需完成的共享接口统一工作；
+5. 已启用 Architecture 时，要求架构基线或功能设计以及共享机器可读契约就绪；
+6. 对全新产品，确认 PRD 不存在阻塞产品的问题，`FR-*` 标识唯一且稳定，成功指标可观察；
+7. 展示一份紧凑的共同理解摘要；
+8. 请求用户对合并契约做一次明确确认。
 
-Silence, topic changes, partial agreement, or the model's confidence are not approval. A clear affirmative response to the approval request is approval. If the user changes the contract, revise it and review again.
+沉默、切换话题、部分同意或模型自信都不构成确认。用户针对确认请求给出明确肯定回答，才算确认。用户更改契约时，修订后重新审查。
 
-Read `references/readiness-review.md` before declaring the contract ready.
+宣布契约就绪前，阅读 `references/readiness-review.md`。
 
-## Persist the approved contract and hand off
+## 持久化已确认契约并交接
 
-For an approved greenfield product requested as repository work:
+用户要求把已确认的全新产品落实到仓库时：
 
-1. create or update `.scd/product/prd.md` from
-   `assets/product-prd.md`;
-2. set `status: approved`, increment `version` for a material product-contract
-   change, record `approved_at`, and keep stable `FR-*` identifiers;
-3. use the repository's ordinary low-risk document-delivery path so the
-   approved version is reachable from the default branch before Project marks
-   delivery nodes READY or QuickDev starts product implementation;
-4. treat the PRD as authoritative for product-level why, users, problem, MVP
-   scope, requirements, and success metrics.
+1. 从 `assets/product-prd.md` 创建或更新 `.scd/product/prd.md`；
+2. 设置 `status: approved`；产品契约发生实质变化时递增 `version`；记录 `approved_at`；保留稳定的 `FR-*` 标识；
+3. 使用仓库普通的低风险文档交付路径，确保已确认版本可从默认分支访问；只有此后 Project 才能把交付节点标为 READY，QuickDev 才能开始产品实施；
+4. 把 PRD 视为产品级原因、用户、问题、MVP 范围、需求和成功指标的权威来源。
 
-Do not keep a permanent draft PRD. Before approval, use conversation or the
-temporary Discovery continuity state. If the approved PRD cannot be made
-reachable from the default branch, report that downstream work is blocked
-instead of treating an uncommitted local file as shared product truth.
+不要永久保存草稿 PRD。确认前只使用对话或临时 Discovery 连续性状态。已确认 PRD 无法进入默认分支时，报告下游工作受阻；不要把未提交的本地文件当作共享产品事实。
 
-When the user requested repository work for one delivery, present the converged
-contract for explicit approval, then create or update one detailed GitHub
-Issue. For a clear change to an existing product, that Issue is the sole
-requirement and acceptance source of truth. For a greenfield product, the PRD
-owns the product baseline while the Delivery Issue owns the next slice's
-boundary, acceptance, and verification seams. Reference the PRD path, approved
-version, and implemented `FR-*` identifiers without copying the full PRD into
-the Issue.
+用户要求一项交付的仓库工作时，先展示收敛后的契约并请求明确确认，然后创建或更新一个详细的中文 GitHub Issue。对于现有产品的清晰变更，该 Issue 是需求与验收的唯一事实来源。对于全新产品，PRD 负责产品基线，Delivery Issue 负责下一切片的边界、验收和验证衔接点。Issue 应引用 PRD 路径、已确认版本和要实施的 `FR-*` 标识，不要复制整份 PRD。
 
-For an approved multi-delivery project, hand the shared project contract to
-`scd-project` instead. Project owns the Initiative and Delivery Issue graph;
-Discovery must not create one oversized implementation Issue first.
+对于已确认的多交付项目，把共享项目契约交给 `scd-project`。Project 负责 Initiative 和 Delivery Issue 图；Discovery 不得先创建一个过大的实施 Issue。
 
-If GitHub or the repository's authoritative tracker is unavailable, report the
-blocker instead of silently substituting `.scd/specs/`. If the user approves
-but does not want implementation, remove temporary discovery state and stop
-after creating the Issue. If the user approves implementation, hand the Issue
-to `scd-quickdev`. Do not add separate approval gates for architecture, task
-breakdown, or implementation unless a later choice would change the approved
-product contract.
+如果 GitHub 或仓库的权威跟踪器不可用，报告阻塞，不得悄悄用 `.scd/specs/` 替代。用户确认但不希望实施时，删除临时 Discovery 状态，并在创建 Issue 后停止。用户确认实施时，把 Issue 交给 `scd-quickdev`。除非后续选择会改变已确认的产品契约，否则不要为架构、任务拆解或实施增加独立确认门。
 
-When the user asked only to discuss an idea, keep the result in conversation
-unless they request a file. Discussion alone does not authorize creating or
-approving a repository PRD.
+用户只要求讨论想法时，结果保留在对话中，除非用户要求文件。仅讨论不代表授权创建或确认仓库 PRD。
 
-## Resources
+## 资源
 
-- `references/interviewing.md` - decision-tree questioning, depth control, and research discipline.
-- `references/readiness-review.md` - fast path, adversarial review, and explicit approval semantics.
-- `references/artifacts.md` - temporary state, GitHub Issue schema, technical documents, and change handling.
-- `assets/product-prd.md` - minimum greenfield PRD template.
+- `references/interviewing.md`：决策树提问、深度控制和研究纪律。
+- `references/readiness-review.md`：快速路径、对抗式审查和明确确认语义。
+- `references/artifacts.md`：临时状态、中文 GitHub Issue 结构、技术文档和变更处理。
+- `assets/product-prd.md`：最小全新产品 PRD 模板。

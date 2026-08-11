@@ -1,234 +1,147 @@
 ---
 name: scd-project
-description: "Turn an approved project that spans multiple independently verifiable deliveries into a GitHub Initiative and an issue-level dependency DAG before implementation. Use when one request needs several delivery Issues, hard prerequisites, rolling project decomposition, or an explicit integration gate. Use scd-discovery first when the product outcome or shared rules remain open. Do not use for one coherent delivery, one complete Issue, or merely because implementation is large. This skill creates or updates project and delivery Issues, validates the graph, and reports READY, BLOCKED, PLANNED, and DONE nodes; it does not implement code, launch agents, create worktrees, merge pull requests, or run an execution loop."
+description: "在实施前，把跨越多个可独立验证交付的已确认项目转化为 GitHub Initiative 和 Issue 级依赖 DAG。适用于一个请求需要多个 Delivery Issues、硬前置依赖、滚动式项目拆解或明确集成门的情形。产品结果或共享规则仍未确定时，先使用 scd-discovery。不适用于一项连贯交付、一个完整 Issue，也不能仅因实施规模大而使用。本技能创建或更新项目与交付 Issues、验证依赖图，并报告 READY、BLOCKED、PLANNED 和 DONE 节点；它不实施代码、不启动 Agent、不创建工作树、不合并拉取请求，也不运行执行循环。"
 ---
 
-# SCD Project
+# SCD 项目规划
 
-Turn an approved multi-delivery project into a small, tracker-backed delivery
-graph. Stop after the graph and its executable Issues are ready; project
-decomposition is not implementation authority.
+把已确认的多交付项目转化为小型、由跟踪器承载的交付图。依赖图及其可执行 Issues 就绪后停止；项目拆解不授予实施权限。
 
-Maintain these boundaries:
+维护以下边界：
 
-- an approved greenfield PRD owns product-level why, users, problem, MVP scope,
-  `FR-*` requirements, and success metrics;
-- the Initiative Issue owns delivery topology, shared coordination decisions,
-  graph revision, and project-level integration acceptance;
-- each Delivery Issue owns the boundary, acceptance, verification seams, and
-  PRD traceability for one independently verifiable slice;
-- pull requests and independent verifiers hold implementation and delivery
-  evidence;
-- any derived graph snapshot is a validated coordination view, not a second
-  product specification or state database.
+- 已确认的全新产品 PRD 负责产品级原因、用户、问题、MVP 范围、`FR-*` 需求和成功指标；
+- Initiative Issue 负责交付拓扑、共享协调决策、图版本和项目级集成验收；
+- 每个 Delivery Issue 负责一个可独立验证切片的边界、验收、验证衔接点和 PRD 追溯；
+- 拉取请求和独立验收者保存实施与交付证据；
+- 派生的依赖图快照只是经过验证的协调视图，不是第二份产品规格或状态数据库。
 
-## Select the lightest sufficient path
+## 选择最轻量且充分的路径
 
-Use Project only when the requested outcome needs more than one independently
-verifiable delivery—normally one Delivery Issue and pull request per slice—or
-when those slices need a hard dependency graph or an explicit cross-slice
-integration gate. Multiple pull requests caused only by implementation size do
-not create a project boundary.
+只有请求结果需要多个可独立验证的交付——通常每个切片对应一个 Delivery Issue 和拉取请求——或这些切片需要硬依赖图或明确的跨切片集成门时，才使用 Project。仅因实施规模而需要多个拉取请求，不会形成项目边界。
 
-Do not use Project when:
+以下情况不要使用 Project：
 
-- one Issue can express one coherent outcome and its acceptance;
-- one material answer can make that Issue executable;
-- the request is large only in implementation effort;
-- future ideas do not affect the next delivery and can remain deferred.
+- 一个 Issue 可以表达一项连贯结果及其验收；
+- 一个实质性答案即可使该 Issue 可执行；
+- 请求只是实施工作量大；
+- 未来想法不影响下一项交付，可以继续延期。
 
-For one clear delivery, use `scd-quickdev`. For one underdefined delivery, use
-`scd-discovery`. When product-wide outcomes, users, rules, permissions, data
-boundaries, or shared interfaces remain open, use `scd-discovery` first and
-return only after the project core is explicitly approved.
+一项清晰交付使用 `scd-quickdev`；一项定义不足的交付使用 `scd-discovery`。产品级结果、用户、规则、权限、数据边界或共享接口仍未确定时，先使用 `scd-discovery`，并且只有项目核心得到明确确认后才返回。
 
-## Start from live project truth
+## 从实时项目事实出发
 
-1. Read applicable `AGENTS.md`, `CLAUDE.md`, repository instructions, existing
-   Issues, pull requests, architecture documents, shared contracts, and tests.
-   For a new greenfield product, read the approved default-branch
-   `.scd/product/prd.md`.
-2. Find an existing Initiative and Delivery Issues before creating duplicates.
-3. Separate confirmed project decisions, working assumptions, deferred
-   deliveries, and unresolved blockers.
-4. Re-read live Issue and pull-request state before reporting a node as ready
-   or done.
-5. Keep high-risk actions behind the human gates already required by
-   `scd-quickdev`.
+1. 阅读适用的 `AGENTS.md`、`CLAUDE.md`、仓库说明、现有 Issues、拉取请求、架构文档、共享契约和测试。全新产品还要读取默认分支中已确认的 `.scd/product/prd.md`。
+2. 创建前先查找现有 Initiative 和 Delivery Issues，避免重复。
+3. 区分已确认的项目决策、工作假设、延期交付和未解决阻塞。
+4. 报告节点 READY 或 DONE 前，重新读取实时 Issue 与拉取请求状态。
+5. 高风险操作继续受 `scd-quickdev` 已规定的人工门约束。
 
-Do not infer project completion from checked tasks, a merged pull request, or a
-closed dependency alone. A Delivery Issue is done only when its QuickDev
-contract has completed independent acceptance and closure.
+不得根据任务已勾选、拉取请求已合并或单个依赖已关闭来推断项目完成。只有 Delivery Issue 完成 QuickDev 契约规定的独立验收和关闭，才算 DONE。
 
-For greenfield work, do not materialize READY Delivery Issues from a draft,
-uncommitted, missing, or superseded PRD. Existing products may use an approved
-repository-native product contract; record that authority explicitly instead
-of manufacturing a new PRD during Project.
+对全新产品，不得从草稿、未提交、缺失或已被取代的 PRD 生成 READY Delivery Issues。现有产品可以使用已确认的仓库原生产品契约；明确记录该权威来源，不要在 Project 中人为创建新 PRD。
 
-## Establish the project core
+## 确定项目核心
 
-Derive the product-wide decisions from the approved product contract and
-confirm only the coordination decisions shared by several deliveries:
+从已确认产品契约中派生全产品决策，只确认多个交付共享的协调决策：
 
-- the project outcome and primary users;
-- project boundaries and non-goals;
-- shared language, invariants, permissions, and data ownership;
-- shared experience or machine-readable interface contracts;
-- project-level failure, integration, and release acceptance.
+- 项目结果和主要用户；
+- 项目边界和非目标；
+- 共享语言、不变量、权限和数据所有权；
+- 共享体验或机器可读接口契约；
+- 项目级失败、集成和发布验收。
 
-Use `scd-uiux` or `scd-architecture` only when those shared decisions need
-design. They may refine how the product works but must not silently change the
-approved PRD. Reconcile any shared interface before declaring dependent
-Delivery Issues executable.
+只有这些共享决策需要设计时，才使用 `scd-uiux` 或 `scd-architecture`。它们可以完善产品如何工作，但不得悄悄改变已确认 PRD。宣布依赖的 Delivery Issues 可执行前，必须统一共享接口。
 
-Do not fully specify the product's distant future. Apply rolling decomposition:
-make the next useful delivery wave precise, and keep later ideas deferred or
-PLANNED until evidence makes their boundaries stable.
+不要完整定义产品的遥远未来。采用滚动拆解：让下一批有用交付足够精确，后续想法保持延期或 PLANNED，直到证据使其边界稳定。
 
-## Decompose into delivery slices
+## 拆解交付切片
 
-Each executable node must be an explicitly approved GitHub Delivery Issue that:
+每个可执行节点必须是一个经过明确确认的中文 GitHub Delivery Issue，并满足：
 
-- produces one observable outcome;
-- has its own in-scope and out-of-scope boundary;
-- has stable acceptance identifiers and external verification seams;
-- for a PRD-governed product, names the approved PRD version and every `FR-*`
-  requirement it implements;
-- can use one QuickDev branch, pull request, and independent acceptance lane;
-- does not hide several independently valuable outcomes in one checklist.
+- 产生一个可观察结果；
+- 拥有自己的范围内和范围外边界；
+- 拥有稳定的验收标识和外部验证衔接点；
+- 对 PRD 管理的产品，列出已确认 PRD 版本和它实施的每个 `FR-*` 需求；
+- 可以使用一个 QuickDev 分支、一个拉取请求和一条独立验收通道；
+- 不在一份清单中隐藏多个各自有价值的结果。
 
-Prefer vertical slices over frontend, backend, database, or file-based task
-layers. Split technical layers only when each is independently mergeable and
-verifiable against an approved shared contract.
+优先采用垂直切片，而非前端、后端、数据库或按文件分层的任务。只有每个技术层都能依据已确认共享契约独立合并和验证时，才按技术层拆分。
 
-A PLANNED placeholder may exist without an Issue while its product contract is
-still immature. It cannot become READY or be handed to QuickDev. Create or
-update a Delivery Issue when the exact slice contract is approved.
+产品契约尚不成熟时，可以存在没有 Issue 的 PLANNED 占位节点。它不能变为 READY，也不能交给 QuickDev。只有精确切片契约得到确认后，才创建或更新 Delivery Issue。
 
-Add an explicit integration or release Delivery Issue when child completion
-does not directly prove cross-slice behavior. It depends on the applicable leaf
-nodes and owns project-level end-to-end evidence.
+如果子节点完成不能直接证明跨切片行为，增加明确的集成或发布 Delivery Issue。它依赖相关叶节点，并负责项目级端到端证据。
 
-A PRD-governed Delivery Issue cannot become READY when its product-contract
-reference is missing, the approved version is not reachable from the default
-branch, an `FR-*` identifier does not exist in that version, or its slice
-contradicts the PRD. Return the exact traceability gap to Discovery; do not
-repair product scope inside Project.
+对 PRD 管理的 Delivery Issue，存在以下任一情况时不能进入 READY：产品契约引用缺失；已确认版本无法从默认分支访问；某个 `FR-*` 标识在该版本中不存在；切片与 PRD 矛盾。把精确的追溯缺口返回 Discovery；不要在 Project 中修复产品范围。
 
-## Model the dependency DAG
+## 建模依赖 DAG
 
-Use a directed edge only for a hard causal prerequisite: the downstream
-delivery cannot be correctly implemented or verified before the upstream
-delivery is DONE.
+只有硬因果前置条件才使用有向边：下游交付在上游 DONE 前无法正确实施或验证。
 
-Do not encode shared-file contention, preferred ordering, staffing, or possible
-merge conflict as a fake dependency. Record those as coordination notes for a
-future executor; this version does not schedule them.
+不要把共享文件冲突、偏好顺序、人员安排或潜在合并冲突伪装成依赖。把它们记录为未来执行者的协调说明；本版本不负责调度。
 
-Before approval or a readiness claim:
+确认或声称就绪前：
 
-1. build the graph snapshot defined in
-   `references/project-contract.md`;
-2. run `scripts/validate-project-graph.mjs`;
-3. reject duplicate IDs, invalid references, self-dependencies, duplicate
-   dependencies, and cycles;
-4. use the validator's deterministic READY, BLOCKED, PLANNED, and DONE result;
-5. bring only product decisions or real blockers back to the user.
+1. 构建 `references/project-contract.md` 定义的依赖图快照；
+2. 运行 `scripts/validate-project-graph.mjs`；
+3. 拒绝重复 ID、无效引用、自依赖、重复依赖和循环；
+4. 使用验证器给出的确定性 READY、BLOCKED、PLANNED 和 DONE 结果；
+5. 只把产品决策或真实阻塞带回用户。
 
-If Node.js is unavailable, state that deterministic graph validation is
-`UNVERIFIED`; do not represent manual inspection as equivalent evidence.
+如果 Node.js 不可用，将确定性图验证标为 `UNVERIFIED`；不得把人工检查表述为等价证据。
 
-## Review and approve the project contract
+## 评审并确认项目契约
 
-Present one compact approval summary containing:
+展示一份紧凑的中文确认摘要，包含：
 
-- governing product contract and approved version;
-- Initiative coordination boundaries, shared decisions, and project
-  integration acceptance;
-- each materialized Delivery Issue outcome and acceptance seam;
-- each Delivery Issue's implemented `FR-*` identifiers when a PRD governs the
-  product;
-- graph edges and their causal reason;
-- PLANNED placeholders and why they are not executable;
-- the current READY set, BLOCKED reasons, integration gate, and human gates.
+- 作为依据的产品契约及已确认版本；
+- Initiative 的协调边界、共享决策和项目集成验收；
+- 每个已实例化 Delivery Issue 的结果与验收衔接点；
+- PRD 管理产品时，每个 Delivery Issue 实施的 `FR-*` 标识；
+- 依赖边及其因果理由；
+- PLANNED 占位节点，以及它们为何不可执行；
+- 当前 READY 集合、BLOCKED 原因、集成门和人工门。
 
-Obtain one explicit approval before creating or materially rewriting the
-Initiative and the exact Delivery Issues in that summary. That approval covers
-only the shown project revision and child contracts. Silence, partial agreement,
-or approval of the project idea alone is not approval of unspecified future
-Issues.
+创建或实质重写 Initiative 以及摘要中的精确 Delivery Issues 前，取得一次明确确认。该确认只覆盖展示的项目版本和子契约。沉默、部分同意或只确认项目想法，不代表确认未具体说明的未来 Issues。
 
-Read `references/project-contract.md` before writing or updating tracker state.
+写入或更新跟踪器状态前，阅读 `references/project-contract.md`。
 
-## Persist the Initiative and Delivery Issues
+## 持久化 Initiative 与 Delivery Issues
 
-For repository work:
+对于仓库工作：
 
-1. create or update the Initiative Issue;
-2. create or update only the approved Delivery Issues;
-3. update the Initiative's canonical graph after Issue numbers are known;
-4. mirror the Initiative link, node ID, graph revision, hard dependencies,
-   product-contract version, and applicable `FR-*` identifiers in each Delivery
-   Issue;
-5. validate the resulting live snapshot again;
-6. report the READY and BLOCKED sets, then stop.
+1. 创建或更新中文 Initiative Issue；
+2. 只创建或更新已经确认的中文 Delivery Issues；
+3. Issue 编号确定后，更新 Initiative 中的规范依赖图；
+4. 在每个 Delivery Issue 中同步 Initiative 链接、节点 ID、图版本、硬依赖、产品契约版本和适用 `FR-*` 标识；
+5. 再次验证得到的实时快照；
+6. 报告 READY 和 BLOCKED 集合，然后停止。
 
-Do not create a permanent local project plan, project wiki, execution database,
-branch, worktree, pull request, or implementation checklist. The approved
-greenfield PRD is a product contract, not a Project plan. QuickDev adds
-implementation tasks only after targeted repository inspection for one
-selected READY Delivery Issue.
+不要创建永久本地项目计划、项目 Wiki、执行数据库、分支、工作树、拉取请求或实施清单。已确认的全新产品 PRD 是产品契约，不是 Project 计划。QuickDev 只有针对一个选中的 READY Delivery Issue 检查仓库后，才能加入实施任务。
 
-If GitHub or the repository-authoritative tracker is unavailable, stop after
-the approved summary and report the blocker. Do not silently replace the
-Initiative with `.scd/specs/` or another local requirements file.
+如果 GitHub 或仓库权威跟踪器不可用，在已确认摘要后停止并报告阻塞。不得悄悄用 `.scd/specs/` 或其他本地需求文件替代 Initiative。
 
-## Replan without freezing the future
+## 重新规划，但不冻结未来
 
-Re-enter Project when a dependency finishes, a shared contract changes, a slice
-proves too broad, or new evidence requires a graph change. Use `scd-next` when
-the request is only to inspect current status, readiness, unfinished work, or
-the recommended continuation without changing the graph.
+依赖完成、共享契约变化、切片被证明过宽，或新证据要求改变依赖图时，重新进入 Project。请求只涉及检查当前状态、就绪度、未完成工作或推荐的继续行动而不改变图时，使用 `scd-next`。
 
-- Re-read the Initiative, affected Delivery Issues, pull requests, and
-  acceptance evidence.
-- Increment the graph revision whenever nodes, edges, or shared project
-  decisions change.
-- Update affected child Issues; do not silently rewrite approved acceptance.
-- Obtain approval again only when the affected outcome, visible behavior,
-  scope, permissions, data or privacy boundary, irreversible action, or
-  acceptance changes.
-- Keep unaffected DONE evidence intact.
-- Remove obsolete PLANNED placeholders instead of preserving speculative
-  backlog for its own sake.
+- 重新读取 Initiative、受影响 Delivery Issues、拉取请求和验收证据。
+- 节点、边或共享项目决策变化时递增图版本。
+- 更新受影响子 Issues；不得悄悄改写已确认验收。
+- 只有受影响结果、可见行为、范围、权限、数据或隐私边界、不可逆操作或验收发生变化时，才再次取得确认。
+- 保留不受影响的 DONE 证据。
+- 删除过时 PLANNED 占位节点，不要为了保留臆测性待办而保留它们。
 
-## Hand off without running a loop
+## 交接，但不运行执行循环
 
-This version may identify several READY Issues, but it must not automatically
-launch agents or run them sequentially or in parallel. When the user explicitly
-selects one READY Delivery Issue for implementation, hand only that Issue to
-`scd-quickdev`. When the user asks to start, continue, resume, or finish the
-approved Initiative or execute its current READY Issues, hand the current graph
-revision to `scd-execute`.
+本版本可以识别多个 READY Issues，但不得自动启动 Agent，也不得串行或并行运行它们。用户明确选择一个 READY Delivery Issue 实施时，只把该 Issue 交给 `scd-quickdev`。用户要求开始、继续、恢复或完成已确认 Initiative，或执行其当前 READY Issues 时，把当前图版本交给 `scd-execute`。
 
-`scd-execute` is the general external consumer for an approved Initiative. It
-may execute the validated graph revision under its own READY-wave, isolation,
-merge, and integration contract. `scd-reengineering` composes that executor
-only after satisfying its additional source, direction, compatibility, receipt,
-and parity gates. Neither consumer gives Project execution authority.
+`scd-execute` 是已确认 Initiative 的通用外部消费者。它可以在自己的 READY 波次、隔离、合并和集成契约约束下执行已验证图版本。`scd-reengineering` 只有通过额外的来源、方向、兼容性、收据和等价门后，才组合该执行器。二者都不会授予 Project 执行权限。
 
-`scd-next` is the read-only status consumer. It may derive and explain current
-state from the live graph, Issues, pull requests, and acceptance evidence, but
-it cannot create or revise nodes, edges, approvals, or Issue contracts.
+`scd-next` 是只读状态消费者。它可以从实时依赖图、Issues、拉取请求和验收证据派生并解释当前状态，但不能创建或修订节点、边、确认或 Issue 契约。
 
-Do not add leases, retries, concurrency slots, resource locks, automatic
-worktree creation, merge queues, deployment, or a long-running scheduler. A
-supported external consumer may use the same validated Issue graph, but that
-execution remains outside Project's authority.
+不要添加租约、重试、并发槽、资源锁、自动工作树创建、合并队列、部署或长期调度器。受支持的外部消费者可以使用同一份已验证 Issue 图，但执行仍在 Project 权限之外。
 
-## Resources
+## 资源
 
-- `references/project-contract.md` - Initiative and Delivery Issue templates,
-  graph snapshot, state derivation, approval, and replanning rules.
-- `scripts/validate-project-graph.mjs` - dependency-free graph validation and
-  deterministic readiness classification.
+- `references/project-contract.md`：中文 Initiative 与 Delivery Issue 模板、依赖图快照、状态派生、确认和重新规划规则。
+- `scripts/validate-project-graph.mjs`：无依赖的依赖图验证与确定性就绪分类。

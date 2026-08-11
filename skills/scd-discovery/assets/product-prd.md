@@ -6,37 +6,37 @@ updated_at: YYYY-MM-DDTHH:MM:SSZ
 approved_at:
 ---
 
-# Product Requirements Document
+# 产品需求文档
 
-## Product vision
+## 产品愿景
 
-## Primary users
+## 主要用户
 
-## User problem and current alternative
+## 用户问题与当前替代方案
 
-## MVP goals
+## MVP 目标
 
-## Non-goals
+## 非目标
 
-## Core user journeys
+## 核心用户旅程
 
-## Functional requirements
+## 功能需求
 
-- FR-001: <observable product capability>
+- FR-001: <可观察的产品能力>
 
-## Rules and failure cases
+## 规则与失败场景
 
-## Data, permissions, and integrations
+## 数据、权限与集成
 
-## Success metrics
+## 成功指标
 
-## Assumptions and risks
+## 假设与风险
 
-## Open questions
+## 待确认问题
 
-- None
+- 无
 
-## Approval
+## 确认
 
-- Status: Draft
-- Approved version: Not approved
+- 状态：草稿
+- 已确认版本：尚未确认

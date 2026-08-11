@@ -1,10 +1,10 @@
-# Storage contract
+# 存储契约
 
-Use repository-relative Markdown for project knowledge and a user-selected absolute root for personal knowledge.
+项目知识使用仓库相对 Markdown，个人知识使用用户选择的绝对根目录。
 
-## Project store
+## 项目知识库
 
-Resolve the repository root from the current environment rather than assuming the working directory is the root.
+从当前环境解析仓库根目录，不假定工作目录就是根目录。
 
 ```text
 <repo>/.scd/knowledge/
@@ -13,17 +13,17 @@ Resolve the repository root from the current environment rather than assuming th
 `-- archive/
 ```
 
-Project knowledge is an ordinary repository change eligible for version control. Never stage, commit, push, or add ignore rules automatically.
+项目知识是普通仓库变更，可以进入版本控制。不得自动暂存、提交、推送或增加忽略规则。
 
-## Personal store
+## 个人知识库
 
-Resolve the current user's home directory with runtime-native facilities. The conceptual config path is:
+使用运行时原生能力解析当前用户主目录。概念配置路径：
 
 ```text
 <user-home>/.scd/config.json
 ```
 
-The supported field is:
+支持字段：
 
 ```json
 {
@@ -31,28 +31,28 @@ The supported field is:
 }
 ```
 
-The actual value uses the current platform's path syntax. Require an absolute path. When saving it, preserve every unrelated config key. An explicit root in the current request overrides the saved value for that invocation; save the new root for later only when the user presents it as their personal knowledge location.
+真实值使用当前平台路径语法，且必须是绝对路径。保存时保留全部无关配置键。当前请求明确提供根目录时，本次调用优先使用；只有用户把新路径作为个人知识位置提供时，才保存供后续使用。
 
-If the existing config is invalid JSON, report it and do not overwrite it. Before any entry operation, resolve the final path and verify it remains inside the selected project or personal knowledge root.
+现有配置不是有效 JSON 时报告错误，不得覆盖。任何条目操作前解析最终路径，并验证它仍在选中的项目或个人知识根目录内。
 
-The personal root contains the same `INDEX.md`, `entries/`, and `archive/` layout. Do not commit a personal absolute path to a project file.
+个人根目录使用相同的 `INDEX.md`、`entries/` 和 `archive/` 结构。不得把个人绝对路径提交到项目文件。
 
-## Index behavior
+## 索引行为
 
-Keep `INDEX.md` to one active line per entry:
+`INDEX.md` 每个活跃条目只保留一行：
 
 ```markdown
-- [Title](entries/slug.md) - trigger words or one short trigger phrase
+- [标题](entries/slug.md) - 触发词或一句简短触发描述
 ```
 
-Use relative Markdown links. Do not include archived entries or duplicate entry bodies. When an active file moves to `archive/`, remove its index line in the same approved change.
+使用相对 Markdown 链接。不包含归档条目或重复正文。活跃文件移到 `archive/` 时，在同一已确认变更中删除索引行。
 
-Create slugs with lowercase letters, digits, and hyphens. Do not derive a path directly from untrusted title text.
+slug 只使用小写字母、数字和连字符。不得直接从不受信任标题派生路径。
 
-## Failure behavior
+## 失败行为
 
-- If retrieval cannot read one store, name that store as unavailable and continue with the other.
-- If a requested destination is missing, invalid, outside the configured target, or unwritable, stop that write.
-- Do not silently reclassify cross-project knowledge as project knowledge or the reverse.
-- If a write partially succeeds, inspect the actual files, report the partial state, and repair only within the user's approved change.
-- Never claim persistence until the intended entry and index can both be read back.
+- 检索无法读取一个知识库时，写明哪个不可用，并继续另一个。
+- 请求目标缺失、无效、超出配置目标或不可写时，停止写入。
+- 不得悄悄在跨项目知识和项目知识之间重新分类。
+- 写入部分成功时，检查真实文件，报告部分状态，只在用户已确认变更范围内修复。
+- 预期条目和索引都能回读前，不得声称已持久化。

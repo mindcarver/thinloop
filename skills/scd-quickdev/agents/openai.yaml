@@ -1,4 +1,4 @@
 interface:
-  display_name: "SCD QuickDev"
-  short_description: "Issue-backed coding through verified PR merge"
-  default_prompt: "Use $scd-quickdev to deliver this repository change from its GitHub Issue through verified PR merge and real-use UAT handoff."
+  display_name: "SCD 快速开发"
+  short_description: "基于 Issue 完成编码、验证与 PR 合并"
+  default_prompt: "使用 $scd-quickdev，从 GitHub Issue 开始交付这项仓库变更，完成工程验证、独立验收和符合条件的 PR 合并。"

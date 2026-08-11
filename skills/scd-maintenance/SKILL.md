@@ -1,145 +1,99 @@
 ---
 name: scd-maintenance
-description: "Audit and repair repository technical debt, code-documentation drift, stale specifications, architecture erosion, dead code, dependency hygiene, and obsolete project artifacts. Use when the user explicitly asks to inspect, clean up, reconcile, modernize, or reduce debt in an existing repository, including requests such as 'audit this repo', 'find stale docs', 'clean technical debt', or 'make the implementation and documentation agree'. Do not invoke automatically during ordinary feature work, routine code review, or documentation editing, and use scd-reengineering instead for a project-scale refactor or reimplementation."
+description: "审计并修复仓库技术债务、代码文档漂移、陈旧规格、架构侵蚀、死代码、依赖卫生和过时项目产物。适用于用户明确要求检查、清理、统一、现代化或减少现有仓库债务，包括‘审计这个仓库’、‘找陈旧文档’、‘清理技术债’或‘让实施与文档一致’。普通功能开发、例行代码评审或文档编辑期间不得自动调用；项目级重构或重新实施应使用 scd-reengineering。"
 ---
 
-# SCD Maintenance
+# SCD 仓库维护
 
-Find maintainability problems from repository evidence, then repair only a
-bounded, justified set. Keep broad audits read-only until the direction of each
-conflict is known.
+从仓库证据发现可维护性问题，然后只修复有边界、有理由的一组问题。每项冲突的权威方向确定前，广泛审计保持只读。
 
-## Select the operation
+## 选择操作
 
-- **Audit:** Use when the user asks to inspect, assess, list, or find debt.
-  Produce findings without changing repository files.
-- **Repair:** Use when the user explicitly asks to clean, fix, reconcile, or
-  remove debt. Revalidate the target findings, resolve their authority, make
-  the smallest coherent changes, and verify them.
-- **Focused:** When the user names a file, subsystem, debt category, or
-  finding, inspect only that scope and its direct consumers.
+- **审计：** 用户要求检查、评估、列出或寻找债务时使用。只产出发现，不修改仓库文件。
+- **修复：** 用户明确要求清理、修复、统一或删除债务时使用。重新验证目标发现，判断权威方向，实施最小连贯变更并验证。
+- **聚焦：** 用户具名文件、子系统、债务类别或发现时，只检查该范围及其直接消费者。
 
-For a broad repair request, audit first and recommend a first batch of no more
-than three findings. Do not interpret "clean the repository" as permission for
-an unbounded rewrite.
+广泛修复请求先审计，并推荐第一批不超过三个发现。不得把“清理仓库”解释为无边界重写权限。
 
-Use `scd-reengineering` instead when the requested outcome is a project-scale
-refactor, replacement implementation, language or framework port, architectural
-replacement, or staged migration across several independently verifiable
-deliveries. Maintenance may supply confirmed debt evidence, but it does not own
-the reengineering direction or execution graph.
+请求结果是项目级重构、替换实施、语言或框架移植、架构替换，或跨多个可独立验证交付的分阶段迁移时，改用 `scd-reengineering`。Maintenance 可以提供已确认债务证据，但不负责再工程方向或执行图。
 
-## Start from repository truth
+## 从仓库事实出发
 
-1. Read applicable `AGENTS.md`, `CLAUDE.md`, repository instructions,
-   manifests, tests, CI configuration, public documentation, and existing debt
-   tooling.
-2. Inspect the working tree and preserve unrelated user changes.
-3. Prefer repository-native lint, test, documentation, dependency, schema, and
-   architecture checks over generic guesses.
-4. Run the bundled deterministic collector when Node.js is available:
+1. 阅读适用的 `AGENTS.md`、`CLAUDE.md`、仓库说明、清单、测试、CI 配置、公共文档和现有债务工具。
+2. 检查工作区并保留用户无关变更。
+3. 优先使用仓库原生的代码检查、测试、文档、依赖、模式和架构检查，不做通用猜测。
+4. Node.js 可用时运行内置确定性收集器：
 
    ```text
    node <this-skill>/scripts/collect-signals.mjs --root <repo> --format json
    ```
 
-   Treat its output as leads, not a complete debt verdict. With Git available,
-   it checks tracked and non-ignored files; otherwise it uses conservative
-   filesystem exclusions. It detects broken relative Markdown links,
-   documented npm scripts that do not exist, and explicit
-   TODO/FIXME/HACK/XXX markers.
-5. Exclude generated output, vendored dependencies, caches, fixtures that are
-   intentionally inconsistent, and files ignored by the repository unless the
-   user puts them in scope.
+   输出只作为线索，不是完整债务结论。Git 可用时检查已跟踪且未忽略文件，否则使用保守文件系统排除规则。收集器识别损坏的相对 Markdown 链接、文档中不存在的 npm scripts，以及明确 TODO/FIXME/HACK/XXX 标记。
+5. 排除生成输出、供应商依赖、缓存、有意不一致的测试数据和仓库忽略文件，除非用户明确纳入范围。
 
-Read `references/audit-contract.md` before a broad audit or any
-code-documentation consistency judgment.
+广泛审计或任何代码文档一致性判断前，阅读 `references/audit-contract.md`。
 
-## Audit activated surfaces
+## 审计已触发表面
 
-Inspect only categories supported by repository evidence:
+只检查有仓库证据支持的类别：
 
-- approved PRDs, GitHub delivery contracts, acceptance behavior, tests, and
-  implementation;
-- public API, CLI, configuration, schema, migration, and environment contracts;
-- README instructions, tutorials, examples, screenshots, and local links;
-- documented architecture, actual dependency direction, cycles, and ownership;
-- dead files, exports, dependencies, feature flags, compatibility paths, and
-  explicit debt markers;
-- dependency age, security, or generated-artifact drift when repository tools
-  can measure it.
+- 已确认 PRD、GitHub 交付契约、验收行为、测试和实施；
+- 公共 API、CLI、配置、模式、迁移和环境契约；
+- README 说明、教程、示例、截图和本地链接；
+- 书面架构、真实依赖方向、循环和所有权；
+- 死文件、导出、依赖、功能开关、兼容路径和明确债务标记；
+- 仓库工具可以度量的依赖年龄、安全或生成产物漂移。
 
-Use deterministic checks first. Use semantic comparison second, limited to
-documents and implementation surfaces that claim to describe one another.
-Never infer that code is automatically correct merely because it is
-executable.
+先运行确定性检查，再做语义比较；语义比较只限声称彼此对应的文档和实施表面。代码可以执行不代表代码自动正确。
 
-## Produce evidence-backed findings
+## 生成有证据支持的发现
 
-For every reported finding, include:
+每个发现包含：
 
-- a stable `MAINT-...` identifier when one is available;
-- category and severity;
-- the conflicting or obsolete claim;
-- exact file, line, symbol, command, or runtime evidence;
-- the likely authority and why;
-- confidence and any material uncertainty;
-- the smallest recommended repair and its verification path.
+- 可用时使用稳定 `MAINT-...` 标识；
+- 类别和严重程度；
+- 冲突或过时声明；
+- 精确文件、行号、符号、命令或运行时证据；
+- 可能的权威来源及理由；
+- 置信度和实质不确定性；
+- 最小推荐修复及验证路径。
 
-Separate confirmed debt from investigation leads. Do not report style
-preferences, possible refactors, old file age, or missing document edits as
-debt without evidence of cost, inconsistency, risk, or violated repository
-policy.
+区分已确认债务和调查线索。没有成本、不一致、风险或违反仓库策略的证据时，不得把风格偏好、可能重构、文件年龄或缺少文档编辑报告为债务。
 
-Keep the report in the response by default. Do not create a permanent debt
-ledger, issue, specification, or report file unless the user asks. When a file
-is requested, copy and complete `assets/maintenance-report.md`.
+默认只在回复中保留报告。除非用户要求，不创建永久债务账本、Issue、规格或报告文件。用户要求文件时，复制并完成 `assets/maintenance-report.md`。
 
-## Repair selected findings
+## 修复选中发现
 
-Before editing:
+编辑前：
 
-1. Reproduce or re-inspect each finding against the current worktree.
-2. Determine whether the authority is a normative contract, executable
-   behavior, or descriptive documentation.
-3. Ask one concise question only when choosing the authority would change
-   product behavior, compatibility, data, permissions, or another approved
-   contract.
-4. Drop findings that cannot be reproduced.
+1. 针对当前工作区复现或重新检查每个发现。
+2. 判断权威来源是规范契约、可执行行为还是说明性文档。
+3. 只有权威选择会改变产品行为、兼容性、数据、权限或其他已确认契约时，才询问一个简短问题。
+4. 删除无法复现的发现。
 
-Then hand the bounded change to `scd-quickdev`:
+然后把有边界的变更交给 `scd-quickdev`：
 
-- preserve public behavior unless the selected authority requires a change;
-- fix the source and every directly coupled test, example, generated artifact,
-  or document in the same change;
-- use an established repository tool for mechanical refactors when available;
-- run the strongest focused verification for each finding;
-- stop and report when a repair exposes a larger product or architecture
-  decision.
+- 除非选中权威要求改变，否则保留公共行为；
+- 同一变更中修复来源和所有直接耦合测试、示例、生成产物或文档；
+- 可用时使用仓库已建立的机械重构工具；
+- 为每个发现运行最强聚焦验证；
+- 修复暴露更大产品或架构决策时停止并报告。
 
-Do not stage, commit, push, publish, deploy, migrate live data, or create an
-external issue unless the user explicitly requests that action.
+除非用户明确要求，不得自行暂存、提交、推送、发布、部署、迁移在线数据或创建外部 Issue。
 
-Read `references/repair-contract.md` before repairing multiple findings or
-deleting code or documentation.
+修复多个发现或删除代码/文档前，阅读 `references/repair-contract.md`。
 
-## Hand off
+## 交接
 
-For an audit, report the inspected scope, checks that actually ran, confirmed
-findings ordered by severity, investigation leads, and blind spots.
+审计报告应包含检查范围、真实运行的检查、按严重程度排序的已确认发现、调查线索和盲区。
 
-For a repair, report the findings resolved, changed locations, observed
-verification, findings intentionally deferred, and remaining uncertainty.
+修复报告应包含已解决发现、变更位置、观察验证、有意延期发现和剩余不确定性。
 
-Do not claim that the repository is debt-free. State only what the activated
-checks and inspected surfaces support.
+不得声称仓库没有技术债。只陈述已触发检查和已检查表面支持的结论。
 
-## Resources
+## 资源
 
-- `scripts/collect-signals.mjs` - dependency-free deterministic signal
-  collector for cross-platform repository audits.
-- `references/audit-contract.md` - authority, taxonomy, severity, confidence,
-  and evidence rules.
-- `references/repair-contract.md` - repair selection, deletion safety, and
-  verification rules.
-- `assets/maintenance-report.md` - optional persistent report template.
+- `scripts/collect-signals.mjs`：跨平台仓库审计的无依赖确定性信号收集器。
+- `references/audit-contract.md`：权威、分类、严重程度、置信度和证据规则。
+- `references/repair-contract.md`：修复选择、删除安全和验证规则。
+- `assets/maintenance-report.md`：可选持久报告模板。

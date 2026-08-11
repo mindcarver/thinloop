@@ -44,7 +44,7 @@ test("Codex, Claude, WorkBuddy, and ZCode manifests share one version and skill 
     .sort();
 
   assert.equal(codex.name, "thinloop");
-  assert.equal(codex.version, "0.13.5");
+  assert.equal(codex.version, "0.13.6");
   assert.equal(claude.name, codex.name);
   assert.equal(workbuddy.name, codex.name);
   assert.equal(zcode.name, codex.name);
@@ -181,10 +181,10 @@ test("shared skills recognize both repository instruction conventions", () => {
   const maintenance = read("skills/scd-maintenance/SKILL.md");
   const reengineering = read("skills/scd-reengineering/SKILL.md");
 
-  assert.match(quickdev, /whenever a coding agent is asked/i);
+  assert.match(quickdev, /编码 Agent 被要求修改仓库时/);
   assert.doesNotMatch(quickdev, /whenever Codex is asked/i);
-  assert.match(quickdev, /`AGENTS\.md`, `CLAUDE\.md`/);
-  assert.match(execute, /`AGENTS\.md`, `CLAUDE\.md`/);
-  assert.match(maintenance, /`AGENTS\.md`, `CLAUDE\.md`/);
-  assert.match(reengineering, /`AGENTS\.md`, `CLAUDE\.md`/);
+  assert.match(quickdev, /`AGENTS\.md`、`CLAUDE\.md`/);
+  assert.match(execute, /`AGENTS\.md`、`CLAUDE\.md`/);
+  assert.match(maintenance, /`AGENTS\.md`、`CLAUDE\.md`/);
+  assert.match(reengineering, /`AGENTS\.md`、`CLAUDE\.md`/);
 });

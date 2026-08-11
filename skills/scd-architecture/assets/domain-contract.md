@@ -2,26 +2,26 @@
 managed_by: scd-architecture
 status: draft
 sources:
-  - <governing GitHub Issue>
-  - <architecture baseline>
+  - <作为依据的 GitHub Issue>
+  - <架构基线>
 ---
 
-# Shared language
+# 统一语言
 
-## Entities, values, and ownership
+## 实体、值与所有权
 
-## Lifecycles and state transitions
+## 生命周期与状态转换
 
-## Invariants and policies
+## 不变量与策略
 
-## Commands, queries, and events
+## 命令、查询与事件
 
-## Permissions and audit
+## 权限与审计
 
-## Cross-entity consistency
+## 跨实体一致性
 
-## Synchronization and migration
+## 同步与迁移
 
-## Verification
+## 验证
 
-## Open items
+## 待定事项

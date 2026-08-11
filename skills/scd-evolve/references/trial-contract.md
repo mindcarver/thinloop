@@ -1,53 +1,53 @@
-# Trial Contract
+# 试验契约
 
-## Approval Gate
+## 确认门
 
-Implementation requires all of these:
+实施需要满足全部条件：
 
-- the exact candidate is visible in the current context;
-- the user explicitly approves its stable candidate ID;
-- no candidate operation changed after approval;
-- source authority resolves independently of approval;
-- one same-root-cause batch remains in scope.
+- 当前上下文可见精确候选项；
+- 用户明确确认其稳定候选 ID；
+- 确认后没有候选操作变化；
+- 来源权威独立于确认成功解析；
+- 一个同根因批次仍在范围内。
 
-Generic agreement without the candidate ID is insufficient. Any changed operation creates a new candidate revision and requires new approval.
+不含候选 ID 的一般同意不充分。任一操作变化都会形成新候选版本，必须重新确认。
 
-## Trial
+## 试验
 
-Append `proposed` only after the approval gate, then append `trial` immediately before editing. Snapshot only files named by the candidate. Use `scd-quickdev` for implementation and preserve the approved candidate acceptance identifiers.
+只有确认门通过后才追加 `proposed`，编辑前立即追加 `trial`。只快照候选项具名文件。实施使用 `scd-quickdev`，并保留已确认候选验收标识。
 
-Do not improve adjacent wording, restructure unrelated instructions, reformat unrelated files, or add speculative flexibility. A trial is a causal intervention: the diff must be narrow enough that the observed outcome can be attributed to it.
+不得改进相邻措辞、重构无关说明、重新格式化无关文件或增加臆测灵活性。试验是因果干预；差异必须足够窄，才能把观察结果归因于它。
 
-## Validation
+## 验证
 
-Classify every operation:
+分类每个操作：
 
-- `instruction`, `trigger`, `workflow`: behavior-changing; require relevant deterministic checks and a fresh isolated agent session using a realistic prompt that did not participate in authoring the change.
-- `script`, `format`: deterministic; require focused automated tests. Add an isolated agent session only if the observable agent behavior also changes.
-- `packaging`, `documentation`: require directly coupled manifest, parser, link, and content checks.
+- `instruction`、`trigger`、`workflow`：改变行为；要求相关确定性检查，以及使用真实提示词且未参与编写变更的新隔离 Agent 会话。
+- `script`、`format`：确定性；要求聚焦自动测试。只有可观察 Agent 行为也变化时才增加隔离会话。
+- `packaging`、`documentation`：要求直接耦合的清单、解析器、链接和内容检查。
 
-An isolated session must start after the edit, load the edited skill fresh, receive only the declared test prompt and fixture context, and produce inspectable output. A second reading in the authoring context is not independent.
+隔离会话必须在编辑后启动，重新加载已编辑技能，只接收声明的测试提示词和测试数据上下文，并产生可检查输出。在编写上下文中再次阅读不构成独立验证。
 
-Record unavailable independent validation as `trial-unverified`. Do not treat a static inspection, green build, or existing-session answer as a substitute.
+无法取得独立验证时记录 `trial-unverified`。不得用静态检查、绿色构建或现有会话回答替代。
 
-## Terminal Decisions
+## 终止决策
 
-**Accepted:** All required trial checks pass; attribution remains Thinloop skill; no acceptance regression appears. Increment exactly one patch version, synchronize every release manifest, rerun the complete promoted-state checks, and only then append `accepted`. If promotion checks fail, restore the entire batch and append `reverted`. Report that distribution remains pending.
+**Accepted：** 全部必需试验检查通过；归因仍为 Thinloop 技能；没有验收回归。只递增一个补丁版本，同步每个发布清单，重新运行完整提升状态检查，最后才追加 `accepted`。提升检查失败时，恢复整个批次并追加 `reverted`。报告分发仍待进行。
 
-**Reverted:** A required check fails or the candidate causes regression. Restore only candidate-owned files from the snapshot, verify restoration, and append `reverted`.
+**Reverted：** 必需检查失败或候选项引起回归。只从快照恢复候选项拥有的文件，验证恢复并追加 `reverted`。
 
-**Rejected:** The user rejects the candidate or trial. Restore trial-owned changes if any and append `rejected`.
+**Rejected：** 用户拒绝候选项或试验。存在试验变更时恢复，并追加 `rejected`。
 
-**Trial-unverified:** Required independent behavior evidence cannot be obtained. Do not promote, patch-bump, distribute, or describe the candidate as effective.
+**Trial-unverified：** 无法取得必需独立行为证据。不得提升、递增补丁版本、分发或描述候选项有效。
 
-## Version and Distribution
+## 版本与分发
 
-A formal accepted batch increments `major.minor.patch` by exactly one patch. Update all Thinloop plugin and marketplace manifests in the same batch and verify equality.
+正式 accepted 批次把 `major.minor.patch` 精确递增一个 patch。同一批次更新全部 Thinloop 插件和市场清单并验证相等。
 
-Never stage, commit, push, publish, deploy, reinstall, update an installed Skill, or write a runtime plugin cache without a separate explicit request. A successful local trial proves only the checked behavior in the authoritative source.
+没有单独明确请求时，绝不暂存、提交、推送、发布、部署、重新安装、更新已安装 Skill 或写入运行时插件缓存。成功本地试验只证明权威来源中已检查的行为。
 
-## Self-Evolution
+## 自演进
 
-A candidate targeting `scd-evolve` must cite a prior terminal history record from a different run as `source_run_id`. The prior record must predate the current proposed event.
+目标为 `scd-evolve` 的候选项必须通过 `source_run_id` 引用不同运行的此前终止历史记录。此前记录必须早于当前 proposed 事件。
 
-Never use the current diagnosing conversation as both evidence and modification context for `scd-evolve`. When prior independent evidence is absent, stop before proposal implementation.
+不得把当前诊断对话同时用作 `scd-evolve` 的证据和修改上下文。缺少此前独立证据时，在建议实施前停止。
