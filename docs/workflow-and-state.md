@@ -11,7 +11,7 @@ GitHub Delivery Issue 保存切片边界和验收；多交付项目由 Initiativ
 
 | 遇到什么 | Thinloop 怎么做 |
 |---|---|
-| QuickDev 即将写 Issue 或开始实现 | 先询问是否需要审核完整 Issue、实施方案和 tasks；不需要则自动继续，需要则确认后才能写入和实现 |
+| QuickDev 即将写 Issue 或开始实现 | 默认直接创建或更新中文 Issue 并自动继续；只有用户主动要求先看或先确认时才等待确认 |
 | 目标、边界和验收已经清楚 | 直接进入 QuickDev，不制造额外需求流程 |
 | 从 0 到 1，或多个上游产品决定仍会改变结果 | 用 Discovery 一次解决一个关键决定；新产品批准后形成轻量 PRD |
 | 已批准目标跨越多个独立交付 | 用 Project 从 PRD/产品契约创建 Initiative、Delivery Issues 和依赖 DAG；不启动执行 loop |
@@ -31,8 +31,8 @@ GitHub Delivery Issue 保存切片边界和验收；多交付项目由 Initiativ
 和 cutover 门禁。Next 不修改上述图或启动实现，只在调用时从实时证据重建状态。
 QuickDev 每个 lane 只固定使用一个独立验收 Agent，其实现请求包含任务内
 Issue、分支、提交、推送、PR 与合资格合并；高风险合并和生产部署仍需明确授权。
-Issue 是 QuickDev 的持久计划：用户可以选择免审后自动继续，也可以要求先确认
-完整 Issue、实施方案和 tasks；后一种情况下，任何实质性计划变化都要重新确认。
+Issue 是 QuickDev 的持久计划：默认免确认并自动继续；只有用户主动要求时才先确认
+完整 Issue、实施方案和 tasks，此后任何实质性计划变化都要重新确认。
 QuickDev 创建或更新的 Issue 标题、正文、验收、tasks 和验证记录统一使用中文，
 但命令、路径、代码标识和机器状态保持规范原值。
 十二个 Thinloop Skill 的说明、Agent 提示词、参考契约与模板也统一使用中文。
@@ -48,7 +48,7 @@ QuickDev 创建或更新的 Issue 标题、正文、验收、tasks 和验证记�
 已选 READY Delivery Issue ────────────────────────────────────→ QuickDev
 不知道下一步 → Next → 实时状态分类 → 唯一建议 → Project / Execute / QuickDev / 其他责任 Skill
 项目级重构/重写 → Reengineering → 基线与兼容边界 → Project DAG → Execute → QuickDev lanes
-QuickDev → 确认偏好 → Issue 方案与 tasks → 分支 → 开发与工程验收 → 独立行为验收 → PR → main → 关闭 Issue
+QuickDev → 默认继续或主动确认 → 中文 Issue 方案与 tasks → 分支 → 开发与工程验收 → 独立行为验收 → PR → main → 关闭 Issue
 主动调用 → Maintenance / Knowledge
 主动复盘 → Evolve → 候选 ID 审批 → 可回滚试验 → 证据
 ```

@@ -44,7 +44,7 @@ test("Codex, Claude, WorkBuddy, and ZCode manifests share one version and skill 
     .sort();
 
   assert.equal(codex.name, "thinloop");
-  assert.equal(codex.version, "0.13.6");
+  assert.equal(codex.version, "0.13.7");
   assert.equal(claude.name, codex.name);
   assert.equal(workbuddy.name, codex.name);
   assert.equal(zcode.name, codex.name);
