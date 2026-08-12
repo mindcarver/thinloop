@@ -88,7 +88,7 @@ test("Issue 模板保持中文结构和规范机器标识", () => {
   assert.doesNotMatch(combined, /^## (?:Outcome|Acceptance|Implementation tasks|Verification)$/m);
 });
 
-test("QuickDev 保留方案确认门且不生成 plan.md", () => {
+test("QuickDev 默认免确认且只在用户主动要求时启用确认门", () => {
   const quickdev = read("skills/scd-quickdev/SKILL.md");
   const contract = read(
     "skills/scd-quickdev/references/issue-delivery-contract.md",
@@ -96,9 +96,9 @@ test("QuickDev 保留方案确认门且不生成 plan.md", () => {
 
   assert.match(
     quickdev,
-    /本次交付是否需要你先确认完整的 Issue 草案、实施方案和任务清单？/,
+    /默认不询问用户是否要先确认完整的 Issue 草案、实施方案和任务清单/,
   );
-  assert.match(quickdev, /用户回答不需要[\s\S]*`已放弃`/);
-  assert.match(quickdev, /用户回答需要[\s\S]*等待明确确认/);
+  assert.match(quickdev, /没有主动要求确认[\s\S]*`状态：默认免确认`/);
+  assert.match(quickdev, /只有用户主动要求先看或先确认[\s\S]*等待明确确认/);
   assert.match(contract, /不会创建本地 `plan\.md`/);
 });

@@ -225,6 +225,8 @@ codebuddy plugin update thinloop@thinloop --scope user
   更新的 Issue 使用中文，命令、路径和机器状态标识保持规范原值。
 - 升级到 v0.13.6：确认十二个 Skill 的 `SKILL.md`、Agent 提示词、参考契约和模板均使用中文；
   Issue 标题、正文、验收、实施任务、验证更新和评论也使用中文，机器标识保持规范原值。
+- 升级到 v0.13.7：确认 QuickDev 默认不再询问方案确认偏好，而是直接创建或更新中文 Issue
+  并继续；只有用户主动要求先看或先确认方案、Issue 或 tasks 时才等待明确确认。
 - 若从 v0.6.x 升级，另确认旧 `scd-dev-loop` 已消失。
 
 更新后可以在 Thinloop 源码仓库运行只读检查器：

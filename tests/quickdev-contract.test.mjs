@@ -48,7 +48,7 @@ test("quickdev separates product PRD authority from delivery Issue authority", (
   assert.doesNotMatch(skill, /\.scd\/specs/);
 });
 
-test("quickdev lets the user choose whether to confirm the Issue plan and tasks", () => {
+test("quickdev defaults to autonomous delivery and only pauses when the user asks to confirm", () => {
   const skill = read("skills/scd-quickdev/SKILL.md");
   const issueContract = read(
     "skills/scd-quickdev/references/issue-delivery-contract.md",
@@ -57,26 +57,31 @@ test("quickdev lets the user choose whether to confirm the Issue plan and tasks"
 
   assert.match(
     skill,
-    /用中文简短询问[\s\S]*本次交付是否需要你先确认完整的 Issue 草案、实施方案和任务清单？/,
+    /默认不询问用户是否要先确认完整的 Issue 草案、实施方案和任务清单/,
   );
   assert.match(
     skill,
-    /用户回答不需要[\s\S]*`已放弃`[\s\S]*普通自主交付流程/,
+    /没有主动要求确认[\s\S]*`需要确认：否`[\s\S]*`状态：默认免确认`[\s\S]*普通自主交付流程/,
   );
   assert.match(
     skill,
-    /用户回答需要[\s\S]*只读仓库检查[\s\S]*等待明确确认/,
+    /只有用户主动要求先看或先确认[\s\S]*只读仓库检查[\s\S]*等待明确确认/,
   );
   assert.match(
     skill,
     /确认前不得创建或更新 Issue、修改仓库或开始实施/,
   );
-  assert.match(skill, /实质改变[\s\S]*再次取得确认/);
+  assert.match(skill, /已经选择确认[\s\S]*实质改变[\s\S]*再次取得确认/);
+  assert.match(combined, /沉默、普通实施请求或“开始做”都不/);
   assert.match(issueContract, /## 方案确认/);
   assert.match(issueContract, /## 实施方案/);
   assert.match(issueContract, /## 实施任务/);
   assert.match(issueContract, /需要确认：是，或否/);
-  assert.match(issueContract, /状态：已确认，或已放弃/);
+  assert.match(issueContract, /状态：已确认，或默认免确认/);
+  assert.doesNotMatch(
+    combined,
+    /本次交付是否需要你先确认完整的 Issue 草案、实施方案和任务清单？/,
+  );
   assert.match(combined, /不是第二次产品确认/);
   assert.match(combined, /不[会是]创建本地 `plan\.md`|不是创建 `plan\.md` 的理由/);
 });
