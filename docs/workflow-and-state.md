@@ -18,7 +18,8 @@ GitHub Delivery Issue 保存切片边界和验收；多交付项目由 Initiativ
 | 已批准 Initiative 需要开始、继续、恢复或完成 | 用 Execute 复核实时 DAG，默认执行当前所有安全 READY Issues，也接受单 Issue、串行或并发上限覆盖 |
 | 不清楚当前进度、未完成工作、阻塞或下一步 | 用 Next 只读检查实时 Issue、PR、Initiative DAG 和验收证据，给出唯一建议下一步和责任 Skill |
 | 现有系统需要项目级重构或跨技术栈重新实现 | 用 Reengineering 固定上游、兼容边界和目标方向，再通过 Execute 消费批准的 Project DAG |
-| 体验或技术边界仍影响交付 | 按需调用 UIUX 或 Architecture，不设固定关卡 |
+| 重要新页面、重要流程或整体改版需要设计 | 调用 UIUX；UX 契约、项目内 UI 图和必要原型一致后才可交接，重大视觉方向需要一次确认 |
+| 技术边界仍影响交付 | 按需调用 Architecture，不设固定关卡 |
 | 实现完成 | Agent 验证、自审并提交任务内变更 |
 | 工程验证完成 | 一个独立 Agent 执行真实环境行为验收；只有验收 `PASS` 才能交付 |
 | 用户主动要求维护或沉淀 | 调用 Maintenance 或 Knowledge；普通开发不自动触发 |
@@ -37,11 +38,18 @@ QuickDev 创建或更新的 Issue 标题、正文、验收、tasks 和验证记�
 但命令、路径、代码标识和机器状态保持规范原值。
 十二个 Thinloop Skill 的说明、Agent 提示词、参考契约与模板也统一使用中文。
 
+UIUX 的前端交接由三类互补事实组成：UX 契约负责行为、状态、响应式和无障碍；
+项目内视觉产物负责具名视口中的布局、层级、密度和外观；共享机器契约负责数据、
+操作、权限和错误。重要 UIUX 工作缺少主要界面或关键状态视觉图时保持 `draft`，
+复杂交互缺少可练习原型时同样不能交接。重大新页面、整体改版和高成本视觉方向
+取得一次用户确认后才能 `ready`；这不会改变 QuickDev 默认免确认的实施流程。
+
 ## 工作闭环
 
 ```text
 模糊的现有产品单交付 → Discovery → 批准 Issue →（按需 UIUX / Architecture）→ QuickDev
 从 0 到 1 → Discovery → 批准 PRD →（按需 UIUX / Architecture）→ Project 或 Delivery Issue
+重要 UI → UIUX → UX 契约 + 项目内视觉交付 + 必要原型 →（重大设计确认）→ QuickDev
 清晰单交付 → 创建/确认 Issue ─────────────────────────────────→ QuickDev
 多交付项目 → 批准 PRD/产品契约 → Project → Initiative + Delivery Issue DAG
 批准 Initiative → Execute → 当前安全 READY 波次 → 隔离 QuickDev lanes → 重算 DAG
