@@ -75,7 +75,7 @@ test("diagram stage summaries remain traceable to authoritative skill workflows"
       /从产品事实和仓库事实出发/,
       /确定体验切片/,
       /先建模行为，再打磨外观/,
-      /只有视觉观察会改变决策时才创建视觉产物/,
+      /形成可实施的视觉交付/,
       /审查就绪度并交接/,
     ],
     architecture: [

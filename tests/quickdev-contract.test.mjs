@@ -205,3 +205,19 @@ test("quickdev respects a composing skill's narrower delivery authority", () => 
     /`scd-evolve` 试验不授权提交、推送、拉取请求或合并/,
   );
 });
+
+test("quickdev verifies frontend implementation against UX, visual, and interface contracts", () => {
+  const skill = read("skills/scd-quickdev/SKILL.md");
+  const evidence = read(
+    "skills/scd-quickdev/references/evidence-contract.md",
+  );
+  const combined = `${skill}\n${evidence}`;
+
+  assert.match(skill, /三类权威/);
+  assert.match(skill, /UX 契约负责行为、状态与响应式规则/);
+  assert.match(skill, /视觉 ID[\s\S]*布局、层级、密度与外观/);
+  assert.match(skill, /共享机器契约负责数据、操作、权限和错误语义/);
+  assert.match(skill, /目标桌面和窄屏视口真实渲染/);
+  assert.match(skill, /截图或视觉比较/);
+  assert.match(combined, /仅有构建通过[\s\S]*不能证明前端符合视觉交付/);
+});

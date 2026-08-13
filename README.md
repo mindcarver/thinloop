@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <kbd>v0.13.7</kbd>
+  <kbd>v0.14.0</kbd>
   &nbsp;
   <kbd>ISSUE-DRIVEN</kbd>
   &nbsp;
@@ -62,7 +62,8 @@ QuickDev 默认不询问你是否要先审核 Issue、实施方案和任务清�
 | 已批准 Initiative 需要开始、继续或恢复交付 | 调用 Execute 自动选择当前安全 READY 波次，每个 Issue 进入独立 QuickDev lane |
 | 不清楚当前做到哪、还有什么没做或下一步该干嘛 | 调用 Next 只读检查实时 Issue、PR、Initiative DAG 和验收状态，并给出唯一建议下一步 |
 | 对现有项目做大型重构或跨语言、跨架构重新实现 | 调用 Reengineering 固定上游与兼容边界，再执行批准的 Project 任务图 |
-| UI 或系统边界会显著影响实现 | 按需组合 UIUX 或 Architecture |
+| 重要新页面、重要流程或整体改版 | 调用 UIUX，交付 UX 契约、项目内 UI 图和必要的交互原型；重大视觉方向确认后再实施 |
+| 系统边界会显著影响实现 | 按需组合 Architecture |
 | 工程验证通过 | Agent 自审并提交任务内变更 |
 | 工程验证完成 | 一个独立 Agent 执行真实环境行为验收；只有验收 `PASS` 才能交付 |
 | 生产部署、认证支付、破坏性数据等高风险工作 | 在高风险动作前停下并请求明确批准 |
@@ -87,8 +88,8 @@ QuickDev 默认不询问你是否要先审核 Issue、实施方案和任务清�
     <td width="33%" valign="top">
       <img src="./assets/retro-uiux.png" alt="SCD UIUX 复古工程图标" width="92">
       <h3><a href="./skills/scd-uiux/SKILL.md">02 · SCD UIUX</a></h3>
-      <p>把稳定的产品行为设计成可审阅、可实现的 Web 体验。</p>
-      <p><strong>适合：</strong>复杂用户流、页面状态、交互与视觉设计。</p>
+      <p>把稳定的产品行为设计成 UX 契约、项目内 UI 图和可练习原型。</p>
+      <p><strong>适合：</strong>重要页面、复杂用户流、页面状态、响应式交互与视觉设计。</p>
     </td>
     <td width="33%" valign="top">
       <img src="./assets/retro-architecture.png" alt="SCD Architecture 复古工程图标" width="92">
@@ -182,7 +183,7 @@ Execute 消费普通已批准 Initiative 的 READY 波次；Reengineering 在此
 ## 十二个技能如何工作 / SKILL FLOWS
 
 <p><img src="./assets/flows/scd-discovery.svg" alt="SCD Discovery 流程：从用户问题和 MVP 边界到批准后的轻量 PRD 或 Delivery Issue" width="100%"></p>
-<p><img src="./assets/flows/scd-uiux.svg" alt="SCD UIUX 流程：从稳定产品核心到可交付的体验设计" width="100%"></p>
+<p><img src="./assets/flows/scd-uiux.svg" alt="SCD UIUX 流程：从稳定产品核心到 UX 契约、项目内视觉交付、必要原型与确认后的实施就绪设计" width="100%"></p>
 <p><img src="./assets/flows/scd-architecture.svg" alt="SCD Architecture 流程：从仓库事实到领域边界和机器可读契约" width="100%"></p>
 <p><img src="./assets/flows/scd-project.svg" alt="SCD Project 流程：从批准的 PRD 或产品契约到 Initiative、Delivery Issues 和就绪依赖图" width="100%"></p>
 <p><img src="./assets/flows/scd-execute.svg" alt="SCD Execute 流程：从批准的 Initiative DAG 到安全 READY 波次、隔离 QuickDev lanes 和集成验收" width="100%"></p>

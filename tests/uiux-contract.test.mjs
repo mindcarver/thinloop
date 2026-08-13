@@ -21,7 +21,7 @@ test("uiux is composable and keeps clear UI changes on the direct path", () => {
   assert.match(skill, /小型 UI 变更也不会因此进入“产品体验”路径/);
 });
 
-test("uiux composes with discovery without adding a product approval", () => {
+test("uiux composes with discovery without duplicating product approval", () => {
   const skill = read("skills/scd-uiux/SKILL.md");
   const discovery = read("skills/scd-discovery/SKILL.md");
   const contract = read(
@@ -33,7 +33,8 @@ test("uiux composes with discovery without adding a product approval", () => {
   assert.match(skill, /一次合并确认/);
   assert.match(discovery, /组合 `scd-uiux`/);
   assert.match(discovery, /同一个合并契约中统一确认/);
-  assert.match(contract, /不增加确认门/);
+  assert.match(contract, /重大新页面、整体改版或高成本视觉方向还需要一次视觉交付确认/);
+  assert.match(contract, /与 Discovery 的合并确认同时完成/);
 });
 
 test("uiux covers experience behavior and risk-adaptive visual evidence", () => {
@@ -46,6 +47,52 @@ test("uiux covers experience behavior and risk-adaptive visual evidence", () => 
   assert.match(visual, /根据决策风险选择保真度/);
   assert.match(visual, /明确的非生产位置/);
   assert.match(visual, /文件存在或渲染命令成功，不代表视觉已经审查/);
+});
+
+test("uiux requires project-owned visual delivery for consequential interface design", () => {
+  const skill = read("skills/scd-uiux/SKILL.md");
+  const contract = read(
+    "skills/scd-uiux/references/experience-contract.md",
+  );
+  const visual = read("skills/scd-uiux/references/visual-evidence.md");
+  const template = read("skills/scd-uiux/assets/ux-contract.md");
+  const combined = `${skill}\n${contract}\n${visual}\n${template}`;
+
+  assert.match(skill, /显式 UIUX 设计、重要新页面、重要用户流程或整体改版必须生成项目内可渲染的视觉产物/);
+  assert.match(combined, /稳定视觉 ID/);
+  assert.match(combined, /界面或组件族/);
+  assert.match(combined, /旅程或验收/);
+  assert.match(combined, /目标视口|视口/);
+  assert.match(combined, /保真度/);
+  assert.match(combined, /项目文件|仓库相对文件/);
+  assert.match(combined, /代表性桌面和窄屏视口/);
+  assert.match(combined, /可点击或可运行的.*非生产原型|可点击或可运行的轻量原型/);
+  assert.match(combined, /外部.*链接[\s\S]*不能.*唯一视觉交付/);
+  assert.match(template, /\.scd\/ux\/<slug>\/visuals/);
+  assert.match(template, /## 实现对照验收/);
+});
+
+test("uiux blocks readiness on visual conflict or missing required confirmation", () => {
+  const skill = read("skills/scd-uiux/SKILL.md");
+  const contract = read(
+    "skills/scd-uiux/references/experience-contract.md",
+  );
+  const visual = read("skills/scd-uiux/references/visual-evidence.md");
+  const combined = `${skill}\n${contract}\n${visual}`;
+
+  assert.match(combined, /重大新页面、整体改版或高成本视觉方向/);
+  assert.match(combined, /一次明确确认/);
+  assert.match(combined, /确认前保持 `draft`|取得一次明确确认后才能设为 `ready`/);
+  assert.match(combined, /冲突时保持 `status: draft`|冲突时保持 `draft`/);
+  assert.match(combined, /不得静默选择一方|不得静默指定一方优先/);
+  assert.match(skill, /不恢复 QuickDev 的默认方案确认门/);
+});
+
+test("uiux keeps trivial local UI changes on the direct path without mandatory mockups", () => {
+  const skill = read("skills/scd-uiux/SKILL.md");
+
+  assert.match(skill, /文案、颜色、间距或局部组件变更[\s\S]*不强制扩大成设计项目/);
+  assert.match(skill, /不提 UX 问题、不创建产物，直接交给 `scd-quickdev`/);
 });
 
 test("uiux keeps the shared frontend-backend contract jointly owned", () => {
@@ -75,6 +122,8 @@ test("uiux durable artifacts stay minimal and distinguish readiness from approva
   assert.match(contract, /优先保留一份功能 UX 契约/);
   assert.match(template, /managed_by: scd-uiux/);
   assert.match(template, /### 共享契约引用/);
+  assert.match(template, /## 视觉交付清单/);
+  assert.match(template, /### 视觉确认/);
 });
 
 test("quickdev consumes a ready UX handoff without confusing it for architecture", () => {
@@ -84,6 +133,8 @@ test("quickdev consumes a ready UX handoff without confusing it for architecture
   assert.match(quickdev, /要求 `status: ready`/);
   assert.match(quickdev, /不得把 UX 接口需求当成 API/);
   assert.match(quickdev, /尚未统一的共享接口决策/);
+  assert.match(quickdev, /视觉交付清单/);
+  assert.match(quickdev, /每个视觉 ID/);
 });
 
 test("the approved uiux specification retains A1 through A9", () => {

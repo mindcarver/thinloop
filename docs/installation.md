@@ -227,6 +227,8 @@ codebuddy plugin update thinloop@thinloop --scope user
   Issue 标题、正文、验收、实施任务、验证更新和评论也使用中文，机器标识保持规范原值。
 - 升级到 v0.13.7：确认 QuickDev 默认不再询问方案确认偏好，而是直接创建或更新中文 Issue
   并继续；只有用户主动要求先看或先确认方案、Issue 或 tasks 时才等待明确确认。
+- 升级到 v0.14.0：确认重要 UIUX 工作会生成项目内 UI 图与必要的非生产原型，并把视觉 ID、
+  状态、视口和 UX 契约交给前端；重大视觉方向确认后才能 `ready`，QuickDev 仍默认自主实施。
 - 若从 v0.6.x 升级，另确认旧 `scd-dev-loop` 已消失。
 
 更新后可以在 Thinloop 源码仓库运行只读检查器：
