@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <kbd>v0.14.0</kbd>
+  <kbd>v0.15.0</kbd>
   &nbsp;
   <kbd>ISSUE-DRIVEN</kbd>
   &nbsp;
@@ -54,6 +54,12 @@ QuickDev 默认不询问你是否要先审核 Issue、实施方案和任务清�
 标题、正文、实施任务和验证记录统一使用中文；命令、路径和机器状态标识保持原样。
 十二个 Thinloop Skill 的说明、提示词、参考契约和模板也统一使用中文。
 
+开发完成后，QuickDev 会重新审计整张 Issue：验收项必须有直接行为证据，实施
+任务必须标记为 `DONE`、`SUPERSEDED` 或 `N/A`，交付差异、检查和阻塞也必须闭合。
+页面、路由、组件交互或可见样式发生变化时，不论是否走过 UIUX，都必须通过真实
+浏览器控件完成关键旅程，并记录页面、状态、视口、视觉 ID 和截图或追踪证据；
+浏览器路径不可用时只能 `BLOCKED`，不能用构建或 API 调用代替。
+
 | 当前情况 | 默认路径 |
 |---|---|
 | Bug 或清晰、局部的新功能 | 建立或确认 Issue，直接诊断、实现和验证 |
@@ -65,7 +71,7 @@ QuickDev 默认不询问你是否要先审核 Issue、实施方案和任务清�
 | 重要新页面、重要流程或整体改版 | 调用 UIUX，交付 UX 契约、项目内 UI 图和必要的交互原型；重大视觉方向确认后再实施 |
 | 系统边界会显著影响实现 | 按需组合 Architecture |
 | 工程验证通过 | Agent 自审并提交任务内变更 |
-| 工程验证完成 | 一个独立 Agent 执行真实环境行为验收；只有验收 `PASS` 才能交付 |
+| 工程验证完成 | 审计整张 Issue；页面差异必须完成真实浏览器交互与视觉验收，再由独立 Agent 返回 `PASS`、`FAIL` 或 `BLOCKED` |
 | 生产部署、认证支付、破坏性数据等高风险工作 | 在高风险动作前停下并请求明确批准 |
 
 新产品的 `.scd/product/prd.md` 保存产品级 why/what、MVP、`FR-*` 需求和成功
@@ -175,7 +181,8 @@ Execute 消费普通已批准 Initiative 的 READY 波次；Reengineering 在此
 增加源码、兼容性和集成门禁。清晰单交付不制造本地 Spec；新产品只保留一个
 批准的轻量 PRD。Next 在用户不知道如何继续时只读重建当前进度并把工作交给
 正确的责任 Skill。默认不强制 TDD、角色系统或固定阶段；Project 自身不执行
-工程 loop，QuickDev 每个 lane 只固定使用一个独立验收 Agent。完整的
+工程 loop，QuickDev 每个 lane 只固定使用一个独立验收 Agent，并在验收前闭合
+Issue 的验收、实施和交付三本账；页面差异还必须通过真实浏览器门。完整的
 路由、状态与契约说明见[工作流与项目状态](./docs/workflow-and-state.md)。
 
 <a id="skill-flows"></a>
@@ -187,7 +194,7 @@ Execute 消费普通已批准 Initiative 的 READY 波次；Reengineering 在此
 <p><img src="./assets/flows/scd-architecture.svg" alt="SCD Architecture 流程：从仓库事实到领域边界和机器可读契约" width="100%"></p>
 <p><img src="./assets/flows/scd-project.svg" alt="SCD Project 流程：从批准的 PRD 或产品契约到 Initiative、Delivery Issues 和就绪依赖图" width="100%"></p>
 <p><img src="./assets/flows/scd-execute.svg" alt="SCD Execute 流程：从批准的 Initiative DAG 到安全 READY 波次、隔离 QuickDev lanes 和集成验收" width="100%"></p>
-<p><img src="./assets/flows/scd-quickdev.svg" alt="SCD QuickDev 流程：默认创建中文 Issue 并继续，用户主动要求时先确认方案与任务，再实现、独立行为验收、合并 main 并关闭 Issue" width="100%"></p>
+<p><img src="./assets/flows/scd-quickdev.svg" alt="SCD QuickDev 流程：中文 Issue 默认继续，经诊断实现、整张 Issue 完成审计、页面浏览器验收和独立验收后，合并复核 main 并关闭 Issue" width="100%"></p>
 <p><img src="./assets/flows/scd-knowledge.svg" alt="SCD Knowledge 流程：从显式请求和证据到确认后的知识写入或检索" width="100%"></p>
 <p><img src="./assets/flows/scd-maintenance.svg" alt="SCD Maintenance 流程：从仓库信号到证据确认和有边界的修复" width="100%"></p>
 <p><img src="./assets/flows/scd-evolve.svg" alt="SCD Evolve 流程：从可见证据和归因到人工批准的可回滚试验" width="100%"></p>

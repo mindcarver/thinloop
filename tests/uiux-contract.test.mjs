@@ -123,7 +123,25 @@ test("uiux durable artifacts stay minimal and distinguish readiness from approva
   assert.match(template, /managed_by: scd-uiux/);
   assert.match(template, /### 共享契约引用/);
   assert.match(template, /## 视觉交付清单/);
-  assert.match(template, /### 视觉确认/);
+  assert.match(template, /### 设计确认/);
+  assert.match(template, /### 实现后最终视觉确认/);
+});
+
+test("uiux distinguishes design approval from post-implementation visual confirmation", () => {
+  const skill = read("skills/scd-uiux/SKILL.md");
+  const contract = read(
+    "skills/scd-uiux/references/experience-contract.md",
+  );
+  const visual = read("skills/scd-uiux/references/visual-evidence.md");
+  const template = read("skills/scd-uiux/assets/ux-contract.md");
+  const combined = `${skill}\n${contract}\n${visual}\n${template}`;
+
+  assert.match(combined, /设计确认和实现后确认是两个不同事实|单独决定是否需要“实现后最终视觉确认”/);
+  assert.match(combined, /整体改版、高保真品牌表达/);
+  assert.match(combined, /普通页面.*不需要|普通页面和明确局部变更默认“不需要”/);
+  assert.match(skill, /不阻止设计契约先进入 `ready`/);
+  assert.match(skill, /确认完成前阻止最终交付和关闭 Issue/);
+  assert.match(template, /状态：<待实现\/待确认\/已确认\/不需要>/);
 });
 
 test("quickdev consumes a ready UX handoff without confusing it for architecture", () => {

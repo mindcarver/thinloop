@@ -217,7 +217,70 @@ test("quickdev verifies frontend implementation against UX, visual, and interfac
   assert.match(skill, /UX 契约负责行为、状态与响应式规则/);
   assert.match(skill, /视觉 ID[\s\S]*布局、层级、密度与外观/);
   assert.match(skill, /共享机器契约负责数据、操作、权限和错误语义/);
-  assert.match(skill, /目标桌面和窄屏视口真实渲染/);
-  assert.match(skill, /截图或视觉比较/);
-  assert.match(combined, /仅有构建通过[\s\S]*不能证明前端符合视觉交付/);
+  assert.match(skill, /代表性桌面和窄屏视口/);
+  assert.match(combined, /截图、录屏、浏览器追踪或等价证据/);
+  assert.match(combined, /构建通过[\s\S]*不能替代页面行为证据|只运行组件测试[\s\S]*不能证明交互旅程完成/);
+});
+
+test("quickdev audits acceptance, implementation, and delivery before declaring the Issue complete", () => {
+  const skill = read("skills/scd-quickdev/SKILL.md");
+  const evidence = read(
+    "skills/scd-quickdev/references/evidence-contract.md",
+  );
+  const issueContract = read(
+    "skills/scd-quickdev/references/issue-delivery-contract.md",
+  );
+  const combined = `${skill}\n${evidence}\n${issueContract}`;
+
+  assert.match(skill, /## 审计整个 Issue 是否完成/);
+  assert.match(skill, /验收闭合/);
+  assert.match(skill, /实施账目闭合/);
+  assert.match(skill, /交付状态闭合/);
+  assert.match(combined, /`DONE`、`SUPERSEDED` 或 `N\/A`/);
+  assert.match(combined, /`SUPERSEDED` 和 `N\/A` 记录原因|后两者缺少原因/);
+  assert.match(combined, /任务状态说明实施路径，不替代行为验收|任务复选框只记录计划执行情况/);
+  assert.match(combined, /任何 `FAIL`、`BLOCKED`、`UNVERIFIED` 或缺失映射都阻止完成/);
+  assert.match(combined, /独立结论和合并版本.*待完成/);
+  assert.match(combined, /合并后.*最终.*闭合/);
+  assert.match(issueContract, /## 完成审计/);
+  assert.match(issueContract, /实施任务使用稳定 `T1`、`T2` 等标识/);
+  assert.match(issueContract, /### 验收闭合/);
+  assert.match(issueContract, /### 实施账目/);
+  assert.match(issueContract, /### 交付状态/);
+});
+
+test("quickdev makes browser acceptance mandatory for every real page change", () => {
+  const skill = read("skills/scd-quickdev/SKILL.md");
+  const evidence = read(
+    "skills/scd-quickdev/references/evidence-contract.md",
+  );
+  const issueContract = read(
+    "skills/scd-quickdev/references/issue-delivery-contract.md",
+  );
+  const combined = `${skill}\n${evidence}\n${issueContract}`;
+
+  assert.match(skill, /页面、路由、组件交互、可见样式或响应式行为/);
+  assert.match(skill, /无论是否调用过 UIUX，都必须执行页面验收门/);
+  assert.match(combined, /用户可见的导航、按钮、表单|用户可见控件/);
+  assert.match(combined, /不得用 API|直接调用 API/);
+  assert.match(evidence, /\| 页面\/路由 \| 状态 \| 视口 \| 旅程\/验收 \| 视觉 ID \| 操作与证据 \| 结果 \|/);
+  assert.match(combined, /加载、空数据、成功、失败、权限、部分成功.*恢复状态/);
+  assert.match(combined, /控制台错误/);
+  assert.match(combined, /失败网络请求/);
+  assert.match(combined, /键盘.*焦点|键盘顺序、焦点/);
+  assert.match(combined, /浏览器.*不可用[\s\S]*`BLOCKED`|缺少浏览器[\s\S]*`BLOCKED`/);
+  assert.match(skill, /页面验收门由真实差异触发，不属于可选的“适用时”判断/);
+});
+
+test("quickdev confirms the accepted merge on main before closing the Issue", () => {
+  const skill = read("skills/scd-quickdev/SKILL.md");
+  const issueContract = read(
+    "skills/scd-quickdev/references/issue-delivery-contract.md",
+  );
+  const combined = `${skill}\n${issueContract}`;
+
+  assert.match(skill, /读取远端默认分支和合并提交/);
+  assert.match(skill, /`main` 包含的任务差异就是独立验证过的版本/);
+  assert.match(skill, /重新读取 Issue[\s\S]*完成审计三本账仍闭合/);
+  assert.match(issueContract, /确认远端 `main` 包含独立验收版本/);
 });
