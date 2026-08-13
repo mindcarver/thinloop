@@ -30,8 +30,8 @@
       <circle cx="78" cy="148" r="13" fill="#f8edcf" stroke="#c55c2f" stroke-width="2"/>
       <text x="78" y="153" fill="#17313b" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="11" font-weight="800">01</text>
       <text x="140" y="168" fill="#f8edcf" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="15" font-weight="800" letter-spacing="0.8">
-        <tspan x="140" dy="0">默认继续</tspan>
-        <tspan x="140" dy="20">或主动确认</tspan>
+        <tspan x="140" dy="0">中文任务单</tspan>
+        <tspan x="140" dy="20">默认继续</tspan>
       </text>
     </g>
 <path d="M 465 167 H 502" fill="none" stroke="#c55c2f" stroke-width="3" marker-end="url(#arrow)"/>
@@ -40,8 +40,8 @@
       <circle cx="307" cy="148" r="13" fill="#f8edcf" stroke="#c55c2f" stroke-width="2"/>
       <text x="307" y="153" fill="#17313b" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="11" font-weight="800">02</text>
       <text x="369" y="168" fill="#f8edcf" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="15" font-weight="800" letter-spacing="0.8">
-        <tspan x="369" dy="0">中文任务单</tspan>
-        <tspan x="369" dy="20">方案与任务</tspan>
+        <tspan x="369" dy="0">诊断实现</tspan>
+        <tspan x="369" dy="20">工程检查</tspan>
       </text>
     </g>
 <path d="M 694 167 H 731" fill="none" stroke="#c55c2f" stroke-width="3" marker-end="url(#arrow)"/>
@@ -50,8 +50,8 @@
       <circle cx="536" cy="148" r="13" fill="#f8edcf" stroke="#c55c2f" stroke-width="2"/>
       <text x="536" y="153" fill="#17313b" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="11" font-weight="800">03</text>
       <text x="598" y="168" fill="#f8edcf" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="15" font-weight="800" letter-spacing="0.8">
-        <tspan x="598" dy="0">诊断实现</tspan>
-        <tspan x="598" dy="20">工程检查</tspan>
+        <tspan x="598" dy="0">完成审计</tspan>
+        <tspan x="598" dy="20">页面验收</tspan>
       </text>
     </g>
 <path d="M 923 167 H 960" fill="none" stroke="#c55c2f" stroke-width="3" marker-end="url(#arrow)"/>
@@ -60,8 +60,8 @@
       <circle cx="765" cy="148" r="13" fill="#f8edcf" stroke="#c55c2f" stroke-width="2"/>
       <text x="765" y="153" fill="#17313b" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="11" font-weight="800">04</text>
       <text x="827" y="168" fill="#f8edcf" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="15" font-weight="800" letter-spacing="0.8">
-        <tspan x="827" dy="0">独立</tspan>
-        <tspan x="827" dy="20">行为验收</tspan>
+        <tspan x="827" dy="0">独立验收</tspan>
+        <tspan x="827" dy="20">通过门</tspan>
       </text>
     </g>
 
@@ -70,7 +70,7 @@
       <circle cx="994" cy="148" r="13" fill="#f8edcf" stroke="#c55c2f" stroke-width="2"/>
       <text x="994" y="153" fill="#17313b" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="11" font-weight="800">05</text>
       <text x="1056" y="168" fill="#f8edcf" text-anchor="middle" font-family="'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', ui-monospace, monospace" font-size="15" font-weight="800" letter-spacing="0.8">
-        <tspan x="1056" dy="0">合并主分支</tspan>
+        <tspan x="1056" dy="0">合并复核</tspan>
         <tspan x="1056" dy="20">关闭任务单</tspan>
       </text>
     </g>

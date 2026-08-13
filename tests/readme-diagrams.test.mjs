@@ -103,8 +103,8 @@ test("diagram stage summaries remain traceable to authoritative skill workflows"
       /从仓库事实出发/,
       /实施最小且连贯的变更/,
       /验证工程验收/,
+      /审计整个 Issue 是否完成/,
       /独立的新上下文子 Agent/,
-      /通过拉取请求交付/,
     ],
     knowledge: [
       /选择请求的操作/,

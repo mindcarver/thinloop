@@ -229,6 +229,8 @@ codebuddy plugin update thinloop@thinloop --scope user
   并继续；只有用户主动要求先看或先确认方案、Issue 或 tasks 时才等待明确确认。
 - 升级到 v0.14.0：确认重要 UIUX 工作会生成项目内 UI 图与必要的非生产原型，并把视觉 ID、
   状态、视口和 UX 契约交给前端；重大视觉方向确认后才能 `ready`，QuickDev 仍默认自主实施。
+- 升级到 v0.15.0：确认 QuickDev 在独立验收前闭合 Issue 的验收、实施和交付三本账；任何
+  页面差异都必须执行真实浏览器交互与视觉验收，缺少必需证据时只能 `BLOCKED`。
 - 若从 v0.6.x 升级，另确认旧 `scd-dev-loop` 已消失。
 
 更新后可以在 Thinloop 源码仓库运行只读检查器：
