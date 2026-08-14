@@ -43,8 +43,8 @@ node evals/knowledge/runner/run.mjs --mode full
 | Reasonix | 十二个 Skill 链接均指向当前源码；新会话可通过 `/scd-next`、`/scd-execute`、`/scd-project` 与 `/scd-quickdev` 调用 |
 | DeepSeek Harness | 十二个 Skill 链接均指向当前源码；新会话的 skill 工具可发现 `scd-next`、`scd-execute`、`scd-project` 与 `scd-quickdev` |
 | Claude Code | `claude plugin list --json` 提供版本、enabled 与安装路径；检查器从该路径核对十二个 Skill 和两个 Hook，包括 `scd-next` 与 `scd-execute` |
-| WorkBuddy | 插件页显示当前仓库版本、enabled、十二个 Skill 和两个 Hook，包括 `scd-next` 与 `scd-execute` |
-| ZCode | Settings → Plugins 显示当前仓库版本、12 Skills、2 Hooks；Skills 中存在 `scd-next`、`scd-execute`、`scd-project` 与 `scd-quickdev` |
+| WorkBuddy | 不验证：WorkBuddy 无可靠只读 CLI 探测；已取消插件页核验要求 |
+| ZCode | 不验证：ZCode 无可用 CLI；已取消 Settings → Plugins 核验要求 |
 
 在 Thinloop 源码仓库运行统一的只读检查：
 
@@ -67,8 +67,9 @@ node scripts/verify-install.mjs --platform dsh
 | `FAIL` | 自动验证入口已确认缺失、停用、版本漂移或 Skill / Hook 不完整 |
 | `UNVERIFIED` | 所需 CLI 不可用、失败或没有返回有效 JSON，不能判断安装结果 |
 | `MANUAL` | 平台没有可靠的自动验证入口，必须按提示从界面核验 |
+| `SKIP` | 平台按用户决定不参与验证，检查器不核验也不计入失败 |
 
-退出码 `0` 表示没有确认失败，但仍可能包含 `UNVERIFIED` 或 `MANUAL`；
+退出码 `0` 表示没有确认失败，但仍可能包含 `UNVERIFIED`、`MANUAL` 或 `SKIP`；
 退出码 `1` 表示至少存在一个确认失败；退出码 `2` 表示参数、注册表或源码
 仓库无效。Codex、OpenCode、Pi、CodeWhale、Reasonix 与 DeepSeek Harness
 检查分别遵循 `CODEX_HOME`、`XDG_CONFIG_HOME`、`PI_CODING_AGENT_DIR`、
@@ -104,13 +105,12 @@ printf '%s\n' '{"type":"get_commands"}' \
 结果应恰好包含十二个 `skill:scd-*` 命令，路径均位于当前 Pi Skill 根。该检查
 只证明 Skill 发现，不证明 Pi 存在 Thinloop 的连续性 Hook。
 
-WorkBuddy 的 `codebuddy plugin list --json` 实测会写客户端日志，因此统一
-检查器不会调用它；WorkBuddy 安装状态保持 `MANUAL`，必须在插件页核验。
+WorkBuddy 与 ZCode 按用户决定不参与验证：统一检查器将其记为 `SKIP`，不再
+要求在插件页或 Settings → Plugins 中核验。
 
 OpenCode、Pi 与 CodeWhale 当前都不声明连续性阻断能力，因为尚未核验到与
 Claude Code、WorkBuddy、ZCode Stop Hook 等价的可取消完成协议；CodeWhale
-当前的 Plugin Bundle 兼容层也没有 Hook 适配器。ZCode 当前安装不提供可依赖的
-`zcode` CLI，所以以实际 Settings 界面作为安装验证边界。
+当前的 Plugin Bundle 兼容层也没有 Hook 适配器。
 
 Reasonix 的 `reasonix doctor --json` 用于本地诊断，不输出 Skill 清单，不能作为
 Skill 发现证据。安装链接通过后，必须在新 Reasonix 会话中输入 `/scd-next` 做

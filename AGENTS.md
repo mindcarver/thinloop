@@ -18,7 +18,9 @@ delivery sequence:
    behavior—such as `skills/**`, `hooks/**`, plugin manifests, version metadata,
    or installation mechanics—reinstall or refresh the affected supported local
    agents, then verify the installed version, skill names, and hooks that each
-   platform supports;
+   platform supports; WorkBuddy and ZCode are exempt from verification
+   (`verification.mode: skip` in `config/platform-capabilities.json`) and are
+   never required to be refreshed or UI-checked;
 8. do not refresh local agents for repository-only changes such as `README.md`,
    `docs/**`, tests, evaluations, CI configuration, or assets that installed
    Skills and plugins do not load;

@@ -212,10 +212,8 @@
         ]
       },
       "verification": {
-        "mode": "manual",
-        "pluginId": "thinloop@thinloop",
-        "summary": "插件页显示当前仓库版本、enabled、十二个 Skill 和两个 Hook，包括 `scd-next` 与 `scd-execute`",
-        "manualFallback": "`codebuddy plugin list --json` 会写客户端日志；必须在 WorkBuddy 插件页核验"
+        "mode": "skip",
+        "summary": "不验证：WorkBuddy 无可靠只读 CLI 探测；已取消插件页核验要求"
       }
     },
     {
@@ -243,9 +241,8 @@
         ]
       },
       "verification": {
-        "mode": "manual",
-        "summary": "Settings → Plugins 显示当前仓库版本、12 Skills、2 Hooks；Skills 中存在 `scd-next`、`scd-execute`、`scd-project` 与 `scd-quickdev`",
-        "manualFallback": "ZCode 当前没有可依赖的 CLI；必须在 Settings → Plugins 中核验"
+        "mode": "skip",
+        "summary": "不验证：ZCode 无可用 CLI；已取消 Settings → Plugins 核验要求"
       }
     }
   ]

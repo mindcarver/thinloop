@@ -293,8 +293,8 @@ test("read-only checker verifies complete automatic installs", () => {
     assert.equal(results.reasonix.status, "PASS");
     assert.equal(results.dsh.status, "MANUAL");
     assert.equal(results["claude-code"].status, "PASS");
-    assert.equal(results.workbuddy.status, "MANUAL");
-    assert.equal(results.zcode.status, "MANUAL");
+    assert.equal(results.workbuddy.status, "SKIP");
+    assert.equal(results.zcode.status, "SKIP");
     assert.match(formatText(report), /Mode: read-only/);
   } finally {
     fs.rmSync(homeDir, { recursive: true, force: true });
@@ -338,8 +338,8 @@ test("checker reports missing, partial, stale, and hook-mismatched installs", ()
     assert.equal(results.codewhale.status, "FAIL");
     assert.equal(results.reasonix.status, "PASS");
     assert.equal(results["claude-code"].status, "FAIL");
-    assert.equal(results.workbuddy.status, "MANUAL");
-    assert.equal(results.zcode.status, "MANUAL");
+    assert.equal(results.workbuddy.status, "SKIP");
+    assert.equal(results.zcode.status, "SKIP");
     assert.match(
       results["claude-code"].checks.find((check) => check.name === "version").detail,
       /0\.0\.0 installed/,
@@ -391,8 +391,8 @@ test("unavailable automatic plugin CLI stays unverified instead of failing", () 
     assert.equal(results.reasonix.status, "PASS");
     assert.equal(results.dsh.status, "MANUAL");
     assert.equal(results["claude-code"].status, "UNVERIFIED");
-    assert.equal(results.workbuddy.status, "MANUAL");
-    assert.equal(results.zcode.status, "MANUAL");
+    assert.equal(results.workbuddy.status, "SKIP");
+    assert.equal(results.zcode.status, "SKIP");
   } finally {
     fs.rmSync(homeDir, { recursive: true, force: true });
   }
@@ -421,7 +421,7 @@ test("missing plugin evidence stays unverified instead of being guessed", () => 
     assert.equal(report.exitCode, 0);
     assert.equal(results.dsh.status, "MANUAL");
     assert.equal(results["claude-code"].status, "UNVERIFIED");
-    assert.equal(results.workbuddy.status, "MANUAL");
+    assert.equal(results.workbuddy.status, "SKIP");
     assert.match(
       results["claude-code"].checks.find((check) => check.name === "version").detail,
       /did not report a version/,
@@ -452,7 +452,7 @@ test("checker has a dedicated not-installed fixture", () => {
 
     assert.equal(report.exitCode, 1);
     assert.equal(results["claude-code"].status, "FAIL");
-    assert.equal(results.workbuddy.status, "MANUAL");
+    assert.equal(results.workbuddy.status, "SKIP");
     assert.match(
       results["claude-code"].checks.find((check) => check.name === "plugin")
         .detail,
@@ -610,7 +610,7 @@ test("checker rejects broken plugin manifest and hook wiring", () => {
     const results = resultMap(report);
 
     assert.equal(results["claude-code"].status, "FAIL");
-    assert.equal(results.workbuddy.status, "MANUAL");
+    assert.equal(results.workbuddy.status, "SKIP");
     assert.match(
       results["claude-code"].checks.find((check) => check.name === "manifest")
         .detail,
@@ -661,8 +661,8 @@ test("checker never executes probes registered as manual", () => {
     ]);
     assert.equal(runtimeCheck.status, "MANUAL");
     assert.match(runtimeCheck.detail, /可能写入日志/);
-    assert.equal(results.workbuddy.status, "MANUAL");
-    assert.match(results.workbuddy.checks[0].detail, /写客户端日志/);
+    assert.equal(results.workbuddy.status, "SKIP");
+    assert.match(results.workbuddy.checks[0].detail, /不验证/);
   } finally {
     fs.rmSync(homeDir, { recursive: true, force: true });
   }
@@ -709,9 +709,10 @@ test("checker source and registered probes are read-only", () => {
     "list",
     "--json",
   ]);
-  assert.equal(platform("workbuddy").verification.mode, "manual");
-  assert.match(platform("workbuddy").verification.manualFallback, /写客户端日志/);
-  assert.equal(platform("zcode").verification.mode, "manual");
+  assert.equal(platform("workbuddy").verification.mode, "skip");
+  assert.match(platform("workbuddy").verification.summary, /不验证/);
+  assert.equal(platform("zcode").verification.mode, "skip");
+  assert.match(platform("zcode").verification.summary, /不验证/);
 });
 
 test("checker can target Pi without probing unrelated platforms", () => {
