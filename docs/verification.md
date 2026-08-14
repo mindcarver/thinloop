@@ -41,6 +41,7 @@ node evals/knowledge/runner/run.mjs --mode full
 | Pi | 十二个 Skill 链接均指向当前源码；Pi RPC `get_commands` 可发现十二个 `/skill:scd-*` 命令 |
 | CodeWhale | 十二个 Skill 链接均指向当前源码；`codewhale doctor --json` 确认全局 Skill 根、数量且跳过实时 API 探测 |
 | Reasonix | 十二个 Skill 链接均指向当前源码；新会话可通过 `/scd-next`、`/scd-execute`、`/scd-project` 与 `/scd-quickdev` 调用 |
+| DeepSeek Harness | 十二个 Skill 链接均指向当前源码；新会话的 skill 工具可发现 `scd-next`、`scd-execute`、`scd-project` 与 `scd-quickdev` |
 | Claude Code | `claude plugin list --json` 提供版本、enabled 与安装路径；检查器从该路径核对十二个 Skill 和两个 Hook，包括 `scd-next` 与 `scd-execute` |
 | WorkBuddy | 插件页显示当前仓库版本、enabled、十二个 Skill 和两个 Hook，包括 `scd-next` 与 `scd-execute` |
 | ZCode | Settings → Plugins 显示当前仓库版本、12 Skills、2 Hooks；Skills 中存在 `scd-next`、`scd-execute`、`scd-project` 与 `scd-quickdev` |
@@ -53,11 +54,12 @@ node scripts/verify-install.mjs --format json
 node scripts/verify-install.mjs --platform pi
 node scripts/verify-install.mjs --platform codewhale
 node scripts/verify-install.mjs --platform reasonix
+node scripts/verify-install.mjs --platform dsh
 ```
 
 检查器从
 [`config/platform-capabilities.json`](../config/platform-capabilities.json)
-读取七个平台的安装形态、Skill 根、Hook 和验证入口，并使用以下状态：
+读取八个平台的安装形态、Skill 根、Hook 和验证入口，并使用以下状态：
 
 | 状态 | 含义 |
 |---|---|
@@ -68,9 +70,9 @@ node scripts/verify-install.mjs --platform reasonix
 
 退出码 `0` 表示没有确认失败，但仍可能包含 `UNVERIFIED` 或 `MANUAL`；
 退出码 `1` 表示至少存在一个确认失败；退出码 `2` 表示参数、注册表或源码
-仓库无效。Codex、OpenCode、Pi、CodeWhale 与 Reasonix 检查分别遵循 `CODEX_HOME`、
-`XDG_CONFIG_HOME`、`PI_CODING_AGENT_DIR`、`CODEWHALE_SKILLS_DIR` 与
-`~/.reasonix/skills`。
+仓库无效。Codex、OpenCode、Pi、CodeWhale、Reasonix 与 DeepSeek Harness
+检查分别遵循 `CODEX_HOME`、`XDG_CONFIG_HOME`、`PI_CODING_AGENT_DIR`、
+`CODEWHALE_SKILLS_DIR`、`~/.reasonix/skills` 与 `DSH_HOME`（默认 `~/.dsh`）。
 检查器不会安装、更新、覆盖、重启或重新加载任何 Agent。
 
 CodeWhale 的链接通过后，检查器会自动运行无网络的结构化诊断：
@@ -113,5 +115,13 @@ Claude Code、WorkBuddy、ZCode Stop Hook 等价的可取消完成协议；CodeW
 Reasonix 的 `reasonix doctor --json` 用于本地诊断，不输出 Skill 清单，不能作为
 Skill 发现证据。安装链接通过后，必须在新 Reasonix 会话中输入 `/scd-next` 做
 运行时发现核对；Reasonix 也尚未在 Thinloop 中声明连续性阻断能力。
+
+DeepSeek Harness 当前没有可依赖的 CLI 或插件列表命令，安装链接通过后，必须在
+新会话中通过 skill 工具核对 `scd-next`、`scd-execute`、`scd-project` 与
+`scd-quickdev` 是否出现在可用目录中。filesystem provider 的 watcher 会自动
+失效并更新模型侧目录，因此链接更新后无需重启；Thinloop 不为 DeepSeek
+Harness 声明连续性阻断能力，因为 DSH 没有可注入的 `Stop` / `PreCompact`
+等价生命周期 Hook，压缩与恢复后的指令基线由 DSH 自身的 `AGENTS.md` 机制
+重新注入。
 
 完整评测方法、历史证据和限制见 [EVALUATION.md](../EVALUATION.md)。

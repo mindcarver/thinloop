@@ -11,6 +11,7 @@
 | Pi | 把十二个 Skill 链接到 `~/.pi/agent/skills` | 新会话或执行 `/reload` |
 | CodeWhale | 把十二个 Skill 链接到 `~/.codewhale/skills` | 新会话 |
 | Reasonix | 把十二个 Skill 链接到 `~/.reasonix/skills` | 新会话 |
+| DeepSeek Harness | 把十二个 Skill 链接到 `~/.dsh/skills` | 新会话（Skill watcher 自动失效重扫） |
 | Claude Code | 安装完整插件 | 更新后重启或重新加载插件 |
 | WorkBuddy | 安装完整插件 | 更新后重启 WorkBuddy |
 | ZCode | 安装完整插件 | 更新后新建会话 |
@@ -19,7 +20,7 @@ Skill 链接随源码仓库更新，但不启用连续性 Hook；Claude Code、W
 ZCode 的完整插件会额外启用各自支持的 Hook。不要在同一个 Agent 中同时安装
 完整插件和个人 Skill 链接，以免重复暴露同名能力。
 
-## Codex、OpenCode、Pi、CodeWhale 与 Reasonix
+## Codex、OpenCode、Pi、CodeWhale、Reasonix 与 DeepSeek Harness
 
 ### Windows · Junction
 
@@ -35,7 +36,8 @@ $skillRoots = @(
   "$env:USERPROFILE\.config\opencode\skills",
   "$env:USERPROFILE\.pi\agent\skills",
   $codeWhaleSkillRoot,
-  "$env:USERPROFILE\.reasonix\skills"
+  "$env:USERPROFILE\.reasonix\skills",
+  if ($env:DSH_HOME) { "$env:DSH_HOME\skills" } else { "$env:USERPROFILE\.dsh\skills" }
 )
 $skillNames = @(
   "scd-discovery", "scd-uiux", "scd-architecture",
@@ -79,6 +81,7 @@ skill_roots=(
   "${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}/skills"
   "${CODEWHALE_SKILLS_DIR:-$HOME/.codewhale/skills}"
   "$HOME/.reasonix/skills"
+  "${DSH_HOME:-$HOME/.dsh}/skills"
 )
 skills=(
   scd-discovery scd-uiux scd-architecture
@@ -125,6 +128,16 @@ Plugin Bundle 或连续性 Hook；当前 CodeWhale 的 Bundle 兼容层尚未提
 Reasonix 会在新会话发现 `~/.reasonix/skills` 下的标准 `SKILL.md` 目录；可直接
 输入 `/scd-next` 激活。Thinloop 当前不为 Reasonix 写入 Hook 配置，避免把
 Reasonix 已有的全局或项目 Hook 与未经验证的连续性阻断语义混合。
+
+DeepSeek Harness 的 Skill 发现由内置的 filesystem provider 负责：它按
+`<projectRoot>/.dsh/skills`、`<projectRoot>/.agents/skills`、自定义目录、
+`$DSH_HOME/skills`（默认 `~/.dsh/skills`）与 `~/.agents/skills` 分层扫描
+标准 `SKILL.md` 目录。把十二个 Skill 链接到 `~/.dsh/skills` 后，新会话的
+skill 工具即可发现并加载 `scd-next`、`scd-execute`、`scd-project`、
+`scd-quickdev` 等全部 Skill；provider 的 watcher 会自动失效并更新模型侧
+目录，不依赖重启。DeepSeek Harness 当前没有与 Claude Code、WorkBuddy、
+ZCode 的 `Stop` / `PreCompact` 等价的可注入生命周期 Hook，Thinloop 不为它
+写入 Hook 配置，连续性保护依赖 `AGENTS.md` 基线在压缩或恢复后重新注入。
 
 ## Evolve 权威源码
 
@@ -203,7 +216,7 @@ git -C /path/to/thinloop pull --ff-only
 随后按安装方式刷新：
 
 ```bash
-# Codex / OpenCode / Pi / CodeWhale / Reasonix：重新运行上面的链接脚本，然后新建任务或会话、重启或 /reload
+# Codex / OpenCode / Pi / CodeWhale / Reasonix / DeepSeek Harness：重新运行上面的链接脚本，然后新建任务或会话、重启或 /reload
 
 # Claude Code 完整插件
 claude plugin update thinloop@thinloop --scope user
@@ -241,8 +254,9 @@ node scripts/verify-install.mjs
 
 检查器从
 [`config/platform-capabilities.json`](../config/platform-capabilities.json)
-读取八个平台的能力契约，遵循 `CODEX_HOME`、`XDG_CONFIG_HOME`、
-`PI_CODING_AGENT_DIR/skills`、`CODEWHALE_SKILLS_DIR` 与 `~/.reasonix/skills`，只读取 Skill
+读取九个平台的能力契约，遵循 `CODEX_HOME`、`XDG_CONFIG_HOME`、
+`PI_CODING_AGENT_DIR/skills`、`CODEWHALE_SKILLS_DIR`、`~/.reasonix/skills`
+与 `DSH_HOME`，只读取 Skill
 链接、CodeWhale 的无网络 `doctor --json` 报告、Claude Code 插件清单及本地
 插件内容；
 不安装、修复、覆盖、重启或重新加载任何 Agent。状态和退出码见
@@ -277,6 +291,11 @@ Reasonix：使用 /scd-quickdev 按 Issue 开发、验证并合并 main。
 Reasonix：使用 /scd-project 从批准的 PRD 分解 multi-Issue 项目 DAG，不执行 Issues。
 Reasonix：使用 /scd-execute 继续已批准的 Initiative，按安全 READY 波次执行。
 Reasonix：使用 /scd-next 只读检查当前项目进度和下一步。
+DeepSeek Harness：使用 $scd-quickdev 按 Issue 开发、验证并合并。
+DeepSeek Harness：使用 $scd-project 从批准的 PRD 分解 multi-Issue 项目 DAG，不执行 Issues。
+DeepSeek Harness：使用 $scd-execute 继续已批准的 Initiative，按安全 READY 波次执行。
+DeepSeek Harness：使用 $scd-next 只读检查当前项目进度和下一步。
+DeepSeek Harness：使用 $scd-reengineering 重新实现这个项目并保留选定兼容契约。
 WorkBuddy 完整插件：/thinloop:scd-quickdev
 ZCode：使用 $scd-quickdev 按 Issue 开发、验证并合并。
 ZCode：使用 $scd-project 分解 multi-Issue 项目并验证依赖 DAG，不启动执行 loop。

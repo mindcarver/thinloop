@@ -125,6 +125,27 @@
       }
     },
     {
+      "id": "dsh",
+      "displayName": "DeepSeek Harness",
+      "installation": {
+        "mode": "skill-links",
+        "skillRoot": ".dsh/skills",
+        "skillRootOverride": {
+          "environment": "DSH_HOME",
+          "suffix": "skills"
+        },
+        "summary": "把十二个 Skill 链接到 `~/.dsh/skills`",
+        "takesEffect": "新会话（filesystem provider 的 watcher 会自动失效并更新目录）"
+      },
+      "capabilities": {
+        "hooks": []
+      },
+      "verification": {
+        "mode": "skill-links",
+        "summary": "十二个 Skill 链接均指向当前源码；新会话的 skill 工具可发现 `scd-next`、`scd-execute`、`scd-project` 与 `scd-quickdev`"
+      }
+    },
+    {
       "id": "claude-code",
       "displayName": "Claude Code",
       "installation": {
