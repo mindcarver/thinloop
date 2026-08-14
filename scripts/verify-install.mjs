@@ -16,7 +16,7 @@ const DEFAULT_REGISTRY = path.join(
   "config",
   "platform-capabilities.json",
 );
-const RESULT_ORDER = ["PASS", "FAIL", "UNVERIFIED", "MANUAL"];
+const RESULT_ORDER = ["PASS", "FAIL", "UNVERIFIED", "MANUAL", "SKIP"];
 const READ_ONLY_PROBES = new Map([
   ["claude-code", ["claude", "plugin", "list", "--json"]],
   ["codewhale", ["codewhale", "doctor", "--json"]],
@@ -188,6 +188,9 @@ function resultStatus(checks) {
   }
   if (checks.some((check) => check.status === "MANUAL")) {
     return "MANUAL";
+  }
+  if (checks.some((check) => check.status === "SKIP")) {
+    return "SKIP";
   }
   return "PASS";
 }
@@ -681,6 +684,12 @@ function inspectManual(platform) {
   ]);
 }
 
+function inspectSkip(platform) {
+  return platformResult(platform, [
+    makeCheck("verification", "SKIP", platform.verification.summary),
+  ]);
+}
+
 export function inspectInstallations({
   registryPath = DEFAULT_REGISTRY,
   sourceRoot = SCRIPT_ROOT,
@@ -733,6 +742,9 @@ export function inspectInstallations({
     }
     if (platform.verification.mode === "manual") {
       return inspectManual(platform);
+    }
+    if (platform.verification.mode === "skip") {
+      return inspectSkip(platform);
     }
     throw new Error(
       `Unsupported verification mode for ${platform.id}: ${platform.verification.mode}`,
