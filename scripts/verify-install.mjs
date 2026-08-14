@@ -322,10 +322,10 @@ function inspectSkillLinks(platform, expected, homeDir, environment) {
   checks.push(
     makeCheck(
       "hooks",
-      "PASS",
+      platform.capabilities.hooks.length === 0 ? "PASS" : "MANUAL",
       platform.capabilities.hooks.length === 0
         ? "not supported by this installation mode"
-        : `${platform.capabilities.hooks.length} expected`,
+        : `${platform.capabilities.hooks.length} continuity hook (Cordis plugin) — verify in a real session; no read-only CLI probe exists`,
     ),
   );
 
