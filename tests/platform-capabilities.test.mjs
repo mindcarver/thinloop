@@ -184,7 +184,7 @@ function resultMap(report) {
   );
 }
 
-test("platform registry is the eight-platform capability contract", () => {
+test("platform registry is the nine-platform capability contract", () => {
   assert.equal(registry.schemaVersion, 1);
   assert.deepEqual(
     registry.platforms.map((entry) => entry.id),
@@ -194,6 +194,7 @@ test("platform registry is the eight-platform capability contract", () => {
       "pi",
       "codewhale",
       "reasonix",
+      "dsh",
       "claude-code",
       "workbuddy",
       "zcode",
@@ -230,6 +231,13 @@ test("platform registry is the eight-platform capability contract", () => {
       assert.equal(manifest.version, expectedVersion);
     }
     for (const hook of definition.capabilities.hooks) {
+      if (hook.kind === "cordis-plugin") {
+        assert.ok(
+          fs.existsSync(path.join(root, hook.source)),
+          `${definition.id} ${hook.event} (${hook.source})`,
+        );
+        continue;
+      }
       const hooks = readJson(hook.source).hooks?.[hook.event];
       assert.ok(Array.isArray(hooks), `${definition.id} ${hook.event}`);
       if (hook.matcher) {
@@ -257,6 +265,7 @@ test("read-only checker verifies complete automatic installs", () => {
     linkSkills(homeDir, "pi");
     linkSkills(homeDir, "codewhale");
     linkSkills(homeDir, "reasonix");
+    linkSkills(homeDir, "dsh");
     const report = inspectInstallations({
       registryPath,
       sourceRoot: root,
@@ -282,6 +291,7 @@ test("read-only checker verifies complete automatic installs", () => {
     assert.equal(results.pi.status, "PASS");
     assert.equal(results.codewhale.status, "PASS");
     assert.equal(results.reasonix.status, "PASS");
+    assert.equal(results.dsh.status, "MANUAL");
     assert.equal(results["claude-code"].status, "PASS");
     assert.equal(results.workbuddy.status, "MANUAL");
     assert.equal(results.zcode.status, "MANUAL");
@@ -357,6 +367,7 @@ test("unavailable automatic plugin CLI stays unverified instead of failing", () 
     linkSkills(homeDir, "pi");
     linkSkills(homeDir, "codewhale");
     linkSkills(homeDir, "reasonix");
+    linkSkills(homeDir, "dsh");
     const report = inspectInstallations({
       registryPath,
       sourceRoot: root,
@@ -378,6 +389,7 @@ test("unavailable automatic plugin CLI stays unverified instead of failing", () 
     assert.equal(results.pi.status, "PASS");
     assert.equal(results.codewhale.status, "UNVERIFIED");
     assert.equal(results.reasonix.status, "PASS");
+    assert.equal(results.dsh.status, "MANUAL");
     assert.equal(results["claude-code"].status, "UNVERIFIED");
     assert.equal(results.workbuddy.status, "MANUAL");
     assert.equal(results.zcode.status, "MANUAL");
@@ -394,6 +406,7 @@ test("missing plugin evidence stays unverified instead of being guessed", () => 
     linkSkills(homeDir, "pi");
     linkSkills(homeDir, "codewhale");
     linkSkills(homeDir, "reasonix");
+    linkSkills(homeDir, "dsh");
     const report = inspectInstallations({
       registryPath,
       sourceRoot: root,
@@ -406,6 +419,7 @@ test("missing plugin evidence stays unverified instead of being guessed", () => 
     const results = resultMap(report);
 
     assert.equal(report.exitCode, 0);
+    assert.equal(results.dsh.status, "MANUAL");
     assert.equal(results["claude-code"].status, "UNVERIFIED");
     assert.equal(results.workbuddy.status, "MANUAL");
     assert.match(
@@ -747,6 +761,37 @@ test("checker can target Reasonix without probing its CLI", () => {
     assert.deepEqual(
       report.results[0].checks.map((check) => check.name),
       ["skills", "version", "hooks"],
+    );
+  } finally {
+    fs.rmSync(homeDir, { recursive: true, force: true });
+  }
+});
+
+test("checker can target DeepSeek Harness without probing its CLI", () => {
+  const homeDir = makeFixture();
+  try {
+    linkSkills(homeDir, "dsh");
+    const report = inspectInstallations({
+      registryPath,
+      sourceRoot: root,
+      homeDir,
+      environment: {},
+      platformId: "dsh",
+      runCommand: () => {
+        throw new Error("targeted DeepSeek Harness verification must not run a CLI probe");
+      },
+    });
+
+    assert.equal(report.exitCode, 0);
+    assert.deepEqual(report.results.map((result) => result.id), ["dsh"]);
+    assert.equal(report.results[0].status, "MANUAL");
+    assert.deepEqual(
+      report.results[0].checks.map((check) => check.name),
+      ["skills", "version", "hooks"],
+    );
+    assert.equal(
+      report.results[0].checks.find((check) => check.name === "hooks").status,
+      "MANUAL",
     );
   } finally {
     fs.rmSync(homeDir, { recursive: true, force: true });

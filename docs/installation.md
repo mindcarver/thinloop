@@ -11,14 +11,16 @@
 | Pi | 把十二个 Skill 链接到 `~/.pi/agent/skills` | 新会话或执行 `/reload` |
 | CodeWhale | 把十二个 Skill 链接到 `~/.codewhale/skills` | 新会话 |
 | Reasonix | 把十二个 Skill 链接到 `~/.reasonix/skills` | 新会话 |
-| DeepSeek Harness | 把十二个 Skill 链接到 `~/.dsh/skills` | 新会话（Skill watcher 自动失效重扫） |
+| DeepSeek Harness | 把十二个 Skill 链接到 `~/.dsh/skills` | 新会话（filesystem provider 的 watcher 会自动失效并更新目录） |
 | Claude Code | 安装完整插件 | 更新后重启或重新加载插件 |
 | WorkBuddy | 安装完整插件 | 更新后重启 WorkBuddy |
 | ZCode | 安装完整插件 | 更新后新建会话 |
 
-Skill 链接随源码仓库更新，但不启用连续性 Hook；Claude Code、WorkBuddy 和
-ZCode 的完整插件会额外启用各自支持的 Hook。不要在同一个 Agent 中同时安装
-完整插件和个人 Skill 链接，以免重复暴露同名能力。
+Skill 链接随源码仓库更新，但默认不启用连续性 Hook；Claude Code、WorkBuddy
+和 ZCode 的完整插件会额外启用各自支持的 Hook，DeepSeek Harness 则通过手动
+挂载 `.dsh-plugin/continuity.mjs` 插件启用 `agent/turn-stopping` 连续性闸门。
+不要在同一个 Agent 中同时安装完整插件和个人 Skill 链接，以免重复暴露同名
+能力。
 
 ## Codex、OpenCode、Pi、CodeWhale、Reasonix 与 DeepSeek Harness
 
@@ -135,9 +137,14 @@ DeepSeek Harness 的 Skill 发现由内置的 filesystem provider 负责：它�
 标准 `SKILL.md` 目录。把十二个 Skill 链接到 `~/.dsh/skills` 后，新会话的
 skill 工具即可发现并加载 `scd-next`、`scd-execute`、`scd-project`、
 `scd-quickdev` 等全部 Skill；provider 的 watcher 会自动失效并更新模型侧
-目录，不依赖重启。DeepSeek Harness 当前没有与 Claude Code、WorkBuddy、
-ZCode 的 `Stop` / `PreCompact` 等价的可注入生命周期 Hook，Thinloop 不为它
-写入 Hook 配置，连续性保护依赖 `AGENTS.md` 基线在压缩或恢复后重新注入。
+目录，不依赖重启。DeepSeek Harness 没有 Claude Code、WorkBuddy、ZCode 那种
+「JSON Hook 清单 + 子进程处理程序」的声明式 Hook，但提供可编程的 Cordis
+插件生命周期事件系统：Thinloop 通过 `.dsh-plugin/continuity.mjs` 插件注册
+`agent/turn-stopping`（`Stop` 的等价物）监听器，在状态不可恢复时
+`agent.steer(...)` 让 Agent 继续补齐，而不是在不可恢复的状态上停下。该插件
+需手动挂载到 Agent preset 的 `agent.cordis.yml`（详见
+`.dsh-plugin/README.md`）；DSH 未暴露第三方可用的压缩前否决点，压缩后仍由
+`AGENTS.md` 基线机制重新注入指令。
 
 ## Evolve 权威源码
 

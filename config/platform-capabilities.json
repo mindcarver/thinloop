@@ -138,7 +138,14 @@
         "takesEffect": "新会话（filesystem provider 的 watcher 会自动失效并更新目录）"
       },
       "capabilities": {
-        "hooks": []
+        "hookHandler": ".dsh-plugin/continuity.mjs",
+        "hooks": [
+          {
+            "event": "agent/turn-stopping",
+            "source": ".dsh-plugin/continuity.mjs",
+            "kind": "cordis-plugin"
+          }
+        ]
       },
       "verification": {
         "mode": "skill-links",

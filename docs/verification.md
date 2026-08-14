@@ -59,7 +59,7 @@ node scripts/verify-install.mjs --platform dsh
 
 检查器从
 [`config/platform-capabilities.json`](../config/platform-capabilities.json)
-读取八个平台的安装形态、Skill 根、Hook 和验证入口，并使用以下状态：
+读取九个平台的安装形态、Skill 根、Hook 和验证入口，并使用以下状态：
 
 | 状态 | 含义 |
 |---|---|
@@ -116,12 +116,16 @@ Reasonix 的 `reasonix doctor --json` 用于本地诊断，不输出 Skill 清�
 Skill 发现证据。安装链接通过后，必须在新 Reasonix 会话中输入 `/scd-next` 做
 运行时发现核对；Reasonix 也尚未在 Thinloop 中声明连续性阻断能力。
 
-DeepSeek Harness 当前没有可依赖的 CLI 或插件列表命令，安装链接通过后，必须在
-新会话中通过 skill 工具核对 `scd-next`、`scd-execute`、`scd-project` 与
+DeepSeek Harness 没有可依赖的 CLI 或插件列表命令，安装链接通过后，必须在新
+会话中通过 skill 工具核对 `scd-next`、`scd-execute`、`scd-project` 与
 `scd-quickdev` 是否出现在可用目录中。filesystem provider 的 watcher 会自动
-失效并更新模型侧目录，因此链接更新后无需重启；Thinloop 不为 DeepSeek
-Harness 声明连续性阻断能力，因为 DSH 没有可注入的 `Stop` / `PreCompact`
-等价生命周期 Hook，压缩与恢复后的指令基线由 DSH 自身的 `AGENTS.md` 机制
-重新注入。
+失效并更新模型侧目录，因此链接更新后无需重启。DeepSeek Harness 的连续性
+阻断不是声明式子进程 Hook，而是可编程的 Cordis 插件：Thinloop 通过
+`.dsh-plugin/continuity.mjs` 注册 `agent/turn-stopping` 监听器，在
+`.scd/tasks/current.md` 属于 SCD 管理但不可恢复时 `agent.steer(...)` 让 Agent
+继续补齐。挂载与运行时行为需手动核验（无只读 CLI 探测，统一检查器将其记为
+`MANUAL`）：新会话写入一份缺章节的状态文件，确认 Agent 停止前被打断、补齐
+后才允许停下；DSH 未暴露第三方可用的压缩前否决点，压缩后仍由 DSH 自身的
+`AGENTS.md` 机制重新注入指令基线。
 
 完整评测方法、历史证据和限制见 [EVALUATION.md](../EVALUATION.md)。
