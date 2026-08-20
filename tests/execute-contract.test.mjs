@@ -67,6 +67,18 @@ test("execute develops concurrently but merges and unlocks serially", () => {
   assert.match(combined, /集成或发布 Delivery Issue/);
 });
 
+test("execute owns and closes cleanup for the branches and worktrees it creates", () => {
+  const skill = read("skills/scd-execute/SKILL.md");
+  const contract = read("skills/scd-execute/references/execution-contract.md");
+  const combined = `${skill}\n${contract}`;
+
+  assert.match(combined, /谁创建.*分支和.*工作树.*谁负责.*清理|创建者.*清理所有者/);
+  assert.match(combined, /父 Execute.*清理所有者/);
+  assert.match(combined, /通道.*工作树[\s\S]*本地.*分支[\s\S]*远端.*分支/);
+  assert.match(combined, /清理证据.*闭合后.*关闭.*Issue|清理完成后.*关闭.*Delivery Issue/);
+  assert.match(combined, /未提交状态[\s\S]*`BLOCKED`/);
+});
+
 test("execute fails closed and resumes from authoritative evidence", () => {
   const skill = read("skills/scd-execute/SKILL.md");
   const contract = read("skills/scd-execute/references/execution-contract.md");
