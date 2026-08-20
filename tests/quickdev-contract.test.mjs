@@ -284,3 +284,30 @@ test("quickdev confirms the accepted merge on main before closing the Issue", ()
   assert.match(skill, /重新读取 Issue[\s\S]*完成审计三本账仍闭合/);
   assert.match(issueContract, /确认远端 `main` 包含独立验收版本/);
 });
+
+test("quickdev makes task-owned branch and worktree cleanup a closing gate", () => {
+  const skill = read("skills/scd-quickdev/SKILL.md");
+  const issueContract = read(
+    "skills/scd-quickdev/references/issue-delivery-contract.md",
+  );
+  const combined = `${skill}\n${issueContract}`;
+
+  for (const requiredCleanupField of [
+    "清理所有者",
+    "任务工作树",
+    "本地任务分支",
+    "远端任务分支",
+    "连续性状态",
+    "main 同步",
+  ]) {
+    assert.match(issueContract, new RegExp(requiredCleanupField));
+  }
+  assert.match(combined, /任务自有资源.*阻止.*关闭 Issue|保持 Issue 开放/);
+  assert.match(combined, /未提交状态[\s\S]*不得强制删除/);
+  assert.match(combined, /合并命令.*非零[\s\S]*重新读取.*拉取请求|重新读取.*拉取请求[\s\S]*合并命令.*非零/);
+  assert.match(combined, /squash|rebase/i);
+  assert.match(combined, /显式删除远端任务分支/);
+  assert.match(combined, /不得仅依赖.*--delete-branch/);
+  assert.match(combined, /工作树.*不存在[\s\S]*本地任务分支.*不存在[\s\S]*远端任务分支.*不存在/);
+  assert.match(combined, /不得扫描或删除.*历史|不得清理.*无关/);
+});
