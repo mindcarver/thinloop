@@ -36,6 +36,8 @@ npm exec --yes --package=@anthropic-ai/claude-code@2.1.197 -- claude plugin vali
 CI 只运行无密钥、无桌面依赖且结果确定的检查。真实模型 `smoke` / `full` 评测、
 本机 Agent 安装验证和 WorkBuddy / ZCode 界面检查不在该 workflow 中；这些路径
 继续按下文的发布或安装验收边界执行，不能由绿色 CI 代替。
+仓库测试会解析固定的历史评测提交，因此 CI 必须使用完整 Git 历史，不能把
+`actions/checkout` 恢复为默认浅克隆。
 
 Knowledge 发布前还需在隔离 Fixture 中运行真实成对行为评测：
 

@@ -21,6 +21,7 @@ test("Thinloop CI keeps one stable pull-request check with bounded permissions",
   assert.match(workflow, /^    runs-on: ubuntu-latest$/m);
   assert.match(workflow, /^    timeout-minutes: 10$/m);
   assert.match(workflow, /uses: actions\/checkout@v4/);
+  assert.match(workflow, /fetch-depth: 0/);
   assert.match(workflow, /uses: actions\/setup-node@v4/);
   assert.match(workflow, /node-version: "22"/);
 });
