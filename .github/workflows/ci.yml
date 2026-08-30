@@ -1,0 +1,42 @@
+name: Thinloop CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Thinloop CI
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Run repository tests
+        run: node --test tests/*.test.mjs
+
+      - name: Validate evaluation definitions
+        run: |
+          node evals/validate-discovery-cases.mjs
+          node evals/validate-knowledge-cases.mjs
+          node evals/knowledge/validate.mjs
+
+      - name: Run Knowledge dry-run
+        run: node evals/knowledge/runner/run.mjs --mode dry
+
+      - name: Check README diagrams
+        run: node scripts/generate-readme-diagrams.mjs --check
+
+      - name: Validate Claude plugin
+        run: npm exec --yes --package=@anthropic-ai/claude-code@2.1.197 -- claude plugin validate . --strict
