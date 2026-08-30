@@ -29,6 +29,9 @@ jobs:
       - name: Run repository tests
         run: node --test tests/*.test.mjs
 
+      - name: Check routing kernel surfaces
+        run: node scripts/sync-routing-kernel.mjs --check
+
       - name: Validate evaluation definitions
         run: |
           node evals/validate-discovery-cases.mjs

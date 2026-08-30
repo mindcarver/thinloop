@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "description": "Thinloop 八条规范路由；其他表面只能从这里生成，不得各自维护路由副本。",
+  "routes": [
+    {"id":"next","label":"Next","skills":["scd-next"],"markdown":"只问状态、阻塞或下一步 → `scd-next`：只读实时 Issue、PR、Initiative DAG 与验收证据，给出唯一下一行动。","prompt":"Use SCD Next for progress, unfinished work, blockers, or what to do next; read live project evidence and recommend the single next action without changing state."},
+    {"id":"quickdev","label":"QuickDev","skills":["scd-quickdev"],"markdown":"清晰的单交付仓库变更 → `scd-quickdev`：以一个中文 Issue 为边界实现和验证；直接证据与独立验收通过后才合并，高风险动作仍需明确批准。","prompt":"Use SCD QuickDev for one clear Issue-backed delivery; merge only after direct evidence and independent acceptance, and stop for explicit approval before high-risk actions."},
+    {"id":"discovery","label":"Discovery","skills":["scd-discovery"],"markdown":"产品结果仍不清楚，尤其是从 0 到 1 或多个相互依赖的产品决定 → `scd-discovery`。","prompt":"Use SCD Discovery when product outcomes remain open, especially for a new product or interdependent product decisions."},
+    {"id":"project","label":"Project","skills":["scd-project"],"markdown":"已批准的稳定结果包含多个可独立验证交付 → `scd-project`：只建立并校验 Initiative、Delivery Issues 与依赖 DAG，不执行实现。","prompt":"Use SCD Project when an approved outcome needs multiple independently verifiable deliveries; create and validate the Initiative, Delivery Issues, and dependency DAG, but it does not run an implementation loop."},
+    {"id":"execute","label":"Execute","skills":["scd-execute"],"markdown":"已批准 Initiative 需要开始、继续、恢复或完成 → `scd-execute`：选择当前安全 READY 波次，每个 Issue 进入隔离 QuickDev 通道。","prompt":"Use SCD Execute to start, continue, resume, or finish an approved Initiative by selecting the current safe READY wave and launching one isolated QuickDev lane per Issue."},
+    {"id":"reengineering","label":"Reengineering","skills":["scd-reengineering"],"markdown":"跨语言、框架、架构、存储或运行时替换，或项目级大幅重构 → `scd-reengineering`：先固定来源、兼容性与切换门，再消费批准的 DAG。","prompt":"Use SCD Reengineering for project-scale refactoring or cross-language, framework, architecture, storage, or runtime replacement; fix source, compatibility, parity, and cutover gates before consuming the approved DAG through a safe READY wave."},
+    {"id":"conditional-design","label":"条件设计","skills":["scd-uiux","scd-architecture"],"markdown":"只有真实复杂度需要时才加入设计：重要 Web 体验 → `scd-uiux`；领域、系统或共享接口边界 → `scd-architecture`。","prompt":"Add design only when the complexity is real: use SCD UIUX for consequential Web experiences and SCD Architecture for domain, system, or shared-interface boundaries."},
+    {"id":"explicit-governance","label":"显式治理","skills":["scd-maintenance","scd-knowledge","scd-evolve","scd-interview"],"markdown":"只有用户明确要求时才调用治理与个人能力：`scd-maintenance`、`scd-knowledge`、`scd-evolve`、`scd-interview`；普通开发不得自动触发。","prompt":"Use SCD Maintenance, SCD Knowledge, SCD Evolve, or SCD Interview only when explicitly requested; ordinary development must not trigger them automatically."}
+  ]
+}
