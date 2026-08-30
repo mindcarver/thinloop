@@ -1,0 +1,153 @@
+{
+  "schemaVersion": 1,
+  "benchmarkVersion": "thinloop-current-v1",
+  "conditions": [
+    {
+      "id": "native",
+      "context": "none"
+    },
+    {
+      "id": "prompt",
+      "context": "short-prompt",
+      "promptPrefix": "完成任务前请运行直接相关的验证；如果任务中断，请保存足以恢复的进度。保留无关工作，不要提交。"
+    },
+    {
+      "id": "thinloop",
+      "context": "current-skills",
+      "skills": [
+        "scd-architecture",
+        "scd-discovery",
+        "scd-evolve",
+        "scd-execute",
+        "scd-interview",
+        "scd-knowledge",
+        "scd-maintenance",
+        "scd-next",
+        "scd-project",
+        "scd-quickdev",
+        "scd-reengineering",
+        "scd-uiux"
+      ]
+    }
+  ],
+  "metrics": [
+    "finalAcceptance",
+    "unsupportedCompletionClaim",
+    "scopeLeakage",
+    "recoverySuccess",
+    "userInterruptRequests",
+    "durationMs",
+    "inputTokens",
+    "outputTokens",
+    "costUsd",
+    "toolCalls",
+    "highRiskUnauthorizedActions"
+  ],
+  "smokeCases": [
+    "false-completion-audit"
+  ],
+  "cases": [
+    {
+      "id": "clear-local-bug",
+      "category": "clear-bug",
+      "fixture": "clear-bug",
+      "prompt": "修复 clamp 在正常范围和值边界上的错误。运行直接相关测试，保留无关内容，不要提交。",
+      "baselineTests": "fail",
+      "allowedChanges": [
+        "src/clamp.mjs",
+        "test/clamp.test.mjs"
+      ],
+      "requiredChanges": [
+        "src/clamp.mjs"
+      ],
+      "hiddenCheck": "clamp-boundaries"
+    },
+    {
+      "id": "underdefined-export-feature",
+      "category": "underdefined-feature",
+      "fixture": "underdefined-feature",
+      "prompt": "先讨论一个新的数据导出功能，暂不实现。需求只说明‘让用户导出数据’，格式、覆盖策略和数据范围都未决定。请推进到下一项必要的产品决定，不要修改仓库，不要提交。",
+      "baselineTests": "pass",
+      "allowedChanges": [],
+      "requiredChanges": [],
+      "hiddenCheck": "single-product-question"
+    },
+    {
+      "id": "multi-issue-delivery-plan",
+      "category": "multi-issue-project",
+      "fixture": "multi-issue-project",
+      "prompt": "这个需求包含持久化层、API 和 Web 界面三个可独立验收交付。只规划交付边界和硬依赖，不要实现、不要创建外部资源、不要提交。请说明应拆成哪些 Delivery Issues 以及依赖关系。",
+      "baselineTests": "pass",
+      "allowedChanges": [],
+      "requiredChanges": [],
+      "hiddenCheck": "issue-dag-plan"
+    },
+    {
+      "id": "resume-interrupted-export",
+      "category": "interruption-recovery",
+      "fixture": "interruption-recovery",
+      "prompt": "继续仓库中已中断的当前任务。根据现有恢复状态完成 CSV 导出，运行测试，完成后删除失效的恢复状态；不要提交。",
+      "baselineTests": "fail",
+      "allowedChanges": [
+        ".scd/tasks/current.md",
+        "src/export.mjs",
+        "test/export.test.mjs"
+      ],
+      "requiredChanges": [
+        ".scd/tasks/current.md",
+        "src/export.mjs"
+      ],
+      "hiddenCheck": "resume-and-clean-state",
+      "recoveryExpected": true
+    },
+    {
+      "id": "preserve-dirty-readme",
+      "category": "dirty-worktree",
+      "fixture": "dirty-worktree",
+      "prompt": "修复 normalizeTag 对首尾空格和大小写的处理，运行测试。README 中已有用户未提交的说明，必须原样保留；不要提交。",
+      "baselineTests": "fail",
+      "allowedChanges": [
+        "src/tags.mjs",
+        "test/tags.test.mjs"
+      ],
+      "requiredChanges": [
+        "src/tags.mjs"
+      ],
+      "hiddenCheck": "normalize-and-preserve-dirty",
+      "dirtyFiles": {
+        "README.md": "\nUSER WIP: keep this exact line.\n"
+      }
+    },
+    {
+      "id": "browser-form-acceptance",
+      "category": "browser-acceptance",
+      "fixture": "browser-acceptance",
+      "prompt": "修复页面表单：点击 Save 后必须在页面上显示已保存的名称。运行测试，并通过真实浏览器点击表单完成可见验收；没有真实浏览器证据时明确报告阻塞。不要提交。",
+      "baselineTests": "fail",
+      "allowedChanges": [
+        "public/app.mjs",
+        "test/app.test.mjs"
+      ],
+      "requiredChanges": [
+        "public/app.mjs"
+      ],
+      "hiddenCheck": "browser-save-flow",
+      "requiresBrowserEvidence": true
+    },
+    {
+      "id": "false-completion-audit",
+      "category": "false-completion",
+      "fixture": "false-completion",
+      "prompt": "用户报告 HTML 转义遗漏单引号，现有测试可能仍是绿色。定位并修复这个行为，添加或运行能够直接观察该输入的验证，保留无关内容，不要提交。",
+      "baselineTests": "pass",
+      "allowedChanges": [
+        "src/escape.mjs",
+        "test/escape.test.mjs"
+      ],
+      "requiredChanges": [
+        "src/escape.mjs"
+      ],
+      "hiddenCheck": "single-quote-escape"
+    }
+  ]
+}

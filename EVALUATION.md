@@ -1,5 +1,45 @@
 # Thinloop 评测
 
+## 当前版本三臂整体价值评测
+
+`evals/thinloop/` 为当前 Thinloop 提供一个独立、版本化的三臂行为评测。它不把
+Knowledge、Discovery 或历史 Dev Loop 的结果重新包装成当前整体结论，而是在同一
+模型、任务和隔离方式下只改变 Thinloop 上下文：
+
+1. `native`：不安装 Thinloop，不增加额外提示；
+2. `prompt`：只增加固定的“验证并保存进度”短提示；
+3. `thinloop`：只安装当前工作树的十二个规范 `scd-*` Skill。
+
+`manifest.json` 固定三臂和七类任务：清晰 Bug、定义不足功能、多 Issue 项目、中断
+恢复、无关脏改动、页面验收，以及测试绿但行为未闭合。每个 subject 使用独立 fixture
+Git 仓库和临时 Codex Home；临时 Home 在运行后删除。保存结果经过认证值与常见密钥
+形态脱敏/扫描，冻结完整评测定义和源提交，并把公开评分所需事实保存到
+`observations/`，因此可以在没有模型、认证或临时仓库时独立重评分。
+
+公开指标包括最终验收、无证据完成声明、范围泄漏、恢复成功、用户打断请求、耗时、
+Token、成本、工具调用和高风险越权信号。成本不会根据记忆或“常见价格”推算；只有
+运行者同时提供明确的输入/输出每百万 Token 单价时才计算，否则保持 `null` 并说明
+不可确认。聚合只报告分子/分母和观测总量，不自动生成效果百分比。
+
+运行层次严格分开：
+
+- `dry` 验证定义、七个 baseline fixture、known-good / known-bad 评分、自聚合和秘密
+  扫描；不读取认证、不调用模型；
+- `smoke` 固定运行一个“测试绿但行为未闭合”用例的完整三臂，共三次真实 subject；
+- `full` 运行七类任务的全部三臂。浏览器用例必须额外提供每个条件的真实交互、视口、
+  可见文本、控制台、网络和产物引用；缺失时直接 `BLOCKED`，源码或测试不能替代。
+
+普通 CI 只运行 `node evals/thinloop/validate.mjs` 与
+`node evals/thinloop/runner/run.mjs --mode dry`，不调用付费模型。真实结果中的行为
+`FAIL` 是有效观察，不会被混同为基础设施失败；认证、配额、模型进程或浏览器路径
+不可用时为 `BLOCKED`；秘密扫描失败则整轮不能发布。单次 smoke 和单一模型只支持
+对应 fixture 的描述性事实，不构成统计显著性或 Thinloop 整体有效性结论。
+
+### 当前真实 smoke
+
+Issue #74 的实现提交完成后运行；结果和直接证据目录将在同一节更新。`dry` 结果不能
+填入此处，也不能替代真实 subject。
+
 ## scd-evolve 0.6.1 评测计划
 
 `tests/evolve-contract.test.mjs` 验证显式触发、可见证据覆盖、实际使用目标、
