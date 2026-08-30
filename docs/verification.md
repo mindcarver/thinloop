@@ -8,6 +8,7 @@
 
 ```bash
 node --test tests/*.test.mjs
+node scripts/check-version.mjs
 node scripts/sync-routing-kernel.mjs --check
 node evals/validate-discovery-cases.mjs
 node evals/validate-knowledge-cases.mjs
@@ -26,6 +27,7 @@ codebuddy plugin validate .codebuddy-plugin/marketplace.json
 
 ```bash
 node --test tests/*.test.mjs
+node scripts/check-version.mjs
 node scripts/sync-routing-kernel.mjs --check
 node evals/validate-discovery-cases.mjs
 node evals/validate-knowledge-cases.mjs
@@ -40,6 +42,12 @@ CI 只运行无密钥、无桌面依赖且结果确定的检查。真实模型 `
 继续按下文的发布或安装验收边界执行，不能由绿色 CI 代替。
 仓库测试会解析固定的历史评测提交，因此 CI 必须使用完整 Git 历史，不能把
 `actions/checkout` 恢复为默认浅克隆。
+
+正式发布由 `.github/workflows/release.yml` 在 `v*` Tag push 时触发。它先用与
+Pull Request CI 同构的确定性门检查全部版本面、精确 Tag 发布说明和 Tag 提交属于
+远端 `main`，再由唯一具有 `contents: write` 权限的 Release job 从
+`docs/releases/<tag>.md` 创建 GitHub Release。候选 PR 不打 Tag；不发布 npm，也不
+配置包注册表密钥。
 
 Knowledge 发布前还需在隔离 Fixture 中运行真实成对行为评测：
 
