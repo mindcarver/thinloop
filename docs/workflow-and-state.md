@@ -9,21 +9,20 @@ GitHub Delivery Issue 保存切片边界和验收；多交付项目由 Initiativ
 
 ## 路由原则
 
-| 遇到什么 | Thinloop 怎么做 |
-|---|---|
-| QuickDev 即将写 Issue 或开始实现 | 默认直接创建或更新中文 Issue 并自动继续；只有用户主动要求先看或先确认时才等待确认 |
-| 目标、边界和验收已经清楚 | 直接进入 QuickDev，不制造额外需求流程 |
-| 从 0 到 1，或多个上游产品决定仍会改变结果 | 用 Discovery 一次解决一个关键决定；新产品批准后形成轻量 PRD |
-| 已批准目标跨越多个独立交付 | 用 Project 从 PRD/产品契约创建 Initiative、Delivery Issues 和依赖 DAG；不启动执行 loop |
-| 已批准 Initiative 需要开始、继续、恢复或完成 | 用 Execute 复核实时 DAG，默认执行当前所有安全 READY Issues，也接受单 Issue、串行或并发上限覆盖 |
-| 不清楚当前进度、未完成工作、阻塞或下一步 | 用 Next 只读检查实时 Issue、PR、Initiative DAG 和验收证据，给出唯一建议下一步和责任 Skill |
-| 现有系统需要项目级重构或跨技术栈重新实现 | 用 Reengineering 固定上游、兼容边界和目标方向，再通过 Execute 消费批准的 Project DAG |
-| 重要新页面、重要流程或整体改版需要设计 | 调用 UIUX；UX 契约、项目内 UI 图和必要原型一致后才可交接，重大视觉方向需要一次确认 |
-| 技术边界仍影响交付 | 按需调用 Architecture，不设固定关卡 |
-| 实现完成 | Agent 验证、自审并提交任务内变更 |
-| 工程验证完成 | QuickDev 闭合 Issue 的验收、实施和交付三本账；页面差异强制执行真实浏览器交互与视觉验收，再由独立 Agent 判定 |
-| 用户主动要求维护或沉淀 | 调用 Maintenance 或 Knowledge；普通开发不自动触发 |
-| 用户主动要求优化 Thinloop | 调用 Evolve；先诊断和候选，按候选 ID 批准后才试验 |
+`config/routing-kernel.json` 是八条路由的规范事实源，下方受控块由
+`node scripts/sync-routing-kernel.mjs` 生成。具体 Skill 契约仍以各自
+`SKILL.md` 为准。
+
+<!-- thinloop-routing-kernel:start source=config/routing-kernel.json -->
+1. **Next**：只问状态、阻塞或下一步 → `scd-next`：只读实时 Issue、PR、Initiative DAG 与验收证据，给出唯一下一行动。
+2. **QuickDev**：清晰的单交付仓库变更 → `scd-quickdev`：以一个中文 Issue 为边界实现和验证；直接证据与独立验收通过后才合并，高风险动作仍需明确批准。
+3. **Discovery**：产品结果仍不清楚，尤其是从 0 到 1 或多个相互依赖的产品决定 → `scd-discovery`。
+4. **Project**：已批准的稳定结果包含多个可独立验证交付 → `scd-project`：只建立并校验 Initiative、Delivery Issues 与依赖 DAG，不执行实现。
+5. **Execute**：已批准 Initiative 需要开始、继续、恢复或完成 → `scd-execute`：选择当前安全 READY 波次，每个 Issue 进入隔离 QuickDev 通道。
+6. **Reengineering**：跨语言、框架、架构、存储或运行时替换，或项目级大幅重构 → `scd-reengineering`：先固定来源、兼容性与切换门，再消费批准的 DAG。
+7. **条件设计**：只有真实复杂度需要时才加入设计：重要 Web 体验 → `scd-uiux`；领域、系统或共享接口边界 → `scd-architecture`。
+8. **显式治理**：只有用户明确要求时才调用治理与个人能力：`scd-maintenance`、`scd-knowledge`、`scd-evolve`、`scd-interview`；普通开发不得自动触发。
+<!-- thinloop-routing-kernel:end -->
 
 默认不强制 TDD、角色系统或固定阶段。Project 只拆解项目、校验 Issue 级 DAG
 并报告 READY/BLOCKED，不启动 Agent、worktree 或长期 loop；Execute 消费批准

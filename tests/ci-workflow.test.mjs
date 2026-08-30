@@ -30,6 +30,7 @@ test("Thinloop CI keeps one stable pull-request check with bounded permissions",
 test("Thinloop CI runs every deterministic repository gate", () => {
   const commands = [
     "node --test tests/*.test.mjs",
+    "node scripts/sync-routing-kernel.mjs --check",
     "node evals/validate-discovery-cases.mjs",
     "node evals/validate-knowledge-cases.mjs",
     "node evals/knowledge/validate.mjs",

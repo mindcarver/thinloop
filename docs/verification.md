@@ -8,6 +8,7 @@
 
 ```bash
 node --test tests/*.test.mjs
+node scripts/sync-routing-kernel.mjs --check
 node evals/validate-discovery-cases.mjs
 node evals/validate-knowledge-cases.mjs
 node evals/knowledge/validate.mjs
@@ -25,6 +26,7 @@ codebuddy plugin validate .codebuddy-plugin/marketplace.json
 
 ```bash
 node --test tests/*.test.mjs
+node scripts/sync-routing-kernel.mjs --check
 node evals/validate-discovery-cases.mjs
 node evals/validate-knowledge-cases.mjs
 node evals/knowledge/validate.mjs

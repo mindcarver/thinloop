@@ -60,19 +60,19 @@ QuickDev 默认不询问你是否要先审核 Issue、实施方案和任务清�
 浏览器控件完成关键旅程，并记录页面、状态、视口、视觉 ID 和截图或追踪证据；
 浏览器路径不可用时只能 `BLOCKED`，不能用构建或 API 调用代替。
 
-| 当前情况 | 默认路径 |
-|---|---|
-| Bug 或清晰、局部的新功能 | 建立或确认 Issue，直接诊断、实现和验证 |
-| 从 0 到 1 的新产品，或多个产品决定仍未明确 | 调用 Discovery 逐项澄清；新产品批准后形成轻量 PRD |
-| 已批准项目包含多个可独立验收的交付 | 调用 Project 从 PRD/产品契约拆成 Initiative、Delivery Issues 和依赖图 |
-| 已批准 Initiative 需要开始、继续或恢复交付 | 调用 Execute 自动选择当前安全 READY 波次，每个 Issue 进入独立 QuickDev lane |
-| 不清楚当前做到哪、还有什么没做或下一步该干嘛 | 调用 Next 只读检查实时 Issue、PR、Initiative DAG 和验收状态，并给出唯一建议下一步 |
-| 对现有项目做大型重构或跨语言、跨架构重新实现 | 调用 Reengineering 固定上游与兼容边界，再执行批准的 Project 任务图 |
-| 重要新页面、重要流程或整体改版 | 调用 UIUX，交付 UX 契约、项目内 UI 图和必要的交互原型；重大视觉方向确认后再实施 |
-| 系统边界会显著影响实现 | 按需组合 Architecture |
-| 工程验证通过 | Agent 自审并提交任务内变更 |
-| 工程验证完成 | 审计整张 Issue；页面差异必须完成真实浏览器交互与视觉验收，再由独立 Agent 返回 `PASS`、`FAIL` 或 `BLOCKED` |
-| 生产部署、认证支付、破坏性数据等高风险工作 | 在高风险动作前停下并请求明确批准 |
+下面的八条路由
+[`config/routing-kernel.json`](./config/routing-kernel.json) 统一生成；修改路由时只改该事实源。
+
+<!-- thinloop-routing-kernel:start source=config/routing-kernel.json -->
+1. **Next**：只问状态、阻塞或下一步 → `scd-next`：只读实时 Issue、PR、Initiative DAG 与验收证据，给出唯一下一行动。
+2. **QuickDev**：清晰的单交付仓库变更 → `scd-quickdev`：以一个中文 Issue 为边界实现和验证；直接证据与独立验收通过后才合并，高风险动作仍需明确批准。
+3. **Discovery**：产品结果仍不清楚，尤其是从 0 到 1 或多个相互依赖的产品决定 → `scd-discovery`。
+4. **Project**：已批准的稳定结果包含多个可独立验证交付 → `scd-project`：只建立并校验 Initiative、Delivery Issues 与依赖 DAG，不执行实现。
+5. **Execute**：已批准 Initiative 需要开始、继续、恢复或完成 → `scd-execute`：选择当前安全 READY 波次，每个 Issue 进入隔离 QuickDev 通道。
+6. **Reengineering**：跨语言、框架、架构、存储或运行时替换，或项目级大幅重构 → `scd-reengineering`：先固定来源、兼容性与切换门，再消费批准的 DAG。
+7. **条件设计**：只有真实复杂度需要时才加入设计：重要 Web 体验 → `scd-uiux`；领域、系统或共享接口边界 → `scd-architecture`。
+8. **显式治理**：只有用户明确要求时才调用治理与个人能力：`scd-maintenance`、`scd-knowledge`、`scd-evolve`、`scd-interview`；普通开发不得自动触发。
+<!-- thinloop-routing-kernel:end -->
 
 新产品的 `.scd/product/prd.md` 保存产品级 why/what、MVP、`FR-*` 需求和成功
 指标；Initiative 保存交付拓扑，各 Delivery Issue 保存自身切片和验收。PR
