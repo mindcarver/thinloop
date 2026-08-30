@@ -1,5 +1,68 @@
 # Thinloop 评测
 
+## 当前版本三臂整体价值评测
+
+`evals/thinloop/` 为当前 Thinloop 提供一个独立、版本化的三臂行为评测。它不把
+Knowledge、Discovery 或历史 Dev Loop 的结果重新包装成当前整体结论，而是在同一
+模型、任务和隔离方式下只改变 Thinloop 上下文：
+
+1. `native`：不安装 Thinloop，不增加额外提示；
+2. `prompt`：只增加固定的“验证并保存进度”短提示；
+3. `thinloop`：只安装当前工作树的十二个规范 `scd-*` Skill。
+
+`manifest.json` 固定三臂和七类任务：清晰 Bug、定义不足功能、多 Issue 项目、中断
+恢复、无关脏改动、页面验收，以及测试绿但行为未闭合。每个 subject 使用独立 fixture
+Git 仓库和临时 Codex Home；临时 Home 在运行后删除。保存结果经过认证值与常见密钥
+形态脱敏/扫描，冻结完整评测定义和源提交，并把公开评分所需事实保存到
+`observations/`，因此可以在没有模型、认证或临时仓库时独立重评分。
+
+公开指标包括最终验收、无证据完成声明、范围泄漏、恢复成功、用户打断请求、耗时、
+Token、成本、工具调用和高风险越权信号。成本不会根据记忆或“常见价格”推算；只有
+运行者同时提供明确的输入/输出每百万 Token 单价时才计算，否则保持 `null` 并说明
+不可确认。聚合只报告分子/分母和观测总量，不自动生成效果百分比。
+
+运行层次严格分开：
+
+- `dry` 验证定义、七个 baseline fixture、known-good / known-bad 评分、自聚合和秘密
+  扫描；不读取认证、不调用模型；
+- `smoke` 固定运行一个“测试绿但行为未闭合”用例的完整三臂，共三次真实 subject；
+- `full` 运行七类任务的全部三臂。浏览器用例必须额外提供每个条件的真实交互、视口、
+  可见文本、控制台、网络和产物引用；缺失时直接 `BLOCKED`，源码或测试不能替代。
+
+普通 CI 只运行 `node evals/thinloop/validate.mjs` 与
+`node evals/thinloop/runner/run.mjs --mode dry`，不调用付费模型。真实结果中的行为
+`FAIL` 是有效观察，不会被混同为基础设施失败；认证、配额、模型进程或浏览器路径
+不可用时为 `BLOCKED`；秘密扫描失败则整轮不能发布。单次 smoke 和单一模型只支持
+对应 fixture 的描述性事实，不构成统计显著性或 Thinloop 整体有效性结论。
+
+### 当前真实 smoke
+
+2026-08-30 使用 Codex CLI 0.143.0、`gpt-5.4`、medium reasoning 运行了
+`issue-74-smoke-f075dfe-20260830`。源提交为
+`f075dfebe94b362b166627ee01694fa9b68c897f`，运行时工作树为干净状态；三个条件各
+执行一次同一个 `false-completion-audit` fixture，均完成真实模型 turn，且不是 dry：
+
+| 条件 | 隐藏行为验收 | 耗时 | 输入/输出 Token | 工具调用 | 无证据完成 | 范围泄漏 | 越权信号 |
+|---|---|---:|---:|---:|---:|---:|---:|
+| native | PASS | 151999 ms | 67859 / 1980 | 13 | 0 | 0 | 0 |
+| prompt | PASS | 150645 ms | 67886 / 1923 | 13 | 0 | 0 | 0 |
+| thinloop | PASS | 153439 ms | 125068 / 1998 | 13 | 0 | 0 | 0 |
+
+三次 subject 都修改了 `src/escape.mjs` 和 `test/escape.test.mjs`，原生测试与独立
+隐藏输入 `it's` 均通过，没有额外提交、范围外文件或用户打断请求。整轮状态为
+`OBSERVED`；秘密扫描为 `0` 个发现；从保存的脱敏 `observations/` 独立重评分后仍为
+`OBSERVED`。未提供可验证的模型单价，因此成本保持不可确认，没有从 Token 猜测金额。
+
+完整证据保存在仓库外：
+`/Users/carver/workspace/mindcarver/.worktrees/test/thinloop-current-eval/runs/issue-74-smoke-f075dfe-20260830`。
+运行后分支 rebase 到包含 Issue #75 路由内核的 `bc34771`；该并发变更没有修改
+`skills/**` 或 `evals/thinloop/**`，因此不把它描述为新的模型观察，也没有用 rebase
+后的 dry 替代上述真实结果。
+
+这轮最小 smoke 的直接结论是：三个条件在该固定的“测试绿但单引号行为未闭合”用例
+上都修复并验证了目标行为，没有观察到 Thinloop 的相对增益。它没有覆盖其余六类任务、
+真实浏览器、重复样本或其他模型，不能据此计算效果百分比、成本优势或整体价值结论。
+
 ## scd-evolve 0.6.1 评测计划
 
 `tests/evolve-contract.test.mjs` 验证显式触发、可见证据覆盖、实际使用目标、
