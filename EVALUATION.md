@@ -86,35 +86,42 @@ Token、成本、工具调用和高风险越权信号。成本不会根据记忆
 也不证明任意对话的因果归因正确。其余负向路由仍由契约测试覆盖，后续可增加真实
 成对会话评测。
 
-## WorkBuddy 兼容性边界
+## 历史平台兼容性快照（2026-07-27）
+
+以下 WorkBuddy、ZCode、OpenCode 与 Claude Code 结果记录的是 2026-07-27 当日的
+六 Skill 仓库快照和当时运行时，不是当前十二 Skill 的安装或行为状态。当前仓库的
+十二 Skill 与九平台结构由 `config/platform-capabilities.json` 和确定性测试校验；
+这些当前结构检查不能追溯性地把下列六 Skill 实机观察改写成十二 Skill 实机证据。
+
+### WorkBuddy 兼容性边界
 
 WorkBuddy 5.3.5 内置 CodeBuddy CLI 2.115.0，并在内置插件中实际使用
 `.codebuddy-plugin/plugin.json`、`skills/` 与 `hooks/hooks.json`。Thinloop
 因此提供 `.codebuddy-plugin/plugin.json` 和
-`.codebuddy-plugin/marketplace.json`，共享仓库中的六个 Skill，不复制 Skill
+`.codebuddy-plugin/marketplace.json`，共享当时仓库快照中的六个 Skill，不复制 Skill
 内容。
 
 2026-07-27 使用 WorkBuddy 应用包内的 CLI 分别运行
 `plugin validate .codebuddy-plugin/plugin.json` 与
 `plugin validate .codebuddy-plugin/marketplace.json`，两项均通过。
 随后用 `--plugin-dir . --tools ""` 启动同一运行时且不发起模型任务；运行日志
-将当前仓库识别为 `thinloop@inline`，加载出六个 `scd-*` Skill 和两个 Hook，
+将当时被测仓库识别为 `thinloop@inline`，加载出六个 `scd-*` Skill 和两个 Hook，
 Hook 配置也成功载入。
 `tests/plugin-compatibility.test.mjs` 验证版本、Skill 源、Marketplace 和专用
 Hook 路径；`tests/check-state.test.mjs` 验证 WorkBuddy `Stop` 返回
 `{ "continue": false, "reason": "..." }`，而不是已弃用的
 `decision: "block"`。
 
-该结果证明当前本机 WorkBuddy 运行时能解析插件结构、发现 Skill 与 Hook，并
+该结果证明当日本机 WorkBuddy 运行时能解析插件结构、发现 Skill 与 Hook，并
 接受对应协议；不证明自动 Skill 召回率或复杂任务端到端行为。
 
-## ZCode 兼容性边界
+### ZCode 兼容性边界
 
 ZCode 优先读取 `.zcode-plugin/plugin.json`，并从插件根目录加载 `skills/` 与
 Hook。Thinloop 还在仓库根目录提供 `marketplace.json`，可通过 ZCode 的自定义
 Marketplace 安装本地路径或 GitHub 仓库。
 
-2026-07-27 在 ZCode App 3.5.2、CLI 0.15.2 上，通过临时工作区配置把当前仓库
+2026-07-27 在 ZCode App 3.5.2、CLI 0.15.2 上，通过临时工作区配置把当时被测仓库
 作为 inline 插件加载。`zcode plugins list --json` 报告原生清单版本 0.6.0、
 6 个 Skill、1 个 Skill 根目录，以及两个可运行 Hook：
 
@@ -127,24 +134,24 @@ Thinloop 插件源发现。`tests/check-state.test.mjs` 覆盖 ZCode 的 Stop �
 压缩后上下文协议；`tests/plugin-compatibility.test.mjs` 覆盖三端版本一致、
 Marketplace、Hook 映射和共享命令路径。
 
-同日通过 ZCode 实际 Settings → Plugins 界面添加当前仓库路径后，个人
+同日通过 ZCode 实际 Settings → Plugins 界面添加当时仓库路径后，个人
 Marketplace 登记为 `thinloop`、`pluginCount: 1`，切换到 Personal 筛选可见
 `thinloop` 安装卡片。使用 `mindcarver/thinloop` 的远程路径时，本机网络环境在
 GitHub clone 90 秒后超时，因此远程安装未确认；本地 Marketplace 解析与发现已
 确认，但尚未点击安装。
 
-当前已确认的限制：Codex 仍依赖标准 `hooks/hooks.json` 中的 `PreCompact`；
+当日观察到的限制：Codex 依赖标准 `hooks/hooks.json` 中的 `PreCompact`；
 ZCode 不支持该事件，因此加载共享文件时产生
 `plugin_hook_unsupported_event` warning，并跳过这一项。实机输出同时确认
 ZCode 的 `Stop` 与 `SessionStart` 仍为 runnable，六个 Skill 正常发现。这里的
 通过只证明结构、发现和协议适配，不证明自动 Skill 召回率或复杂任务中的端到端
 行为。
 
-## OpenCode 兼容性边界
+### OpenCode 兼容性边界
 
 OpenCode 原生从 `~/.config/opencode/skills/<name>/SKILL.md` 发现全局 Skill，
 并通过 `skill` 工具按需加载。Thinloop 的安装说明把同一份 `skills/` 源链接到
-该目录；`tests/opencode-compatibility.test.mjs` 验证六个 Skill 的目录名、
+该目录；当时版本的 `tests/opencode-compatibility.test.mjs` 验证六个 Skill 的目录名、
 frontmatter 名称、允许字段、名称格式和描述长度符合 OpenCode 契约。
 
 2026-07-27 在 OpenCode 1.17.7 上使用隔离的 `XDG_CONFIG_HOME`，同时禁用
@@ -152,19 +159,19 @@ Claude / Agents 外部 Skill 扫描后运行 `opencode debug skill --pure`，六
 `scd-*` Skill 均从隔离目录被发现。这证明原生发现和解析有效，不证明自动选择
 召回率或复杂任务行为。
 
-OpenCode 插件提供 `session.idle` 事件和压缩上下文扩展，但当前官方接口没有与
-Codex / Claude Stop Hook 等价的可取消完成输出。因此本版不模拟阻断语义，也不
+OpenCode 插件提供 `session.idle` 事件和压缩上下文扩展，但当日官方接口没有与
+Codex / Claude Stop Hook 等价的可取消完成输出。因此当时版本不模拟阻断语义，也不
 把 Skill-only 安装描述为连续性 Hook 已覆盖；OpenCode 中的状态维护仍依赖
 `scd-dev-loop` / `scd-discovery` Skill 自身的连续性契约。
 
-## Claude Code 兼容性边界
+### Claude Code 兼容性边界
 
-Claude Code 与 Codex 共享 `skills/` 下的六个 Agent Skill，但插件清单、Hook
+当时的 Claude Code 与 Codex 共享 `skills/` 下的六个 Agent Skill，但插件清单、Hook
 路径变量和阻断输出使用各自的运行时协议。Claude Code 支持由以下检查证明：
 
 - `claude plugin validate . --strict` 验证 marketplace、插件、Skill 与 Hook
   结构；
-- `tests/plugin-compatibility.test.mjs` 验证双端清单版本一致、共享同一 Skill
+- 当时版本的 `tests/plugin-compatibility.test.mjs` 验证双端清单版本一致、共享同一 Skill
   源，并使用 Claude Code 的 Hook 路径；
 - `tests/check-state.test.mjs` 分别验证 Codex 的 `continue: false` 和 Claude
   Code 的 `decision: "block"` 输出。
@@ -175,7 +182,7 @@ Claude Code 与 Codex 共享 `skills/` 下的六个 Agent Skill，但插件清�
 Skill 可以被实际加载，不证明自动路由召回率、复杂任务行为或 Hook 在真实中断
 任务中的端到端效果。
 
-现有 Discovery 正式评测仍是 Codex-only：它隔离 `CODEX_HOME`、解析 Codex
+截至 2026-07-27，Discovery 正式评测仍是 Codex-only：它隔离 `CODEX_HOME`、解析 Codex
 JSONL 并使用 `codex exec`。在新增独立的 Claude Code 隔离运行器和真实成对结果
 前，不把下面的 Codex 行为分数描述为 Claude Code 行为证据。
 
@@ -222,7 +229,7 @@ JSONL 并使用 `codex exec`。在新增独立的 Claude Code 隔离运行器和
 
 2026-07-26 的第一轮正式评测**未达到发布门槛**。`scd-discovery`
 在复杂需求上相对基线更受匿名裁判偏好，但仍会过早请求整体批准、一次捆绑多个
-独立决定，并在完整规格上提出多余问题。因此，当前结果只能证明方向有改善，
+独立决定，并在完整规格上提出多余问题。因此，本轮结果只能证明方向有改善，
 不能声明需求发现行为已经可靠。
 
 ### 方法
@@ -301,7 +308,7 @@ JSONL 并使用 `codex exec`。在新增独立的 Claude Code 隔离运行器和
 - 24/24 个运行都没有自动提交。
 - Hook 在 24 个完成态运行中误拦截 0 次；Hook 单元测试 10/10 通过。
 
-这组结果也验证了最初判断：当前模型本身已经很强。插件没有在普通实现正确率上制造显著差异，它的价值主要是补上“验证声明可信”和“中断后可恢复”这两个容易被忽略的边缘。
+这组结果也验证了最初判断：该轮模型本身已经很强。插件没有在普通实现正确率上制造显著差异，它的价值主要是补上“验证声明可信”和“中断后可恢复”这两个容易被忽略的边缘。
 
 ## 方法
 
