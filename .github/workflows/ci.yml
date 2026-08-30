@@ -26,6 +26,9 @@ jobs:
           node-version: "22"
           package-manager-cache: false
 
+      - name: Check version surfaces
+        run: node scripts/check-version.mjs
+
       - name: Run repository tests
         run: node --test tests/*.test.mjs
 

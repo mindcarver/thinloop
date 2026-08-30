@@ -251,6 +251,9 @@ codebuddy plugin update thinloop@thinloop --scope user
   状态、视口和 UX 契约交给前端；重大视觉方向确认后才能 `ready`，QuickDev 仍默认自主实施。
 - 升级到 v0.15.0：确认 QuickDev 在独立验收前闭合 Issue 的验收、实施和交付三本账；任何
   页面差异都必须执行真实浏览器交互与视觉验收，缺少必需证据时只能 `BLOCKED`。
+- 升级到 v0.16.0：确认 `Thinloop CI`、当前三臂评测、单一路由内核、README 产品表面和
+  Tag-only GitHub Release 链路均存在；发布范围、证据和已知限制见
+  [`docs/releases/v0.16.0.md`](./releases/v0.16.0.md)。
 - 若从 v0.6.x 升级，另确认旧 `scd-dev-loop` 已消失。
 
 更新后可以在 Thinloop 源码仓库运行只读检查器：
