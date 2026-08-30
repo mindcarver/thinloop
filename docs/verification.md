@@ -18,6 +18,27 @@ codebuddy plugin validate .codebuddy-plugin/plugin.json
 codebuddy plugin validate .codebuddy-plugin/marketplace.json
 ```
 
+## Pull Request CI
+
+`.github/workflows/ci.yml` 在每个 Pull Request 和 `main` push 上运行稳定命名的
+`Thinloop CI` 检查。以下命令与远端 workflow 一致，可在本地完整复现：
+
+```bash
+node --test tests/*.test.mjs
+node evals/validate-discovery-cases.mjs
+node evals/validate-knowledge-cases.mjs
+node evals/knowledge/validate.mjs
+node evals/knowledge/runner/run.mjs --mode dry
+node scripts/generate-readme-diagrams.mjs --check
+npm exec --yes --package=@anthropic-ai/claude-code@2.1.197 -- claude plugin validate . --strict
+```
+
+CI 只运行无密钥、无桌面依赖且结果确定的检查。真实模型 `smoke` / `full` 评测、
+本机 Agent 安装验证和 WorkBuddy / ZCode 界面检查不在该 workflow 中；这些路径
+继续按下文的发布或安装验收边界执行，不能由绿色 CI 代替。
+仓库测试会解析固定的历史评测提交，因此 CI 必须使用完整 Git 历史，不能把
+`actions/checkout` 恢复为默认浅克隆。
+
 Knowledge 发布前还需在隔离 Fixture 中运行真实成对行为评测：
 
 ```bash
