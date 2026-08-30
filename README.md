@@ -21,8 +21,10 @@
 </p>
 
 <p align="center">
+  <a href="#capability-map">三层能力</a> ·
+  <a href="#evidence-cases">对照</a> ·
   <a href="#quick-start">开始</a> ·
-  <a href="#capabilities">能力</a> ·
+  <a href="#capabilities">完整目录</a> ·
   <a href="#workflow">闭环</a> ·
   <a href="#skill-flows">技能流程</a> ·
   <a href="#docs">文档</a>
@@ -33,6 +35,40 @@
 Thinloop 不接管开发过程，只守住容易在长任务里丢失的结果：
 
 > **需求不被误解，体验与架构有据可循，完成声明有真实证据，仓库漂移能被主动发现。**
+
+<a id="capability-map"></a>
+
+## 三层能力 / THREE LAYERS
+
+十二个 Skill 不是十二道固定工序。先按责任看三层，再由任务事实选择最短路径：
+
+| 层级 | Skill | 什么时候进入 |
+|---|---|---|
+| **核心交付** | [Next](./skills/scd-next/SKILL.md) · [Discovery](./skills/scd-discovery/SKILL.md) · [Project](./skills/scd-project/SKILL.md) · [Execute](./skills/scd-execute/SKILL.md) · [QuickDev](./skills/scd-quickdev/SKILL.md) | 从状态导航、产品澄清和多交付拆解，一直到每个 Issue 的实现、验收与合并。清晰单交付直接进入 QuickDev。 |
+| **条件设计与再工程** | [UIUX](./skills/scd-uiux/SKILL.md) · [Architecture](./skills/scd-architecture/SKILL.md) · [Reengineering](./skills/scd-reengineering/SKILL.md) | 只有体验、系统边界或项目级替换的复杂度真实存在时才加入，不是普通任务的必经阶段。 |
+| **主动治理与个人能力** | [Maintenance](./skills/scd-maintenance/SKILL.md) · [Knowledge](./skills/scd-knowledge/SKILL.md) · [Evolve](./skills/scd-evolve/SKILL.md) · [Interview](./skills/scd-interview/SKILL.md) | 只在用户明确要求审计、沉淀、演进或提炼面试题时调用，普通开发不会自动触发。 |
+
+<a id="evidence-cases"></a>
+
+## 三个可追溯对照 / BEFORE & AFTER
+
+### 01 · 修一个 Bug
+
+- **Before：** 仓库原有测试是绿色的，仍可能漏掉用户报告的具体输入；只说“测试通过”不能证明行为已经闭合。
+- **After：** QuickDev 先把 Bug 绑定到一个中文 Issue，再用直接回归证据、完整 Issue 审计和独立验收约束完成声明。依据：[Issue 交付契约](./skills/scd-quickdev/references/issue-delivery-contract.md)、[证据契约](./skills/scd-quickdev/references/evidence-contract.md)和当前评测的 [`false-completion-audit`](./evals/thinloop/manifest.json) fixture。
+- **证据边界：** #74 的当前 smoke 只运行一个 fixture，`native`、`prompt`、`thinloop` 三个条件均为 `PASS`；**没有观察到 Thinloop 的相对增益**。完整数字与限制见[当前真实 smoke](./EVALUATION.md#当前真实-smoke)。
+
+### 02 · 从模糊想法到多 Issue 项目
+
+- **Before：** “让用户导出数据”仍缺格式、数据范围等产品决定；把它直接塞进一个实现任务，会混合产品澄清、项目拓扑和代码交付。
+- **After：** Discovery 只收敛尚未决定的产品结果；稳定结果确实包含多个独立交付时，Project 建立 Initiative 与 Delivery Issue DAG；批准后由 Execute 把 READY 节点送入隔离 QuickDev 通道。依据：[Discovery](./skills/scd-discovery/SKILL.md)、[Project](./skills/scd-project/SKILL.md)、[Execute](./skills/scd-execute/SKILL.md)及当前评测中尚待完整运行的 [`underdefined-feature` 与 `multi-issue-project`](./evals/thinloop/manifest.json) 定义。
+- **证据边界：** 这是当前仓库的契约路径和已冻结评测定义，不是 #74 单 fixture smoke 已观察到的相对收益。
+
+### 03 · 长任务失败后恢复
+
+- **Before：** 历史受控用例中，基线完成恢复任务后留下过期状态；按要求中途停止时没有留下可恢复状态。
+- **After：** 当时的 `scd-dev-loop` 在对应两例中清理了失效状态，并留下包含唯一下一步的恢复记录。当前 QuickDev 把 GitHub Issue 作为权威，只在确有跨会话需要时使用 `.scd/tasks/current.md` 后备；Execute 从实时 Initiative、Issues、PR 和仓库状态重建项目进度。依据：[0.1.0 历史报告](./EVALUATION.md#scd-dev-loop-010-历史报告)、[QuickDev 连续性契约](./skills/scd-quickdev/references/continuity-contract.md)和[Execute](./skills/scd-execute/SKILL.md)。
+- **证据边界：** 历史两臂结果证明旧版固定 fixture 的差异，不等于当前十二 Skill、其他模型或真实项目已经获得同样收益。
 
 <a id="quick-start"></a>
 
@@ -60,7 +96,9 @@ QuickDev 默认不询问你是否要先审核 Issue、实施方案和任务清�
 浏览器控件完成关键旅程，并记录页面、状态、视口、视觉 ID 和截图或追踪证据；
 浏览器路径不可用时只能 `BLOCKED`，不能用构建或 API 调用代替。
 
-下面的八条路由
+### 八条规范路由
+
+下面的八条路由由
 [`config/routing-kernel.json`](./config/routing-kernel.json) 统一生成；修改路由时只改该事实源。
 
 <!-- thinloop-routing-kernel:start source=config/routing-kernel.json -->
@@ -81,7 +119,7 @@ QuickDev 默认不询问你是否要先审核 Issue、实施方案和任务清�
 
 <a id="capabilities"></a>
 
-## 十二块能力 / CAPABILITIES
+## 完整十二 Skill 目录 / FULL CATALOG
 
 <table width="100%">
   <tr>
