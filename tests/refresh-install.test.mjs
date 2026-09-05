@@ -8,7 +8,10 @@ import { refreshInstallation } from "../scripts/refresh-install.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const version = JSON.parse(fs.readFileSync(path.join(root, ".codex-plugin/plugin.json"))).version;
-const names = fs.readdirSync(path.join(root, "skills"));
+const names = fs.readdirSync(path.join(root, "skills"), { withFileTypes: true })
+  .filter(entry => entry.isDirectory() &&
+    fs.existsSync(path.join(root, "skills", entry.name, "SKILL.md")))
+  .map(entry => entry.name);
 const fixture = () => fs.mkdtempSync(path.join(os.tmpdir(), "thinloop-refresh-"));
 
 function pluginPayload(target) {
