@@ -56,15 +56,27 @@ export function verifyCode(cwd) {
   const env = { ...process.env };
   delete env.NODE_TEST_CONTEXT;
   assert.equal(fs.readFileSync(path.join(cwd, "clamp.test.mjs"), "utf8"), fixtureTests, "fixture acceptance tests were modified");
-  const direct = spawnSync(process.execPath, ["--input-type=module", "-e", `import assert from 'node:assert/strict'; import { clamp } from './clamp.mjs';
-    for (const [value, min, max, expected] of [[5,0,10,5],[-3,0,10,0],[20,0,10,10],[2,2,2,2],[-20,-10,-5,-10],[-7,-10,-5,-7]]) assert.equal(clamp(value,min,max),expected);
-    assert.throws(() => clamp(1,9,2), RangeError);`], { cwd, encoding: "utf8", env });
+  const direct = spawnSync(process.execPath, ["--input-type=module", "-e", `
+    import { writeSync } from 'node:fs'; import { randomBytes } from 'node:crypto';
+    const write = writeSync, nonce = randomBytes(16).toString('hex'), ExpectedRangeError = RangeError;
+    write(1, 'start:' + nonce + '\\n');
+    let passed = false;
+    try {
+      const { clamp } = await import('./clamp.mjs');
+      let reversed = false;
+      try { clamp(1,9,2); } catch (error) { reversed = error instanceof ExpectedRangeError; }
+      passed = clamp(5,0,10) === 5 && clamp(-3,0,10) === 0 && clamp(20,0,10) === 10
+        && clamp(2,2,2) === 2 && clamp(-20,-10,-5) === -10 && clamp(-7,-10,-5) === -7 && reversed === true;
+    } catch {}
+    write(1, 'result:' + nonce + ':' + (passed === true ? 'true' : 'false') + '\\n');
+  `], { cwd, encoding: "utf8", env });
   assert.equal(direct.status, 0, direct.stdout + direct.stderr);
+  assert.match(direct.stdout, /^start:([a-f0-9]{32})\nresult:\1:true\n$/, "independent fixture behavior check failed or exited before completion");
   const result = spawnSync(process.execPath, ["--test", "--test-reporter=tap", "clamp.test.mjs"], { cwd, encoding: "utf8", env });
   assert.equal(result.status, 0, result.stdout + result.stderr);
   assert.match(result.stdout, /^# tests 3$/m, "fixture tests must actually execute");
   assert.match(result.stdout, /^# pass 3$/m, "all fixture tests must pass");
-  return { command: "node --test --test-reporter=tap clamp.test.mjs", exitCode: result.status, stdout: result.stdout };
+  return { command: "node --test --test-reporter=tap clamp.test.mjs", exitCode: result.status, stdout: result.stdout, direct: { exitCode: direct.status, stdout: direct.stdout } };
 }
 function assertScope(ctx, base, head) {
   const args = ["diff", "--name-only", base];

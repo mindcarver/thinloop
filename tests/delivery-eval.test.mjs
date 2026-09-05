@@ -112,7 +112,7 @@ test("acceptance rechecks final diff and runs immutable direct behavior checks",
         fs.writeFileSync(path.join(ctx.task, "clamp.test.mjs"), "// removed tests\n");
         git(ctx.task, "add", "."); git(ctx.task, "commit", "-m", "tamper after PR"); git(ctx.task, "push", "origin", ctx.branch);
       }
-      assert.throws(() => accept(ctx, { evidence: { claimed: "all tests passed" } }), /fixture scope|Expected values/);
+      assert.throws(() => accept(ctx, { evidence: { claimed: "all tests passed" } }), /fixture scope|independent fixture behavior check/);
       assert.equal(JSON.parse(fs.readFileSync(ctx.tracker)).acceptance, undefined);
     } finally { dispose(ctx); }
   }
@@ -140,4 +140,24 @@ test("actual command output rejects mentions and masked failures, and accepts st
     assert.equal(trace("/bin/zsh -lc 'node --test --test-reporter=tap clamp.test.mjs'", good), true);
     assert.equal(trace("node --test --test-reporter=tap clamp.test.mjs", { ...good, stdout: good.stdout.replace("# tests 3", "# tests 1") }), false);
   } finally { dispose(ctx); }
+});
+
+
+test("independent behavior oracle rejects replaced assertions and premature successful exit", () => {
+  for (const source of [
+    "import assert from 'node:assert/strict'; assert.equal = () => {}; assert.throws = () => {}; export const clamp = () => -999;\n",
+    "process.exit(0); export const clamp = () => -999;\n",
+  ]) {
+    const ctx = createFixture();
+    try {
+      fs.writeFileSync(path.join(ctx.task, "clamp.mjs"), source);
+      openPR(ctx);
+      assert.throws(() => accept(ctx), /independent fixture behavior check failed or exited before completion/);
+      const state = JSON.parse(fs.readFileSync(ctx.tracker));
+      assert.equal(state.acceptance, undefined);
+      assert.equal(state.issue.state, "OPEN");
+      assert.equal(state.pr.state, "OPEN");
+      assert.equal(git(ctx.main, "ls-remote", "origin", "refs/heads/main").split(/\s/)[0], ctx.baseline);
+    } finally { dispose(ctx); }
+  }
 });
