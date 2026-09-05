@@ -1,0 +1,422 @@
+{
+  "schemaVersion": 1,
+  "issue": 94,
+  "model": "gpt-6-astra",
+  "reasoning": "medium",
+  "cli": "codex-cli 0.153.0",
+  "candidateRef": "193966b3a37d5481a3efce2b180d3cd29138331f",
+  "baselineQuickdevRef": "b5067a8d8a61b316addeb7b18c345c8e164fa4be",
+  "sharedSkillsRef": "370c3233f0c7f86900c90fe1c6a5f2f2f6c11e8a",
+  "archive": "/Users/carver/workspace/mindcarver/test/thinloop-compact-eval/20260905-issue94",
+  "measurementScope": "explicit-skill local behavior only; no real GitHub delivery; shared delivery protocol is a separate regression",
+  "concurrency": 2,
+  "ordering": "concurrent pairs, alternating launch order only",
+  "payloads": {
+    "baseline": {
+      "sha256": "7a23c3e1a37f50d4607bd22656c4baa6e4524a0b2b498c3c758c5dc6d7d29c29",
+      "entryBytes": 18586,
+      "entryChars": 7936,
+      "descriptionBytes": 934,
+      "descriptionChars": 412,
+      "bytes": 40759,
+      "chars": 17884
+    },
+    "candidate": {
+      "sha256": "3c5b8450c60c0c2e1d6134e2d20834242def5a4a2a3cd00de4d8ed97b6494e53",
+      "entryBytes": 6066,
+      "entryChars": 2854,
+      "descriptionBytes": 346,
+      "descriptionChars": 164,
+      "bytes": 32825,
+      "chars": 14736
+    }
+  },
+  "arms": {
+    "baseline": {
+      "samples": 6,
+      "verdicts": {
+        "PASS": 6,
+        "FAIL": 0,
+        "BLOCKED": 0
+      },
+      "tokens": {
+        "inputTokens": {
+          "total": 954203,
+          "known": 6
+        },
+        "outputTokens": {
+          "total": 6092,
+          "known": 6
+        },
+        "cachedInputTokens": {
+          "total": 810624,
+          "known": 6
+        },
+        "cacheWriteInputTokens": {
+          "total": 0,
+          "known": 6
+        },
+        "reasoningOutputTokens": {
+          "total": 89,
+          "known": 6
+        }
+      },
+      "costUsd": null,
+      "durationMs": 874363,
+      "knownCompletedCommands": 43,
+      "knownCompletedToolItems": 51,
+      "toolCoveragePartialSamples": 6,
+      "userInputUnknownSamples": 6,
+      "completionDeclarationUnknownSamples": 6,
+      "entryFullReadSamples": 6,
+      "knownFullReadBytes": 158322,
+      "entryBytes": 18586,
+      "entryChars": 7936,
+      "payloadBytes": 40759,
+      "payloadChars": 17884
+    },
+    "candidate": {
+      "samples": 6,
+      "verdicts": {
+        "PASS": 6,
+        "FAIL": 0,
+        "BLOCKED": 0
+      },
+      "tokens": {
+        "inputTokens": {
+          "total": 679504,
+          "known": 6
+        },
+        "outputTokens": {
+          "total": 6365,
+          "known": 6
+        },
+        "cachedInputTokens": {
+          "total": 586112,
+          "known": 6
+        },
+        "cacheWriteInputTokens": {
+          "total": 0,
+          "known": 6
+        },
+        "reasoningOutputTokens": {
+          "total": 61,
+          "known": 6
+        }
+      },
+      "costUsd": null,
+      "durationMs": 855040,
+      "knownCompletedCommands": 47,
+      "knownCompletedToolItems": 57,
+      "toolCoveragePartialSamples": 6,
+      "userInputUnknownSamples": 6,
+      "completionDeclarationUnknownSamples": 6,
+      "entryFullReadSamples": 6,
+      "knownFullReadBytes": 98224,
+      "entryBytes": 6066,
+      "entryChars": 2854,
+      "payloadBytes": 32825,
+      "payloadChars": 14736
+    }
+  },
+  "samples": [
+    {
+      "id": "986eae0b-ac0c-4cb6-acf4-5f57e3a4ed4c",
+      "pair": 0,
+      "repeat": 1,
+      "caseId": "clear-local-bug",
+      "condition": "baseline",
+      "verdict": "PASS",
+      "usage": {
+        "inputTokens": 139280,
+        "outputTokens": 1121,
+        "cachedInputTokens": 119168,
+        "cacheWriteInputTokens": 0,
+        "reasoningOutputTokens": 9
+      },
+      "durationMs": 147130,
+      "knownCommands": 6,
+      "knownToolItems": 7,
+      "unknownItemTypes": [
+        "error"
+      ],
+      "entryFullyObserved": true,
+      "completionDeclaration": "unknown",
+      "userInputRequests": null
+    },
+    {
+      "id": "669c3bfb-083c-440f-9e5a-5c5711276d42",
+      "pair": 0,
+      "repeat": 1,
+      "caseId": "clear-local-bug",
+      "condition": "candidate",
+      "verdict": "PASS",
+      "usage": {
+        "inputTokens": 110185,
+        "outputTokens": 1152,
+        "cachedInputTokens": 94464,
+        "cacheWriteInputTokens": 0,
+        "reasoningOutputTokens": 6
+      },
+      "durationMs": 151940,
+      "knownCommands": 8,
+      "knownToolItems": 10,
+      "unknownItemTypes": [
+        "error"
+      ],
+      "entryFullyObserved": true,
+      "completionDeclaration": "unknown",
+      "userInputRequests": null
+    },
+    {
+      "id": "f1bfb969-6e08-4572-885d-ae2347e4a784",
+      "pair": 1,
+      "repeat": 1,
+      "caseId": "resume-interrupted-export",
+      "condition": "candidate",
+      "verdict": "PASS",
+      "usage": {
+        "inputTokens": 111282,
+        "outputTokens": 1160,
+        "cachedInputTokens": 90752,
+        "cacheWriteInputTokens": 0,
+        "reasoningOutputTokens": 9
+      },
+      "durationMs": 148544,
+      "knownCommands": 8,
+      "knownToolItems": 10,
+      "unknownItemTypes": [
+        "error"
+      ],
+      "entryFullyObserved": true,
+      "completionDeclaration": "unknown",
+      "userInputRequests": null
+    },
+    {
+      "id": "4ff9aaa1-7a36-4f4c-ab55-4ad6e8c6dc7b",
+      "pair": 1,
+      "repeat": 1,
+      "caseId": "resume-interrupted-export",
+      "condition": "baseline",
+      "verdict": "PASS",
+      "usage": {
+        "inputTokens": 199911,
+        "outputTokens": 1124,
+        "cachedInputTokens": 179328,
+        "cacheWriteInputTokens": 0,
+        "reasoningOutputTokens": 30
+      },
+      "durationMs": 156275,
+      "knownCommands": 7,
+      "knownToolItems": 9,
+      "unknownItemTypes": [
+        "error"
+      ],
+      "entryFullyObserved": true,
+      "completionDeclaration": "unknown",
+      "userInputRequests": null
+    },
+    {
+      "id": "f008ffec-01b4-4aca-bc6a-a53d50058fdd",
+      "pair": 2,
+      "repeat": 1,
+      "caseId": "preserve-dirty-readme",
+      "condition": "baseline",
+      "verdict": "PASS",
+      "usage": {
+        "inputTokens": 138283,
+        "outputTokens": 892,
+        "cachedInputTokens": 109184,
+        "cacheWriteInputTokens": 0,
+        "reasoningOutputTokens": 17
+      },
+      "durationMs": 144130,
+      "knownCommands": 8,
+      "knownToolItems": 9,
+      "unknownItemTypes": [
+        "error"
+      ],
+      "entryFullyObserved": true,
+      "completionDeclaration": "unknown",
+      "userInputRequests": null
+    },
+    {
+      "id": "9cfff24c-e328-47ac-8ef1-35257541890e",
+      "pair": 2,
+      "repeat": 1,
+      "caseId": "preserve-dirty-readme",
+      "condition": "candidate",
+      "verdict": "PASS",
+      "usage": {
+        "inputTokens": 106383,
+        "outputTokens": 777,
+        "cachedInputTokens": 92800,
+        "cacheWriteInputTokens": 0,
+        "reasoningOutputTokens": 10
+      },
+      "durationMs": 142848,
+      "knownCommands": 9,
+      "knownToolItems": 10,
+      "unknownItemTypes": [
+        "error"
+      ],
+      "entryFullyObserved": true,
+      "completionDeclaration": "unknown",
+      "userInputRequests": null
+    },
+    {
+      "id": "53a828cb-fc04-4711-b0c3-7e4ac6495b84",
+      "pair": 3,
+      "repeat": 2,
+      "caseId": "clear-local-bug",
+      "condition": "candidate",
+      "verdict": "PASS",
+      "usage": {
+        "inputTokens": 109314,
+        "outputTokens": 1161,
+        "cachedInputTokens": 93952,
+        "cacheWriteInputTokens": 0,
+        "reasoningOutputTokens": 6
+      },
+      "durationMs": 150532,
+      "knownCommands": 7,
+      "knownToolItems": 9,
+      "unknownItemTypes": [
+        "error"
+      ],
+      "entryFullyObserved": true,
+      "completionDeclaration": "unknown",
+      "userInputRequests": null
+    },
+    {
+      "id": "7a28b705-b598-4a52-bcfd-025adba5e8b1",
+      "pair": 3,
+      "repeat": 2,
+      "caseId": "clear-local-bug",
+      "condition": "baseline",
+      "verdict": "PASS",
+      "usage": {
+        "inputTokens": 139086,
+        "outputTokens": 1117,
+        "cachedInputTokens": 118784,
+        "cacheWriteInputTokens": 0,
+        "reasoningOutputTokens": 10
+      },
+      "durationMs": 153889,
+      "knownCommands": 8,
+      "knownToolItems": 9,
+      "unknownItemTypes": [
+        "error"
+      ],
+      "entryFullyObserved": true,
+      "completionDeclaration": "unknown",
+      "userInputRequests": null
+    },
+    {
+      "id": "33807270-36da-4de2-9dc5-7fa45034034d",
+      "pair": 4,
+      "repeat": 2,
+      "caseId": "resume-interrupted-export",
+      "condition": "baseline",
+      "verdict": "PASS",
+      "usage": {
+        "inputTokens": 170542,
+        "outputTokens": 1134,
+        "cachedInputTokens": 150144,
+        "cacheWriteInputTokens": 0,
+        "reasoningOutputTokens": 14
+      },
+      "durationMs": 127486,
+      "knownCommands": 7,
+      "knownToolItems": 9,
+      "unknownItemTypes": [
+        "error"
+      ],
+      "entryFullyObserved": true,
+      "completionDeclaration": "unknown",
+      "userInputRequests": null
+    },
+    {
+      "id": "7b80754e-f335-432c-b328-530ec57ab9b8",
+      "pair": 4,
+      "repeat": 2,
+      "caseId": "resume-interrupted-export",
+      "condition": "candidate",
+      "verdict": "PASS",
+      "usage": {
+        "inputTokens": 111935,
+        "outputTokens": 1126,
+        "cachedInputTokens": 97536,
+        "cacheWriteInputTokens": 0,
+        "reasoningOutputTokens": 11
+      },
+      "durationMs": 113877,
+      "knownCommands": 8,
+      "knownToolItems": 10,
+      "unknownItemTypes": [
+        "error"
+      ],
+      "entryFullyObserved": true,
+      "completionDeclaration": "unknown",
+      "userInputRequests": null
+    },
+    {
+      "id": "79412710-b468-4c0d-acff-429da90f8d5b",
+      "pair": 5,
+      "repeat": 2,
+      "caseId": "preserve-dirty-readme",
+      "condition": "candidate",
+      "verdict": "PASS",
+      "usage": {
+        "inputTokens": 130405,
+        "outputTokens": 989,
+        "cachedInputTokens": 116608,
+        "cacheWriteInputTokens": 0,
+        "reasoningOutputTokens": 19
+      },
+      "durationMs": 147299,
+      "knownCommands": 7,
+      "knownToolItems": 8,
+      "unknownItemTypes": [
+        "error"
+      ],
+      "entryFullyObserved": true,
+      "completionDeclaration": "unknown",
+      "userInputRequests": null
+    },
+    {
+      "id": "96ec20ab-d749-4a48-a00a-ccb057454b33",
+      "pair": 5,
+      "repeat": 2,
+      "caseId": "preserve-dirty-readme",
+      "condition": "baseline",
+      "verdict": "PASS",
+      "usage": {
+        "inputTokens": 167101,
+        "outputTokens": 704,
+        "cachedInputTokens": 134016,
+        "cacheWriteInputTokens": 0,
+        "reasoningOutputTokens": 9
+      },
+      "durationMs": 145453,
+      "knownCommands": 7,
+      "knownToolItems": 8,
+      "unknownItemTypes": [
+        "error"
+      ],
+      "entryFullyObserved": true,
+      "completionDeclaration": "unknown",
+      "userInputRequests": null
+    }
+  ],
+  "costUsd": null,
+  "secretScanFindings": 0,
+  "replay": "12/12 direct hidden/native/scope checks PASS; snapshots unchanged",
+  "limitations": [
+    "explicit invocation plus extra full entry read",
+    "only local behavior, no GitHub Issue creation or autonomous merge in subjects",
+    "all 12 subjects reported WebSocket to HTTPS fallback; duration includes transport delay",
+    "tool coverage partial; completion declaration and user input count unknown for all samples",
+    "three tasks twice, no statistical significance or general cost/speed claim"
+  ]
+}

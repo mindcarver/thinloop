@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "issue94-quickdev-paired-v1",
+  "baselineQuickdevRef": "b5067a8d8a61b316addeb7b18c345c8e164fa4be",
+  "sharedSkillsRef": "370c3233f0c7f86900c90fe1c6a5f2f2f6c11e8a",
+  "model": "gpt-6-astra",
+  "reasoning": "medium",
+  "cliVersion": "codex-cli 0.153.0",
+  "repeats": 2,
+  "concurrency": 2,
+  "caseIds": ["clear-local-bug", "resume-interrupted-export", "preserve-dirty-readme"],
+  "promptPrefix": "请显式使用 $scd-quickdev，先完整读取 $CODEX_HOME/skills/scd-quickdev/SKILL.md，再按当前阶段需要读取参考。当前是用户已明确批准的隔离本地基准任务：本消息与仓库已有状态共同界定交付范围，授权直接在当前工作树实施；不要创建外部 Issue/PR，不创建分支或工作树，不提交或合并，不启动其他 Agent。恢复记录里的 Issue 地址仅为已有任务标识，本次不要求联网复核或重建 Issue。该本地授权覆盖技能中的外部交付流程。请完成下面的局部行为并运行直接测试，最后准确说明结果与未验证边界。",
+  "scope": "explicit-skill local behavior only; no real GitHub delivery; shared delivery protocol is a separate regression",
+  "priceUsd": null
+}

@@ -145,7 +145,8 @@ test("uiux distinguishes design approval from post-implementation visual confirm
 });
 
 test("quickdev consumes a ready UX handoff without confusing it for architecture", () => {
-  const quickdev = read("skills/scd-quickdev/SKILL.md");
+  const quickdev = read("skills/scd-quickdev/SKILL.md") + "\n" +
+    read("skills/scd-quickdev/references/scope-contract.md");
 
   assert.match(quickdev, /\.scd\/ux\/<slug>\.md/);
   assert.match(quickdev, /要求 `status: ready`/);

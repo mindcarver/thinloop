@@ -102,10 +102,10 @@ test("diagram stage summaries remain traceable to authoritative skill workflows"
       /证明项目完成/,
     ],
     quickdev: [
-      /从仓库事实出发/,
-      /实施最小且连贯的变更/,
-      /验证工程验收/,
-      /审计整个 Issue 是否完成/,
+      /确定边界/,
+      /最小修复/,
+      /运行直接练习变更[\s\S]*构建[\s\S]*测试/,
+      /审计整个 Issue/,
       /独立的新上下文子 Agent/,
     ],
     knowledge: [

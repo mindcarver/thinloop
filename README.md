@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <kbd>v0.16.1</kbd>
+  <kbd>v0.17.0</kbd>
   &nbsp;
   <kbd>ISSUE-DRIVEN</kbd>
   &nbsp;
