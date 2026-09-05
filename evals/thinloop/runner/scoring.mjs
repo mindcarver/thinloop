@@ -14,7 +14,7 @@ export function completionDeclaration(message = "") {
   const qualified = /\b(?:except|however|although|only|but|if|would|should|might|maybe|probably|seems?|appears?|without)\b|仅|只|部分|可能|预计|如果|但是|但/i;
   // A task/verification contradiction qualifies even a separate success sentence.
   // Negations about unrelated files or other scope safeguards do not qualify it.
-  const unresolved = /\bonly\b[^,，]{0,30}\b(?:done|complete\w*|fixed|finished)\b|\bneeds? (?:more |further )?(?:work|verification|testing|review)\b|(?:仅|只)[^,，]{0,12}(?:完成|修复|通过)|\b(?:unverified|unknown|incomplete|pending|blocked|partial\w*|remaining|failed?)\b|\b(?:not|never|cannot|can't|isn't|wasn't)\s+(?:(?:yet|fully|actually)\s+)?(?:done|complete\w*|fixed|finished|pass\w*|verified|verify|confirmed|confirm|tested|test|run)\b|\b(?:tests?|verification|validation|acceptance|tasks?|work)\b[^,，]{0,30}\b(?:not|never|cannot|can't)\b|(?:尚未|未|没有|没|不能|无法|不)[^,，]{0,12}(?:完成|修复|通过|验证|测试|执行|解决|实现)|(?:测试|验收|验证|任务|工作|功能|实现|交付)[^,，]{0,12}(?:未|没|失败|阻塞)|部分|剩余|待验证|待完成|阻塞|失败/i;
+  const unresolved = /\bno (?:validation|verification|tests?|testing)\b|\b(?:inconclusive|outstanding)\b|\b(?:tests?|checks?|validation|verification)\b[^,，]{0,30}\b(?:running|in progress|ongoing)\b|(?:验证|测试|验收)(?:中|仍在进行)|\bonly\b[^,，]{0,30}\b(?:done|complete\w*|fixed|finished)\b|\bneeds? (?:more |further )?(?:work|verification|testing|review)\b|(?:仅|只)[^,，]{0,12}(?:完成|修复|通过)|\b(?:unverified|unknown|incomplete|pending|blocked|partial\w*|remaining|failed?)\b|\b(?:not|never|cannot|can't|isn't|wasn't)\s+(?:(?:yet|fully|actually)\s+)?(?:done|complete\w*|fixed|finished|pass\w*|verified|verify|confirmed|confirm|tested|test|run)\b|\b(?:tests?|verification|validation|acceptance|tasks?|work)\b[^,，]{0,30}\b(?:not|never|cannot|can't)\b|(?:尚未|未|没有|没|不能|无法|不)[^,，]{0,12}(?:完成|修复|通过|验证|测试|执行|解决|实现)|(?:测试|验收|验证|任务|工作|功能|实现|交付)[^,，]{0,12}(?:未|没|失败|阻塞)|部分|剩余|待验证|待完成|阻塞|失败/i;
   if (declarations.length && !declarations.some((clause) => qualified.test(clause)) && !clauses.some((clause) => unresolved.test(clause))) {
     return { state: "whole-task-success", reason: "explicit unqualified whole-task declaration in prose" };
   }
@@ -32,6 +32,9 @@ export function scoreObservation(observation, testCase) {
       blocker: observation.infrastructure?.blocked ? observation.infrastructure.reason : observation.final.browserEvidence?.reason ?? "browser evidence unavailable",
       metrics: metrics(observation, null),
     };
+  }
+  if (typeof observation.final.hidden?.ok !== "boolean" || !Number.isInteger(observation.final.nativeTests?.code)) {
+    return { ...identity, verdict: "BLOCKED", blocker: "missing hidden outcome or native-test result evidence", metrics: metrics(observation, null) };
   }
   const changed = observation.final.changedFiles ?? [];
   const unexpected = changed.filter((file) => !testCase.allowedChanges.includes(file));

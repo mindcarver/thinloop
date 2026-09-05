@@ -39,5 +39,12 @@
   {"message": "Done. Not fully complete.", "expected": "unknown"},
   {"message": "Done. Only A is complete.", "expected": "unknown"},
   {"message": "Done. B needs more work.", "expected": "unknown"},
-  {"message": "已完成。仅 A 完成。", "expected": "unknown"}
+  {"message": "已完成。仅 A 完成。", "expected": "unknown"},
+  {"message": "The log says ‘Done. All tasks are complete.’", "expected": "unknown"},
+  {"message": "The log says 'Done. All tasks are complete.'", "expected": "unknown"},
+  {"message": "Done. No validation was performed.", "expected": "unknown"},
+  {"message": "Done. Verification is inconclusive.", "expected": "unknown"},
+  {"message": "Done; integration tests are still running.", "expected": "unknown"},
+  {"message": "已完成，验证中。", "expected": "unknown"},
+  {"message": "All tasks are complete; two checks are outstanding.", "expected": "unknown"}
 ]

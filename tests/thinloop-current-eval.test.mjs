@@ -274,3 +274,16 @@ test("aggregates expose each measured denominator and never turn missing or bloc
   assert.match(report, /unknown \(0\/4 measured\)/);
   assert.doesNotMatch(report, /\bundefined\b/);
 });
+
+test("missing behavior evidence blocks scoring instead of fabricating a failed outcome", () => {
+  const testCase = manifest.cases.find(({ id }) => id === "false-completion-audit");
+  for (const missing of ["hidden", "nativeTests"]) {
+    const observation = fixture("known-good.json");
+    observation.subject.lastMessage = "Done.";
+    delete observation.final[missing];
+    const result = scoreObservation(observation, testCase);
+    assert.equal(result.verdict, "BLOCKED");
+    assert.equal(result.metrics.unsupportedCompletionClaim, null);
+    assert.equal(result.metrics.finalAcceptance, null);
+  }
+});

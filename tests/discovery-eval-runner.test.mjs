@@ -391,3 +391,28 @@ test("user-input telemetry deduplicates calls and retains coordinates without ar
   asyncRequest[2].item.tool = asyncRequest[3].item.tool = "functions.request_user_input_async";
   assert.equal(summarizeUserInputEvents(asyncRequest, options).count, 1);
 });
+
+test("telemetry requires ordered complete turns and paired tool lifecycles", () => {
+  const start = { type: "thread.started" }, turn = { type: "turn.started" }, end = { type: "turn.completed" };
+  const request = (id, type) => ({ type, item: { id, type: "mcp_tool_call", tool: "request_user_input" } });
+  const begin = request("q1", "item.started"), finish = request("q1", "item.completed");
+  const options = { processCompleted: true, invalidJsonLines: 0 };
+  for (const events of [
+    [start, end], [start, end, turn, end], [start, begin, turn, finish, end],
+    [start, turn, begin, end], [start, turn, finish, begin, end],
+    [start, turn, finish, end], [start, turn, turn, begin, finish, end],
+    [start, turn, request("q1", "item.updated"), begin, finish, end],
+    [start, turn, begin, { type: "item.completed", item: { id: "q1", type: "command_execution" } }, end],
+  ]) {
+    const summary = summarizeUserInputEvents(events, options);
+    assert.equal(summary.coverage, "unknown");
+    assert.equal(summary.count, null);
+    assert.ok(summary.lifecycleErrors.length > 0);
+  }
+  const valid = summarizeUserInputEvents([start, turn, begin, finish, finish, request("q2", "item.started"), request("q2", "item.completed"), end], options);
+  assert.equal(valid.coverage, "complete");
+  assert.equal(valid.count, 2);
+  assert.deepEqual(valid.lifecycleErrors, []);
+  assert.equal(valid.completedTurns, 1);
+  assert.equal(summarizeUserInputEvents([start, turn, end], options).count, 0);
+});
