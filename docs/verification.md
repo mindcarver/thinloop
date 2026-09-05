@@ -107,6 +107,14 @@ node scripts/verify-install.mjs --platform dsh
 `CODEWHALE_SKILLS_DIR`、`~/.reasonix/skills` 与 `DSH_HOME`（默认 `~/.dsh`）。
 检查器不会安装、更新、覆盖、重启或重新加载任何 Agent。
 
+Claude 插件内容以当前源码 Git 跟踪清单为准：逐文件比较 `skills/**`（含参考文档、
+脚本、模板和 Agent 元数据）以及 Hook 所在目录 `hooks/**` 的原始字节。缺失或
+内容改变均为 `FAIL`，包括入口间接使用的 `hooks/validate-state.mjs` 和子目录依赖；
+不会导入或执行安装目录中的代码。未跟踪的缓存和 `.DS_Store` 不加入规范载荷。
+源码 Git 清单不可读取或载荷清单为空时返回 `FAIL`，不会降级成仅检查文件存在。
+这验证安装与当前源码一致，不代替 Hook 运行行为验收；链接平台和 `SKIP` 平台
+仍按各自能力核验，不要求复制插件载荷。
+
 CodeWhale 的链接通过后，检查器会自动运行无网络的结构化诊断：
 
 ```bash
