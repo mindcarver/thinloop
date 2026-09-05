@@ -212,6 +212,44 @@ WorkBuddy 5.3.5 内置的 CodeBuddy 运行时读取
 上下文注入。ZCode 不支持 Codex 专用的 `PreCompact` 事件，因此当前运行时会
 记录一条 warning 并只跳过该事件，不影响上述两个 ZCode Hook。
 
+## 每次交付核对三端
+
+每次 Thinloop 交付后都核对已安装的 ZCode、Claude Code 和 Codex；只改 README、
+测试或 CI 也不能跳过已有版本或内容漂移。源码必须是验收通过并已同步的 `main`。
+只更新 Thinloop 插件载荷/Skill 链接，不升级宿主 App、不安装缺失客户端，也不改
+无关插件设置、数据或认证。WorkBuddy 仍为 SKIP。
+
+```bash
+node scripts/verify-install.mjs --platform codex
+node scripts/verify-install.mjs --platform claude-code
+node scripts/verify-install.mjs --platform zcode
+```
+
+逐项读取状态；`UNVERIFIED` 不是通过。发现漂移后，只对对应的已安装端运行：
+
+```bash
+node scripts/refresh-install.mjs --platform codex
+node scripts/refresh-install.mjs --platform claude-code
+node scripts/refresh-install.mjs --platform zcode
+```
+
+刷新脚本会再次运行只读检查，必须得到 `PASS` 才报告成功。Codex 遵循
+`CODEX_HOME`，只替换有 Thinloop 来源证据的 Skill 链接；碰到实体目录、其他来源
+或不存在的安装会停止，不覆盖用户文件。Claude 使用原生
+`claude plugin marketplace update thinloop` 和
+`claude plugin update thinloop@thinloop --scope user`；插件必须已经以 user scope 安装并启用，且 Thinloop marketplace 指向当前验收源码。
+
+ZCode 0.16.5 的 `plugins` CLI 没有 update 子命令。脚本通过实际 app-server 协议
+依次发送 `plugins/marketplace/update`（只指定 `thinloop`）和 `plugins/update`
+（只指定 `thinloop@thinloop`），由宿主管理缓存事务，不手工改插件数据库。
+该路径要求既有 Thinloop marketplace 已指向当前验收源码的本地目录；若不是，
+先核对真实市场来源，按既有设置的更新方式处理，不能静默替换市场来源。其他
+插件的无关诊断不影响 Thinloop 验证。原生更新异常或超时后先重新只读检查，
+不能从命令退出码推断成功或盲目重试。
+
+新任务/会话才能可靠读取更新后的指令；正在运行的会话不自动重启。缺失客户端、
+禁用插件或无法核验时保留明确缺口，不把它升级为已同步。
+
 ## 更新已有安装
 
 先更新源码仓库：
@@ -258,7 +296,7 @@ codebuddy plugin update thinloop@thinloop --scope user
   允许 HTML、泛型与 Markdown 自动链接。Claude Stop 首次要求纠正，重复纠正仍失败时
   输出未解决状态交接并结束自动纠正；DSH 对同一 Agent 的未改变错误状态不重复 steer，
   状态改变或恢复后可重新纠正。更新后新建会话使新 Hook 生效，版本与验证范围见
-  [`docs/releases/v0.16.1.md`](./releases/v0.16.1.md)。WorkBuddy / ZCode 维持 SKIP。
+  [`docs/releases/v0.16.1.md`](./releases/v0.16.1.md)。WorkBuddy 维持 SKIP；ZCode 后续交付按三端规则核验。
 - 若从 v0.6.x 升级，另确认旧 `scd-dev-loop` 已消失。
 
 更新后可以在 Thinloop 源码仓库运行只读检查器：

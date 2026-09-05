@@ -38,7 +38,7 @@ npm exec --yes --package=@anthropic-ai/claude-code@2.1.197 -- claude plugin vali
 ```
 
 CI 只运行无密钥、无桌面依赖且结果确定的检查。真实模型 `smoke` / `full` 评测、
-本机 Agent 安装验证和 WorkBuddy / ZCode 界面检查不在该 workflow 中；这些路径
+本机 Agent 安装验证和 WorkBuddy 界面检查不在该 workflow 中；这些路径
 继续按下文的发布或安装验收边界执行，不能由绿色 CI 代替。
 仓库测试会解析固定的历史评测提交，因此 CI 必须使用完整 Git 历史，不能把
 `actions/checkout` 恢复为默认浅克隆。
@@ -75,7 +75,7 @@ node evals/knowledge/runner/run.mjs --mode full
 | DeepSeek Harness | 十二个 Skill 链接均指向当前源码；新会话的 skill 工具可发现 `scd-next`、`scd-execute`、`scd-project` 与 `scd-quickdev` |
 | Claude Code | `claude plugin list --json` 提供版本、enabled 与安装路径；检查器从该路径核对十二个 Skill 和两个 Hook，包括 `scd-next` 与 `scd-execute` |
 | WorkBuddy | 不验证：WorkBuddy 无可靠只读 CLI 探测；已取消插件页核验要求 |
-| ZCode | 不验证：ZCode 无可用 CLI；已取消 Settings → Plugins 核验要求 |
+| ZCode | `zcode plugins list --json` 提供 enabled、version、rootPath、skillCount 与 hookDetails；检查完整 Skill/Hook 载荷和两个可运行 Hook |
 
 在 Thinloop 源码仓库运行统一的只读检查：
 
@@ -107,7 +107,7 @@ node scripts/verify-install.mjs --platform dsh
 `CODEWHALE_SKILLS_DIR`、`~/.reasonix/skills` 与 `DSH_HOME`（默认 `~/.dsh`）。
 检查器不会安装、更新、覆盖、重启或重新加载任何 Agent。
 
-Claude 插件内容以当前源码 Git 跟踪清单为准：逐文件比较 `skills/**`（含参考文档、
+Claude 和 ZCode 插件内容以当前源码 Git 跟踪清单为准：逐文件比较 `skills/**`（含参考文档、
 脚本、模板和 Agent 元数据）以及 Hook 所在目录 `hooks/**` 的原始字节。缺失或
 内容改变均为 `FAIL`，包括入口间接使用的 `hooks/validate-state.mjs` 和子目录依赖；
 不会导入或执行安装目录中的代码。未跟踪的缓存和 `.DS_Store` 不加入规范载荷。
@@ -144,8 +144,16 @@ printf '%s\n' '{"type":"get_commands"}' \
 结果应恰好包含十二个 `skill:scd-*` 命令，路径均位于当前 Pi Skill 根。该检查
 只证明 Skill 发现，不证明 Pi 存在 Thinloop 的连续性 Hook。
 
-WorkBuddy 与 ZCode 按用户决定不参与验证：统一检查器将其记为 `SKIP`，不再
-要求在插件页或 Settings → Plugins 中核验。
+WorkBuddy 按用户决定不参与验证，维持 `SKIP`。ZCode 已纳入必查三端：
+`zcode plugins list --json` 返回 `{ plugins, diagnostics }`，检查器只选择
+`thinloop@thinloop`，不因其他插件的无关诊断误判 Thinloop。除完整载荷外，核对
+启用状态、版本、实际根目录、清单路径、Skill 数量以及 `Stop` 和
+`SessionStart(compact)` 的来源与 runnable。缺失字段保持 `UNVERIFIED`，
+已确认缺失、禁用、内容漂移或不可运行 Hook 返回 `FAIL`。
+
+每次 Thinloop 交付（包括只修改仓库文档、测试或 CI）都核对已安装的 ZCode、
+Claude Code、Codex，发现旧版本或内容漂移必须刷新后重新检查。缺少客户端不自动
+安装，也不升级宿主 App；缺少必需证据必须报告，不能将退出码 0 当作 PASS。
 
 OpenCode、Pi 与 CodeWhale 当前都不声明连续性阻断能力，因为尚未核验到与
 Claude Code、WorkBuddy、ZCode Stop Hook 等价的可取消完成协议；CodeWhale
