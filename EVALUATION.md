@@ -367,3 +367,62 @@ node evals\score-runs.mjs
 ## 浏览器证据的实现后导入
 
 当前页面评测先完成实现并保存代码快照，随后通过 `rescore.mjs --run <目录> --browser-evidence <文件>` 导入真实浏览器记录。记录绑定 runId、case、condition、代码快照及采集时间，产物必须存在且 SHA-256 匹配；离线重评分重新校验冻结记录与产物，不直接信任保存的通过标记。缺失证据保持 BLOCKED。具体格式及采集命令见 [当前版本评测说明](evals/thinloop/README.md#证据与重评分)。这项修复改善证据绑定与完整性，不代表已经重新测量模型整体收益。
+
+
+## 2026-09-05 真实仓库交付观察
+
+本次 [Initiative #90](https://github.com/mindcarver/thinloop/issues/90) 已通过真实 GitHub 完成三个交付：
+[评分证据 PR #95](https://github.com/mindcarver/thinloop/pull/95)、
+[三端更新 PR #96](https://github.com/mindcarver/thinloop/pull/96)、
+[完整交付评测 PR #97](https://github.com/mindcarver/thinloop/pull/97)。各自经历 Issue、PR、真实 CI、
+独立验收、合并及父 Execute 清理；验收证据分别见
+[#95 结论](https://github.com/mindcarver/thinloop/pull/95#issuecomment-5549049918)、
+[#96 结论](https://github.com/mindcarver/thinloop/pull/96#issuecomment-5549029298)、
+[#97 结论](https://github.com/mindcarver/thinloop/pull/97#issuecomment-5549163114)。
+
+这是本次工程协作的观察性案例，区别于 delivery 套件的模拟 tracker；没有对照组，不能推出通用全链成功率或相对优势。QuickDev 精简的 #94 仍由自己的验收和关闭状态约束，不据上述三个交付提前声明完成。
+
+
+## 2026-09-05 QuickDev 精简成对实测
+
+固定旧 QuickDev 提交 `b5067a8d8a61b316addeb7b18c345c8e164fa4be` 与候选冻结提交
+`193966b3a37d5481a3efce2b180d3cd29138331f`，其余11个 Skill固定为
+`370c3233f0c7f86900c90fe1c6a5f2f2f6c11e8a`。应用内 Codex CLI 0.153.0，
+命令指定 `gpt-6-astra` / medium。清晰缺陷、CSV恢复、无关dirty保护各两次重复，
+每次两臂，共12个真实subject；首pair预检通过后计入总数，没有剔除或补跑样本。
+
+| 指标 | 旧版，6次 | 候选，6次 |
+|---|---:|---:|
+| 直接隐藏行为、原生测试和范围验收 | 6 PASS | 6 PASS |
+| 完整入口实际读取证明 | 6/6 | 6/6 |
+| input tokens合计 | 954203 | 679504 |
+| output tokens合计 | 6092 | 6365 |
+| cached input tokens合计 | 810624 | 586112 |
+| cache-write input tokens合计（明确报告） | 0 | 0 |
+| reasoning output tokens合计（CLI报告） | 89 | 61 |
+| subject进程时长合计，ms | 874363 | 855040 |
+| 已知command_execution事件 | 43 | 47 |
+| 已知完成工具项 | 51 | 57 |
+| description bytes / Unicode字符 | 934 / 412 | 346 / 164 |
+| 入口 bytes / Unicode字符 | 18586 / 7936 | 6066 / 2854 |
+| QuickDev总载荷 bytes / Unicode字符 | 40759 / 17884 | 32825 / 14736 |
+
+本组输入量差为 `954203 - 679504 = 274699`，占旧版合计 `28.79%`；输出量、
+命令和工具项反而增加，不能据此宣称全面提速或成本降低。未提供单价，成本为null。
+两臂各6次的用户输入计数与完成声明分类都保持unknown，不包装成零次干预或零次
+无证据声明；所有直接行为验收均有独立于最终措辞的测试与隐藏结果。
+
+每对两臂并发，只交错启动顺序，不是串行A/B与B/A顺序平衡。12次均记录WebSocket
+超时后回退HTTPS，因此时长含传输延迟、工具事件覆盖标为partial。全部入口通过
+当前识别器支持的完整stdout读取得到证明；识别器未覆盖所有分段sed/Python读法，
+这轮未因此丢弃样本。协议显式调用并额外要求完整读取入口，不衡量自动路由或普通
+自动注入路径的Token开销；本地授权禁止外部Issue/PR/提交，未直接测紧凑Issue创建
+或模型自主GitHub全链收益。三个小任务各两次不能推出统计显著性或通用节省。
+
+[逐样本指标与固定载荷hash](evals/compact/results/issue94.json) 和
+[运行方法](evals/compact/README.md) 可复核。完整脱敏轨迹、命令事件、安装文件hash、
+原生/隐藏结果、diff及报告保存在
+`/Users/carver/workspace/mindcarver/test/thinloop-compact-eval/20260905-issue94/`；
+`evidence.sha256`覆盖168个文件，`replay.json`记录12/12离线直接重放PASS且代码快照未改变。
+临时认证已清理，秘密扫描0项；候选QuickDev载荷SHA-256为
+`3c5b8450c60c0c2e1d6134e2d20834242def5a4a2a3cd00de4d8ed97b6494e53`，最终Skill与该冻结载荷一致。

@@ -41,3 +41,23 @@ test("loading proof requires a successful full read and usage keeps absent count
   assert.equal(unknown.toolCountCoverage, "partial");
   assert.equal(unknown.usage.inputTokens, null);
 });
+
+test("paired summary preserves unknown usage rather than summing incomplete samples", async () => {
+  const { summarize } = await import("../evals/compact/report.mjs");
+  const identity = { bytes: 20, chars: 10, inventory: [{ file: "skills/scd-quickdev/SKILL.md", bytes: 20, chars: 10 }] };
+  const row = (condition, inputTokens) => ({ condition, durationMs: 5,
+    evidence: { usage: { inputTokens, outputTokens: 2 }, knownCompletedCommands: 1, knownCompletedToolItems: 1,
+      toolCountCoverage: "partial", entryFullyObserved: true,
+      reads: [{ file: "skills/scd-quickdev/SKILL.md", fullContentObserved: true }] },
+    scored: { verdict: "PASS", metrics: { userInterruptRequests: null }, facts: { completionDeclaration: { state: "unknown" } } },
+  });
+  const summary = summarize([row("baseline", 100), row("baseline", 150), row("candidate", 50), row("candidate", null)], { baseline: identity, candidate: identity });
+  assert.deepEqual(summary.baseline.tokens.inputTokens, { total: 250, known: 2 });
+  assert.deepEqual(summary.candidate.tokens.inputTokens, { total: null, known: 1 });
+  assert.equal(summary.candidate.tokens.cachedInputTokens.total, null);
+  assert.equal(summary.candidate.costUsd, null);
+  assert.equal(summary.candidate.userInputUnknownSamples, 2);
+  assert.equal(summary.candidate.completionDeclarationUnknownSamples, 2);
+  assert.equal(summary.candidate.toolCoveragePartialSamples, 2);
+  assert.equal(summary.candidate.entryFullReadSamples, 2);
+});

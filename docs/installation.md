@@ -301,6 +301,11 @@ codebuddy plugin update thinloop@thinloop --scope user
   输出未解决状态交接并结束自动纠正；DSH 对同一 Agent 的未改变错误状态不重复 steer，
   状态改变或恢复后可重新纠正。更新后新建会话使新 Hook 生效，版本与验证范围见
   [`docs/releases/v0.16.1.md`](./releases/v0.16.1.md)。WorkBuddy 维持 SKIP；ZCode 后续交付按三端规则核验。
+- 升级到 v0.17.0：QuickDev 按当前阶段读取 Issue、证据、页面和发布参考；清晰低风险
+  单交付使用五节紧凑 Issue，复杂 PRD/UI/迁移按需展开。独立验收、三本账、真实
+  页面证据、高风险确认、main 核验和精确清理门继续有效。评分器保留 unknown，
+  完整交付协议与真实模型证据分开记录；每次交付核对 ZCode、Claude Code、Codex，
+  同版本载荷漂移也需修复。范围和测量限制见 [`v0.17.0`](./releases/v0.17.0.md)。
 - 若从 v0.6.x 升级，另确认旧 `scd-dev-loop` 已消失。
 
 更新后可以在 Thinloop 源码仓库运行只读检查器：
