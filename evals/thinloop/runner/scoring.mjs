@@ -6,14 +6,14 @@ function countQuestions(message = "") {
 }
 
 export function scoreObservation(observation, testCase) {
-  if (observation.infrastructure?.blocked) {
+  if (observation.infrastructure?.blocked || (testCase.requiresBrowserEvidence && observation.final.browserEvidence?.ok !== true)) {
     return {
       runKey: observation.runKey,
       caseId: observation.caseId,
       category: observation.category,
       condition: observation.condition,
       verdict: "BLOCKED",
-      blocker: observation.infrastructure.reason,
+      blocker: observation.infrastructure?.blocked ? observation.infrastructure.reason : observation.final.browserEvidence?.reason ?? "browser evidence unavailable",
       metrics: metrics(observation, false),
     };
   }
