@@ -254,6 +254,11 @@ codebuddy plugin update thinloop@thinloop --scope user
 - 升级到 v0.16.0：确认 `Thinloop CI`、当前三臂评测、单一路由内核、README 产品表面和
   Tag-only GitHub Release 链路均存在；发布范围、证据和已知限制见
   [`docs/releases/v0.16.0.md`](./releases/v0.16.0.md)。
+- 升级到 v0.16.1：连续性检查兼容当前中文与旧英文状态，保留明确模板占位符检查，
+  允许 HTML、泛型与 Markdown 自动链接。Claude Stop 首次要求纠正，重复纠正仍失败时
+  输出未解决状态交接并结束自动纠正；DSH 对同一 Agent 的未改变错误状态不重复 steer，
+  状态改变或恢复后可重新纠正。更新后新建会话使新 Hook 生效，版本与验证范围见
+  [`docs/releases/v0.16.1.md`](./releases/v0.16.1.md)。WorkBuddy / ZCode 维持 SKIP。
 - 若从 v0.6.x 升级，另确认旧 `scd-dev-loop` 已消失。
 
 更新后可以在 Thinloop 源码仓库运行只读检查器：

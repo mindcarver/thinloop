@@ -353,3 +353,39 @@ test("fails open with a warning on invalid hook input", () => {
     fs.rmSync(cwd, { recursive: true, force: true });
   }
 });
+
+
+test("Claude Stop offers one correction then hands off unresolved state without blocking", () => {
+  const cwd = makeWorkspace();
+  const env = { CLAUDE_PLUGIN_ROOT: path.resolve(testDir, "..") };
+  try {
+    writeState(cwd, validState({ evidence: "" }));
+    const first = parseOutput(runHook(cwd, { stop_hook_active: false }, env));
+    assert.equal(first.decision, "block");
+    assert.match(first.reason, /Update the note/);
+    const repeated = parseOutput(runHook(cwd, { stop_hook_active: true }, env));
+    assert.equal("decision" in repeated, false);
+    assert.equal("hookSpecificOutput" in repeated, false);
+    assert.equal(repeated.continue, true);
+    assert.match(repeated.systemMessage, /unresolved.*handoff/i);
+    assert.match(repeated.systemMessage, /empty section: Evidence/);
+    assert.match(repeated.systemMessage, /not complete/i);
+    writeState(cwd, validState({ evidence: '- clicked `<button>Save</button>`; checked `Map<K, V>` and <https://example.com>' }));
+    assert.equal(parseOutput(runHook(cwd, { stop_hook_active: true }, env)), null);
+  } finally { fs.rmSync(cwd, { recursive: true, force: true }); }
+});
+
+test("repeat guard does not change PreCompact or other platform protocols", () => {
+  const cwd = makeWorkspace();
+  try {
+    writeState(cwd, validState({ evidence: "" }));
+    const precompact = parseOutput(runHook(cwd, { hook_event_name: "PreCompact", stop_hook_active: true }, { CLAUDE_PLUGIN_ROOT: "root" }));
+    assert.equal(precompact.decision, "block");
+    const zcode = parseOutput(runHook(cwd, { stop_hook_active: true }, { ZCODE_PLUGIN_ROOT: "root" }));
+    assert.equal(zcode.decision, "block");
+    const workbuddy = parseOutput(runHook(cwd, { stop_hook_active: true }, { CODEBUDDY_PLUGIN_ROOT: "root" }));
+    assert.equal(workbuddy.continue, false);
+    const generic = parseOutput(runHook(cwd, { stop_hook_active: true }));
+    assert.equal(generic.continue, false);
+  } finally { fs.rmSync(cwd, { recursive: true, force: true }); }
+});

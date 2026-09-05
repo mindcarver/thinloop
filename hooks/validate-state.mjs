@@ -25,6 +25,30 @@ export const REQUIRED_SECTIONS = [
   "Next action",
 ];
 
+const SECTION_ALIASES = {
+  Outcome: "结果",
+  Boundaries: "边界",
+  Acceptance: "验收条件",
+  Decisions: "决策",
+  Evidence: "证据",
+  "Next action": "下一步行动",
+};
+
+// Current Chinese and previous English current-task templates. Arbitrary angle
+// brackets also occur in HTML, type parameters and Markdown autolinks.
+const TEMPLATE_MARKERS = [
+  "<GitHub Issue 地址>",
+  "<GitHub Issue URL>",
+  "<ISO-8601 timestamp with timezone>",
+  "<Issue 验收 ID 与当前状态>",
+  "<Issue acceptance ID and current state>",
+  "<命令或可观察行动>",
+  "<command or observable action>",
+  "<唯一且具体的行动>",
+  "<Exactly one concrete action>",
+  "<One observable result>",
+];
+
 export function parseFrontmatter(markdown) {
   const match = markdown.match(/^---\s*\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/);
   if (!match) {
@@ -61,9 +85,9 @@ export function sectionContent(markdown, heading) {
 
 export function hasPlaceholder(content) {
   return (
-    /<[^>\r\n]+>/.test(content) ||
+    TEMPLATE_MARKERS.some((marker) => content.includes(marker)) ||
     /\[(?:TODO|TBD)\b[^\]]*\]/i.test(content) ||
-    /^\s*(?:TODO|TBD)\s*$/im.test(content)
+    /^\s*(?:[-*]\s+)?(?:TODO|TBD)(?:\s*[:：].*)?\s*$/im.test(content)
   );
 }
 
@@ -102,7 +126,9 @@ export function validateState(markdown) {
 
   const sections = {};
   for (const heading of REQUIRED_SECTIONS) {
-    const content = sectionContent(markdown, heading);
+    const content =
+      sectionContent(markdown, heading) ??
+      sectionContent(markdown, SECTION_ALIASES[heading]);
     sections[heading] = content;
     if (content === null) {
       issues.push(`missing section: ${heading}`);
@@ -115,8 +141,8 @@ export function validateState(markdown) {
 
   if (
     sections.Boundaries &&
-    (!/^\s*-\s*In\s*:/im.test(sections.Boundaries) ||
-      !/^\s*-\s*Out\s*:/im.test(sections.Boundaries))
+    (!/^\s*-\s*(?:In\s*:|范围内\s*[:：])/im.test(sections.Boundaries) ||
+      !/^\s*-\s*(?:Out\s*:|范围外\s*[:：])/im.test(sections.Boundaries))
   ) {
     issues.push("Boundaries must include both In and Out entries");
   }
