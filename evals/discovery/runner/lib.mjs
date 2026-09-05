@@ -76,6 +76,7 @@ export function summarizeUserInputEvents(events, { invalidJsonLines = 0, process
   const requests = new Map();
   const unknownTypes = new Set();
   const lifecycleErrors = new Set();
+  const identities = new Map();
   const activeTools = new Map();
   const completedTools = new Set();
   let inTurn = false;
@@ -99,6 +100,11 @@ export function summarizeUserInputEvents(events, { invalidJsonLines = 0, process
     if (!inTurn) lifecycleErrors.add("item-outside-turn");
     const item = event.item ?? {};
     const tool = item.tool ?? item.name;
+    if (item.id) {
+      const identity = JSON.stringify([item.type, tool ?? null, item.server ?? null]);
+      if (identities.has(item.id) && identities.get(item.id) !== identity) lifecycleErrors.add("item-identity-changed");
+      else identities.set(item.id, identity);
+    }
     if (!["agent_message", "reasoning", "plan"].includes(item.type)) {
       const key = item.id;
       if (!key) lifecycleErrors.add("tool-missing-id");

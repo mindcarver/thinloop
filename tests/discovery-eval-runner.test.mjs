@@ -416,3 +416,25 @@ test("telemetry requires ordered complete turns and paired tool lifecycles", () 
   assert.equal(valid.completedTurns, 1);
   assert.equal(summarizeUserInputEvents([start, turn, end], options).count, 0);
 });
+
+test("item identities stay immutable across updates and duplicate completions", () => {
+  const start = { type: "thread.started" }, turn = { type: "turn.started" }, end = { type: "turn.completed" };
+  const event = (phase, extra = {}) => ({ type: `item.${phase}`, item: { id: "q1", type: "command_execution", ...extra } });
+  const request = { type: "mcp_tool_call", server: "functions", tool: "request_user_input" };
+  const options = { processCompleted: true, invalidJsonLines: 0 };
+  for (const items of [
+    [event("started"), event("updated", request), event("completed")],
+    [event("started"), event("completed"), event("completed", request)],
+    [event("started", request), event("updated", { ...request, tool: "request_user_input_async" }), event("completed", request)],
+    [event("started", request), event("completed", request), event("completed", { ...request, server: "other" })],
+    [event("started", request), event("completed", { type: "agent_message" })],
+  ]) {
+    const result = summarizeUserInputEvents([start, turn, ...items, end], options);
+    assert.equal(result.coverage, "unknown");
+    assert.equal(result.count, null);
+    assert.ok(result.lifecycleErrors.includes("item-identity-changed"));
+  }
+  const valid = summarizeUserInputEvents([start, turn, event("started", request), event("updated", request), event("completed", request), event("completed", request), end], options);
+  assert.equal(valid.count, 1);
+  assert.deepEqual(valid.lifecycleErrors, []);
+});

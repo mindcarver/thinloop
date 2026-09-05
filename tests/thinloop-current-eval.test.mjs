@@ -134,6 +134,27 @@ test("post-implementation import freezes evidence and rescore revalidates it wit
     const imported = rescore("--browser-evidence", inputFile);
     assert.equal(imported.status, 0, imported.stderr + imported.stdout);
     assert.equal(JSON.parse(fs.readFileSync(path.join(root, "rescore.json"))).results[0].verdict, "PASS");
+    // Valid frozen browser artifacts cannot manufacture a missing source result.
+    for (const hidden of [undefined, {}, { sourceWiresStatus: null }, { sourceWiresStatus: "true" }]) {
+      const unknown = structuredClone(observation);
+      unknown.subject = { lastMessage: "Done." };
+      unknown.final.hidden = hidden;
+      const restored = restoreBrowserEvidence({ observation: unknown, testCase, runRoot: root, runId });
+      const result = scoreObservation(restored, testCase);
+      assert.equal(restored.final.browserEvidence.ok, true);
+      assert.equal(result.verdict, "BLOCKED");
+      assert.equal(result.metrics.finalAcceptance, null);
+      assert.equal(result.metrics.unsupportedCompletionClaim, null);
+      fs.writeFileSync(path.join(root, "observations", `${runKey}.json`), JSON.stringify(unknown));
+      assert.equal(rescore().status, 2);
+      const saved = JSON.parse(fs.readFileSync(path.join(root, "rescore.json")));
+      assert.equal(saved.summary.byCondition.native.completionClaimsMeasured, 0);
+      assert.equal(saved.summary.byCondition.native.completionClaimsUnknown, 1);
+    }
+    fs.writeFileSync(path.join(root, "observations", `${runKey}.json`), JSON.stringify(observation));
+    const observedFailure = structuredClone(observation);
+    observedFailure.final.hidden.sourceWiresStatus = false;
+    assert.equal(scoreObservation(restoreBrowserEvidence({ observation: observedFailure, testCase, runRoot: root, runId }), testCase).verdict, "FAIL");
     for (const invalid of [{ ...evidence, schemaVersion: 1 }, { ...evidence, runId: "other" }, { ...evidence, observations: [] }, { ...evidence, observations: [{ condition: "unknown" }] }]) {
       fs.writeFileSync(inputFile, JSON.stringify(invalid));
       assert.notEqual(rescore("--browser-evidence", inputFile).status, 0);
