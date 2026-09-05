@@ -26,6 +26,7 @@ import {
   findThreadId,
   parseJsonLines,
   summarizeCodexEvents,
+  summarizeUserInputEvents,
 } from "../evals/discovery/runner/lib.mjs";
 import { createRedactor } from "../evals/discovery/runner/redact.mjs";
 import {
@@ -351,4 +352,42 @@ test("release failure and secret leakage produce a failing process result", () =
   assert.equal(secured.verdict, "fail");
   assert.equal(secured.gates.secretScan, false);
   assert.equal(passingRelease.verdict, "pass");
+});
+
+test("user-input telemetry deduplicates calls and retains coordinates without arguments or answers", () => {
+  const item = { id: "item_1", type: "mcp_tool_call", server: "functions", tool: "request_user_input", arguments: { private: "do not retain" }, result: { answer: "do not retain" } };
+  const events = [
+    { type: "thread.started", thread_id: "fixture" },
+    { type: "turn.started" },
+    { type: "item.started", item },
+    { type: "item.completed", item },
+    { type: "item.completed", item: { id: "item_2", type: "agent_message", text: "What? Why?" } },
+    { type: "turn.completed" },
+  ];
+  const options = { invalidJsonLines: 0, processCompleted: true };
+  const telemetry = summarizeUserInputEvents(events, options);
+  assert.equal(telemetry.coverage, "complete");
+  assert.equal(telemetry.count, 1);
+  assert.deepEqual(telemetry.observedRequests, [{ eventIndex: 2, itemId: "item_1", tool: "request_user_input" }]);
+  assert.doesNotMatch(JSON.stringify(telemetry), /do not retain|answer|arguments/);
+  for (const malformed of [
+    events.slice(1), events.slice(0, -1),
+    [...events.slice(0, -1), { type: "future_event" }, events.at(-1)],
+    [...events.slice(0, -1), { type: "item.completed", item: { type: "new_tool" } }, events.at(-1)],
+    [...events.slice(0, -1), { type: "item.completed", item: { type: "mcp_tool_call", tool: "exec" } }, events.at(-1)],
+    [...events.slice(0, -1), { type: "item.completed", item: { type: "request_user_input" } }, events.at(-1)],
+  ]) {
+    const unknown = summarizeUserInputEvents(malformed, options);
+    assert.equal(unknown.coverage, "unknown");
+    assert.equal(unknown.count, null);
+    assert.equal(unknown.observedRequests.length, 1);
+  }
+  assert.equal(summarizeUserInputEvents(events, { ...options, invalidJsonLines: 1 }).count, null);
+  assert.equal(summarizeUserInputEvents(events, { ...options, processCompleted: false }).count, null);
+  assert.equal(summarizeUserInputEvents(events).count, null);
+  const noRequests = events.filter((event) => event.item?.id !== "item_1");
+  assert.equal(summarizeUserInputEvents(noRequests, options).count, 0);
+  const asyncRequest = structuredClone(events);
+  asyncRequest[2].item.tool = asyncRequest[3].item.tool = "functions.request_user_input_async";
+  assert.equal(summarizeUserInputEvents(asyncRequest, options).count, 1);
 });

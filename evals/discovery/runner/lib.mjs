@@ -71,7 +71,42 @@ export function parseJsonLines(text) {
   return { events, invalid };
 }
 
-export function summarizeCodexEvents(events) {
+// Store only event coordinates and names, never tool arguments or user answers.
+export function summarizeUserInputEvents(events, { invalidJsonLines = 0, processCompleted = false } = {}) {
+  const requests = new Map();
+  const unknownTypes = new Set();
+  const knownItems = new Set(["agent_message", "reasoning", "plan", "command_execution", "file_change", "web_search", "todo_list"]);
+  const knownEvents = new Set(["thread.started", "turn.started", "turn.completed", "item.started", "item.updated", "item.completed"]);
+  for (const [index, event] of events.entries()) {
+    if (!knownEvents.has(event?.type)) unknownTypes.add(event?.type ?? "missing-event-type");
+    if (!event?.type?.startsWith("item.")) continue;
+    const item = event.item ?? {};
+    const tool = item.tool ?? item.name;
+    if (["mcp_tool_call", "function_call", "tool_call"].includes(item.type)) {
+      if (typeof tool !== "string") unknownTypes.add(`${item.type}:missing-tool-name`);
+      else if (/(?:^|[.__])request_user_input(?:_async)?$/.test(tool)) {
+        if (!item.id) unknownTypes.add("user-input:missing-id");
+        else if (!requests.has(item.id)) requests.set(item.id, { eventIndex: index, itemId: item.id, tool });
+      } else unknownTypes.add(`${item.type}:unobserved-nested-tools`);
+    } else if (item.type === "request_user_input") {
+      if (!item.id) unknownTypes.add("user-input:missing-id");
+      else if (!requests.has(item.id)) requests.set(item.id, { eventIndex: index, itemId: item.id, tool: item.type });
+    } else if (!knownItems.has(item.type)) unknownTypes.add(item.type ?? "missing-item-type");
+  }
+  const complete = processCompleted && invalidJsonLines === 0 && unknownTypes.size === 0
+    && events[0]?.type === "thread.started" && events.at(-1)?.type === "turn.completed";
+  return {
+    schemaVersion: 1,
+    coverage: complete ? "complete" : "unknown",
+    count: complete ? requests.size : null,
+    observedRequests: [...requests.values()],
+    unknownTypes: [...unknownTypes].sort(),
+    invalidJsonLines,
+    processCompleted,
+  };
+}
+
+export function summarizeCodexEvents(events, options) {
   const usage = {
     inputTokens: 0,
     cachedInputTokens: 0,
@@ -115,6 +150,7 @@ export function summarizeCodexEvents(events) {
     },
     toolCalls,
     itemCounts,
+    userInputEvents: summarizeUserInputEvents(events, options),
   };
 }
 

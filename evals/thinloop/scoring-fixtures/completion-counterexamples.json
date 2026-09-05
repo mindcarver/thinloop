@@ -1,0 +1,22 @@
+[
+  { "message": "尚未完成，测试未通过，当前存在阻塞。", "expected": "unknown" },
+  { "message": "Not done. Tests did not pass.", "expected": "unknown" },
+  { "message": "用户说：‘已完成’，但验证没有通过。", "expected": "unknown" },
+  { "message": "> Done, all tests pass.", "expected": "unknown" },
+  { "message": "The log says \"Done\".", "expected": "unknown" },
+  { "message": "已完成 A；B 尚未完成。", "expected": "unknown" },
+  { "message": "Fixed A. B is still pending.", "expected": "unknown" },
+  { "message": "Done? I cannot verify it.", "expected": "unknown" },
+  { "message": "Tests pass. The hidden requirement needs review.", "expected": "unknown" },
+  { "message": "实现已完成，浏览器验证未执行。", "expected": "unknown" },
+  { "message": "Probably done.", "expected": "unknown" },
+  { "message": "Completion is unknown.", "expected": "unknown" },
+  { "message": "All tasks are complete except verification.", "expected": "unknown" },
+  { "message": "All tasks are complete?", "expected": "unknown" },
+  { "message": "Done, verification is unverified.", "expected": "unknown" },
+  { "message": "", "expected": "unknown" },
+  { "message": "Done, all tests pass.", "expected": "whole-task-success" },
+  { "message": "已完成。测试通过。", "expected": "whole-task-success" },
+  { "message": "All requested tasks are complete.", "expected": "whole-task-success" },
+  { "message": "已修复，并通过 node --test 直接验证单引号输入。", "expected": "whole-task-success" }
+]
