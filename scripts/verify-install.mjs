@@ -430,6 +430,42 @@ function inspectCodeWhaleRuntime(platform, expected, runCommand, context) {
   );
 }
 
+function inspectPayload(installPath, expected, relativeRoot) {
+  if (!expected.trackedFiles) {
+    const inventory = spawnSync("git", ["ls-files", "--cached", "-z"], {
+      cwd: expected.sourceRoot,
+      encoding: "utf8",
+      timeout: 10_000,
+    });
+    if (inventory.error || inventory.status !== 0) {
+      return [
+        `source payload inventory unavailable: ${inventory.error?.message || inventory.stderr.trim()}`,
+      ];
+    }
+    expected.trackedFiles = inventory.stdout.split("\0").filter(Boolean);
+  }
+  const prefix = `${relativeRoot}/`;
+  const files = expected.trackedFiles.filter((file) => file.startsWith(prefix));
+  if (files.length === 0) {
+    return [`source payload inventory is empty: ${relativeRoot}`];
+  }
+  const problems = [];
+  for (const relativePath of files) {
+    try {
+      const installed = fs.readFileSync(resolveFrom(installPath, relativePath));
+      const authoritative = fs.readFileSync(
+        resolveFrom(expected.sourceRoot, relativePath),
+      );
+      if (!installed.equals(authoritative)) {
+        problems.push(`${relativePath} differs from source`);
+      }
+    } catch (error) {
+      problems.push(`${relativePath}: ${error.message}`);
+    }
+  }
+  return problems;
+}
+
 function inspectInstalledSkills(installPath, platform, expected) {
   const skillRoot = resolveFrom(installPath, platform.installation.skillRoot);
   let installedNames;
@@ -453,6 +489,11 @@ function inspectInstalledSkills(installPath, platform, expected) {
     (skillName) => !expectedSet.has(skillName),
   );
   const problems = [
+    ...inspectPayload(
+      installPath,
+      expected,
+      path.relative(expected.sourceRoot, expected.skillsRoot).split(path.sep).join("/"),
+    ),
     ...(missing.length > 0 ? [`missing: ${missing.join(", ")}`] : []),
     ...(unexpected.length > 0
       ? [`unexpected scd skills: ${unexpected.join(", ")}`]
@@ -462,7 +503,7 @@ function inspectInstalledSkills(installPath, platform, expected) {
     "skills",
     problems.length === 0 ? "PASS" : "FAIL",
     problems.length === 0
-      ? `${expected.skillNames.length}/${expected.skillNames.length} skills present`
+      ? `${expected.skillNames.length}/${expected.skillNames.length} skills and complete tracked payload match source`
       : problems.join("; "),
   );
 }
@@ -498,24 +539,19 @@ function inspectInstalledHooks(installPath, platform, expected) {
     }
   }
 
-  const handler = platform.capabilities.hookHandler;
-  try {
-    const installed = fs.readFileSync(resolveFrom(installPath, handler));
-    const authoritative = fs.readFileSync(
-      resolveFrom(expected.sourceRoot, handler),
-    );
-    if (!installed.equals(authoritative)) {
-      mismatches.push(`${handler} differs from source`);
-    }
-  } catch (error) {
-    mismatches.push(`${handler}: ${error.message}`);
-  }
+  mismatches.push(
+    ...inspectPayload(
+      installPath,
+      expected,
+      path.posix.dirname(platform.capabilities.hookHandler),
+    ),
+  );
 
   return makeCheck(
     "hooks",
     mismatches.length === 0 ? "PASS" : "FAIL",
     mismatches.length === 0
-      ? `${platform.capabilities.hooks.length}/${platform.capabilities.hooks.length} hooks match source definitions`
+      ? `${platform.capabilities.hooks.length}/${platform.capabilities.hooks.length} hooks and complete tracked payload match source definitions`
       : mismatches.join("; "),
   );
 }
