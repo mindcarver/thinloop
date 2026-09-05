@@ -48,6 +48,9 @@ jobs:
       - name: Run Thinloop current evaluation dry-run
         run: node evals/thinloop/runner/run.mjs --mode dry
 
+      - name: Run isolated delivery protocol evaluation
+        run: node evals/delivery/run.mjs --mode protocol
+
       - name: Check README diagrams
         run: node scripts/generate-readme-diagrams.mjs --check
 
