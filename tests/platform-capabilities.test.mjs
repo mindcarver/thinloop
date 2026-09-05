@@ -106,13 +106,17 @@ function makePluginInstall(
     installPath,
     ...definition.installation.skillRoot.split("/"),
   );
-  for (const skillName of [...expectedSkills, ...extraSkills]) {
+  fs.cpSync(path.join(root, "skills"), installedSkillRoot, { recursive: true });
+  for (const skillName of extraSkills) {
     const skillPath = path.join(installedSkillRoot, skillName);
     fs.mkdirSync(skillPath, { recursive: true });
     fs.writeFileSync(path.join(skillPath, "SKILL.md"), `# ${skillName}\n`);
   }
 
-  const hookSources = [
+  fs.cpSync(path.join(root, "hooks"), path.join(installPath, "hooks"), {
+    recursive: true,
+  });
+  const hookSources = missingHooks.length === 0 ? [] : [
     ...new Set(definition.capabilities.hooks.map((hook) => hook.source)),
   ];
   for (const relativePath of hookSources) {
@@ -127,15 +131,6 @@ function makePluginInstall(
     fs.mkdirSync(path.dirname(absolutePath), { recursive: true });
     fs.writeFileSync(absolutePath, JSON.stringify(configuration));
   }
-  const handlerPath = path.join(
-    installPath,
-    ...definition.capabilities.hookHandler.split("/"),
-  );
-  fs.mkdirSync(path.dirname(handlerPath), { recursive: true });
-  fs.copyFileSync(
-    path.join(root, definition.capabilities.hookHandler),
-    handlerPath,
-  );
 
   return installPath;
 }
@@ -298,6 +293,113 @@ test("read-only checker verifies complete automatic installs", () => {
     assert.match(formatText(report), /Mode: read-only/);
   } finally {
     fs.rmSync(homeDir, { recursive: true, force: true });
+    fs.rmSync(claudePath, { recursive: true, force: true });
+  }
+});
+
+for (const relativePath of [
+  "skills/scd-quickdev/SKILL.md",
+  "skills/scd-quickdev/references/evidence-contract.md",
+  "skills/scd-project/scripts/validate-project-graph.mjs",
+  "skills/scd-quickdev/assets/current-task.md",
+  "skills/scd-quickdev/agents/openai.yaml",
+  "hooks/check-state.mjs",
+  "hooks/validate-state.mjs",
+]) {
+  for (const mutation of ["missing", "modified"]) {
+    test(`checker rejects ${mutation} installed payload: ${relativePath}`, () => {
+      const claudePath = makePluginInstall("claude-code");
+      const installedFile = path.join(claudePath, relativePath);
+      const sentinel = path.join(claudePath, "executed-installed-code");
+      try {
+        if (mutation === "missing") {
+          fs.rmSync(installedFile);
+        } else {
+          fs.writeFileSync(installedFile,
+            `import fs from "node:fs"; fs.writeFileSync(${JSON.stringify(sentinel)}, "executed");`);
+        }
+        const before = mutation === "modified" ? fs.readFileSync(installedFile) : null;
+        const calls = [];
+        const report = inspectInstallations({
+          registryPath,
+          sourceRoot: root,
+          homeDir: claudePath,
+          environment: {},
+          platformId: "claude-code",
+          runCommand: (command) => {
+            calls.push(command);
+            return pluginRunner({ claude: [{
+              id: "thinloop@thinloop", version: expectedVersion,
+              enabled: true, installPath: claudePath,
+            }] })(command);
+          },
+        });
+        const check = report.results[0].checks.find((entry) =>
+          entry.name === (relativePath.startsWith("skills/") ? "skills" : "hooks"));
+        assert.equal(report.exitCode, 1);
+        assert.equal(check.status, "FAIL");
+        assert.match(check.detail, new RegExp(escapeRegex(relativePath)));
+        assert.deepEqual(calls, [["claude", "plugin", "list", "--json"]]);
+        assert.equal(fs.existsSync(sentinel), false);
+        if (before) assert.deepEqual(fs.readFileSync(installedFile), before);
+        else assert.equal(fs.existsSync(installedFile), false);
+      } finally {
+        fs.rmSync(claudePath, { recursive: true, force: true });
+      }
+    });
+  }
+}
+
+test("checker follows the tracked payload inventory, including nested Hook dependencies", () => {
+  const sourceRoot = makeFixture();
+  const claudePath = makePluginInstall("claude-code");
+  const dependency = "hooks/lib/state-schema.mjs";
+  const inspect = () => inspectInstallations({
+    registryPath, sourceRoot, homeDir: claudePath, environment: {},
+    platformId: "claude-code",
+    runCommand: pluginRunner({ claude: [{
+      id: "thinloop@thinloop", version: expectedVersion,
+      enabled: true, installPath: claudePath,
+    }] }),
+  });
+  try {
+    for (const directory of ["skills", "hooks", ".claude-plugin", ".codex-plugin"]) {
+      fs.cpSync(path.join(root, directory), path.join(sourceRoot, directory), {
+        recursive: true,
+      });
+    }
+    fs.mkdirSync(path.dirname(path.join(sourceRoot, dependency)), { recursive: true });
+    fs.writeFileSync(path.join(sourceRoot, dependency), "export const schema = 1;\n");
+    fs.appendFileSync(path.join(sourceRoot, "hooks/validate-state.mjs"),
+      '\nimport "./lib/state-schema.mjs";\n');
+    for (const args of [["init", "-q"], ["add", "skills", "hooks", ".claude-plugin"]]) {
+      const git = spawnSync("git", args, { cwd: sourceRoot, encoding: "utf8" });
+      assert.equal(git.status, 0, git.stderr);
+    }
+    fs.cpSync(path.join(sourceRoot, "hooks"), path.join(claudePath, "hooks"), {
+      recursive: true,
+    });
+    // Local caches are not part of the canonical installation payload.
+    fs.writeFileSync(path.join(sourceRoot, "skills/scd-quickdev/.DS_Store"), "cache");
+    fs.mkdirSync(path.join(sourceRoot, "hooks/__pycache__"));
+    fs.writeFileSync(path.join(sourceRoot, "hooks/__pycache__/local.pyc"), "cache");
+    assert.equal(inspect().results[0].status, "PASS");
+    for (const mutation of ["missing", "modified"]) {
+      if (mutation === "missing") fs.rmSync(path.join(claudePath, dependency));
+      else fs.writeFileSync(path.join(claudePath, dependency), "export const schema = 2;");
+      const report = inspect();
+      assert.equal(report.exitCode, 1);
+      const hooks = report.results[0].checks.find((check) => check.name === "hooks");
+      assert.match(hooks.detail, new RegExp(escapeRegex(dependency)));
+    }
+    fs.copyFileSync(path.join(sourceRoot, dependency), path.join(claudePath, dependency));
+    fs.rmSync(path.join(sourceRoot, ".git"), { recursive: true });
+    const report = inspect();
+    assert.equal(report.exitCode, 1);
+    assert.match(report.results[0].checks.find((check) => check.name === "skills").detail,
+      /source payload inventory unavailable/);
+  } finally {
+    fs.rmSync(sourceRoot, { recursive: true, force: true });
     fs.rmSync(claudePath, { recursive: true, force: true });
   }
 });
