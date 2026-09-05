@@ -31,16 +31,16 @@ delivery sequence:
    returns `PASS`, `FAIL`, or `BLOCKED` with direct evidence, then merge only
    after `PASS`;
 6. synchronize local `main` and confirm it contains the accepted change;
-7. only when the merged change modifies installed Thinloop payload or runtime
-   behavior—such as `skills/**`, `hooks/**`, plugin manifests, version metadata,
-   or installation mechanics—reinstall or refresh the affected supported local
-   agents, then verify the installed version, skill names, and hooks that each
-   platform supports; WorkBuddy and ZCode are exempt from verification
-   (`verification.mode: skip` in `config/platform-capabilities.json`) and are
-   never required to be refreshed or UI-checked;
-8. do not refresh local agents for repository-only changes such as `README.md`,
-   `docs/**`, tests, evaluations, CI configuration, or assets that installed
-   Skills and plugins do not load;
+7. after every Thinloop delivery, check installed ZCode, Claude Code and Codex
+   against merged `main`, including repository-only changes: refresh Thinloop
+   payload or source links whenever the version or content has drifted, then
+   verify version, complete skills and each platform's supported hooks. Do not
+   install missing clients or upgrade host apps. Missing required evidence stays
+   UNVERIFIED and must be reported, never treated as PASS;
+8. for other supported installed agents, refresh when the merged change modifies
+   installed payload or runtime behavior. WorkBuddy alone remains exempt
+   (`verification.mode: skip`). Preserve unrelated plugin settings, data and
+   authentication; use native update commands/APIs and recheck their result;
 9. close the Issue only after the merged version, required installation state,
    and all three completion-audit ledgers still support `PASS`.
 
