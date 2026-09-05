@@ -40,6 +40,8 @@ function correctiveMessage(text) {
 }
 
 export function apply(ctx) {
+  // Per live Agent, without persisting task data or retaining finished agents.
+  const corrections = new WeakMap();
   ctx.on("agent/turn-stopping", async ({ agent, signal }) => {
     if (signal?.aborted) return;
 
@@ -50,7 +52,10 @@ export function apply(ctx) {
     try {
       markdown = await readFile(statePath, "utf8");
     } catch (error) {
-      if (error?.code === "ENOENT") return; // no fallback state → nothing to protect
+      if (error?.code === "ENOENT") {
+        corrections.delete(agent);
+        return; // no fallback state → nothing to protect
+      }
       ctx.logger.warn(
         `thinloop continuity check failed open: ${
           error instanceof Error ? error.message : String(error)
@@ -60,9 +65,24 @@ export function apply(ctx) {
     }
 
     const result = validateState(markdown);
-    if (!result.managed || result.issues.length === 0) return;
+    if (!result.managed || result.issues.length === 0) {
+      corrections.delete(agent);
+      return;
+    }
+
+    const previous = corrections.get(agent);
+    if (previous?.statePath === statePath && previous.markdown === markdown) {
+      ctx.logger.warn(
+        `thinloop unresolved continuity handoff: .scd/tasks/current.md ` +
+          `is unchanged after correction; no further steering. ` +
+          `The task is not complete. Resume by fixing the note:\n` +
+          result.issues.map((issue) => `- ${issue}`).join("\n"),
+      );
+      return;
+    }
 
     const issueList = result.issues.map((issue) => `- ${issue}`).join("\n");
+    corrections.set(agent, { statePath, markdown });
     agent.steer(
       correctiveMessage(
         `${result.managedBy} paused before stopping because ` +

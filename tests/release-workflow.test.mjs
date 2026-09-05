@@ -8,6 +8,13 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const checker = path.join(root, "scripts", "check-version.mjs");
+const version = JSON.parse(fs.readFileSync(
+  path.join(root, ".codex-plugin/plugin.json"), "utf8",
+)).version;
+const tag = `v${version}`;
+const differentVersion = version.replace(/\d+$/, (patch) => Number(patch) + 1);
+const differentTag = `v${differentVersion}`;
+const releaseNotes = `docs/releases/${tag}.md`;
 const workflow = fs.readFileSync(
   path.join(root, ".github", "workflows", "release.yml"),
   "utf8",
@@ -22,7 +29,7 @@ const versionFiles = [
   "marketplace.json",
   "README.md",
   "docs/installation.md",
-  "docs/releases/v0.16.0.md",
+  releaseNotes,
 ];
 
 function makeFixture() {
@@ -53,13 +60,13 @@ test("version checker accepts all carriers, the matching tag, and exact notes", 
     const result = runChecker(
       fixture,
       "--tag",
-      "v0.16.0",
+      tag,
       "--require-release-notes",
     );
 
     assert.equal(result.status, 0, result.stderr);
-    assert.match(result.stdout, /PASS version 0\.16\.0: 11 surfaces/);
-    assert.match(result.stdout, /notes docs\/releases\/v0\.16\.0\.md/);
+    assert.ok(result.stdout.includes(`PASS version ${version}: 11 surfaces`));
+    assert.ok(result.stdout.includes(`notes ${releaseNotes}`));
   } finally {
     fs.rmSync(fixture, { recursive: true, force: true });
   }
@@ -70,14 +77,14 @@ test("version checker rejects a mismatched carrier", () => {
   try {
     const manifestPath = path.join(fixture, ".claude-plugin", "plugin.json");
     const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
-    manifest.version = "0.15.0";
+    manifest.version = differentVersion;
     fs.writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
 
     const result = runChecker(fixture);
 
     assert.equal(result.status, 1);
     assert.match(result.stderr, /.claude-plugin\/plugin\.json version/);
-    assert.match(result.stderr, /expected 0\.16\.0/);
+    assert.ok(result.stderr.includes(`expected ${version}`));
   } finally {
     fs.rmSync(fixture, { recursive: true, force: true });
   }
@@ -86,13 +93,12 @@ test("version checker rejects a mismatched carrier", () => {
 test("version checker rejects a tag that differs from the manifest", () => {
   const fixture = makeFixture();
   try {
-    const result = runChecker(fixture, "--tag", "v0.16.1");
+    const result = runChecker(fixture, "--tag", differentTag);
 
     assert.equal(result.status, 1);
-    assert.match(
-      result.stderr,
-      /tag v0\.16\.1 does not match manifest version 0\.16\.0/,
-    );
+    assert.ok(result.stderr.includes(
+      `tag ${differentTag} does not match manifest version ${version}`,
+    ));
   } finally {
     fs.rmSync(fixture, { recursive: true, force: true });
   }
@@ -103,14 +109,13 @@ test("version checker consumes a tag-shaped GITHUB_REF_NAME", () => {
   try {
     const result = runCheckerWithEnv(
       fixture,
-      { GITHUB_REF_NAME: "v0.16.1" },
+      { GITHUB_REF_NAME: differentTag },
     );
 
     assert.equal(result.status, 1);
-    assert.match(
-      result.stderr,
-      /tag v0\.16\.1 does not match manifest version 0\.16\.0/,
-    );
+    assert.ok(result.stderr.includes(
+      `tag ${differentTag} does not match manifest version ${version}`,
+    ));
   } finally {
     fs.rmSync(fixture, { recursive: true, force: true });
   }
@@ -119,16 +124,16 @@ test("version checker consumes a tag-shaped GITHUB_REF_NAME", () => {
 test("version checker rejects missing exact-tag release notes", () => {
   const fixture = makeFixture();
   try {
-    fs.rmSync(path.join(fixture, "docs", "releases", "v0.16.0.md"));
+    fs.rmSync(path.join(fixture, "docs", "releases", `${tag}.md`));
     const result = runChecker(
       fixture,
       "--tag",
-      "v0.16.0",
+      tag,
       "--require-release-notes",
     );
 
     assert.equal(result.status, 1);
-    assert.match(result.stderr, /missing release notes: docs\/releases\/v0\.16\.0\.md/);
+    assert.ok(result.stderr.includes(`missing release notes: ${releaseNotes}`));
   } finally {
     fs.rmSync(fixture, { recursive: true, force: true });
   }

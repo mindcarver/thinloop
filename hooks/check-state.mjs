@@ -83,6 +83,24 @@ async function main() {
     }
 
     const eventName = hookInput.hook_event_name || "lifecycle event";
+    if (
+      process.env.CLAUDE_PLUGIN_ROOT &&
+      !process.env.CODEBUDDY_PLUGIN_ROOT &&
+      !process.env.ZCODE_PLUGIN_ROOT &&
+      eventName === "Stop" &&
+      hookInput.stop_hook_active === true
+    ) {
+      emit({
+        continue: true,
+        systemMessage:
+          `${result.managedBy} unresolved continuity handoff: ` +
+          `.scd/tasks/current.md is still not resumable after correction. ` +
+          `Stopping automatic correction; this task is not complete. ` +
+          `Resume by fixing the note before further delivery:\n` +
+          result.issues.map((issue) => `- ${issue}`).join("\n"),
+      });
+      return;
+    }
     block(eventName, result.managedBy, result.issues);
   } catch (error) {
     emit({
