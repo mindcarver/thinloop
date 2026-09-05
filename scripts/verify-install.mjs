@@ -19,6 +19,7 @@ const DEFAULT_REGISTRY = path.join(
 const RESULT_ORDER = ["PASS", "FAIL", "UNVERIFIED", "MANUAL", "SKIP"];
 const READ_ONLY_PROBES = new Map([
   ["claude-code", ["claude", "plugin", "list", "--json"]],
+  ["zcode", ["zcode", "plugins", "list", "--json"]],
   ["codewhale", ["codewhale", "doctor", "--json"]],
 ]);
 const MANUAL_PROBES = new Map([
@@ -619,8 +620,10 @@ function inspectPlugin(platform, expected, runCommand, context) {
   }
 
   let plugins;
+  let response;
   try {
-    plugins = JSON.parse(commandResult.stdout);
+    response = JSON.parse(commandResult.stdout);
+    plugins = platform.id === "zcode" ? response?.plugins : response;
   } catch {
     return singleCheckResult(
       platform,
@@ -639,7 +642,7 @@ function inspectPlugin(platform, expected, runCommand, context) {
   }
 
   const plugin = plugins.find(
-    (entry) => entry.id === platform.verification.pluginId,
+    (entry) => entry?.id === platform.verification.pluginId,
   );
   if (!plugin) {
     return singleCheckResult(
@@ -648,6 +651,17 @@ function inspectPlugin(platform, expected, runCommand, context) {
       "FAIL",
       `${platform.verification.pluginId} is not installed`,
     );
+  }
+
+  if (platform.id === "zcode") {
+    if (plugins.filter((entry) => entry?.id === platform.verification.pluginId).length !== 1) {
+      return singleCheckResult(platform, "plugin", "FAIL", "ambiguous Thinloop plugin records");
+    }
+    if (Array.isArray(response.diagnostics) && response.diagnostics.some(entry =>
+      entry?.pluginId === platform.verification.pluginId && entry.severity === "error")) {
+      return singleCheckResult(platform, "plugin", "FAIL", "ZCode reported a Thinloop plugin error; inspect diagnostics locally");
+    }
+    plugin.installPath = plugin.rootPath;
   }
 
   const checks = [
@@ -698,6 +712,27 @@ function inspectPlugin(platform, expected, runCommand, context) {
     );
   } else {
     checks.push(makeCheck("install-path", "PASS", plugin.installPath));
+    if (platform.id === "zcode") {
+      const manifestPath = resolveFrom(plugin.installPath, platform.installation.manifest);
+      checks.push(makeCheck("runtime-manifest",
+        typeof plugin.manifestPath !== "string" ? "UNVERIFIED" :
+          path.resolve(plugin.manifestPath) === manifestPath ? "PASS" : "FAIL",
+        "reported manifest must select .zcode-plugin/plugin.json inside rootPath"));
+      checks.push(makeCheck("runtime-skills",
+        typeof plugin.skillCount !== "number" ? "UNVERIFIED" :
+          plugin.skillCount === expected.skillNames.length ? "PASS" : "FAIL",
+        `${plugin.skillCount ?? "unknown"} discovered; ${expected.skillNames.length} expected`));
+      const details = plugin.hookDetails;
+      const missing = platform.capabilities.hooks.filter((hook) =>
+        !Array.isArray(details) || !details.some((entry) =>
+          entry?.event === hook.event && entry.matcher === hook.matcher &&
+          entry.runnable === true && typeof entry.sourcePath === "string" &&
+          path.resolve(entry.sourcePath) === resolveFrom(plugin.installPath, hook.source)));
+      checks.push(makeCheck("runtime-hooks",
+        !Array.isArray(details) ? "UNVERIFIED" : missing.length ? "FAIL" : "PASS",
+        missing.length ? `missing or non-runnable: ${missing.map(hook => hook.event).join(", ")}` :
+          `${platform.capabilities.hooks.length} supported hooks discovered and runnable`));
+    }
     checks.push(inspectInstalledSkills(plugin.installPath, platform, expected));
     checks.push(inspectInstalledHooks(plugin.installPath, platform, expected));
     checks.push(

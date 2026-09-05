@@ -76,6 +76,7 @@ export function restoreBrowserEvidence({ observation, testCase, runRoot, runId, 
     browser = validateBrowserEvidence({ evidence: record, testCase, condition: observation.condition, runId, final: observation.final, artifactRoot: frozenRoot });
   }
   next.final.browserEvidence = browser;
-  next.final.hidden = { ...next.final.hidden, ok: next.final.hidden?.sourceWiresStatus === true && browser.ok, browserEvidence: browser.ok };
+  const sourceResult = next.final.hidden?.sourceWiresStatus;
+  next.final.hidden = { ...next.final.hidden, ok: typeof sourceResult === "boolean" ? sourceResult && browser.ok : null, browserEvidence: browser.ok };
   return next;
 }

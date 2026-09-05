@@ -241,8 +241,16 @@
         ]
       },
       "verification": {
-        "mode": "skip",
-        "summary": "不验证：ZCode 无可用 CLI；已取消 Settings → Plugins 核验要求"
+        "mode": "plugin-cli",
+        "command": [
+          "zcode",
+          "plugins",
+          "list",
+          "--json"
+        ],
+        "pluginId": "thinloop@thinloop",
+        "summary": "`zcode plugins list --json` 提供 enabled、version、rootPath、skillCount 与 hookDetails；检查完整 Skill/Hook 载荷和两个可运行 Hook",
+        "manualFallback": "ZCode CLI 不可用时保持 UNVERIFIED，不自动安装宿主"
       }
     }
   ]
