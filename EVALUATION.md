@@ -363,3 +363,7 @@ node evals\score-runs.mjs
 ```
 
 客观评分原始结果保存在仓库的 `work/scd-dev-loop-evals/objective-results.json`，没有打入发布包。
+
+## 浏览器证据的实现后导入
+
+当前页面评测先完成实现并保存代码快照，随后通过 `rescore.mjs --run <目录> --browser-evidence <文件>` 导入真实浏览器记录。记录绑定 runId、case、condition、代码快照及采集时间，产物必须存在且 SHA-256 匹配；离线重评分重新校验冻结记录与产物，不直接信任保存的通过标记。缺失证据保持 BLOCKED。具体格式及采集命令见 [当前版本评测说明](evals/thinloop/README.md#证据与重评分)。这项修复改善证据绑定与完整性，不代表已经重新测量模型整体收益。
