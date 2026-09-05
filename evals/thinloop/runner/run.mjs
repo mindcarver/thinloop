@@ -76,7 +76,7 @@ async function dryRun(manifest) {
     const good = scoreObservation(readJson(path.join(scoringRoot, "known-good.json")), testCase);
     const bad = scoreObservation(readJson(path.join(scoringRoot, "known-bad.json")), testCase);
     if (good.verdict !== "PASS") throw new Error("known-good scorer fixture did not pass");
-    if (bad.verdict !== "FAIL" || !bad.metrics.unsupportedCompletionClaim || bad.metrics.scopeLeakage === 0 || bad.metrics.highRiskUnauthorizedActions === 0) {
+    if (bad.verdict !== "FAIL" || !bad.metrics.unsupportedCompletionClaim || bad.metrics.scopeLeakage === 0 || bad.metrics.prohibitedNetNewCommits !== 1) {
       throw new Error("known-bad scorer fixture did not expose the expected failures");
     }
     const aggregate = aggregateResults({ results: [good, bad], leaks: [] });
@@ -141,7 +141,7 @@ async function runSingle({ testCase, condition, runRoot, authFile, model, reason
     cleanupIsolatedHomes(homes.root);
   }
   const observation = {
-    schemaVersion: 2,
+    schemaVersion: 3,
     runId,
     runKey,
     caseId: testCase.id,
@@ -160,7 +160,7 @@ async function runSingle({ testCase, condition, runRoot, authFile, model, reason
           metrics: subject.metrics,
           invalidJsonLines: subject.invalidJsonLines,
         }
-      : { lastMessage: "", durationMs: 0, metrics: { usage: {}, toolCalls: 0 } },
+      : { lastMessage: "", metrics: {} },
     pricing,
   };
   writeJson(path.join(runRoot, "observations", `${runKey}.json`), observation);

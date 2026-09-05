@@ -207,7 +207,7 @@ export async function runSubjectTurn({
     sessionId: resolvedSessionId,
     lastMessage: sanitizedLast.text.trim(),
     invalidJsonLines: parsed.invalid,
-    metrics: summarizeCodexEvents(parsed.events),
+    metrics: summarizeCodexEvents(parsed.events, { invalidJsonLines: parsed.invalid.length, processCompleted: result.code === 0 && !result.timedOut }),
     secretRedactions:
       raw.secretReplacements +
       error.secretReplacements +
@@ -294,7 +294,7 @@ export async function runStructuredEvaluator({
     code: result.code,
     timedOut: result.timedOut,
     durationMs: result.durationMs,
-    metrics: summarizeCodexEvents(parsed.events),
+    metrics: summarizeCodexEvents(parsed.events, { invalidJsonLines: parsed.invalid.length, processCompleted: result.code === 0 && !result.timedOut }),
     output,
     parseError,
     secretRedactions: raw.secretReplacements + error.secretReplacements,

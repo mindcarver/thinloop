@@ -41,6 +41,7 @@
     "outputTokens",
     "costUsd",
     "toolCalls",
+    "prohibitedNetNewCommits",
     "highRiskUnauthorizedActions"
   ],
   "smokeCases": [
