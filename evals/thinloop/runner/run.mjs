@@ -28,7 +28,7 @@ import {
   selectCases,
   validateManifest,
 } from "./manifest.mjs";
-import { observeRepository, validateBrowserEvidence } from "./observe.mjs";
+import { observeRepository } from "./observe.mjs";
 import { reportMarkdown } from "./report.mjs";
 import { aggregateResults, scoreObservation } from "./scoring.mjs";
 
@@ -89,28 +89,9 @@ async function dryRun(manifest) {
   }
 }
 
-async function runSingle({ testCase, condition, runRoot, authFile, model, reasoning, redactor, pricing, browserEvidence }) {
+async function runSingle({ testCase, condition, runRoot, authFile, model, reasoning, redactor, pricing, runId }) {
   const runKey = `${testCase.id}--${condition.id}`;
   const fixture = await prepareFixture({ workspaceRoot: runRoot, runKey, testCase });
-  const browser = validateBrowserEvidence({ evidence: browserEvidence, testCase, condition: condition.id });
-  if (testCase.requiresBrowserEvidence && browser?.ok !== true) {
-    const observation = {
-      schemaVersion: 1,
-      runKey,
-      caseId: testCase.id,
-      category: testCase.category,
-      condition: condition.id,
-      context: { id: condition.id, context: condition.context, skills: [] },
-      infrastructure: { blocked: true, reason: browser.reason, evidence: "runner requires --browser-evidence with one real interaction observation per condition" },
-      baseline: fixture.baseline,
-      final: { ...fixture.baseline, changedFiles: [], browserEvidence: browser },
-      subject: { lastMessage: "", durationMs: 0, metrics: { usage: {}, toolCalls: 0 } },
-      pricing,
-    };
-    writeJson(path.join(runRoot, "observations", `${runKey}.json`), observation);
-    return { observation, result: scoreObservation(observation, testCase), secretRedactions: 0 };
-  }
-
   const homes = createIsolatedHomes({ authFile, prefix: "thinloop-eval-current-" });
   let context;
   let login;
@@ -152,7 +133,6 @@ async function runSingle({ testCase, condition, runRoot, authFile, model, reason
       repo: fixture.repo,
       baseline: fixture.baseline,
       lastMessage: subject?.lastMessage ?? "",
-      browserEvidence,
     });
   } catch (error) {
     infrastructure = { blocked: true, reason: "subject infrastructure error", evidence: redactor(error.stack ?? error.message).text };
@@ -161,7 +141,8 @@ async function runSingle({ testCase, condition, runRoot, authFile, model, reason
     cleanupIsolatedHomes(homes.root);
   }
   const observation = {
-    schemaVersion: 1,
+    schemaVersion: 2,
+    runId,
     runKey,
     caseId: testCase.id,
     category: testCase.category,
@@ -209,7 +190,6 @@ async function realRun({ args, manifest, mode }) {
   const auth = readJson(authFile);
   const redactor = createRedactor({ auth, userProfile: os.homedir() });
   const pricing = pricingFrom(args);
-  const browserEvidence = args["browser-evidence"] ? readJson(path.resolve(args["browser-evidence"])) : undefined;
   const runManifest = {
     schemaVersion: 1,
     runId,
@@ -238,7 +218,7 @@ async function realRun({ args, manifest, mode }) {
         reasoning: runManifest.reasoning,
         redactor,
         pricing,
-        browserEvidence,
+        runId,
       });
       results.push(outcome.result);
       secretRedactions += outcome.secretRedactions;
@@ -264,6 +244,7 @@ async function realRun({ args, manifest, mode }) {
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
+  if (args["browser-evidence"]) throw new Error("collect browser evidence after implementation; import with rescore.mjs --run <directory> --browser-evidence <file>");
   const mode = args.mode ?? "dry";
   if (!new Set(["dry", "smoke", "full"]).has(mode)) throw new Error(`invalid mode: ${mode}`);
   const manifest = loadManifest();

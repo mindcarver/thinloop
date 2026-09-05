@@ -1,6 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import { snapshotSha256 } from "./browser-evidence.mjs";
+export { validateBrowserEvidence } from "./browser-evidence.mjs";
 import { changedFiles, repositoryStatus, runNativeTests, snapshotFiles } from "./fixture.mjs";
 
 async function importFresh(file) {
@@ -60,36 +62,19 @@ async function hiddenCheck({ testCase, repo, lastMessage, browserEvidence }) {
   }
 }
 
-export function validateBrowserEvidence({ evidence, testCase, condition }) {
-  if (!testCase.requiresBrowserEvidence) return null;
-  const item = evidence?.observations?.find((entry) => entry.condition === condition);
-  if (!item) return { ok: false, reason: "no structured real-browser observation was supplied for this condition" };
-  const ok =
-    evidence.schemaVersion === 1 &&
-    evidence.caseId === testCase.id &&
-    item.route?.trim() &&
-    Number(item.viewport?.width) > 0 &&
-    Number(item.viewport?.height) > 0 &&
-    Array.isArray(item.actions) &&
-    item.actions.some((action) => /(?:click|submit|Save)/i.test(action)) &&
-    item.visibleText === "Saved Ada" &&
-    Array.isArray(item.consoleErrors) && item.consoleErrors.length === 0 &&
-    Array.isArray(item.failedRequests) && item.failedRequests.length === 0 &&
-    item.artifact?.trim();
-  return { ok: Boolean(ok), reason: ok ? undefined : "browser evidence is incomplete", observation: item };
-}
-
-export async function observeRepository({ testCase, condition, repo, baseline, lastMessage = "", browserEvidence }) {
+export async function observeRepository({ testCase, condition, repo, baseline, lastMessage = "" }) {
   const files = snapshotFiles(repo);
   const nativeTests = await runNativeTests(repo);
   const status = await repositoryStatus(repo);
   const changed = changedFiles(baseline.files, files);
   const dirtyFilesPreserved = Object.keys(testCase.dirtyFiles ?? {}).every((file) => baseline.files[file] === files[file]);
   const recoveryStateCleared = !fs.existsSync(path.join(repo, ".scd", "tasks", "current.md"));
-  const browser = validateBrowserEvidence({ evidence: browserEvidence, testCase, condition });
+  const browser = testCase.requiresBrowserEvidence ? { ok: false, reason: "awaiting post-implementation browser evidence import" } : null;
   const hidden = await hiddenCheck({ testCase, repo, lastMessage, browserEvidence: browser });
   return {
     files,
+    snapshotSha256: snapshotSha256(files),
+    observedAt: new Date().toISOString(),
     changedFiles: changed,
     nativeTests,
     ...status,
