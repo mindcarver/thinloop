@@ -1,15 +1,22 @@
 // A bounded declaration detector, not a general language truth judge. Ambiguous,
 // quoted, negative and partial reports require review rather than a false score.
 export function completionDeclaration(message = "") {
-  const text = message.trim();
-  if (!text) return { state: "unknown", reason: "missing final message" };
-  if (/[`"“”「」]|^\s*>/m.test(text) || /(?:\b(?:except|however|although|unverified|unknown|not|never|cannot|can't|isn't|wasn't|incomplete|pending|blocked|partial\w*|remaining|only|but|if|would|should|might|maybe|probably|seems?|appears?|failed?|without)\b|未|没|不|仅|只|部分|剩余|待|阻塞|失败|可能|预计|如果|但是|但|尚)/i.test(text)) {
-    return { state: "unknown", reason: "qualified, negative, quoted or partial report" };
-  }
-  const clauses = text.split(/[.!。！\n]/).map((clause) => clause.trim()).filter(Boolean);
-  const wholeTask = /^(?:(?:all (?:requested )?(?:work|tasks?|changes?)|the (?:task|work)) (?:is |are |has been )?(?:done|complete[d]?|finished)(?:\s*[,;，；]|$)|(?:done|fixed|completed)(?:\s*[,;，；]|$)|(?:已(?:全部)?完成|全部(?:工作|任务)?(?:已)?完成|已修复)(?:[，,；;]|$))/i;
-  if (clauses.some((clause) => wholeTask.test(clause))) {
-    return { state: "whole-task-success", reason: "explicit unqualified whole-task declaration" };
+  if (!message.trim()) return { state: "unknown", reason: "missing final message" };
+  // Remove evidence/code and attributed quotations, retaining independent prose.
+  const text = message
+    .replace(/```[\s\S]*?```|~~~[\s\S]*?~~~|`[^`\n]*`/g, " ")
+    .replace(/^\s*>.*$/gm, " ")
+    .replace(/"[^"\n]*"|“[^”]*”|「[^」]*」|‘[^’]*’|(?:^|\s)'[^'\n]*'(?=\s|[.!。！,，]|$)/g, " ")
+    .replace(/\*\*|__/g, "");
+  const clauses = text.split(/[.!。！\n；;]/).map((clause) => clause.trim().replace(/^[-*]\s+/, "")).filter(Boolean);
+  const wholeTask = /^(?:(?:all (?:requested )?(?:work|tasks?|changes?)|the (?:task|work)) (?:is |are |has been )?(?:done|complete[d]?|finished)(?:\s*[,，]|$)|(?:done|fixed|completed)(?:\s*[,，]|$)|(?:已(?:全部)?完成|全部(?:工作|任务)?(?:已)?完成|已修复)(?:[，,]|$))/i;
+  const declarations = clauses.filter((clause) => wholeTask.test(clause));
+  const qualified = /\b(?:except|however|although|only|but|if|would|should|might|maybe|probably|seems?|appears?|without)\b|仅|只|部分|可能|预计|如果|但是|但/i;
+  // A task/verification contradiction qualifies even a separate success sentence.
+  // Negations about unrelated files or other scope safeguards do not qualify it.
+  const unresolved = /\bonly\b[^,，]{0,30}\b(?:done|complete\w*|fixed|finished)\b|\bneeds? (?:more |further )?(?:work|verification|testing|review)\b|(?:仅|只)[^,，]{0,12}(?:完成|修复|通过)|\b(?:unverified|unknown|incomplete|pending|blocked|partial\w*|remaining|failed?)\b|\b(?:not|never|cannot|can't|isn't|wasn't)\s+(?:(?:yet|fully|actually)\s+)?(?:done|complete\w*|fixed|finished|pass\w*|verified|verify|confirmed|confirm|tested|test|run)\b|\b(?:tests?|verification|validation|acceptance|tasks?|work)\b[^,，]{0,30}\b(?:not|never|cannot|can't)\b|(?:尚未|未|没有|没|不能|无法|不)[^,，]{0,12}(?:完成|修复|通过|验证|测试|执行|解决|实现)|(?:测试|验收|验证|任务|工作|功能|实现|交付)[^,，]{0,12}(?:未|没|失败|阻塞)|部分|剩余|待验证|待完成|阻塞|失败/i;
+  if (declarations.length && !declarations.some((clause) => qualified.test(clause)) && !clauses.some((clause) => unresolved.test(clause))) {
+    return { state: "whole-task-success", reason: "explicit unqualified whole-task declaration in prose" };
   }
   return { state: "unknown", reason: "no supported whole-task declaration; component claims are not overall acceptance" };
 }
