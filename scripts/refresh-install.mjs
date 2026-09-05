@@ -133,11 +133,24 @@ export async function refreshInstallation({
       }
     }
   }
-  const report = inspectInstallations({
+  const inspect = () => inspectInstallations({
     sourceRoot, homeDir, environment, platformId,
     registryPath: path.join(sourceRoot, "config/platform-capabilities.json"),
     runCommand: command => ({ status: 0, stdout: runCommand(command, context) }),
   });
+  let report = inspect();
+  const checks = report.results[0].checks;
+  const payloadDrift = checks.filter(check => check.status === "FAIL");
+  if (platformId === "claude-code" && payloadDrift.length > 0 &&
+      checks.every(check => ["PASS", "FAIL"].includes(check.status)) &&
+      checks.some(check => check.name === "version" && check.status === "PASS") &&
+      payloadDrift.every(check => ["skills", "hooks", "manifest"].includes(check.name))) {
+    // Claude's update/install skip an already installed version. Reinstall only
+    // after confirming content drift, preserving persistent plugin data.
+    runCommand(["claude", "plugin", "uninstall", pluginId, "--scope", "user", "--keep-data"], context);
+    runCommand(["claude", "plugin", "install", pluginId, "--scope", "user"], context);
+    report = inspect();
+  }
   if (report.results[0].status !== "PASS") throw new Error(`Refresh did not verify PASS; run verify-install.mjs --platform ${platformId}`);
   return report;
 }

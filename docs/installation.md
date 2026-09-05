@@ -238,6 +238,10 @@ node scripts/refresh-install.mjs --platform zcode
 或不存在的安装会停止，不覆盖用户文件。Claude 使用原生
 `claude plugin marketplace update thinloop` 和
 `claude plugin update thinloop@thinloop --scope user`；插件必须已经以 user scope 安装并启用，且 Thinloop marketplace 指向当前验收源码。
+Claude 会跳过已安装的同版本；若更新后已确认版本一致但 Skill/Hook/清单字节仍
+漂移，脚本只执行一次原生 `uninstall --keep-data` 后 `install`，保留 Thinloop
+持久数据并再次核验。原生 CLI 可能重排设置文件的 JSON 键，但不会为此修改
+设置含义、认证或信任。证据缺失、安装路径异常或版本仍不匹配不触发该重装。
 
 ZCode 0.16.5 的 `plugins` CLI 没有 update 子命令。脚本通过实际 app-server 协议
 依次发送 `plugins/marketplace/update`（只指定 `thinloop`）和 `plugins/update`

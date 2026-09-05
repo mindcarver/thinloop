@@ -126,3 +126,49 @@ test("Codex preflight refuses an unrelated same-name link without changing other
     assert.equal(fs.readlinkSync(path.join(skillRoot, names.at(-1))), other);
   } finally { fs.rmSync(home, { recursive: true, force: true }); }
 });
+
+
+test("Claude repairs confirmed same-version payload drift through one native keep-data reinstall", async () => {
+  const home = fixture();
+  const installed = path.join(home, "installed");
+  const commands = [];
+  try {
+    pluginPayload(installed);
+    const changed = path.join(installed, "hooks/validate-state.mjs");
+    fs.appendFileSync(changed, "\n// same-version installed drift\n");
+    const runCommand = command => {
+      commands.push(command);
+      if (command[2] === "list") return JSON.stringify([{ id: "thinloop@thinloop", version, enabled: true, scope: "user", installPath: installed }]);
+      if (command[2] === "marketplace" && command[3] === "list") return JSON.stringify([{ name: "thinloop", source: "directory", path: root }]);
+      if (command[2] === "install") pluginPayload(installed);
+      return "";
+    };
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const report = await refreshInstallation({ platformId: "claude-code", sourceRoot: root, homeDir: home, runCommand });
+      assert.equal(report.results[0].status, "PASS");
+      assert.deepEqual(fs.readFileSync(changed), fs.readFileSync(path.join(root, "hooks/validate-state.mjs")));
+    }
+    assert.deepEqual(commands.filter(command => ["uninstall", "install"].includes(command[2])), [
+      ["claude", "plugin", "uninstall", "thinloop@thinloop", "--scope", "user", "--keep-data"],
+      ["claude", "plugin", "install", "thinloop@thinloop", "--scope", "user"],
+    ]);
+  } finally { fs.rmSync(home, { recursive: true, force: true }); }
+});
+
+test("Claude does not reinstall when update leaves version or install-path evidence unresolved", async () => {
+  const home = fixture();
+  try {
+    for (const versionAfterUpdate of ["0.0.0", undefined]) {
+      const calls = [];
+      await assert.rejects(refreshInstallation({ platformId: "claude-code", sourceRoot: root, homeDir: home,
+        runCommand(command) {
+          calls.push(command);
+          if (command[2] === "list") return JSON.stringify([{ id: "thinloop@thinloop", version: versionAfterUpdate, enabled: true, scope: "user", installPath: path.join(home, "missing") }]);
+          if (command[2] === "marketplace" && command[3] === "list") return JSON.stringify([{ name: "thinloop", source: "directory", path: root }]);
+          return "";
+        },
+      }), /did not verify PASS/);
+      assert.equal(calls.some(command => ["uninstall", "install"].includes(command[2])), false);
+    }
+  } finally { fs.rmSync(home, { recursive: true, force: true }); }
+});
