@@ -1,0 +1,12 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status", "testCommand", "testExitCode", "evidence", "blockers"],
+  "properties": {
+    "status": {"type": "string", "enum": ["PASS", "FAIL", "BLOCKED"]},
+    "testCommand": {"type": "string"},
+    "testExitCode": {"type": ["integer", "null"]},
+    "evidence": {"type": "array", "items": {"type": "string"}},
+    "blockers": {"type": "array", "items": {"type": "string"}}
+  }
+}

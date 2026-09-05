@@ -37,6 +37,7 @@ test("Thinloop CI runs every deterministic repository gate", () => {
     "node evals/knowledge/validate.mjs",
     "node evals/knowledge/runner/run.mjs --mode dry",
     "node scripts/generate-readme-diagrams.mjs --check",
+    "node evals/delivery/run.mjs --mode protocol",
     "npm exec --yes --package=@anthropic-ai/claude-code@2.1.197 -- claude plugin validate . --strict",
   ];
 
