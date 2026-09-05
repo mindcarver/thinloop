@@ -42,6 +42,8 @@ node evals/delivery/run.mjs --mode model --model gpt-6-astra --output work/evals
 | 模型负例 | 故意损坏代码附带虚假的“已完成”声明，fresh evaluator 实际运行失败测试并返回 FAIL |
 | 模型正例 | coding Agent 修改代码并跑测试，fresh evaluator 直接运行测试/边界检查后返回 PASS；验收绑定 base/head/contract 后 adapter 继续 |
 
+提交前分别核对初始基准到工作区、index和已有提交的完整范围，提交后及验收时再检查最终diff；原始验收测试不得更改，验收另行执行不可由fixture代码替换的内置边界断言。模型测试命令必须独立执行（显式`--test-reporter=tap`），命令事件必须有3项测试的完整TAP计数和匹配退出码；打印命令、注释及掩盖退出码的shell语句不算证据。
+
 每个 tracker 事件保存顺序号、进程 PID、绑定提交和状态；`summary.json` 保存模式与结果。模型轨迹保留命令执行、返回结果及结构化结论，可逐条核对，不能只阅读 Agent 最终回答。`implementation.diff`、`clamp.mjs`、`clamp.test.mjs` 支持离线运行 `node --test clamp.test.mjs` 复核代码。fixtures 的临时绝对路径不再可访问是预期行为；提交 SHA 与事件、归档代码一起承担证据作用。
 
 “进程中断恢复”是协议工作进程恢复，不是模型会话恢复；“负例虚假声明”是注入的对抗素材，不是实际编码 Agent 生成的假话。单次模型 smoke 只证明该模型在该 fixture 的观察行为，不能用于推断概率、节省量或相对原生 Agent 的优势。

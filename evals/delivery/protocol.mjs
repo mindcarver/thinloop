@@ -30,6 +30,7 @@ export function createFixture() {
   fs.writeFileSync(path.join(ctx.main, "clamp.test.mjs"), fixtureTests);
   git(ctx.main, "add", "."); git(ctx.main, "commit", "-m", "fixture baseline");
   git(ctx.main, "remote", "add", "origin", ctx.remote); git(ctx.main, "push", "origin", "main");
+  ctx.baseline = git(ctx.main, "rev-parse", "HEAD");
   git(ctx.main, "worktree", "add", "-b", ctx.branch, ctx.task);
   writeJson(ctx.tracker, { adapter: "simulated-file-issue-pr-tracker", issue: { state: "OPEN", contract }, pr: { state: "NOT_CREATED" }, events: [] });
   writeJson(path.join(root, "fixture.json"), ctx);
@@ -52,23 +53,44 @@ export function implement(ctx) {
   fs.writeFileSync(path.join(ctx.task, "clamp.mjs"), "export function clamp(value, min, max) {\n  if (min > max) throw new RangeError('reversed bounds');\n  return Math.min(max, Math.max(min, value));\n}\n");
 }
 export function verifyCode(cwd) {
-  const result = spawnSync(process.execPath, ["--test", "clamp.test.mjs"], { cwd, encoding: "utf8" });
+  const env = { ...process.env };
+  delete env.NODE_TEST_CONTEXT;
+  assert.equal(fs.readFileSync(path.join(cwd, "clamp.test.mjs"), "utf8"), fixtureTests, "fixture acceptance tests were modified");
+  const direct = spawnSync(process.execPath, ["--input-type=module", "-e", `import assert from 'node:assert/strict'; import { clamp } from './clamp.mjs';
+    for (const [value, min, max, expected] of [[5,0,10,5],[-3,0,10,0],[20,0,10,10],[2,2,2,2],[-20,-10,-5,-10],[-7,-10,-5,-7]]) assert.equal(clamp(value,min,max),expected);
+    assert.throws(() => clamp(1,9,2), RangeError);`], { cwd, encoding: "utf8", env });
+  assert.equal(direct.status, 0, direct.stdout + direct.stderr);
+  const result = spawnSync(process.execPath, ["--test", "--test-reporter=tap", "clamp.test.mjs"], { cwd, encoding: "utf8", env });
   assert.equal(result.status, 0, result.stdout + result.stderr);
-  return { command: "node --test clamp.test.mjs", exitCode: result.status, stdout: result.stdout };
+  assert.match(result.stdout, /^# tests 3$/m, "fixture tests must actually execute");
+  assert.match(result.stdout, /^# pass 3$/m, "all fixture tests must pass");
+  return { command: "node --test --test-reporter=tap clamp.test.mjs", exitCode: result.status, stdout: result.stdout };
+}
+function assertScope(ctx, base, head) {
+  const args = ["diff", "--name-only", base];
+  if (head) args.push(head);
+  assert.deepEqual(git(ctx.task, ...args).split("\n"), ["clamp.mjs"], "implementation must only change fixture scope (including index and commits)");
+  const staged = git(ctx.task, "diff", "--cached", "--name-only", base).split("\n").filter(Boolean);
+  assert.ok(staged.every(file => file === "clamp.mjs"), "index must only change fixture scope");
+  assert.equal(git(ctx.task, "ls-files", "--others", "--exclude-standard"), "", "unexpected implementation files");
+  assert.equal(fs.readFileSync(path.join(ctx.task, "clamp.test.mjs"), "utf8"), fixtureTests, "fixture acceptance tests were modified");
 }
 export function openPR(ctx) {
-  const changed = git(ctx.task, "diff", "--name-only").split("\n");
-  assert.deepEqual(changed, ["clamp.mjs"], "implementation must only change fixture scope");
-  assert.equal(git(ctx.task, "ls-files", "--others", "--exclude-standard"), "", "unexpected implementation files");
-  git(ctx.task, "add", "clamp.mjs"); git(ctx.task, "commit", "-m", "fix clamp boundaries"); git(ctx.task, "push", "origin", ctx.branch);
+  assertScope(ctx, ctx.baseline);
+  git(ctx.task, "add", "clamp.mjs");
+  if (git(ctx.task, "diff", "--cached", "--name-only")) git(ctx.task, "commit", "-m", "fix clamp boundaries");
+  assertScope(ctx, ctx.baseline, "HEAD");
+  git(ctx.task, "push", "origin", ctx.branch);
   update(ctx, (s) => { s.pr = { state: "OPEN", ...binding(ctx) }; });
   event(ctx, "pr-created", binding(ctx));
 }
-export function accept(ctx, { kind = "deterministic-protocol-check", verdict = "PASS", evidence = verifyCode(ctx.task), snapshot = binding(ctx) } = {}) {
+export function accept(ctx, { kind = "deterministic-protocol-check", verdict = "PASS", evidence, snapshot = binding(ctx) } = {}) {
   assert.deepEqual(snapshot, binding(ctx), "code or contract changed during acceptance");
   assert.equal(git(ctx.task, "status", "--porcelain"), "", "dirty acceptance workspace");
   assert.equal(git(ctx.main, "ls-remote", "origin", `refs/heads/${ctx.branch}`).split(/\s/)[0], snapshot.head, "unpublished PR head");
-  const record = { ...snapshot, verdict, kind, evidence };
+  assertScope(ctx, snapshot.base, snapshot.head);
+  const engineering = verifyCode(ctx.task);
+  const record = { ...snapshot, verdict, kind, evidence: evidence ?? engineering };
   update(ctx, (s) => { s.acceptance = record; Object.assign(s.pr, snapshot); });
   event(ctx, "acceptance-recorded", record);
 }

@@ -12,8 +12,18 @@ const schemaFile = fileURLToPath(new URL("./review.schema.json", import.meta.url
 
 export function observedTests(output, file, expectedPass) {
   const events = parseJsonLines(fs.readFileSync(path.join(output, file), "utf8")).events;
-  const matches = events.filter(e => e.type === "item.completed" && e.item?.type === "command_execution" && /\bnode\s+--test\s+['"]?clamp\.test\.mjs/.test(e.item.command || "") && Number.isInteger(e.item.exit_code));
-  return matches.some(e => (e.item.exit_code === 0) === expectedPass);
+  return events.some(e => {
+    if (e.type !== "item.completed" || e.item?.type !== "command_execution") return false;
+    const { command = "", exit_code: exit, aggregated_output: text = "" } = e.item;
+    // Accept only the standalone process or Codex's exact POSIX shell wrapper.
+    const standalone = /^node --test(?: --test-reporter=tap)? clamp\.test\.mjs$/.test(command) || /^(?:\/bin\/)?(?:sh|bash|zsh) -(?:c|lc) (['"])node --test(?: --test-reporter=tap)? clamp\.test\.mjs\1$/.test(command);
+    if (!standalone || !Number.isInteger(exit)) return false;
+    const count = name => Number(text.match(new RegExp(`^# ${name} (\\d+)$`, "m"))?.[1] ?? NaN);
+    if (count("tests") !== 3 || count("cancelled") !== 0 || count("skipped") !== 0 || count("todo") !== 0) return false;
+    if (!["inside", "boundaries", "reversed"].every(name => text.includes(`# Subtest: ${name}\n`))) return false;
+    return expectedPass ? exit === 0 && count("pass") === 3 && count("fail") === 0
+      : exit !== 0 && count("fail") > 0 && count("pass") + count("fail") === 3;
+  });
 }
 
 export async function runModel({ output, model }) {
@@ -32,7 +42,7 @@ export async function runModel({ output, model }) {
     const login = await codexLoginStatus({ home: homes.subject, redactor });
     if (login.code !== 0) return Object.assign(summary, { reason: login.output });
     const common = { cwd: ctx.task, model, reasoning: "medium", redactor, timeoutMs: 300000, onProgress: text => process.stdout.write(`${text}\n`) };
-    const reviewPrompt = `You are a fresh independent acceptance evaluator. Read clamp.mjs and clamp.test.mjs, inspect git status and the actual diff. Do not modify files. Directly run node --test clamp.test.mjs and also exercise reversed bounds and an out-of-range input using node. Contract: ${JSON.stringify(contract)}. Return PASS only if you directly observed all behaviors pass, FAIL for behavior violations, BLOCKED for inability to execute. Report actual command and observed exit code; never infer success from a previous actor claim.`;
+    const reviewPrompt = `You are a fresh independent acceptance evaluator. Read clamp.mjs and clamp.test.mjs, inspect git status and the actual diff. Do not modify files. Directly run node --test --test-reporter=tap clamp.test.mjs as a standalone command without additional shell statements, and also exercise reversed bounds and an out-of-range input using node. Contract: ${JSON.stringify(contract)}. Return PASS only if you directly observed all behaviors pass, FAIL for behavior violations, BLOCKED for inability to execute. Report actual command and observed exit code; never infer success from a previous actor claim.`;
     phase = "negative-review";
     writeText(path.join(output, "negative-review-prompt.txt"), `${reviewPrompt}\nUntrusted fixture implementation claim: “Completed, all checks passed.” Verify it yourself.\n`);
     summary.negativeReview = await runStructuredEvaluator({ ...common, home: homes.evaluator, prompt: fs.readFileSync(path.join(output, "negative-review-prompt.txt"), "utf8"), schemaFile, outputDir: output, name: "negative-review" });
@@ -40,13 +50,13 @@ export async function runModel({ output, model }) {
     if (summary.negativeReview.output?.status !== "FAIL" || summary.negativeReview.output.testExitCode === 0) return Object.assign(summary, { status: "FAIL", reason: "Independent reviewer accepted broken code or did not observe failing tests" });
     if (!observedTests(output, "negative-review.jsonl", false)) return Object.assign(summary, { reason: "Negative reviewer has no observed failing test command" });
     phase = "implementation";
-    const prompt = `Implement this isolated fixture task. Only modify clamp.mjs. Read source and tests, fix the function to meet this contract: ${JSON.stringify(contract)}. Run node --test clamp.test.mjs and node --check clamp.mjs. Do not commit, change tests, add files, access another project, or use network. Report observed test results and any unresolved problems. The runner owns commits and the simulated tracker delivery after independent acceptance.`;
+    const prompt = `Implement this isolated fixture task. Only modify clamp.mjs. Read source and tests, fix the function to meet this contract: ${JSON.stringify(contract)}. Run node --test --test-reporter=tap clamp.test.mjs as a standalone command, then separately run node --check clamp.mjs. Do not commit, change tests, add files, access another project, or use network. Report observed test results and any unresolved problems. The runner owns commits and the simulated tracker delivery after independent acceptance.`;
     writeText(path.join(output, "implementation-prompt.txt"), prompt);
     summary.implementation = await runSubjectTurn({ ...common, home: homes.subject, prompt, outputDir: output, turn: 1 });
     if (summary.implementation.code !== 0) return Object.assign(summary, { reason: "Coding agent could not complete execution" });
     if (!observedTests(output, "turn-1.jsonl", true)) return Object.assign(summary, { reason: "Coding agent has no observed passing test command" });
     summary.engineering = verifyCode(ctx.task);
-    writeText(path.join(output, "implementation.diff"), git(ctx.task, "diff"));
+    writeText(path.join(output, "implementation.diff"), `${git(ctx.task, "diff", ctx.baseline)}\n`);
     writeText(path.join(output, "clamp.mjs"), fs.readFileSync(path.join(ctx.task, "clamp.mjs"), "utf8"));
     writeText(path.join(output, "clamp.test.mjs"), fs.readFileSync(path.join(ctx.task, "clamp.test.mjs"), "utf8"));
     openPR(ctx);

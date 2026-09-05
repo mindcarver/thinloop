@@ -3,9 +3,10 @@ import test from "node:test";
 import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
+import { spawnSync } from "node:child_process";
 import { runModel, observedTests } from "../evals/delivery/model.mjs";
 import { runProtocol } from "../evals/delivery/run.mjs";
-import { createFixture, dispose, implement, openPR, accept, binding, merge, update } from "../evals/delivery/protocol.mjs";
+import { createFixture, dispose, implement, openPR, accept, binding, merge, update, git, fixtureTests } from "../evals/delivery/protocol.mjs";
 
 test("delivery protocol observes real Git and rejects faults before completing", { timeout: 60000 }, async () => {
   const result = await runProtocol();
@@ -28,6 +29,8 @@ test("delivery protocol observes real Git and rejects faults before completing",
     assert.equal(c.tracker.issue.state, "CLOSED");
     assert.equal(c.tracker.pr.head, c.tracker.acceptance.head);
     assert.equal(c.tracker.acceptance.kind, "deterministic-protocol-check");
+    assert.match(c.tracker.acceptance.evidence.stdout, /^# tests 3$/m);
+    assert.match(c.tracker.acceptance.evidence.stdout, /^# pass 3$/m);
   }
 });
 
@@ -43,7 +46,7 @@ test("delivery rejects unknown/failed acceptance and drift during review", () =>
     update(ctx, s => { s.issue.contract.acceptance.push("new requirement"); });
     assert.throws(() => accept(ctx, { snapshot }), /changed during acceptance/);
     fs.writeFileSync(path.join(ctx.task, "clamp.mjs"), "export const clamp = () => 123;\n");
-    assert.throws(() => accept(ctx), /fail|ERR_ASSERTION|Expected/);
+    assert.throws(() => accept(ctx), /dirty acceptance workspace|fail|ERR_ASSERTION|Expected/);
   } finally { dispose(ctx); }
 });
 
@@ -63,7 +66,7 @@ test("model evidence requires an executed test event, not a final success claim"
     assert.equal(observedTests(output, "review.jsonl", true), false);
     fs.writeFileSync(file, JSON.stringify({ type: "item.completed", item: { type: "command_execution", command: "node --test clamp.test.mjs", exit_code: 1 } }));
     assert.equal(observedTests(output, "review.jsonl", true), false);
-    assert.equal(observedTests(output, "review.jsonl", false), true);
+    assert.equal(observedTests(output, "review.jsonl", false), false);
   } finally { fs.rmSync(output, { recursive: true }); }
 });
 
@@ -77,4 +80,64 @@ test("model mode preserves a previous evidence directory", async () => {
     assert.match(result.reason, /stale model evidence/);
     assert.equal(fs.readFileSync(path.join(output, "summary.json"), "utf8"), "previous evidence");
   } finally { fs.rmSync(output, { recursive: true }); }
+});
+
+
+test("delivery rejects staged and committed out-of-scope changes before publishing", () => {
+  for (const mutation of ["staged-extra", "staged-extra-deleted", "committed-extra", "staged-tests", "staged-tests-restored"]) {
+    const ctx = createFixture();
+    try {
+      implement(ctx);
+      const file = mutation.includes("tests") ? "clamp.test.mjs" : "out-of-scope.txt";
+      fs.writeFileSync(path.join(ctx.task, file), "// unauthorized\n");
+      git(ctx.task, "add", file);
+      if (mutation === "staged-extra-deleted") fs.unlinkSync(path.join(ctx.task, file));
+      if (mutation === "staged-tests-restored") fs.writeFileSync(path.join(ctx.task, file), fixtureTests);
+      if (mutation === "committed-extra") git(ctx.task, "commit", "-m", "unauthorized actor commit");
+      assert.throws(() => openPR(ctx), /only change fixture scope/);
+      assert.equal(JSON.parse(fs.readFileSync(ctx.tracker)).issue.state, "OPEN");
+      assert.equal(git(ctx.main, "ls-remote", "origin", `refs/heads/${ctx.branch}`), "");
+    } finally { dispose(ctx); }
+  }
+});
+
+test("acceptance rechecks final diff and runs immutable direct behavior checks", () => {
+  for (const mutation of ["committed-tests", "false-pass-evidence"]) {
+    const ctx = createFixture();
+    try {
+      implement(ctx);
+      if (mutation === "false-pass-evidence") fs.writeFileSync(path.join(ctx.task, "clamp.mjs"), "export const clamp = () => -999;\n");
+      openPR(ctx);
+      if (mutation === "committed-tests") {
+        fs.writeFileSync(path.join(ctx.task, "clamp.test.mjs"), "// removed tests\n");
+        git(ctx.task, "add", "."); git(ctx.task, "commit", "-m", "tamper after PR"); git(ctx.task, "push", "origin", ctx.branch);
+      }
+      assert.throws(() => accept(ctx, { evidence: { claimed: "all tests passed" } }), /fixture scope|Expected values/);
+      assert.equal(JSON.parse(fs.readFileSync(ctx.tracker)).acceptance, undefined);
+    } finally { dispose(ctx); }
+  }
+});
+
+test("actual command output rejects mentions and masked failures, and accepts standalone tests", () => {
+  const env = { ...process.env };
+  delete env.NODE_TEST_CONTEXT;
+  const ctx = createFixture();
+  try {
+    const trace = (command, result) => {
+      fs.writeFileSync(path.join(ctx.root, "trace.jsonl"), JSON.stringify({ type: "item.completed", item: { type: "command_execution", command, exit_code: result.status, aggregated_output: result.stdout + result.stderr } }));
+      return observedTests(ctx.root, "trace.jsonl", true);
+    };
+    for (const command of ["printf '%s\\n' 'node --test clamp.test.mjs'", "node --test clamp.test.mjs; true", "# node --test clamp.test.mjs\ntrue"]) {
+      const result = spawnSync("/bin/sh", ["-c", command], { cwd: ctx.task, encoding: "utf8", env });
+      assert.equal(result.status, 0);
+      assert.equal(trace(command, result), false);
+    }
+    const bad = spawnSync("node", ["--test", "--test-reporter=tap", "clamp.test.mjs"], { cwd: ctx.task, encoding: "utf8", env });
+    assert.equal(trace("node --test --test-reporter=tap clamp.test.mjs", bad), false);
+    assert.equal(observedTests(ctx.root, "trace.jsonl", false), true, bad.stdout + bad.stderr);
+    implement(ctx);
+    const good = spawnSync("node", ["--test", "--test-reporter=tap", "clamp.test.mjs"], { cwd: ctx.task, encoding: "utf8", env });
+    assert.equal(trace("/bin/zsh -lc 'node --test --test-reporter=tap clamp.test.mjs'", good), true);
+    assert.equal(trace("node --test --test-reporter=tap clamp.test.mjs", { ...good, stdout: good.stdout.replace("# tests 3", "# tests 1") }), false);
+  } finally { dispose(ctx); }
 });
