@@ -10,8 +10,29 @@ function read(relativePath) {
   return fs.readFileSync(path.join(root, relativePath), "utf8");
 }
 
+// Rules may live in their stage-specific references. Verify the composed
+// guidance without requiring every gate to be duplicated in the entry point.
+function composeGuidance(relativePath) {
+  const files = [relativePath];
+  if (relativePath.endsWith("SKILL.md")) files.push(
+    "skills/scd-quickdev/references/scope-contract.md",
+    "skills/scd-quickdev/references/issue-delivery-contract.md",
+    "skills/scd-quickdev/references/release-contract.md",
+    "skills/scd-quickdev/references/page-acceptance.md",
+  );
+  if (relativePath.endsWith("issue-delivery-contract.md")) files.push(
+    "skills/scd-quickdev/references/extended-issue.md",
+    "skills/scd-quickdev/references/release-contract.md",
+  );
+  if (relativePath.endsWith("evidence-contract.md")) files.push(
+    "skills/scd-quickdev/references/page-acceptance.md",
+    "skills/scd-quickdev/references/release-contract.md",
+  );
+  return files.map(read).join("\n");
+}
+
 test("quickdev selects direct, clarify, project, or discovery without forcing ceremony", () => {
-  const skill = read("skills/scd-quickdev/SKILL.md");
+  const skill = composeGuidance("skills/scd-quickdev/SKILL.md");
 
   assert.match(skill, /\*\*直接实施：\*\*/);
   assert.match(skill, /\*\*单点澄清：\*\*/);
@@ -23,8 +44,8 @@ test("quickdev selects direct, clarify, project, or discovery without forcing ce
 });
 
 test("quickdev separates product PRD authority from delivery Issue authority", () => {
-  const skill = read("skills/scd-quickdev/SKILL.md");
-  const issueContract = read(
+  const skill = composeGuidance("skills/scd-quickdev/SKILL.md");
+  const issueContract = composeGuidance(
     "skills/scd-quickdev/references/issue-delivery-contract.md",
   );
 
@@ -49,8 +70,8 @@ test("quickdev separates product PRD authority from delivery Issue authority", (
 });
 
 test("quickdev defaults to autonomous delivery and only pauses when the user asks to confirm", () => {
-  const skill = read("skills/scd-quickdev/SKILL.md");
-  const issueContract = read(
+  const skill = composeGuidance("skills/scd-quickdev/SKILL.md");
+  const issueContract = composeGuidance(
     "skills/scd-quickdev/references/issue-delivery-contract.md",
   );
   const combined = `${skill}\n${issueContract}`;
@@ -87,8 +108,8 @@ test("quickdev defaults to autonomous delivery and only pauses when the user ask
 });
 
 test("quickdev writes Issue output in Chinese without translating machine identifiers", () => {
-  const skill = read("skills/scd-quickdev/SKILL.md");
-  const issueContract = read(
+  const skill = composeGuidance("skills/scd-quickdev/SKILL.md");
+  const issueContract = composeGuidance(
     "skills/scd-quickdev/references/issue-delivery-contract.md",
   );
   const combined = `${skill}\n${issueContract}`;
@@ -108,8 +129,8 @@ test("quickdev writes Issue output in Chinese without translating machine identi
 });
 
 test("quickdev diagnoses bugs and requires regression evidence", () => {
-  const skill = read("skills/scd-quickdev/SKILL.md");
-  const issueContract = read(
+  const skill = composeGuidance("skills/scd-quickdev/SKILL.md");
+  const issueContract = composeGuidance(
     "skills/scd-quickdev/references/issue-delivery-contract.md",
   );
 
@@ -127,7 +148,7 @@ test("quickdev diagnoses bugs and requires regression evidence", () => {
 });
 
 test("quickdev always isolates meaningful work on a branch and uses worktrees conditionally", () => {
-  const contract = read(
+  const contract = composeGuidance(
     "skills/scd-quickdev/references/issue-delivery-contract.md",
   );
 
@@ -140,11 +161,11 @@ test("quickdev always isolates meaningful work on a branch and uses worktrees co
 });
 
 test("quickdev delegates acceptance to one independent verifier", () => {
-  const skill = read("skills/scd-quickdev/SKILL.md");
-  const contract = read(
+  const skill = composeGuidance("skills/scd-quickdev/SKILL.md");
+  const contract = composeGuidance(
     "skills/scd-quickdev/references/issue-delivery-contract.md",
   );
-  const evidence = read(
+  const evidence = composeGuidance(
     "skills/scd-quickdev/references/evidence-contract.md",
   );
   const guidance = [
@@ -184,7 +205,7 @@ test("quickdev delegates acceptance to one independent verifier", () => {
 });
 
 test("quickdev keeps high-risk merge and production deployment behind human approval", () => {
-  const contract = read(
+  const contract = composeGuidance(
     "skills/scd-quickdev/references/issue-delivery-contract.md",
   );
 
@@ -197,7 +218,7 @@ test("quickdev keeps high-risk merge and production deployment behind human appr
 });
 
 test("quickdev respects a composing skill's narrower delivery authority", () => {
-  const skill = read("skills/scd-quickdev/SKILL.md");
+  const skill = composeGuidance("skills/scd-quickdev/SKILL.md");
 
   assert.match(skill, /以其更窄交付边界为准/);
   assert.match(
@@ -207,8 +228,8 @@ test("quickdev respects a composing skill's narrower delivery authority", () => 
 });
 
 test("quickdev verifies frontend implementation against UX, visual, and interface contracts", () => {
-  const skill = read("skills/scd-quickdev/SKILL.md");
-  const evidence = read(
+  const skill = composeGuidance("skills/scd-quickdev/SKILL.md");
+  const evidence = composeGuidance(
     "skills/scd-quickdev/references/evidence-contract.md",
   );
   const combined = `${skill}\n${evidence}`;
@@ -223,11 +244,11 @@ test("quickdev verifies frontend implementation against UX, visual, and interfac
 });
 
 test("quickdev audits acceptance, implementation, and delivery before declaring the Issue complete", () => {
-  const skill = read("skills/scd-quickdev/SKILL.md");
-  const evidence = read(
+  const skill = composeGuidance("skills/scd-quickdev/SKILL.md");
+  const evidence = composeGuidance(
     "skills/scd-quickdev/references/evidence-contract.md",
   );
-  const issueContract = read(
+  const issueContract = composeGuidance(
     "skills/scd-quickdev/references/issue-delivery-contract.md",
   );
   const combined = `${skill}\n${evidence}\n${issueContract}`;
@@ -250,11 +271,11 @@ test("quickdev audits acceptance, implementation, and delivery before declaring 
 });
 
 test("quickdev makes browser acceptance mandatory for every real page change", () => {
-  const skill = read("skills/scd-quickdev/SKILL.md");
-  const evidence = read(
+  const skill = composeGuidance("skills/scd-quickdev/SKILL.md");
+  const evidence = composeGuidance(
     "skills/scd-quickdev/references/evidence-contract.md",
   );
-  const issueContract = read(
+  const issueContract = composeGuidance(
     "skills/scd-quickdev/references/issue-delivery-contract.md",
   );
   const combined = `${skill}\n${evidence}\n${issueContract}`;
@@ -273,8 +294,8 @@ test("quickdev makes browser acceptance mandatory for every real page change", (
 });
 
 test("quickdev confirms the accepted merge on main before closing the Issue", () => {
-  const skill = read("skills/scd-quickdev/SKILL.md");
-  const issueContract = read(
+  const skill = composeGuidance("skills/scd-quickdev/SKILL.md");
+  const issueContract = composeGuidance(
     "skills/scd-quickdev/references/issue-delivery-contract.md",
   );
   const combined = `${skill}\n${issueContract}`;
@@ -286,8 +307,8 @@ test("quickdev confirms the accepted merge on main before closing the Issue", ()
 });
 
 test("quickdev makes task-owned branch and worktree cleanup a closing gate", () => {
-  const skill = read("skills/scd-quickdev/SKILL.md");
-  const issueContract = read(
+  const skill = composeGuidance("skills/scd-quickdev/SKILL.md");
+  const issueContract = composeGuidance(
     "skills/scd-quickdev/references/issue-delivery-contract.md",
   );
   const combined = `${skill}\n${issueContract}`;
@@ -310,4 +331,26 @@ test("quickdev makes task-owned branch and worktree cleanup a closing gate", () 
   assert.match(combined, /不得仅依赖.*--delete-branch/);
   assert.match(combined, /工作树.*不存在[\s\S]*本地任务分支.*不存在[\s\S]*远端任务分支.*不存在/);
   assert.match(combined, /不得扫描或删除.*历史|不得清理.*无关/);
+});
+
+
+test("quickdev loads short phase references conditionally and offers a compact low-risk template", () => {
+  const entry = read("skills/scd-quickdev/SKILL.md");
+  const issue = read("skills/scd-quickdev/references/issue-delivery-contract.md");
+  const release = read("skills/scd-quickdev/references/release-contract.md");
+  assert.match(entry, /只读取当前条件命中的参考/);
+  assert.match(entry, /创建或更新 Issue、分支\/工作树隔离.*issue-delivery-contract/);
+  assert.match(entry, /工程完成，准备 PR\/独立验收\/合并\/清理关闭.*release-contract/);
+  assert.match(entry, /真实页面差异或 UX 视觉交付.*page-acceptance/);
+  assert.match(entry, /PRD、重要页面\/跨层设计、迁移\/兼容性复杂度.*extended-issue/);
+  assert.match(issue, /清晰、低风险、单交付/);
+  const compact = issue.match(/```markdown\n([\s\S]*?)```/)[1];
+  assert.equal((compact.match(/^## /gm) || []).length, 5);
+  for (const marker of ["A1", "T1", "验收闭合", "实施账目", "交付状态", "范围内", "范围外", "状态：默认免确认"]) assert.ok(compact.includes(marker), marker);
+  assert.doesNotMatch(compact, /N\/A|不适用|产品追溯|页面验收/);
+  assert.match(release, /创建 Issue 阶段不需要读取/);
+  assert.ok(Buffer.byteLength(entry) < 8000, "entry remains a concise router plus essential gates");
+  for (const file of ["scope-contract.md", "extended-issue.md", "evidence-contract.md", "page-acceptance.md", "release-contract.md", "continuity-contract.md"]) {
+    assert.ok(entry.includes(`references/${file}`), `${file} must remain reachable with its trigger`);
+  }
 });

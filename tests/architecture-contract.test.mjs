@@ -39,7 +39,8 @@ test("architecture and uiux reconcile one shared machine contract", () => {
   const skill = read("skills/scd-architecture/SKILL.md");
   const discovery = read("skills/scd-discovery/SKILL.md");
   const uiux = read("skills/scd-uiux/SKILL.md");
-  const quickdev = read("skills/scd-quickdev/SKILL.md");
+  const quickdev = read("skills/scd-quickdev/SKILL.md") + "\n" +
+    read("skills/scd-quickdev/references/scope-contract.md");
   const contract = read(
     "skills/scd-architecture/references/interface-contract.md",
   );

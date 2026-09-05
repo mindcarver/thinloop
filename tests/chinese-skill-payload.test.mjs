@@ -32,7 +32,7 @@ test("全部 Thinloop Skill 文本载荷均包含中文", () => {
     .flatMap((entry) => collectPayloadFiles(path.join(skillsRoot, entry.name)))
     .sort();
 
-  assert.equal(files.length, 60);
+  assert.equal(files.length, 63); // Three new conditional QuickDev references.
   for (const file of files) {
     assert.match(read(file), han, file);
   }

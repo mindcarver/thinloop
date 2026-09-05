@@ -97,7 +97,8 @@ test("project uses rolling approval and deterministic graph validation", () => {
 test("discovery and quickdev route project work without widening implementation authority", () => {
   const discovery = read("skills/scd-discovery/SKILL.md");
   const execute = read("skills/scd-execute/SKILL.md");
-  const quickdev = read("skills/scd-quickdev/SKILL.md");
+  const quickdev = read("skills/scd-quickdev/SKILL.md") + "\n" +
+    read("skills/scd-quickdev/references/scope-contract.md");
   const workflow = read("docs/workflow-and-state.md");
 
   assert.match(discovery, /交给 `scd-project` 拆解/);

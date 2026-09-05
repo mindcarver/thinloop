@@ -76,7 +76,8 @@ test("discovery persists approved greenfield PRD without burdening clear changes
 });
 
 test("downstream skills consume PRD authority and delivery evidence", () => {
-  const skill = read("skills/scd-quickdev/SKILL.md");
+  const skill = read("skills/scd-quickdev/SKILL.md") + "\n" +
+    read("skills/scd-quickdev/references/scope-contract.md");
   const uiux = read("skills/scd-uiux/SKILL.md");
   const architecture = read("skills/scd-architecture/SKILL.md");
   const evidence = read(

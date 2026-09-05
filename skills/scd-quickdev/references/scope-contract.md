@@ -80,3 +80,13 @@
 - 更新方案，不要机械执行原方案；
 - 只有新路径改变产品结果或权限边界时才更新 Issue 并请求决策；
 - 无关缺陷和清理作为观察报告，不得悄悄加入范围。
+
+## 就绪设计与项目输入
+
+请求来自 UIUX 时，阅读相关 `.scd/ux/<slug>.md`，要求 `status: ready`；解析视觉交付清单，检查每个视觉 ID 的项目文件、视口、状态及确认，练习适用的非生产原型，并使用共享接口契约；不得把 UX 接口需求当成 API。
+
+请求来自 Architecture 时，阅读相关 `.scd/architecture.md` 或 `.scd/designs/<feature>.md`，要求 `status: ready`，并与生产者一样用格式感知证据解析规范机器可读契约。UX 体验交接不替代产品确认或前端架构；它与 Issue、视觉产物或尚未统一的共享接口决策冲突时，在实施前返回缺口。
+
+收到 Project/Execute 交接时，读取实时 Initiative 和选中 Delivery Issue，确认当前图版本与 READY 依赖。Reengineering 波次通过额外的故障关闭门后，经 Execute 进入 QuickDev。拒绝 Initiative、PLANNED 占位节点、BLOCKED 节点、陈旧图版本或吸收兄弟 Issues 的请求；创建分支前返回精确缺口。
+
+已确认的全新产品 PRD 继续负责产品级原因、用户、问题、MVP 范围、`FR-*` 需求和成功指标。Issue 引用 PRD 时，从默认分支读取精确已确认版本，确认每个具名 `FR-*` 标识存在；不接受缺失、草稿、未提交、已被取代或矛盾引用。

@@ -54,7 +54,8 @@ test("reengineering composes existing Thinloop authority", () => {
   const skill = read("skills/scd-reengineering/SKILL.md");
   const project = read("skills/scd-project/SKILL.md");
   const execute = read("skills/scd-execute/SKILL.md");
-  const quickdev = read("skills/scd-quickdev/SKILL.md");
+  const quickdev = read("skills/scd-quickdev/SKILL.md") + "\n" +
+    read("skills/scd-quickdev/references/scope-contract.md");
 
   assert.match(skill, /再工程前使用 `scd-discovery`/);
   assert.match(skill, /使用 `scd-architecture`/);
