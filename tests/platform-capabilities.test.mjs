@@ -289,7 +289,7 @@ test("read-only checker verifies complete automatic installs", () => {
     assert.equal(results.dsh.status, "MANUAL");
     assert.equal(results["claude-code"].status, "PASS");
     assert.equal(results.workbuddy.status, "SKIP");
-    assert.equal(results.zcode.status, "SKIP");
+    assert.equal(results.zcode.status, "UNVERIFIED");
     assert.match(formatText(report), /Mode: read-only/);
   } finally {
     fs.rmSync(homeDir, { recursive: true, force: true });
@@ -441,7 +441,7 @@ test("checker reports missing, partial, stale, and hook-mismatched installs", ()
     assert.equal(results.reasonix.status, "PASS");
     assert.equal(results["claude-code"].status, "FAIL");
     assert.equal(results.workbuddy.status, "SKIP");
-    assert.equal(results.zcode.status, "SKIP");
+    assert.equal(results.zcode.status, "UNVERIFIED");
     assert.match(
       results["claude-code"].checks.find((check) => check.name === "version").detail,
       /0\.0\.0 installed/,
@@ -494,7 +494,7 @@ test("unavailable automatic plugin CLI stays unverified instead of failing", () 
     assert.equal(results.dsh.status, "MANUAL");
     assert.equal(results["claude-code"].status, "UNVERIFIED");
     assert.equal(results.workbuddy.status, "SKIP");
-    assert.equal(results.zcode.status, "SKIP");
+    assert.equal(results.zcode.status, "UNVERIFIED");
   } finally {
     fs.rmSync(homeDir, { recursive: true, force: true });
   }
@@ -760,6 +760,7 @@ test("checker never executes probes registered as manual", () => {
     assert.deepEqual(calls, [
       ["codewhale", "doctor", "--json"],
       ["claude", "plugin", "list", "--json"],
+      ["zcode", "plugins", "list", "--json"],
     ]);
     assert.equal(runtimeCheck.status, "MANUAL");
     assert.match(runtimeCheck.detail, /可能写入日志/);
@@ -813,8 +814,8 @@ test("checker source and registered probes are read-only", () => {
   ]);
   assert.equal(platform("workbuddy").verification.mode, "skip");
   assert.match(platform("workbuddy").verification.summary, /不验证/);
-  assert.equal(platform("zcode").verification.mode, "skip");
-  assert.match(platform("zcode").verification.summary, /不验证/);
+  assert.equal(platform("zcode").verification.mode, "plugin-cli");
+  assert.deepEqual(platform("zcode").verification.command, ["zcode", "plugins", "list", "--json"]);
 });
 
 test("checker can target Pi without probing unrelated platforms", () => {
@@ -968,4 +969,97 @@ test("checker reserves exit code 2 for invalid invocation", () => {
 
   assert.equal(unknownPlatform.status, 2);
   assert.match(unknownPlatform.stderr, /Unknown platform: unknown/);
+});
+
+
+function zcodeRecord(installPath) {
+  return {
+    id: "thinloop@thinloop", enabled: true, version: expectedVersion,
+    rootPath: installPath, manifestPath: path.join(installPath, ".zcode-plugin/plugin.json"),
+    skillCount: expectedSkills.length,
+    hookDetails: platform("zcode").capabilities.hooks.map(hook => ({
+      event: hook.event, matcher: hook.matcher, runnable: true,
+      sourcePath: path.join(installPath, hook.source),
+    })),
+  };
+}
+
+test("ZCode native envelope verifies complete payload and ignores unrelated diagnostics", () => {
+  const installPath = makePluginInstall("zcode");
+  try {
+    const calls = [];
+    const report = inspectInstallations({
+      registryPath, sourceRoot: root, platformId: "zcode",
+      runCommand: command => {
+        calls.push(command);
+        return { status: 0, stdout: JSON.stringify({ cwd: root,
+          diagnostics: [{ pluginId: "other@market", severity: "error", message: "missing ZCODE_BASE_URL" }],
+          plugins: [zcodeRecord(installPath)] }) };
+      },
+    });
+    assert.equal(report.results[0].status, "PASS");
+    assert.deepEqual(calls, [["zcode", "plugins", "list", "--json"]]);
+  } finally { fs.rmSync(installPath, { recursive: true, force: true }); }
+});
+
+for (const [label, mutate, expected] of [
+  ["disabled", p => { p.enabled = false; }, "FAIL"],
+  ["stale", p => { p.version = "0.0.0"; }, "FAIL"],
+  ["root missing", p => { delete p.rootPath; }, "UNVERIFIED"],
+  ["manifest missing", p => { delete p.manifestPath; }, "UNVERIFIED"],
+  ["manifest wrong", p => { p.manifestPath = "/wrong/plugin.json"; }, "FAIL"],
+  ["skills incomplete", p => { p.skillCount = 1; }, "FAIL"],
+  ["hooks missing", p => { delete p.hookDetails; }, "UNVERIFIED"],
+  ["hook not runnable", p => { p.hookDetails[0].runnable = false; }, "FAIL"],
+  ["hook matcher wrong", p => { p.hookDetails[0].matcher = "other"; }, "FAIL"],
+  ["hook source wrong", p => { p.hookDetails[0].sourcePath = "/wrong/hooks.json"; }, "FAIL"],
+]) {
+  test(`ZCode ${label} does not produce false PASS`, () => {
+    const installPath = makePluginInstall("zcode");
+    try {
+      const record = zcodeRecord(installPath);
+      mutate(record);
+      const report = inspectInstallations({ registryPath, sourceRoot: root, platformId: "zcode",
+        runCommand: pluginRunner({ zcode: { plugins: [record], diagnostics: [] } }),
+      });
+      assert.equal(report.results[0].status, expected);
+    } finally { fs.rmSync(installPath, { recursive: true, force: true }); }
+  });
+}
+
+test("ZCode rejects missing and altered nested payload without executing it", () => {
+  const installPath = makePluginInstall("zcode");
+  try {
+    for (const file of ["hooks/validate-state.mjs", "skills/scd-quickdev/references/evidence-contract.md"]) {
+      const target = path.join(installPath, file);
+      fs.unlinkSync(target);
+      const inspect = () => inspectInstallations({ registryPath, sourceRoot: root, platformId: "zcode",
+        runCommand: pluginRunner({ zcode: { plugins: [zcodeRecord(installPath)] } }),
+      });
+      assert.equal(inspect().results[0].status, "FAIL");
+      fs.writeFileSync(target, "broken payload");
+      assert.equal(inspect().results[0].status, "FAIL");
+      fs.copyFileSync(path.join(root, file), target);
+      assert.equal(inspect().results[0].status, "PASS");
+    }
+  } finally { fs.rmSync(installPath, { recursive: true, force: true }); }
+});
+
+
+test("ZCode distinguishes missing, ambiguous and failed plugin evidence", () => {
+  const installPath = makePluginInstall("zcode");
+  try {
+    for (const [response, expected] of [
+      [{ plugins: [] }, "FAIL"],
+      [{ plugins: [null] }, "FAIL"],
+      [{ plugins: [zcodeRecord(installPath), zcodeRecord(installPath)] }, "FAIL"],
+      [{ plugins: [zcodeRecord(installPath)], diagnostics: [{ pluginId: "thinloop@thinloop", severity: "error" }] }, "FAIL"],
+      [{ plugins: "unavailable" }, "UNVERIFIED"],
+    ]) {
+      const report = inspectInstallations({ registryPath, sourceRoot: root, platformId: "zcode",
+        runCommand: pluginRunner({ zcode: response }),
+      });
+      assert.equal(report.results[0].status, expected);
+    }
+  } finally { fs.rmSync(installPath, { recursive: true, force: true }); }
 });
