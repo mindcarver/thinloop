@@ -293,6 +293,24 @@ test("quickdev makes browser acceptance mandatory for every real page change", (
   assert.match(skill, /页面验收门由真实差异触发，不属于可选的“适用时”判断/);
 });
 
+test("quickdev requires an actual visible independent subagent invocation for page acceptance", () => {
+  const skill = read("skills/scd-quickdev/SKILL.md");
+  const page = read("skills/scd-quickdev/references/page-acceptance.md");
+  const release = read("skills/scd-quickdev/references/release-contract.md");
+
+  assert.match(skill, /必须实际调用独立的新上下文子 Agent/);
+  assert.match(skill, /调用前明确告知用户/);
+  assert.match(skill, /页面任务必须由该子智能体直接复核交互与视觉需求/);
+  assert.match(page, /必须实际调用独立的新上下文子智能体/);
+  assert.match(page, /实际调用标识、验收目标版本/);
+  assert.match(page, /交互与视觉证据/);
+  assert.match(page, /无法调用子智能体、未收到返回结果或必需证据不足[\s\S]*`BLOCKED`，不得合并/);
+  assert.match(release, /必须实际调用可用的子智能体工具/);
+  assert.match(release, /不继承实施对话的新上下文模式/);
+  assert.match(release, /不得以父 Agent 或实施者自检代替独立验收/);
+  assert.match(skill, /必须明确说明独立验收子智能体是否实际调用、返回结论及证据引用/);
+});
+
 test("quickdev confirms the accepted merge on main before closing the Issue", () => {
   const skill = composeGuidance("skills/scd-quickdev/SKILL.md");
   const issueContract = composeGuidance(
