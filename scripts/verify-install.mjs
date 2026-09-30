@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { isDeepStrictEqual } from "node:util";
 
 const SCRIPT_ROOT = path.resolve(
@@ -173,7 +173,28 @@ function validateRegistry(registry) {
         throw new Error(`Platform ${platform.id} has an unsafe runtime probe`);
       }
     }
+    const hookMounts = hookMountDescriptors(platform);
+    if (hookMounts.length > 0 && platform.id !== "dsh") {
+      throw new Error(`Platform ${platform.id} must not declare a hook mount`);
+    }
+    for (const mount of hookMounts) {
+      if (
+        mount.row !== "thinloop-continuity" ||
+        !Array.isArray(mount.patchFiles) ||
+        JSON.stringify(mount.patchFiles) !==
+          JSON.stringify(["cordis.patch.yml", "profiles/*/cordis.patch.yml"])
+      ) {
+        throw new Error(`Platform ${platform.id} has an unsafe hook mount`);
+      }
+    }
   }
+}
+
+/** Mount descriptors declared on a platform's cordis-plugin hooks, if any. */
+function hookMountDescriptors(platform) {
+  return platform.capabilities.hooks
+    .map((hook) => hook.mount)
+    .filter((mount) => mount !== undefined);
 }
 
 function makeCheck(name, status, detail) {
@@ -323,17 +344,100 @@ function inspectSkillLinks(platform, expected, homeDir, environment) {
         : "source version cannot be attributed until every link is valid",
     ),
   );
-  checks.push(
-    makeCheck(
-      "hooks",
-      platform.capabilities.hooks.length === 0 ? "PASS" : "MANUAL",
-      platform.capabilities.hooks.length === 0
-        ? "not supported by this installation mode"
-        : `${platform.capabilities.hooks.length} continuity hook (Cordis plugin) — verify in a real session; no read-only CLI probe exists`,
-    ),
-  );
+  if (hookMountDescriptors(platform).length > 0) {
+    checks.push(
+      inspectHookMount(platform, expected, { homeDir, environment }),
+    );
+  } else {
+    checks.push(
+      makeCheck(
+        "hooks",
+        platform.capabilities.hooks.length === 0 ? "PASS" : "MANUAL",
+        platform.capabilities.hooks.length === 0
+          ? "not supported by this installation mode"
+          : `${platform.capabilities.hooks.length} continuity hook (Cordis plugin) — verify in a real session; no read-only CLI probe exists`,
+      ),
+    );
+  }
 
   return platformResult(platform, checks);
+}
+
+/**
+ * Read-only inspection of a Cordis-plugin host mount: the DSH user patch layers
+ * (`$DSH_HOME/cordis.patch.yml` plus every profile's own `cordis.patch.yml`)
+ * are scanned for a row naming the source checkout's hook handler. A mounted
+ * row proves the composition inserts the plugin; no CLI probe is run. An
+ * absent row stays MANUAL because a skills-only install remains a supported
+ * state, not a confirmed failure.
+ */
+function inspectHookMount(platform, expected, context) {
+  const mount = hookMountDescriptors(platform)[0];
+  const dshHome = context.environment.DSH_HOME
+    ? path.resolve(context.environment.DSH_HOME)
+    : path.join(context.homeDir, ".dsh");
+  const handlerPath = resolveFrom(
+    expected.sourceRoot,
+    platform.capabilities.hookHandler,
+  );
+  const handlerUrl = pathToFileURL(handlerPath).href;
+
+  const candidates = [];
+  for (const pattern of mount.patchFiles) {
+    const segments = pattern.split("/");
+    if (segments.includes("*")) {
+      const wildcardIndex = segments.indexOf("*");
+      const anchor = path.join(dshHome, ...segments.slice(0, wildcardIndex));
+      let entries;
+      try {
+        entries = fs.readdirSync(anchor, { withFileTypes: true });
+      } catch (error) {
+        if (error?.code !== "ENOENT") throw error;
+        continue;
+      }
+      for (const entry of entries) {
+        // `node_modules` beside the profiles holds bundle patches owned by the
+        // installation, not user mount rows.
+        if (!entry.isDirectory() || entry.name === "node_modules") continue;
+        candidates.push(
+          path.join(anchor, entry.name, ...segments.slice(wildcardIndex + 1)),
+        );
+      }
+    } else {
+      candidates.push(path.join(dshHome, ...segments));
+    }
+  }
+
+  const mountedIn = [];
+  const unreadable = [];
+  for (const candidate of candidates) {
+    let text;
+    try {
+      text = fs.readFileSync(candidate, "utf8");
+    } catch (error) {
+      if (error?.code === "ENOENT") continue;
+      unreadable.push(`${candidate}: ${error.message}`);
+      continue;
+    }
+    if (text.includes(handlerPath) || text.includes(handlerUrl)) {
+      mountedIn.push(candidate);
+    }
+  }
+
+  if (mountedIn.length > 0) {
+    return makeCheck(
+      "hooks",
+      "PASS",
+      `${platform.capabilities.hooks.length}/${platform.capabilities.hooks.length} Cordis plugin mounted via ${mountedIn.join(", ")}; loaded at profile boot (restart applies profile patches)`,
+    );
+  }
+  return makeCheck(
+    "hooks",
+    "MANUAL",
+    unreadable.length > 0
+      ? `plugin mount unknown (${unreadable.join("; ")}); mount per .dsh-plugin/README.md`
+      : `plugin not mounted in any ${mount.patchFiles.join(" or ")} under ${dshHome}; skills-only install remains supported — mount per .dsh-plugin/README.md`,
+  );
 }
 
 function defaultRunCommand(command, { homeDir, environment } = {}) {

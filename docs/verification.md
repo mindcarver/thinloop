@@ -72,7 +72,7 @@ node evals/knowledge/runner/run.mjs --mode full
 | Pi | 十二个 Skill 链接均指向当前源码；Pi RPC `get_commands` 可发现十二个 `/skill:scd-*` 命令 |
 | CodeWhale | 十二个 Skill 链接均指向当前源码；`codewhale doctor --json` 确认全局 Skill 根、数量且跳过实时 API 探测 |
 | Reasonix | 十二个 Skill 链接均指向当前源码；新会话可通过 `/scd-next`、`/scd-execute`、`/scd-project` 与 `/scd-quickdev` 调用 |
-| DeepSeek Harness | 十二个 Skill 链接均指向当前源码；新会话的 skill 工具可发现 `scd-next`、`scd-execute`、`scd-project` 与 `scd-quickdev` |
+| DeepSeek Harness | 十二个 Skill 链接均指向当前源码；新会话的 skill 工具可发现 `scd-next`、`scd-execute`、`scd-project` 与 `scd-quickdev`；只读检查器核对 home 级与 profile 级 `cordis.patch.yml` 中的挂载行，已挂载为 `PASS`，未挂载为 `MANUAL` |
 | Claude Code | `claude plugin list --json` 提供版本、enabled 与安装路径；检查器从该路径核对十二个 Skill 和两个 Hook，包括 `scd-next` 与 `scd-execute` |
 | WorkBuddy | 不验证：WorkBuddy 无可靠只读 CLI 探测；已取消插件页核验要求 |
 | ZCode | `zcode plugins list --json` 提供 enabled、version、rootPath、skillCount 与 hookDetails；检查完整 Skill/Hook 载荷和两个可运行 Hook |
@@ -170,9 +170,16 @@ DeepSeek Harness 没有可依赖的 CLI 或插件列表命令，安装链接通�
 阻断不是声明式子进程 Hook，而是可编程的 Cordis 插件：Thinloop 通过
 `.dsh-plugin/continuity.mjs` 注册 `agent/turn-stopping` 监听器，在
 `.scd/tasks/current.md` 属于 SCD 管理但不可恢复时 `agent.steer(...)` 让 Agent
-继续补齐。挂载与运行时行为需手动核验（无只读 CLI 探测，统一检查器将其记为
-`MANUAL`）：新会话写入一份缺章节的状态文件，确认 Agent 停止前被打断、补齐
-后才允许停下；DSH 未暴露第三方可用的压缩前否决点，压缩后仍由 DSH 自身的
-`AGENTS.md` 机制重新注入指令基线。
+继续补齐。插件以宿主级用户 patch 层挂载：统一检查器只读扫描
+`$DSH_HOME/cordis.patch.yml` 与 `$DSH_HOME/profiles/*/cordis.patch.yml`，
+挂载行指向当前源码的 `.dsh-plugin/continuity.mjs` 时 `hooks` 检查为 `PASS`；
+未挂载时保持 `MANUAL`（skills-only 安装仍是受支持形态）。运行时行为需在
+真实会话核验：临时目录写入一份缺章节的状态文件，在该目录运行
+`dsh --profile headless "简单任务"`，确认 Agent 停止前被打断、补齐后才允许
+停下；DSH 未暴露第三方可用的压缩前否决点，压缩后仍由 DSH 自身的
+`AGENTS.md` 机制重新注入指令基线。`dsh --profile web --dump-config` 可做
+只读组合核对（组合树应包含 `thinloop-continuity` 行）；`desktop` profile
+由 Electron 独占管理，CLI 拒绝对它做 config-dump，但 home 级挂载层对它
+同样生效，重启后应用。
 
 完整评测方法、历史证据和限制见 [EVALUATION.md](../EVALUATION.md)。

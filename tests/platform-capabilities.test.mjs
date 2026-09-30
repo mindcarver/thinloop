@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 import {
   formatText,
@@ -899,6 +899,142 @@ test("checker can target DeepSeek Harness without probing its CLI", () => {
     );
   } finally {
     fs.rmSync(homeDir, { recursive: true, force: true });
+  }
+});
+
+test("DeepSeek Harness hook mount check passes when the home patch names the source handler", () => {
+  const homeDir = makeFixture();
+  try {
+    linkSkills(homeDir, "dsh");
+    const dshHome = path.join(homeDir, ".dsh");
+    fs.mkdirSync(dshHome, { recursive: true });
+    fs.writeFileSync(
+      path.join(dshHome, "cordis.patch.yml"),
+      `- id: thinloop-continuity\n  name: ${pathToFileURL(
+        path.join(root, ".dsh-plugin", "continuity.mjs"),
+      ).href}\n`,
+    );
+    const report = inspectInstallations({
+      registryPath,
+      sourceRoot: root,
+      homeDir,
+      environment: {},
+      platformId: "dsh",
+      runCommand: () => {
+        throw new Error("targeted DeepSeek Harness verification must not run a CLI probe");
+      },
+    });
+
+    assert.equal(report.exitCode, 0);
+    assert.equal(report.results[0].status, "PASS");
+    const hooks = report.results[0].checks.find(
+      (check) => check.name === "hooks",
+    );
+    assert.equal(hooks.status, "PASS");
+    assert.match(hooks.detail, new RegExp(escapeRegex("cordis.patch.yml")));
+  } finally {
+    fs.rmSync(homeDir, { recursive: true, force: true });
+  }
+});
+
+test("DeepSeek Harness hook mount check accepts a profile patch with an absolute path row", () => {
+  const homeDir = makeFixture();
+  try {
+    linkSkills(homeDir, "dsh");
+    const profileDir = path.join(homeDir, ".dsh", "profiles", "desktop");
+    fs.mkdirSync(profileDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(profileDir, "cordis.patch.yml"),
+      `- id: thinloop-continuity\n  name: ${path.join(root, ".dsh-plugin", "continuity.mjs")}\n`,
+    );
+    const report = inspectInstallations({
+      registryPath,
+      sourceRoot: root,
+      homeDir,
+      environment: {},
+      platformId: "dsh",
+    });
+
+    assert.equal(report.results[0].status, "PASS");
+    assert.match(
+      report.results[0].checks.find((check) => check.name === "hooks").detail,
+      new RegExp(escapeRegex(path.join("profiles", "desktop"))),
+    );
+  } finally {
+    fs.rmSync(homeDir, { recursive: true, force: true });
+  }
+});
+
+test("DeepSeek Harness hook mount check ignores bundle patches and foreign rows", () => {
+  const homeDir = makeFixture();
+  try {
+    linkSkills(homeDir, "dsh");
+    const dshHome = path.join(homeDir, ".dsh");
+    const profileDir = path.join(dshHome, "profiles", "web");
+    fs.mkdirSync(profileDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(profileDir, "cordis.patch.yml"),
+      "- id: other-plugin\n  name: '@deepseek-ai/dsh-something'\n",
+    );
+    const bundlePatch = path.join(
+      dshHome,
+      "profiles",
+      "node_modules",
+      "dsh-bundle",
+    );
+    fs.mkdirSync(bundlePatch, { recursive: true });
+    fs.writeFileSync(
+      path.join(bundlePatch, "cordis.patch.yml"),
+      `- id: thinloop-continuity\n  name: ${path.join(
+        homeDir,
+        "elsewhere",
+        ".dsh-plugin",
+        "continuity.mjs",
+      )}\n`,
+    );
+    const report = inspectInstallations({
+      registryPath,
+      sourceRoot: root,
+      homeDir,
+      environment: {},
+      platformId: "dsh",
+    });
+
+    assert.equal(report.results[0].status, "MANUAL");
+    assert.equal(
+      report.results[0].checks.find((check) => check.name === "hooks").status,
+      "MANUAL",
+    );
+  } finally {
+    fs.rmSync(homeDir, { recursive: true, force: true });
+  }
+});
+
+test("DeepSeek Harness hook mount honors DSH_HOME", () => {
+  const homeDir = makeFixture();
+  const dshHomeDir = makeFixture();
+  try {
+    const dshHome = path.join(dshHomeDir, "harness-home");
+    linkSkills(homeDir, "dsh", expectedSkills, { DSH_HOME: dshHome });
+    fs.mkdirSync(dshHome, { recursive: true });
+    fs.writeFileSync(
+      path.join(dshHome, "cordis.patch.yml"),
+      `- id: thinloop-continuity\n  name: ${pathToFileURL(
+        path.join(root, ".dsh-plugin", "continuity.mjs"),
+      ).href}\n`,
+    );
+    const report = inspectInstallations({
+      registryPath,
+      sourceRoot: root,
+      homeDir,
+      environment: { DSH_HOME: dshHome },
+      platformId: "dsh",
+    });
+
+    assert.equal(report.results[0].status, "PASS");
+  } finally {
+    fs.rmSync(homeDir, { recursive: true, force: true });
+    fs.rmSync(dshHomeDir, { recursive: true, force: true });
   }
 });
 
