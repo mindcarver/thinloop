@@ -11,16 +11,16 @@
 | Pi | 把十二个 Skill 链接到 `~/.pi/agent/skills` | 新会话或执行 `/reload` |
 | CodeWhale | 把十二个 Skill 链接到 `~/.codewhale/skills` | 新会话 |
 | Reasonix | 把十二个 Skill 链接到 `~/.reasonix/skills` | 新会话 |
-| DeepSeek Harness | 把十二个 Skill 链接到 `~/.dsh/skills` | 新会话（filesystem provider 的 watcher 会自动失效并更新目录） |
+| DeepSeek Harness | 把十二个 Skill 链接到 `~/.dsh/skills`，并在 `$DSH_HOME/cordis.patch.yml` 挂载 `.dsh-plugin/continuity.mjs`（宿主级 Cordis 插件行） | 新会话（filesystem provider 的 watcher 会自动失效并更新目录） |
 | Claude Code | 安装完整插件 | 更新后重启或重新加载插件 |
 | WorkBuddy | 安装完整插件 | 更新后重启 WorkBuddy |
 | ZCode | 安装完整插件 | 更新后新建会话 |
 
 Skill 链接随源码仓库更新，但默认不启用连续性 Hook；Claude Code、WorkBuddy
-和 ZCode 的完整插件会额外启用各自支持的 Hook，DeepSeek Harness 则通过手动
-挂载 `.dsh-plugin/continuity.mjs` 插件启用 `agent/turn-stopping` 连续性闸门。
-不要在同一个 Agent 中同时安装完整插件和个人 Skill 链接，以免重复暴露同名
-能力。
+和 ZCode 的完整插件会额外启用各自支持的 Hook，DeepSeek Harness 则通过把
+`.dsh-plugin/continuity.mjs` 挂载到 DSH 的 home 级用户 patch 层启用
+`agent/turn-stopping` 连续性闸门。不要在同一个 Agent 中同时安装完整插件和
+个人 Skill 链接，以免重复暴露同名能力。
 
 ## Codex、OpenCode、Pi、CodeWhale、Reasonix 与 DeepSeek Harness
 
@@ -141,10 +141,22 @@ skill 工具即可发现并加载 `scd-next`、`scd-execute`、`scd-project`、
 「JSON Hook 清单 + 子进程处理程序」的声明式 Hook，但提供可编程的 Cordis
 插件生命周期事件系统：Thinloop 通过 `.dsh-plugin/continuity.mjs` 插件注册
 `agent/turn-stopping`（`Stop` 的等价物）监听器，在状态不可恢复时
-`agent.steer(...)` 让 Agent 继续补齐，而不是在不可恢复的状态上停下。该插件
-需手动挂载到 Agent preset 的 `agent.cordis.yml`（详见
-`.dsh-plugin/README.md`）；DSH 未暴露第三方可用的压缩前否决点，压缩后仍由
-`AGENTS.md` 基线机制重新注入指令。
+`agent.steer(...)` 让 Agent 继续补齐，而不是在不可恢复的状态上停下。启用
+方式是把挂载块写进 **home 级用户 patch 层** `$DSH_HOME/cordis.patch.yml`
+（等效挂载点为各 profile 的 `$DSH_HOME/profiles/<name>/cordis.patch.yml`）：
+
+```yaml
+- insert:
+    - id: thinloop-continuity
+      name: file:///绝对路径/thinloop/.dsh-plugin/continuity.mjs
+```
+
+patch 层新增条目必须用 `insert` 列表；裸行会被当作按 id 更新既有条目而报
+`entry "thinloop-continuity" not found`。该层对所有 profile 生效（含
+Electron desktop 宿主与全部 agent preset），无需复制 preset；挂载细节、事件
+作用域依据与 Windows 路径注意事项见
+[`.dsh-plugin/README.md`](../.dsh-plugin/README.md)。DSH 未暴露第三方可用的
+压缩前否决点，压缩后仍由 `AGENTS.md` 基线机制重新注入指令。
 
 ## Evolve 权威源码
 
@@ -306,6 +318,13 @@ codebuddy plugin update thinloop@thinloop --scope user
   页面证据、高风险确认、main 核验和精确清理门继续有效。评分器保留 unknown，
   完整交付协议与真实模型证据分开记录；每次交付核对 ZCode、Claude Code、Codex，
   同版本载荷漂移也需修复。范围和测量限制见 [`v0.17.0`](./releases/v0.17.0.md)。
+- 升级到 v0.17.1：DSH 连续性插件的挂载方式改为宿主级用户 patch 层——在
+  `$DSH_HOME/cordis.patch.yml` 以 `insert` 列表追加 `thinloop-continuity`
+  条目即可对全部 profile 与 preset 生效，不再复制 agent preset；纠正消息的
+  来源标记改为 `plugin`。`verify-install.mjs --platform dsh` 会读取 home 级
+  与 profile 级 patch 文件核对挂载，未挂载保持 `MANUAL`。升级后重启 DSH 使
+  新组合生效，并移除旧的 `standard-thinloop` 之类 preset 拷贝，避免双重
+  纠正。范围见 [`v0.17.1`](./releases/v0.17.1.md)。
 - 若从 v0.6.x 升级，另确认旧 `scd-dev-loop` 已消失。
 
 更新后可以在 Thinloop 源码仓库运行只读检查器：

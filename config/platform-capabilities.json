@@ -134,7 +134,7 @@
           "environment": "DSH_HOME",
           "suffix": "skills"
         },
-        "summary": "把十二个 Skill 链接到 `~/.dsh/skills`",
+        "summary": "把十二个 Skill 链接到 `~/.dsh/skills`，并在 `$DSH_HOME/cordis.patch.yml` 挂载 `.dsh-plugin/continuity.mjs`（宿主级 Cordis 插件行）",
         "takesEffect": "新会话（filesystem provider 的 watcher 会自动失效并更新目录）"
       },
       "capabilities": {
@@ -143,13 +143,21 @@
           {
             "event": "agent/turn-stopping",
             "source": ".dsh-plugin/continuity.mjs",
-            "kind": "cordis-plugin"
+            "kind": "cordis-plugin",
+            "mount": {
+              "layer": "host-user-patch",
+              "row": "thinloop-continuity",
+              "patchFiles": [
+                "cordis.patch.yml",
+                "profiles/*/cordis.patch.yml"
+              ]
+            }
           }
         ]
       },
       "verification": {
         "mode": "skill-links",
-        "summary": "十二个 Skill 链接均指向当前源码；新会话的 skill 工具可发现 `scd-next`、`scd-execute`、`scd-project` 与 `scd-quickdev`"
+        "summary": "十二个 Skill 链接均指向当前源码；新会话的 skill 工具可发现 `scd-next`、`scd-execute`、`scd-project` 与 `scd-quickdev`；只读检查器核对 home 级与 profile 级 `cordis.patch.yml` 中的挂载行，已挂载为 `PASS`，未挂载为 `MANUAL`"
       }
     },
     {

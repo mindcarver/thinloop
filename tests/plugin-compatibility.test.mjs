@@ -188,3 +188,25 @@ test("shared skills recognize both repository instruction conventions", () => {
   assert.match(maintenance, /`AGENTS\.md`、`CLAUDE\.md`/);
   assert.match(reengineering, /`AGENTS\.md`、`CLAUDE\.md`/);
 });
+
+test(
+  "DeepSeek Harness continuity plugin keeps the Cordis plugin contract",
+  { skip: process.platform === "win32" },
+  async () => {
+    const pluginUrl = new URL("../.dsh-plugin/continuity.mjs", import.meta.url);
+    const plugin = await import(pluginUrl.href);
+
+    assert.equal(plugin.name, "thinloop-continuity");
+    assert.deepEqual(plugin.inject, []);
+    assert.equal(typeof plugin.apply, "function");
+
+    const source = fs.readFileSync(pluginUrl, "utf8");
+    // Steered corrections must attribute to the plugin, matching the official
+    // dsh-hooks-codex Stop bridge, instead of spoofing the human user.
+    assert.match(source, /kind: "plugin", plugin: "thinloop-continuity"/);
+    assert.doesNotMatch(source, /kind: "user"/);
+    // The gate must share one validator with the subprocess hooks.
+    assert.match(source, /from "\.\.\/hooks\/validate-state\.mjs"/);
+    assert.match(source, /agent\/turn-stopping/);
+  },
+);
