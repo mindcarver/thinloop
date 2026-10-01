@@ -77,8 +77,19 @@ SCD 管理但不可恢复，就 `agent.steer(...)` 一条纠正消息，让 Agen
   管理，CLI 拒绝对它做 config-dump，但 home 级层对它同样生效。
 - 统一只读检查器：`node scripts/verify-install.mjs --platform dsh` 读取
   `$DSH_HOME/cordis.patch.yml` 与 `$DSH_HOME/profiles/*/cordis.patch.yml`，
-  挂载行指向当前源码的 `.dsh-plugin/continuity.mjs` 时 `hooks` 检查为
-  `PASS`；未挂载时保持 `MANUAL`（skills-only 仍是受支持安装形态）。
+  仅当静态结构是顶层、无目标 `id` 的 `insert` 列表，直接条目的
+  `id: thinloop-continuity` 和 `name` 精确指向当前源码 handler，且未禁用时，
+  `hooks` 检查为 `PASS`。profile patch 与 home patch 按该顺序一起检查；
+  不把不同 profile 当作叠加层，也不猜测当前运行的是哪个 profile。
+  `PASS` 仅说明所列 patch 的静态插入配置，**不证明最终组合、插件已经加载
+  或事件已经执行**；bundle、CLI overlay 和运行时须通过上述组合检查与下面
+  的行为检查确认。
+- 检查器不依赖外部 YAML 包，只读取安装示例使用的 block 列表/映射、普通
+  或单/双引号标量、布尔值、空 `[]` / `{}` 和注释。无挂载、裸更新行、
+  重复 id/key、禁用行、嵌套 group、条件字段、无法读取或无效配置，以及
+  未支持的 YAML（如 flow collection、anchor/alias、tag、block scalar）保持
+  `MANUAL`，不会凭路径文本猜为成功。任何覆盖操作也保守地要求组合检查；
+  不支持的有效 YAML 不等于安装错误。skills-only 仍是受支持安装形态。
 - 运行时行为：临时目录写入一份 `managed_by` 为 `scd-quickdev` 但缺章节的
   `.scd/tasks/current.md`，在该目录运行
   `dsh --profile headless "简单任务"`，确认 Agent 停止前被纠正消息打断、

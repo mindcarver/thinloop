@@ -6,6 +6,7 @@ import path from "node:path";
 import { spawn, spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { inspectInstallations } from "./verify-install.mjs";
+import { pluginList } from "./plugin-list.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const pluginId = "thinloop@thinloop";
@@ -98,8 +99,8 @@ export async function refreshInstallation({
     }
   } else {
     const response = JSON.parse(runCommand(platform.verification.command, context));
-    const plugins = platformId === "zcode" ? response.plugins : response;
-    const matches = Array.isArray(plugins) ? plugins.filter(entry => entry.id === pluginId) : [];
+    const plugins = pluginList(platformId, response);
+    const matches = Array.isArray(plugins) ? plugins.filter(entry => entry?.id === pluginId) : [];
     if (matches.length !== 1 || matches[0].enabled !== true) {
       throw new Error("Thinloop must already be installed and enabled; no installation or enablement was attempted");
     }

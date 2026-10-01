@@ -4,6 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
+import { zcodeFixture } from "./helpers/zcode-fixture.mjs";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 import {
@@ -160,6 +161,11 @@ function codeWhaleReport(homeDir, environment = {}) {
 
 function pluginRunner(recordsByExecutable) {
   return ([executable], context = {}) => {
+    // An omitted fixture means the CLI is unavailable, not an installed CLI
+    // reporting an empty list (which is valid evidence of a missing plugin).
+    if (executable === "zcode" && !Object.hasOwn(recordsByExecutable, executable)) {
+      return { status: null, error: Object.assign(new Error("zcode unavailable"), { code: "ENOENT" }) };
+    }
     const output = Object.hasOwn(recordsByExecutable, executable)
       ? recordsByExecutable[executable]
       : executable === "codewhale"
@@ -910,7 +916,7 @@ test("DeepSeek Harness hook mount check passes when the home patch names the sou
     fs.mkdirSync(dshHome, { recursive: true });
     fs.writeFileSync(
       path.join(dshHome, "cordis.patch.yml"),
-      `- id: thinloop-continuity\n  name: ${pathToFileURL(
+      `- insert:\n    - id: thinloop-continuity\n      name: ${pathToFileURL(
         path.join(root, ".dsh-plugin", "continuity.mjs"),
       ).href}\n`,
     );
@@ -932,6 +938,7 @@ test("DeepSeek Harness hook mount check passes when the home patch names the sou
     );
     assert.equal(hooks.status, "PASS");
     assert.match(hooks.detail, new RegExp(escapeRegex("cordis.patch.yml")));
+    assert.match(hooks.detail, /static.*runtime.*not verified/i);
   } finally {
     fs.rmSync(homeDir, { recursive: true, force: true });
   }
@@ -945,7 +952,7 @@ test("DeepSeek Harness hook mount check accepts a profile patch with an absolute
     fs.mkdirSync(profileDir, { recursive: true });
     fs.writeFileSync(
       path.join(profileDir, "cordis.patch.yml"),
-      `- id: thinloop-continuity\n  name: ${path.join(root, ".dsh-plugin", "continuity.mjs")}\n`,
+      `- insert:\n    - id: thinloop-continuity\n      name: ${path.join(root, ".dsh-plugin", "continuity.mjs")}\n`,
     );
     const report = inspectInstallations({
       registryPath,
@@ -985,7 +992,7 @@ test("DeepSeek Harness hook mount check ignores bundle patches and foreign rows"
     fs.mkdirSync(bundlePatch, { recursive: true });
     fs.writeFileSync(
       path.join(bundlePatch, "cordis.patch.yml"),
-      `- id: thinloop-continuity\n  name: ${path.join(
+      `- insert:\n    - id: thinloop-continuity\n      name: ${path.join(
         homeDir,
         "elsewhere",
         ".dsh-plugin",
@@ -1019,7 +1026,7 @@ test("DeepSeek Harness hook mount honors DSH_HOME", () => {
     fs.mkdirSync(dshHome, { recursive: true });
     fs.writeFileSync(
       path.join(dshHome, "cordis.patch.yml"),
-      `- id: thinloop-continuity\n  name: ${pathToFileURL(
+      `- insert:\n    - id: thinloop-continuity\n      name: ${pathToFileURL(
         path.join(root, ".dsh-plugin", "continuity.mjs"),
       ).href}\n`,
     );
@@ -1150,17 +1157,19 @@ for (const [label, mutate, expected] of [
   ["hook matcher wrong", p => { p.hookDetails[0].matcher = "other"; }, "FAIL"],
   ["hook source wrong", p => { p.hookDetails[0].sourcePath = "/wrong/hooks.json"; }, "FAIL"],
 ]) {
-  test(`ZCode ${label} does not produce false PASS`, () => {
-    const installPath = makePluginInstall("zcode");
-    try {
-      const record = zcodeRecord(installPath);
-      mutate(record);
-      const report = inspectInstallations({ registryPath, sourceRoot: root, platformId: "zcode",
-        runCommand: pluginRunner({ zcode: { plugins: [record], diagnostics: [] } }),
-      });
-      assert.equal(report.results[0].status, expected);
-    } finally { fs.rmSync(installPath, { recursive: true, force: true }); }
-  });
+  for (const shape of ["array", "envelope"]) {
+    test(`ZCode ${shape} ${label} does not produce false PASS`, () => {
+      const installPath = makePluginInstall("zcode");
+      try {
+        const record = zcodeRecord(installPath);
+        mutate(record);
+        const report = inspectInstallations({ registryPath, sourceRoot: root, platformId: "zcode",
+          runCommand: pluginRunner({ zcode: shape === "array" ? [record] : { plugins: [record], diagnostics: [] } }),
+        });
+        assert.equal(report.results[0].status, expected);
+      } finally { fs.rmSync(installPath, { recursive: true, force: true }); }
+    });
+  }
 }
 
 test("ZCode rejects missing and altered nested payload without executing it", () => {
@@ -1186,6 +1195,9 @@ test("ZCode distinguishes missing, ambiguous and failed plugin evidence", () => 
   const installPath = makePluginInstall("zcode");
   try {
     for (const [response, expected] of [
+      [[], "FAIL"],
+      [[null], "FAIL"],
+      [[zcodeRecord(installPath), zcodeRecord(installPath)], "FAIL"],
       [{ plugins: [] }, "FAIL"],
       [{ plugins: [null] }, "FAIL"],
       [{ plugins: [zcodeRecord(installPath), zcodeRecord(installPath)] }, "FAIL"],
@@ -1198,4 +1210,104 @@ test("ZCode distinguishes missing, ambiguous and failed plugin evidence", () => 
       assert.equal(report.results[0].status, expected);
     }
   } finally { fs.rmSync(installPath, { recursive: true, force: true }); }
+});
+
+for (const shape of ["array", "envelope"]) {
+  test(`ZCode representative ${shape} fixture verifies the complete installation`, () => {
+    const installPath = makePluginInstall("zcode");
+    try {
+      const response = zcodeFixture(shape, { installPath, version: expectedVersion, sourceRoot: root });
+      const report = inspectInstallations({ registryPath, sourceRoot: root, platformId: "zcode",
+        runCommand: pluginRunner({ zcode: response }),
+      });
+      assert.equal(report.results[0].status, "PASS");
+      assert.ok(report.results[0].checks.every(check => check.status === "PASS"));
+    } finally { fs.rmSync(installPath, { recursive: true, force: true }); }
+  });
+}
+
+for (const response of [null, 42, "plugins", {}, { plugins: null }, { plugins: {} }]) {
+  test(`ZCode malformed shape ${JSON.stringify(response)} stays UNVERIFIED`, () => {
+    const report = inspectInstallations({ registryPath, sourceRoot: root, platformId: "zcode",
+      runCommand: pluginRunner({ zcode: response }),
+    });
+    assert.equal(report.results[0].status, "UNVERIFIED");
+  });
+}
+
+for (const [label, patch] of [
+  ["commented insert", h => `# - insert:\n#     - id: thinloop-continuity\n#       name: ${h}\n`],
+  ["bare update row", h => `- id: thinloop-continuity\n  name: ${h}\n`],
+  ["quoted false disabled", h => `- insert:\n    - id: thinloop-continuity\n      name: ${h}\n      disabled: "false"\n`],
+  ["mixed-case false disabled", h => `- insert:\n    - id: thinloop-continuity\n      name: ${h}\n      disabled: FaLsE\n`],
+  ["duplicate inserted id", h => `- insert:\n    - id: thinloop-continuity\n      name: ${h}\n    - id: thinloop-continuity\n      name: other\n`],
+  ["unsupported alias", h => `- insert:\n    - id: thinloop-continuity\n      name: ${h}\n      disabled: *flag\n`],
+  ["unsupported tag", h => `- insert:\n    - id: thinloop-continuity\n      name: ${h}\n      disabled: !!js false\n`],
+  ["blocked injection", h => `- insert:\n    - id: thinloop-continuity\n      name: ${h}\n      inject:\n        missingService: {}\n`],
+  ["disabled insert", h => `- insert:\n    - id: thinloop-continuity\n      name: ${h}\n      disabled: true\n`],
+  ["name in config only", h => `- insert:\n    - id: other\n      name: other-plugin\n      config:\n        example: ${h}\n`],
+  ["name as a suffix", h => `- insert:\n    - id: thinloop-continuity\n      name: ${h}.disabled\n`],
+  ["invalid YAML", h => `- insert: [\n    - id: thinloop-continuity\n      name: ${h}\n`],
+  ["later disabled", h => `- insert:\n    - id: thinloop-continuity\n      name: ${h}\n- id: thinloop-continuity\n  disabled: true\n`],
+  ["nested insert", h => `- id: unknown-group\n  insert:\n    - id: thinloop-continuity\n      name: ${h}\n`],
+  ["duplicate name", h => `- insert:\n    - id: thinloop-continuity\n      name: ${h}\n      name: other-plugin\n`],
+]) {
+  test(`DeepSeek Harness ${label} cannot be PASS`, () => {
+    const homeDir = makeFixture();
+    try {
+      linkSkills(homeDir, "dsh");
+      fs.writeFileSync(path.join(homeDir, ".dsh", "cordis.patch.yml"),
+        patch(pathToFileURL(path.join(root, ".dsh-plugin/continuity.mjs")).href));
+      const report = inspectInstallations({ registryPath, sourceRoot: root, homeDir,
+        environment: {}, platformId: "dsh",
+        runCommand() { throw new Error("DSH check must remain read-only without CLI execution"); },
+      });
+      assert.equal(report.results[0].checks.find(check => check.name === "hooks").status, "MANUAL");
+    } finally { fs.rmSync(homeDir, { recursive: true, force: true }); }
+  });
+}
+
+for (const nameStyle of ["plain", "single", "double"]) {
+  test(`DeepSeek Harness accepts a ${nameStyle} quoted/commented root insert`, () => {
+    const homeDir = makeFixture();
+    try {
+      linkSkills(homeDir, "dsh");
+      const handler = pathToFileURL(path.join(root, ".dsh-plugin/continuity.mjs")).href;
+      const name = nameStyle === "single" ? `'${handler}'` : nameStyle === "double" ? JSON.stringify(handler) : handler;
+      fs.writeFileSync(path.join(homeDir, ".dsh/cordis.patch.yml"),
+        `---\n# custom configuration\n- insert: # append at root\n    - id: thinloop-continuity\n      name: ${name} # current checkout\n      disabled: false\n      config: false\n...\n`);
+      const report = inspectInstallations({ registryPath, sourceRoot: root, homeDir, environment: {}, platformId: "dsh" });
+      assert.equal(report.results[0].status, "PASS");
+    } finally { fs.rmSync(homeDir, { recursive: true, force: true }); }
+  });
+}
+
+for (const [label, homePatch] of [
+  ["home disables profile mount", "- id: thinloop-continuity\n  disabled: true\n"],
+  ["malformed home", "- insert: [broken\n"],
+  ["empty home", ""],
+  ["comment-only home", "# empty home layer\n"],
+  ["duplicate home mount", null],
+]) {
+  test(`DeepSeek Harness ${label} stays MANUAL`, () => {
+    const homeDir = makeFixture();
+    try {
+      linkSkills(homeDir, "dsh");
+      const profileDir = path.join(homeDir, ".dsh/profiles/web");
+      fs.mkdirSync(profileDir, { recursive: true });
+      const mount = `- insert:\n    - id: thinloop-continuity\n      name: ${pathToFileURL(path.join(root, ".dsh-plugin/continuity.mjs")).href}\n`;
+      fs.writeFileSync(path.join(profileDir, "cordis.patch.yml"), mount);
+      fs.writeFileSync(path.join(homeDir, ".dsh/cordis.patch.yml"), homePatch ?? mount);
+      const report = inspectInstallations({ registryPath, sourceRoot: root, homeDir, environment: {}, platformId: "dsh" });
+      assert.equal(report.results[0].checks.find(check => check.name === "hooks").status, "MANUAL");
+    } finally { fs.rmSync(homeDir, { recursive: true, force: true }); }
+  });
+}
+
+test("ZCode invalid JSON remains UNVERIFIED", () => {
+  const report = inspectInstallations({ registryPath, sourceRoot: root, platformId: "zcode",
+    runCommand: () => ({ status: 0, stdout: "{broken" }),
+  });
+  assert.equal(report.results[0].status, "UNVERIFIED");
+  assert.match(report.results[0].checks[0].detail, /invalid JSON/);
 });
