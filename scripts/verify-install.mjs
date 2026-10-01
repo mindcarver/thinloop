@@ -6,6 +6,8 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { isDeepStrictEqual } from "node:util";
+import { pluginList } from "./plugin-list.mjs";
+import { readDshPatch, hasDshInsertion } from "./dsh-patch.mjs";
 
 const SCRIPT_ROOT = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -364,12 +366,9 @@ function inspectSkillLinks(platform, expected, homeDir, environment) {
 }
 
 /**
- * Read-only inspection of a Cordis-plugin host mount: the DSH user patch layers
- * (`$DSH_HOME/cordis.patch.yml` plus every profile's own `cordis.patch.yml`)
- * are scanned for a row naming the source checkout's hook handler. A mounted
- * row proves the composition inserts the plugin; no CLI probe is run. An
- * absent row stays MANUAL because a skills-only install remains a supported
- * state, not a confirmed failure.
+ * Read-only, static evidence of an unconditional root insert in DSH user patch
+ * layers. Unsupported YAML/composition stays MANUAL. This cannot establish the
+ * selected runtime profile, CLI overlays, successful boot or event execution.
  */
 function inspectHookMount(platform, expected, context) {
   const mount = hookMountDescriptors(platform)[0];
@@ -408,35 +407,45 @@ function inspectHookMount(platform, expected, context) {
     }
   }
 
-  const mountedIn = [];
-  const unreadable = [];
+  const patches = new Map();
+  const unknown = [];
   for (const candidate of candidates) {
-    let text;
     try {
-      text = fs.readFileSync(candidate, "utf8");
+      patches.set(candidate, readDshPatch(fs.readFileSync(candidate, "utf8")));
     } catch (error) {
-      if (error?.code === "ENOENT") continue;
-      unreadable.push(`${candidate}: ${error.message}`);
-      continue;
-    }
-    if (text.includes(handlerPath) || text.includes(handlerUrl)) {
-      mountedIn.push(candidate);
+      if (error?.code === "ENOENT") { patches.set(candidate, []); continue; }
+      unknown.push(`${candidate}: ${error.message}`);
     }
   }
 
+  // Profiles are alternatives, not sequential overlays. Each receives the home
+  // patch after its own patch. A bare update/unsupported operation in either
+  // layer prevents that combination from proving an unconditional insertion.
+  const homePatch = path.join(dshHome, "cordis.patch.yml");
+  const home = patches.get(homePatch) || [];
+  const mountedIn = [];
+  if (unknown.length === 0) {
+    if (patches.size === 1 && hasDshInsertion([home], mount.row, [handlerPath, handlerUrl])) mountedIn.push(homePatch);
+    for (const [candidate, patch] of patches) {
+      if (candidate !== homePatch &&
+          hasDshInsertion([patch, home], mount.row, [handlerPath, handlerUrl])) {
+        mountedIn.push(home.length ? `${candidate} + ${homePatch}` : candidate);
+      }
+    }
+  }
   if (mountedIn.length > 0) {
     return makeCheck(
       "hooks",
       "PASS",
-      `${platform.capabilities.hooks.length}/${platform.capabilities.hooks.length} Cordis plugin mounted via ${mountedIn.join(", ")}; loaded at profile boot (restart applies profile patches)`,
+      `${platform.capabilities.hooks.length}/${platform.capabilities.hooks.length} static Cordis root insert configured via ${mountedIn.join(", ")}; runtime composition, activation and events not verified`,
     );
   }
   return makeCheck(
     "hooks",
     "MANUAL",
-    unreadable.length > 0
-      ? `plugin mount unknown (${unreadable.join("; ")}); mount per .dsh-plugin/README.md`
-      : `plugin not mounted in any ${mount.patchFiles.join(" or ")} under ${dshHome}; skills-only install remains supported — mount per .dsh-plugin/README.md`,
+    unknown.length > 0
+      ? `plugin mount unknown (${unknown.join("; ")}); mount per .dsh-plugin/README.md`
+      : `no unconditional root insert verified in ${mount.patchFiles.join(" or ")} under ${dshHome}; skills-only install remains supported; overrides or complex YAML require dsh --dump-config; see .dsh-plugin/README.md`,
   );
 }
 
@@ -727,7 +736,7 @@ function inspectPlugin(platform, expected, runCommand, context) {
   let response;
   try {
     response = JSON.parse(commandResult.stdout);
-    plugins = platform.id === "zcode" ? response?.plugins : response;
+    plugins = pluginList(platform.id, response);
   } catch {
     return singleCheckResult(
       platform,

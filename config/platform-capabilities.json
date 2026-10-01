@@ -157,7 +157,7 @@
       },
       "verification": {
         "mode": "skill-links",
-        "summary": "十二个 Skill 链接均指向当前源码；新会话的 skill 工具可发现 `scd-next`、`scd-execute`、`scd-project` 与 `scd-quickdev`；只读检查器核对 home 级与 profile 级 `cordis.patch.yml` 中的挂载行，已挂载为 `PASS`，未挂载为 `MANUAL`"
+        "summary": "十二个 Skill 链接均指向当前源码；新会话的 skill 工具可发现 `scd-next`、`scd-execute`、`scd-project` 与 `scd-quickdev`；只读检查器核对 home 级与 profile 级 `cordis.patch.yml` 中明确启用的根级 `insert`，静态配置通过为 `PASS`，未挂载或组合不确定为 `MANUAL`；不证明运行时加载或事件执行"
       }
     },
     {

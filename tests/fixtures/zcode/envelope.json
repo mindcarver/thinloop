@@ -1,0 +1,39 @@
+{
+  "cwd": "$SOURCE_ROOT",
+  "plugins": [
+    {
+      "id": "other@market",
+      "enabled": false,
+      "version": "1.0.0",
+      "rootPath": "/unrelated/plugin"
+    },
+    {
+      "id": "thinloop@thinloop",
+      "enabled": true,
+      "version": "$VERSION",
+      "rootPath": "$INSTALL_ROOT",
+      "manifestPath": "$INSTALL_ROOT/.zcode-plugin/plugin.json",
+      "skillCount": 12,
+      "hookDetails": [
+        {
+          "event": "SessionStart",
+          "matcher": "compact",
+          "runnable": true,
+          "sourcePath": "$INSTALL_ROOT/hooks/hooks.zcode.json"
+        },
+        {
+          "event": "Stop",
+          "runnable": true,
+          "sourcePath": "$INSTALL_ROOT/hooks/hooks.json"
+        }
+      ]
+    }
+  ],
+  "diagnostics": [
+    {
+      "pluginId": "other@market",
+      "severity": "error",
+      "message": "unrelated fixture diagnostic"
+    }
+  ]
+}

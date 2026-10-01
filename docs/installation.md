@@ -158,6 +158,13 @@ Electron desktop 宿主与全部 agent preset），无需复制 preset；挂载�
 [`.dsh-plugin/README.md`](../.dsh-plugin/README.md)。DSH 未暴露第三方可用的
 压缩前否决点，压缩后仍由 `AGENTS.md` 基线机制重新注入指令。
 
+`node scripts/verify-install.mjs --platform dsh` 只验证上述 `insert` 的静态
+结构及精确的 handler 路径，不以注释、裸行或禁用行作为挂载证据。检查器
+保守读取文档示例中的 YAML 子集；复杂语法、覆盖操作或不确定组合返回
+`MANUAL`。`PASS` 不代表运行时已加载或事件已执行，仍应通过
+`dsh --profile web --dump-config` 和插件 README 中的行为步骤核验。
+
+
 ## Evolve 权威源码
 
 `scd-evolve` 诊断阶段不需要源码配置；用户按候选 ID 批准实施后，必须通过本次

@@ -3,6 +3,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { zcodeFixture } from "./helpers/zcode-fixture.mjs";
 import { fileURLToPath } from "node:url";
 import { refreshInstallation } from "../scripts/refresh-install.mjs";
 
@@ -175,3 +176,47 @@ test("Claude does not reinstall when update leaves version or install-path evide
     }
   } finally { fs.rmSync(home, { recursive: true, force: true }); }
 });
+
+for (const shape of ["array", "envelope"]) {
+  test(`ZCode refresh accepts ${shape} and rechecks the updated payload`, async () => {
+    const home = fixture();
+    const installed = path.join(home, "installed");
+    const commands = [];
+    const requests = [];
+    let current = "0.0.0";
+    try {
+      const report = await refreshInstallation({ platformId: "zcode", sourceRoot: root, homeDir: home,
+        runCommand(command) {
+          commands.push(command);
+          return JSON.stringify(zcodeFixture(shape, { installPath: installed, version: current, sourceRoot: root }));
+        },
+        async request(method, params) {
+          requests.push([method, params]);
+          if (method === "plugins/overview") return { marketplaces: [{ id: "thinloop", source: { source: "directory", path: root } }] };
+          if (method === "plugins/update") { pluginPayload(installed); current = version; }
+          return { diagnostics: [] };
+        },
+      });
+      assert.equal(report.results[0].status, "PASS");
+      assert.deepEqual(commands, Array(2).fill(["zcode", "plugins", "list", "--json"]));
+      const workspace = { workspacePath: root, workspaceKey: root };
+      assert.deepEqual(requests, [
+        ["plugins/overview", { workspace }],
+        ["plugins/marketplace/update", { workspace, marketplace: "thinloop" }],
+        ["plugins/update", { workspace, pluginId: "thinloop@thinloop" }],
+      ]);
+    } finally { fs.rmSync(home, { recursive: true, force: true }); }
+  });
+}
+
+for (const response of [null, {}, { plugins: null }, { plugins: {} }, [null],
+  [{ id: "thinloop@thinloop", enabled: true }, { id: "thinloop@thinloop", enabled: true }]]) {
+  test(`ZCode refresh refuses malformed or ambiguous evidence: ${JSON.stringify(response)}`, async () => {
+    let requests = 0;
+    await assert.rejects(refreshInstallation({ platformId: "zcode", sourceRoot: root,
+      runCommand() { return JSON.stringify(response); },
+      request() { requests++; throw new Error("unexpected update"); },
+    }), /already be installed and enabled/);
+    assert.equal(requests, 0);
+  });
+}
