@@ -69,7 +69,7 @@ test("diagram stage summaries remain traceable to authoritative skill workflows"
     discovery: [
       /先调查，再提问/,
       /确定交付切片/,
-      /沿决策树访谈/,
+      /沿决策树按轮访谈/,
       /审查就绪度并请求确认/,
       /持久化已确认契约并交接/,
     ],
