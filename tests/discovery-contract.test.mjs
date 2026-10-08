@@ -20,7 +20,7 @@ test("discovery routes greenfield work without burdening clear changes", () => {
   assert.match(skill, /就绪快速路径/);
 });
 
-test("discovery requires one-decision interviewing and explicit approval", () => {
+test("discovery requires frontier-round interviewing and explicit approval", () => {
   const skill = read("skills/scd-discovery/SKILL.md");
   const interviewing = read(
     "skills/scd-discovery/references/interviewing.md",
@@ -29,9 +29,19 @@ test("discovery requires one-decision interviewing and explicit approval", () =>
     "skills/scd-discovery/references/readiness-review.md",
   );
 
-  assert.match(skill, /一次只询问一个决策/);
+  assert.match(skill, /每轮一次性抛出整个前沿/);
+  assert.match(skill, /互不依赖/);
+  assert.match(skill, /按编号作答/);
   assert.match(skill, /必须明确确认/);
+  assert.doesNotMatch(skill, /一次只询问一个决策/);
   assert.match(interviewing, /先问上游问题，再问其后果/);
+  assert.match(
+    interviewing,
+    /前沿是前置决策已全部落定、彼此互不依赖的未决决策集合/,
+  );
+  assert.match(interviewing, /临时假设视为临时落定/);
+  assert.match(interviewing, /## 每轮收敛/);
+  assert.doesNotMatch(interviewing, /每次只请求一个决策/);
   assert.match(readiness, /静默对抗式审查/);
   assert.match(readiness, /A1：/);
 });
