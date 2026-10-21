@@ -201,9 +201,8 @@ test(
     assert.equal(typeof plugin.apply, "function");
 
     const source = fs.readFileSync(pluginUrl, "utf8");
-    // Steered corrections must attribute to the plugin, matching the official
-    // dsh-hooks-codex Stop bridge, instead of spoofing the human user.
-    assert.match(source, /kind: "plugin", plugin: "thinloop-continuity"/);
+    // Session v4 sources identify the producer directly.
+    assert.match(source, /kind: "plugin:thinloop-continuity"/);
     assert.doesNotMatch(source, /kind: "user"/);
     // The gate must share one validator with the subprocess hooks.
     assert.match(source, /from "\.\.\/hooks\/validate-state\.mjs"/);

@@ -26,11 +26,7 @@ import { RELATIVE_STATE_PATH, validateState } from "../hooks/validate-state.mjs"
 export const name = "thinloop-continuity";
 export const inject = [];
 
-// A corrective user-role message matching the runtime `UserMessage` shape
-// ({ id, role: 'user', content: [{ type: 'text', text }], source }). Provenance
-// is the plugin itself — the same `MessageSourceMap['plugin']` shape the
-// official `dsh-hooks-codex` Stop bridge steers with — so the transcript keeps
-// attributing the correction to Thinloop instead of spoofing the human user.
+// Session v4 requires a producer-owned source kind for corrective messages.
 function correctiveMessage(text) {
   return {
     id: `thinloop-continuity-${Date.now().toString(36)}-${Math.random()
@@ -38,7 +34,7 @@ function correctiveMessage(text) {
       .slice(2)}`,
     role: "user",
     content: [{ type: "text", text }],
-    source: { kind: "plugin", plugin: "thinloop-continuity" },
+    source: { kind: "plugin:thinloop-continuity" },
   };
 }
 
