@@ -16,6 +16,10 @@ SCD 管理但不可恢复，就 `agent.steer(...)` 一条纠正消息，让 Agen
 `PreCompact` 的一半不在此移植；压缩后由 DSH 自身的 `AGENTS.md` 基线机制
 重新注入指令。
 
+纠正消息使用 Session v4 的 `source: { kind: "plugin:thinloop-continuity" }`，
+由来源字段标明 Thinloop；旧的 `{ kind: "plugin", plugin: "thinloop-continuity" }`
+会被 v4 会话写入校验拒绝。
+
 ## 挂载层：宿主级用户 patch，而非 agent preset
 
 推荐把插件挂载到 **home 级用户 patch 层** `$DSH_HOME/cordis.patch.yml`

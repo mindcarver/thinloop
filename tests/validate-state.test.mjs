@@ -148,6 +148,7 @@ test("DSH bounds unchanged invalid-state steering per agent and rearms after rec
     assert.equal(messages.length, 0);
     await listener({ agent });
     assert.equal(messages.length, 1);
+    assert.deepEqual(messages[0].source, { kind: "plugin:thinloop-continuity" });
     assert.match(messages[0].content[0].text, /empty section: Evidence/);
     await listener({ agent });
     await listener({ agent });
