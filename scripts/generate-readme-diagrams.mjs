@@ -186,6 +186,19 @@ const skillFlows = [
       ["写入", "或检索"],
     ],
   },
+  {
+    slug: "ui-polish",
+    index: "13",
+    title: "SCD 页面优化",
+    subtitle: "已有页面 → 有证据的视觉改善",
+    stages: [
+      ["页面", "基线"],
+      ["视觉", "增量"],
+      ["QuickDev", "实施"],
+      ["八维", "复查"],
+      ["前后", "对比"],
+    ],
+  },
 ];
 
 function svgFrame({ title, subtitle, index, body, height = 280 }) {

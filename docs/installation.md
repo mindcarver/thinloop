@@ -2,16 +2,16 @@
 
 [返回 README](../README.md)
 
-十二个 Skill 遵循同一目录契约。推荐安装方式如下：
+十三个 Skill 遵循同一目录契约。推荐安装方式如下：
 
 | Agent | 推荐安装 | 更新生效 |
 |---|---|---|
-| Codex | 把十二个 Skill 链接到 `~/.codex/skills` | 新任务 |
-| OpenCode | 把十二个 Skill 链接到 `~/.config/opencode/skills` | 重启 OpenCode |
-| Pi | 把十二个 Skill 链接到 `~/.pi/agent/skills` | 新会话或执行 `/reload` |
-| CodeWhale | 把十二个 Skill 链接到 `~/.codewhale/skills` | 新会话 |
-| Reasonix | 把十二个 Skill 链接到 `~/.reasonix/skills` | 新会话 |
-| DeepSeek Harness | 把十二个 Skill 链接到 `~/.dsh/skills`，并在 `$DSH_HOME/cordis.patch.yml` 挂载 `.dsh-plugin/continuity.mjs`（宿主级 Cordis 插件行） | 新会话（filesystem provider 的 watcher 会自动失效并更新目录） |
+| Codex | 把十三个 Skill 链接到 `~/.codex/skills` | 新任务 |
+| OpenCode | 把十三个 Skill 链接到 `~/.config/opencode/skills` | 重启 OpenCode |
+| Pi | 把十三个 Skill 链接到 `~/.pi/agent/skills` | 新会话或执行 `/reload` |
+| CodeWhale | 把十三个 Skill 链接到 `~/.codewhale/skills` | 新会话 |
+| Reasonix | 把十三个 Skill 链接到 `~/.reasonix/skills` | 新会话 |
+| DeepSeek Harness | 把十三个 Skill 链接到 `~/.dsh/skills`，并在 `$DSH_HOME/cordis.patch.yml` 挂载 `.dsh-plugin/continuity.mjs`（宿主级 Cordis 插件行） | 新会话（filesystem provider 的 watcher 会自动失效并更新目录） |
 | Claude Code | 安装完整插件 | 更新后重启或重新加载插件 |
 | WorkBuddy | 安装完整插件 | 更新后重启 WorkBuddy |
 | ZCode | 安装完整插件 | 更新后新建会话 |
@@ -42,7 +42,7 @@ $skillRoots = @(
   if ($env:DSH_HOME) { "$env:DSH_HOME\skills" } else { "$env:USERPROFILE\.dsh\skills" }
 )
 $skillNames = @(
-  "scd-discovery", "scd-uiux", "scd-architecture",
+  "scd-discovery", "scd-uiux", "scd-ui-polish", "scd-architecture",
   "scd-project", "scd-execute", "scd-quickdev", "scd-knowledge", "scd-maintenance",
   "scd-next",
   "scd-interview",
@@ -86,7 +86,7 @@ skill_roots=(
   "${DSH_HOME:-$HOME/.dsh}/skills"
 )
 skills=(
-  scd-discovery scd-uiux scd-architecture
+  scd-discovery scd-uiux scd-ui-polish scd-architecture
   scd-project scd-execute scd-quickdev scd-knowledge scd-maintenance scd-next scd-interview scd-evolve
   scd-reengineering
 )
@@ -112,7 +112,7 @@ for root in "${skill_roots[@]}"; do
 done
 ```
 
-上面的脚本只移除明确的旧链接 `scd-dev-loop`，并修复十二个 Thinloop Skill
+上面的脚本只移除明确的旧链接 `scd-dev-loop`，并修复十三个 Thinloop Skill
 链接；遇到同名的真实文件或目录会跳过，不会覆盖用户内容。OpenCode 也能读取
 `~/.claude/skills`，Pi 也能读取 `~/.agents/skills`；CodeWhale 使用
 `~/.codewhale/skills`，并允许 `CODEWHALE_SKILLS_DIR` 直接覆盖整个 Skill
@@ -134,7 +134,7 @@ Reasonix 已有的全局或项目 Hook 与未经验证的连续性阻断语义�
 DeepSeek Harness 的 Skill 发现由内置的 filesystem provider 负责：它按
 `<projectRoot>/.dsh/skills`、`<projectRoot>/.agents/skills`、自定义目录、
 `$DSH_HOME/skills`（默认 `~/.dsh/skills`）与 `~/.agents/skills` 分层扫描
-标准 `SKILL.md` 目录。把十二个 Skill 链接到 `~/.dsh/skills` 后，新会话的
+标准 `SKILL.md` 目录。把十三个 Skill 链接到 `~/.dsh/skills` 后，新会话的
 skill 工具即可发现并加载 `scd-next`、`scd-execute`、`scd-project`、
 `scd-quickdev` 等全部 Skill；provider 的 watcher 会自动失效并更新模型侧
 目录，不依赖重启。DeepSeek Harness 没有 Claude Code、WorkBuddy、ZCode 那种
@@ -212,7 +212,7 @@ claude plugin install thinloop@thinloop --scope user
 
 WorkBuddy 5.3.5 内置的 CodeBuddy 运行时读取
 `.codebuddy-plugin/marketplace.json` 与 `.codebuddy-plugin/plugin.json`。
-完整插件会注册十二个 Skill，并在 `PreCompact` 与 `Stop` 时通过
+完整插件会注册十三个 Skill，并在 `PreCompact` 与 `Stop` 时通过
 `CODEBUDDY_PLUGIN_ROOT` 运行连续性检查；状态不完整时返回原生
 `continue: false`，让 Agent 先补齐恢复信息。
 
@@ -226,7 +226,7 @@ WorkBuddy 5.3.5 内置的 CodeBuddy 运行时读取
 3. 自定义 Marketplace 会显示在 Personal 筛选下；切换到 Personal 后，在
    `thinloop` 卡片点击 Install，并保持插件启用。
 
-完整插件会注册十二个 Skill；`Stop` 发现激活状态不可恢复时会让主 Agent 继续
+完整插件会注册十三个 Skill；`Stop` 发现激活状态不可恢复时会让主 Agent 继续
 补齐，最多连续三次；压缩后的 `SessionStart(compact)` 会把缺失状态作为恢复
 上下文注入。ZCode 不支持 Codex 专用的 `PreCompact` 事件，因此当前运行时会
 记录一条 warning 并只跳过该事件，不影响上述两个 ZCode Hook。
@@ -332,6 +332,7 @@ codebuddy plugin update thinloop@thinloop --scope user
   与 profile 级 patch 文件核对挂载，未挂载保持 `MANUAL`。升级后重启 DSH 使
   新组合生效，并移除旧的 `standard-thinloop` 之类 preset 拷贝，避免双重
   纠正。范围见 [`v0.17.1`](./releases/v0.17.1.md)。
+- 升级到 v0.18.0：新增 `scd-ui-polish`，确认十三个 Skill 完整可读；UIUX 与页面验收共用八维视觉标准、实际页面自审和前后对比。既有设计确认与独立验收门继续有效。
 - 若从 v0.6.x 升级，另确认旧 `scd-dev-loop` 已消失。
 
 更新后可以在 Thinloop 源码仓库运行只读检查器：
@@ -359,9 +360,11 @@ Codex：使用 $scd-execute 继续这个已批准的 Initiative，自动执行�
 Codex：使用 $scd-next 检查当前 Issue、PR 和 Initiative 状态，告诉我还有什么没做以及唯一建议下一步。
 Codex：使用 $scd-reengineering 把这个开源项目换成 Go 重新实现，只保留批准的兼容能力，并按 READY 波次交付。
 Codex：使用 $scd-quickdev 修复这个 Bug，验证后提 PR 并合并 main。
+Codex：使用 $scd-ui-polish 优化已有页面，实际检查并展示修改前后对比。
 Codex：使用 $scd-evolve 复盘本次互动，只提出一个候选，不要先修改。
 Claude Code Skill 链接：/scd-discovery
 Claude Code 完整插件：/thinloop:scd-quickdev
+Claude Code 完整插件：/thinloop:scd-ui-polish
 OpenCode：使用 scd-quickdev skill 按 Issue 开发、验证并合并。
 OpenCode：使用 scd-project skill 建立 multi-Issue 项目 DAG，只报告 READY/BLOCKED，不执行这些 Issues。
 OpenCode：使用 scd-execute skill 继续已批准的 Initiative，按安全 READY 波次执行。
@@ -386,6 +389,7 @@ DeepSeek Harness：使用 $scd-next 只读检查当前项目进度和下一步�
 DeepSeek Harness：使用 $scd-reengineering 重新实现这个项目并保留选定兼容契约。
 WorkBuddy 完整插件：/thinloop:scd-quickdev
 ZCode：使用 $scd-quickdev 按 Issue 开发、验证并合并。
+ZCode：使用 $scd-ui-polish 打磨现有页面并核对前后对比。
 ZCode：使用 $scd-project 分解 multi-Issue 项目并验证依赖 DAG，不启动执行 loop。
 ZCode：使用 $scd-execute 继续这个已批准的 Initiative，执行当前安全 READY Issues。
 ZCode：使用 $scd-next 只读检查当前项目进度和下一步。

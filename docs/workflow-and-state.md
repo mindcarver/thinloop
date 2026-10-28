@@ -20,7 +20,7 @@ GitHub Delivery Issue 保存切片边界和验收；多交付项目由 Initiativ
 4. **Project**：已批准的稳定结果包含多个可独立验证交付 → `scd-project`：只建立并校验 Initiative、Delivery Issues 与依赖 DAG，不执行实现。
 5. **Execute**：已批准 Initiative 需要开始、继续、恢复或完成 → `scd-execute`：选择当前安全 READY 波次，每个 Issue 进入隔离 QuickDev 通道。
 6. **Reengineering**：跨语言、框架、架构、存储或运行时替换，或项目级大幅重构 → `scd-reengineering`：先固定来源、兼容性与切换门，再消费批准的 DAG。
-7. **条件设计**：只有真实复杂度需要时才加入设计：重要 Web 体验 → `scd-uiux`；领域、系统或共享接口边界 → `scd-architecture`。
+7. **条件设计**：只有真实复杂度需要时才加入设计：重要 Web 体验 → `scd-uiux`；已有页面视觉打磨 → `scd-ui-polish`；领域、系统或共享接口边界 → `scd-architecture`。
 8. **显式治理**：只有用户明确要求时才调用治理与个人能力：`scd-maintenance`、`scd-knowledge`、`scd-evolve`、`scd-interview`；普通开发不得自动触发。
 <!-- thinloop-routing-kernel:end -->
 
@@ -35,7 +35,7 @@ Issue 是 QuickDev 的持久计划：默认免确认并自动继续；只有用�
 完整 Issue、实施方案和 tasks，此后任何实质性计划变化都要重新确认。
 QuickDev 创建或更新的 Issue 标题、正文、验收、tasks 和验证记录统一使用中文，
 但命令、路径、代码标识和机器状态保持规范原值。
-十二个 Thinloop Skill 的说明、Agent 提示词、参考契约与模板也统一使用中文。
+十三个 Thinloop Skill 的说明、Agent 提示词、参考契约与模板也统一使用中文。
 
 QuickDev 的完成审计不把“任务勾完”当成交付。验收账要求每个验收标识有直接
 `PASS` 证据；实施账要求每项任务为 `DONE`、`SUPERSEDED` 或 `N/A`，后两者

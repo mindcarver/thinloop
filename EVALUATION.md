@@ -8,7 +8,7 @@ Knowledge、Discovery 或历史 Dev Loop 的结果重新包装成当前整体结
 
 1. `native`：不安装 Thinloop，不增加额外提示；
 2. `prompt`：只增加固定的“验证并保存进度”短提示；
-3. `thinloop`：只安装当前工作树的十二个规范 `scd-*` Skill。
+3. `thinloop`：只安装当前工作树的十三个规范 `scd-*` Skill。
 
 `manifest.json` 固定三臂和七类任务：清晰 Bug、定义不足功能、多 Issue 项目、中断
 恢复、无关脏改动、页面验收，以及测试绿但行为未闭合。每个 subject 使用独立 fixture
@@ -89,9 +89,9 @@ Token、成本、工具调用和高风险越权信号。成本不会根据记忆
 ## 历史平台兼容性快照（2026-07-27）
 
 以下 WorkBuddy、ZCode、OpenCode 与 Claude Code 结果记录的是 2026-07-27 当日的
-六 Skill 仓库快照和当时运行时，不是当前十二 Skill 的安装或行为状态。当前仓库的
-十二 Skill 与九平台结构由 `config/platform-capabilities.json` 和确定性测试校验；
-这些当前结构检查不能追溯性地把下列六 Skill 实机观察改写成十二 Skill 实机证据。
+六 Skill 仓库快照和当时运行时，不是当前十三 Skill 的安装或行为状态。当前仓库的
+十三 Skill 与九平台结构由 `config/platform-capabilities.json` 和确定性测试校验；
+这些当前结构检查不能追溯性地把下列六 Skill 实机观察改写成十三 Skill 实机证据。
 
 ### WorkBuddy 兼容性边界
 

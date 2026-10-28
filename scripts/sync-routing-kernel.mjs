@@ -55,8 +55,8 @@ export function loadRoutingKernel(root = defaultRoot) {
       skills.push(skill);
     }
   }
-  if (skills.length !== 12 || new Set(skills).size !== 12) {
-    throw new Error(`${sourcePath} must cover 12 Thinloop skills exactly once`);
+  if (skills.length !== 13 || new Set(skills).size !== 13) {
+    throw new Error(`${sourcePath} must cover 13 Thinloop skills exactly once`);
   }
 
   const project = kernel.routes.find(({ id }) => id === "project");

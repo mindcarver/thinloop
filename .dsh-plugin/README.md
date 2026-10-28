@@ -47,7 +47,7 @@ SCD 管理但不可恢复，就 `agent.steer(...)` 一条纠正消息，让 Agen
 
 1. 确认 `.dsh-plugin/` 与 `hooks/` 都留在同一份 Thinloop 检出内：插件通过
    相对路径导入 `../hooks/validate-state.mjs`，两处必须同时存在。
-2. 把十二个 Skill 链接到 `$DSH_HOME/skills`（见
+2. 把十三个 Skill 链接到 `$DSH_HOME/skills`（见
    [docs/installation.md](../docs/installation.md) 的统一链接脚本）。
 3. 在 `$DSH_HOME/cordis.patch.yml` 顶层列表追加一个 `insert` 块（文件为
    `[]` 时替换为下面内容；已有其他条目时保留它们）：

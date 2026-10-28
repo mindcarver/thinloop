@@ -11,7 +11,7 @@
     "version": "$VERSION",
     "rootPath": "$INSTALL_ROOT",
     "manifestPath": "$INSTALL_ROOT/.zcode-plugin/plugin.json",
-    "skillCount": 12,
+    "skillCount": 13,
     "hookDetails": [
       {
         "event": "SessionStart",
