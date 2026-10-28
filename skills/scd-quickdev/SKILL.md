@@ -25,7 +25,7 @@ Issue 标题和正文都必须使用中文，代码标识、命令、路径、�
 ## 实施与验收
 
 1. 创建/更新 Issue 与隔离任务时读取 Issue 契约；清晰低风险任务用紧凑模板。用户授权普通任务局部 Issue、分支、推送、PR、符合条件的合并和清理，不能创造缺失凭据或越过高风险边界。
-2. 缺陷先复现、检查因果根因、添加或找出会失败的回归测试，再作最小修复。原因进入框架或依赖时，在认定应用代码有错前查其官方 Issue 跟踪器；无法证实则保持 `Unconfirmed`。只改任务范围，证据使范围扩大时重新路由。
+2. 页面任务在修改前先读取页面参考，执行共用视觉标准并保存基线；清晰局部变更不扩大设计范围。缺陷先复现、检查因果根因、添加或找出会失败的回归测试，再作最小修复。原因进入框架或依赖时，在认定应用代码有错前查其官方 Issue 跟踪器；无法证实则保持 `Unconfirmed`。只改任务范围，证据使范围扩大时重新路由。
 3. 运行直接练习变更的可行最强检查与仓库要求的构建/相关测试，把每个验收项映射到已观察证据、`UNVERIFIED` 或具名阻塞。失败先区分当前回归与无关基线，不伪造完成，不无界重试。
 4. 实际差异影响页面、路由、组件交互、可见样式或响应式行为时，无论是否调用过 UIUX，都必须执行页面验收门：真实浏览器操作及视觉证据，缺失则 `BLOCKED`。触发时读取页面参考，不以测试/API绿色替代。
 5. 工程完成后读取发布契约，审计整个 Issue 的验收闭合、实施账目闭合和交付状态闭合。必须实际调用独立的新上下文子 Agent（子智能体）进行最终验收，调用前明确告知用户；它必须亲读 Issue/差异并直接验证，不得只依赖实施 Agent 摘要。页面任务必须由该子智能体直接复核交互与视觉需求；记录调用标识、目标版本、证据和返回结论，无法调用或未返回必需证据则 `BLOCKED`，不得由实施者自检替代。创建拉取请求并等待必需 CI；只有 `PASS` 才能合并到 `main`；`FAIL` 修复后重验，`BLOCKED` 保持开放。
@@ -43,7 +43,7 @@ Issue 标题和正文都必须使用中文，代码标识、命令、路径、�
 | 产品/范围歧义，或 PRD、Project、UX、Architecture 交接 | [scope-contract.md](references/scope-contract.md) |
 | Issue 有 PRD、重要页面/跨层设计、迁移/兼容性复杂度 | [extended-issue.md](references/extended-issue.md)，仅展开命中章节 |
 | 选择验证或表述未验证边界 | [evidence-contract.md](references/evidence-contract.md) |
-| 真实页面差异或 UX 视觉交付 | [page-acceptance.md](references/page-acceptance.md) |
+| 真实页面差异或 UX 视觉交付（预计有页面差异时，修改前读取） | [page-acceptance.md](references/page-acceptance.md) |
 | 工程完成，准备 PR/独立验收/合并/清理关闭 | [release-contract.md](references/release-contract.md) |
 | 任务跨会话、暂停或恢复，需要创建/修改/删除后备状态 | [continuity-contract.md](references/continuity-contract.md) |
 

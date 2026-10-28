@@ -41,7 +41,7 @@ test("condition installer changes only the declared Thinloop context", () => {
       fs.mkdirSync(codexHome, { recursive: true });
       const installed = installCondition({ condition, codexHome });
       if (condition.id === "thinloop") {
-        assert.equal(installed.skills.length, 12);
+        assert.equal(installed.skills.length, 13);
         assert.equal(fs.existsSync(path.join(codexHome, "skills", "scd-quickdev", "SKILL.md")), true);
       } else {
         assert.deepEqual(installed.skills, []);

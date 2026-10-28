@@ -67,13 +67,13 @@ node evals/knowledge/runner/run.mjs --mode full
 
 | Agent | 安装后检查 |
 |---|---|
-| Codex | 十二个链接都能读取 `SKILL.md`；新任务可发现 `$scd-next`、`$scd-execute`、`$scd-project` 与 `$scd-quickdev` |
-| OpenCode | 十二个 Skill 链接均指向当前源码；运行时需确认 `scd-next`、`scd-execute`、`scd-project` 与其他 Skill 均被发现 |
-| Pi | 十二个 Skill 链接均指向当前源码；Pi RPC `get_commands` 可发现十二个 `/skill:scd-*` 命令 |
-| CodeWhale | 十二个 Skill 链接均指向当前源码；`codewhale doctor --json` 确认全局 Skill 根、数量且跳过实时 API 探测 |
-| Reasonix | 十二个 Skill 链接均指向当前源码；新会话可通过 `/scd-next`、`/scd-execute`、`/scd-project` 与 `/scd-quickdev` 调用 |
-| DeepSeek Harness | 十二个 Skill 链接均指向当前源码；新会话的 skill 工具可发现 `scd-next`、`scd-execute`、`scd-project` 与 `scd-quickdev`；只读检查器核对 home 级与 profile 级 `cordis.patch.yml` 中明确启用的根级 `insert`，静态配置通过为 `PASS`，未挂载或组合不确定为 `MANUAL`；不证明运行时加载或事件执行 |
-| Claude Code | `claude plugin list --json` 提供版本、enabled 与安装路径；检查器从该路径核对十二个 Skill 和两个 Hook，包括 `scd-next` 与 `scd-execute` |
+| Codex | 十三个链接都能读取 `SKILL.md`；新任务可发现 `$scd-next`、`$scd-execute`、`$scd-project` 与 `$scd-quickdev` |
+| OpenCode | 十三个 Skill 链接均指向当前源码；运行时需确认 `scd-next`、`scd-execute`、`scd-project` 与其他 Skill 均被发现 |
+| Pi | 十三个 Skill 链接均指向当前源码；Pi RPC `get_commands` 可发现十三个 `/skill:scd-*` 命令 |
+| CodeWhale | 十三个 Skill 链接均指向当前源码；`codewhale doctor --json` 确认全局 Skill 根、数量且跳过实时 API 探测 |
+| Reasonix | 十三个 Skill 链接均指向当前源码；新会话可通过 `/scd-next`、`/scd-execute`、`/scd-project` 与 `/scd-quickdev` 调用 |
+| DeepSeek Harness | 十三个 Skill 链接均指向当前源码；新会话的 skill 工具可发现 `scd-next`、`scd-execute`、`scd-project` 与 `scd-quickdev`；只读检查器核对 home 级与 profile 级 `cordis.patch.yml` 中明确启用的根级 `insert`，静态配置通过为 `PASS`，未挂载或组合不确定为 `MANUAL`；不证明运行时加载或事件执行 |
+| Claude Code | `claude plugin list --json` 提供版本、enabled 与安装路径；检查器从该路径核对十三个 Skill 和两个 Hook，包括 `scd-next` 与 `scd-execute` |
 | WorkBuddy | 不验证：WorkBuddy 无可靠只读 CLI 探测；已取消插件页核验要求 |
 | ZCode | `zcode plugins list --json` 提供 enabled、version、rootPath、skillCount 与 hookDetails；检查完整 Skill/Hook 载荷和两个可运行 Hook |
 
@@ -122,7 +122,7 @@ codewhale doctor --json \
   | jq '{version, global: .skills.global, api_checked: .api_connectivity.checked}'
 ```
 
-全局路径必须等于当前 CodeWhale Skill 根，数量至少为十二，且
+全局路径必须等于当前 CodeWhale Skill 根，数量至少为十三，且
 `api_checked` 必须为 `false`。该证据证明 CodeWhale 实际选择了正确的全局
 Skill 根，不会调用模型或实时 API；它不证明存在 Thinloop 连续性 Hook。
 
@@ -141,7 +141,7 @@ printf '%s\n' '{"type":"get_commands"}' \
       | {name, path: .sourceInfo.path}]'
 ```
 
-结果应恰好包含十二个 `skill:scd-*` 命令，路径均位于当前 Pi Skill 根。该检查
+结果应恰好包含十三个 `skill:scd-*` 命令，路径均位于当前 Pi Skill 根。该检查
 只证明 Skill 发现，不证明 Pi 存在 Thinloop 的连续性 Hook。
 
 WorkBuddy 按用户决定不参与验证，维持 `SKIP`。ZCode 已纳入必查三端：

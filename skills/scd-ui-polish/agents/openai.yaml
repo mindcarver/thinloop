@@ -1,0 +1,4 @@
+interface:
+  display_name: "SCD 页面优化"
+  short_description: "检查已有网页并打磨视觉、响应式与交互细节，用真实页面前后对比验证改善"
+  default_prompt: "使用 $scd-ui-polish 优化这个已有页面，检查实际渲染与交互，完成视觉打磨并展示修改前后对比。"

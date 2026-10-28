@@ -40,7 +40,8 @@ test("routing kernel is compact and covers every Thinloop skill once", () => {
 
   assert.equal(source.trimEnd().split(/\r?\n/).length <= 20, true);
   assert.equal(kernel.routes.length, 8);
-  assert.equal(new Set(skills).size, 12);
+  assert.equal(new Set(skills).size, 13);
+  assert.deepEqual([...skills].sort(), fs.readdirSync(path.join(root, "skills")).sort());
   assert.deepEqual(inspectRoutingKernel(root), []);
   assert.match(renderDefaultPrompt(kernel), /^Thinloop routing source: config\/routing-kernel\.json\./);
 });

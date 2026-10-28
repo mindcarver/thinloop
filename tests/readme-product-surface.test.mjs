@@ -26,7 +26,7 @@ test("README presents three layers, evidence cases, and generated routes before 
   const layers = "## 三层能力 / THREE LAYERS";
   const cases = "## 三个可追溯对照 / BEFORE & AFTER";
   const quickStart = "## 30 秒开始 / QUICK START";
-  const catalog = "## 完整十二 Skill 目录 / FULL CATALOG";
+  const catalog = "## 完整十三 Skill 目录 / FULL CATALOG";
   const routeStart = "<!-- thinloop-routing-kernel:start source=config/routing-kernel.json -->";
   const routeEnd = "<!-- thinloop-routing-kernel:end -->";
 
@@ -47,6 +47,7 @@ test("README presents three layers, evidence cases, and generated routes before 
     "scd-execute",
     "scd-quickdev",
     "scd-uiux",
+    "scd-ui-polish",
     "scd-architecture",
     "scd-reengineering",
     "scd-maintenance",
@@ -85,13 +86,13 @@ test("README keeps all three Before/After examples traceable and bounded by evid
   assert.match(cases, /三个条件均为 `PASS`/);
   assert.match(cases, /没有观察到 Thinloop 的相对增益/);
   assert.match(cases, /契约路径和已冻结评测定义/);
-  assert.match(cases, /历史两臂结果[\s\S]*不等于当前十二 Skill/);
+  assert.match(cases, /历史两臂结果[\s\S]*不等于当前十三 Skill/);
 });
 
-test("README retains twelve complete Skill entries, every flow, and the documentation index", () => {
+test("README retains thirteen complete Skill entries, every flow, and the documentation index", () => {
   const catalog = between(
     readme,
-    "## 完整十二 Skill 目录 / FULL CATALOG",
+    "## 完整十三 Skill 目录 / FULL CATALOG",
     "## 工作闭环 / WORKFLOW",
   );
   const expectedSkills = fs
@@ -99,7 +100,7 @@ test("README retains twelve complete Skill entries, every flow, and the document
     .filter((entry) => entry.isDirectory())
     .map((entry) => entry.name)
     .sort();
-  assert.equal(expectedSkills.length, 12);
+  assert.equal(expectedSkills.length, 13);
   assert.deepEqual(skillLinks(catalog).sort(), expectedSkills);
 
   for (const skill of expectedSkills) {
@@ -139,7 +140,7 @@ test("evaluation separates current smoke facts from historical six-Skill snapsho
   assert.ok(historicalStart >= 0);
   assert.ok(historicalEnd > historicalStart);
   const historical = evaluation.slice(historicalStart, historicalEnd);
-  assert.match(historical, /六 Skill 仓库快照[\s\S]*不是当前十二 Skill/);
+  assert.match(historical, /六 Skill 仓库快照[\s\S]*不是当前十三 Skill/);
   assert.match(historical, /当时被测仓库/);
   assert.match(historical, /当日观察到的限制/);
 
