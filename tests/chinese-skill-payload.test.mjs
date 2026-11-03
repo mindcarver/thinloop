@@ -32,7 +32,7 @@ test("全部 Thinloop Skill 文本载荷均包含中文", () => {
     .flatMap((entry) => collectPayloadFiles(path.join(skillsRoot, entry.name)))
     .sort();
 
-  assert.equal(files.length, 66); // Shared visual reference and UI Polish skill metadata.
+  assert.equal(files.length, 67); // Shared visual and step communication references.
   for (const file of files) {
     assert.match(read(file), han, file);
   }

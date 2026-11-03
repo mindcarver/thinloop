@@ -5,6 +5,8 @@ description: "消费 scd-project 的实时 Delivery-Issue DAG、选择当前安�
 
 # SCD 项目执行
 
+开始执行前必须先读取并遵守[步骤沟通](../scd-quickdev/references/step-communication.md)；直接调用本技能也适用。
+
 把已确认的 Initiative 依赖图转化为有边界的交付波次，同时不让 Project 变成调度器，也不让 QuickDev 跨越多个 Issues。
 
 维护以下边界：

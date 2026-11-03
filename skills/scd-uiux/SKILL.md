@@ -5,6 +5,8 @@ description: "在生产实施前设计或完善 Web 产品的用户体验和界�
 
 # SCD UIUX 设计
 
+开始执行前必须先读取并遵守[步骤沟通](../scd-quickdev/references/step-communication.md)；直接调用本技能也适用。
+
 让 Web 体验清晰到足以评审和实施，但不把每次界面变更都变成设计项目。本技能设计行为与呈现；生产代码交给 `scd-quickdev`。
 
 ## 选择最轻量且充分的路径

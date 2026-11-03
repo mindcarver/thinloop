@@ -333,6 +333,7 @@ codebuddy plugin update thinloop@thinloop --scope user
   新组合生效，并移除旧的 `standard-thinloop` 之类 preset 拷贝，避免双重
   纠正。范围见 [`v0.17.1`](./releases/v0.17.1.md)。
 - 升级到 v0.18.0：新增 `scd-ui-polish`，确认十三个 Skill 完整可读；UIUX 与页面验收共用八维视觉标准、实际页面自审和前后对比。既有设计确认与独立验收门继续有效。
+- 升级到 v0.18.1：十三个 Skill 统一在关键步骤开始前，用带图标和边框的醒目文本块说明「第几步、当前步骤、做什么、为什么」；直接调用也生效，同一步不重复刷屏。更新后新建任务或会话加载新指令。
 - 若从 v0.6.x 升级，另确认旧 `scd-dev-loop` 已消失。
 
 更新后可以在 Thinloop 源码仓库运行只读检查器：
