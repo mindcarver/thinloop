@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <kbd>v0.18.1</kbd>
+  <kbd>v0.18.2</kbd>
   &nbsp;
   <kbd>ISSUE-DRIVEN</kbd>
   &nbsp;
@@ -36,7 +36,7 @@ Thinloop 不接管开发过程，只守住容易在长任务里丢失的结果�
 
 > **需求不被误解，体验与架构有据可循，完成声明有真实证据，仓库漂移能被主动发现。**
 
-每个关键步骤会用图标和边框醒目展示「第几步、当前步骤、做什么、为什么」，直接调用任一技能也适用；同一步内不为每个工具调用重复提示。规则与示例见[步骤沟通](./skills/scd-quickdev/references/step-communication.md)。
+每个关键步骤会用带图标的轻量引用块展示「第几步、当前步骤、做什么、为什么」，直接调用任一技能也适用；同一步内不为每个工具调用重复提示。规则与示例见[步骤沟通](./skills/scd-quickdev/references/step-communication.md)。
 
 <a id="capability-map"></a>
 
