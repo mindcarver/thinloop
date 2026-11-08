@@ -13,7 +13,7 @@
 | 拉取请求和验收证据 | 实施、工程检查和交付证明 |
 | 已验证依赖图快照 | 从实时跟踪器状态派生的就绪视图 |
 
-不要把 PRD 复制到 Initiative，不要把完整子验收复制到 Initiative，也不要让本地项目计划成为权威来源。Initiative 链接已确认产品契约和子 Issues；每个子 Issue 对 QuickDev 保持自包含。
+不要把 PRD 复制到 Initiative，不要把完整子验收复制到 Initiative，计划负责方案及批准版本，Initiative负责执行拓扑与验收追踪。Initiative 链接已确认产品契约和子 Issues；每个子 Issue 对 QuickDev 保持自包含。
 
 ## Initiative Issue
 
@@ -250,7 +250,7 @@ node skills/scd-project/scripts/validate-project-graph.mjs \
 2. 确认 DONE 节点具有实时 QuickDev 验收和关闭证据；
 3. 重建并验证依赖图快照；
 4. 更新 Initiative 图版本和受影响子节点的协调字段；
-5. 只有产品契约变化时才请求确认；
+5. 新图版本、依赖边或共享技术方案等实质变化也须确认，即使产品行为不变；已批准图内操作不重复询问；
 6. 报告 READY 节点和精确 BLOCKED 原因。
 
 不要维护第二套长期执行状态。未来外部执行器必须从相同 Initiative、Delivery Issues、拉取请求和验收证据重建视图。
@@ -266,3 +266,7 @@ node skills/scd-project/scripts/validate-project-graph.mjs \
 - 一个 Delivery Issue 使用多条 QuickDev 实施通道。
 
 外部技能只能在自己的已确认执行契约下消费该依赖图。`scd-execute` 是已确认 Initiative 的通用消费者。`scd-reengineering` 只有满足额外来源、兼容性、收据、等价和切换门后才组合 Execute。Project 本身始终不执行。
+
+## 计划批准核对
+
+按共享计划契约核对持久计划的精确Git版本、文件清单、实际用户批准依据和开工范围。ready不是用户批准；未答保持待定，未覆盖的技术选择或实质变化重新确认。只读审计/状态查询不创建计划，不替用户批准。

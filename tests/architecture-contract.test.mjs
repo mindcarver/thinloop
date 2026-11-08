@@ -18,7 +18,7 @@ test("architecture is composable and keeps clear changes on the direct path", ()
   assert.match(skill, /\*\*产品架构：\*\*/);
   assert.match(skill, /\*\*架构演进：\*\*/);
   assert.match(skill, /\*\*架构验证：\*\*/);
-  assert.match(skill, /不提架构问题、不创建架构产物/);
+  assert.match(skill, /交给QuickDev确认具体方案和实施计划/);
   assert.match(skill, /新增一个端点也不足以证明/);
 });
 
@@ -107,7 +107,7 @@ test("architecture readiness is not approval and production mutation stays out",
   assert.match(skill, /不得编写生产业务代码/);
   assert.match(skill, /执行真实数据迁移/);
   assert.match(skill, /或部署/);
-  assert.match(contract, /不是人工确认门/);
+  assert.match(contract, /用户方案批准及开工授权另按共享计划契约核对/);
 });
 
 test("architecture templates preserve separate responsibilities", () => {

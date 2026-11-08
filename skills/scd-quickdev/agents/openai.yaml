@@ -1,4 +1,4 @@
 interface:
   display_name: "SCD 快速开发"
   short_description: "基于 Issue 完成编码、验证与 PR 合并"
-  default_prompt: "使用 $scd-quickdev，从 GitHub Issue 开始交付这项仓库变更，完成工程验证、独立验收和符合条件的 PR 合并。"
+  default_prompt: "使用 $scd-quickdev，从 GitHub Issue 开始交付这项仓库变更，完成工程验证、独立验收和符合条件的 PR 合并。 读取共享计划确认契约：具体技术选择先确认，批准精确Git计划并授权开工后按范围连续交付；漏答待定，实质变化重确认。只读不创建开发计划，治理更窄边界有效。"

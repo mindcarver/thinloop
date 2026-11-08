@@ -34,7 +34,7 @@ function composeGuidance(relativePath) {
 test("quickdev selects direct, clarify, project, or discovery without forcing ceremony", () => {
   const skill = composeGuidance("skills/scd-quickdev/SKILL.md");
 
-  assert.match(skill, /\*\*直接实施：\*\*/);
+  assert.match(skill, /\*\*清晰交付：\*\*/);
   assert.match(skill, /\*\*单点澄清：\*\*/);
   assert.match(skill, /\*\*项目规划：\*\*/);
   assert.match(skill, /\*\*需求发现：\*\*/);
@@ -52,14 +52,14 @@ test("quickdev separates product PRD authority from delivery Issue authority", (
   assert.match(skill, /中文 GitHub Issue 是选中交付边界与验收的事实来源/);
   assert.match(
     issueContract,
-    /选中交付边界、验收和验证衔接点的唯一事实来源/,
+    /选中交付边界、执行、验收和验证衔接点/,
   );
   assert.match(issueContract, /已确认 `.scd\/product\/prd\.md`/);
   assert.match(issueContract, /## 产品追溯/);
   assert.match(issueContract, /需求：`FR-001`/);
   assert.match(issueContract, /默认分支访问/);
   assert.match(skill, /实施期间不得生成或重新定义 PRD/);
-  assert.match(skill, /清晰的孤立变更和缺陷继续只使用 Issue/);
+  assert.match(skill, /清晰的孤立变更和缺陷使用任务计划及Issue/);
   assert.match(issueContract, /## 结果/);
   assert.match(issueContract, /## 范围内/);
   assert.match(issueContract, /## 范围外/);
@@ -69,42 +69,15 @@ test("quickdev separates product PRD authority from delivery Issue authority", (
   assert.doesNotMatch(skill, /\.scd\/specs/);
 });
 
-test("quickdev defaults to autonomous delivery and only pauses when the user asks to confirm", () => {
-  const skill = composeGuidance("skills/scd-quickdev/SKILL.md");
-  const issueContract = composeGuidance(
-    "skills/scd-quickdev/references/issue-delivery-contract.md",
-  );
-  const combined = `${skill}\n${issueContract}`;
-
-  assert.match(
-    skill,
-    /默认不询问用户是否要先确认完整的 Issue 草案、实施方案和任务清单/,
-  );
-  assert.match(
-    skill,
-    /没有主动要求确认[\s\S]*`需要确认：否`[\s\S]*`状态：默认免确认`[\s\S]*普通自主交付流程/,
-  );
-  assert.match(
-    skill,
-    /只有用户主动要求先看或先确认[\s\S]*只读仓库检查[\s\S]*等待明确确认/,
-  );
-  assert.match(
-    skill,
-    /确认前不得创建或更新 Issue、修改仓库或开始实施/,
-  );
-  assert.match(skill, /已经选择确认[\s\S]*实质改变[\s\S]*再次取得确认/);
-  assert.match(combined, /沉默、普通实施请求或“开始做”都不/);
-  assert.match(issueContract, /## 方案确认/);
-  assert.match(issueContract, /## 实施方案/);
-  assert.match(issueContract, /## 实施任务/);
-  assert.match(issueContract, /需要确认：是，或否/);
-  assert.match(issueContract, /状态：已确认，或默认免确认/);
-  assert.doesNotMatch(
-    combined,
-    /本次交付是否需要你先确认完整的 Issue 草案、实施方案和任务清单？/,
-  );
-  assert.match(combined, /不是第二次产品确认/);
-  assert.match(combined, /不[会是]创建本地 `plan\.md`|不是创建 `plan\.md` 的理由/);
+test("quickdev requires approved Git plan and implementation authorization", () => {
+  const skill = read("skills/scd-quickdev/SKILL.md");
+  const contract = read("skills/scd-quickdev/references/planning-contract.md");
+  assert.match(skill, /精确Git版本批准与明确开工授权/);
+  assert.match(contract, /漏答保持待定/);
+  assert.match(contract, /不能自引用/);
+  assert.match(contract, /暂停受影响工作/);
+  assert.match(contract, /方案批准与开工授权分别记录/);
+  assert.doesNotMatch(skill, /状态：默认免确认/);
 });
 
 test("quickdev writes Issue output in Chinese without translating machine identifiers", () => {
@@ -364,7 +337,7 @@ test("quickdev loads short phase references conditionally and offers a compact l
   assert.match(issue, /清晰、低风险、单交付/);
   const compact = issue.match(/```markdown\n([\s\S]*?)```/)[1];
   assert.equal((compact.match(/^## /gm) || []).length, 5);
-  for (const marker of ["A1", "T1", "验收闭合", "实施账目", "交付状态", "范围内", "范围外", "状态：默认免确认"]) assert.ok(compact.includes(marker), marker);
+  for (const marker of ["A1", "T1", "验收闭合", "实施账目", "交付状态", "范围内", "范围外", "状态：<待确认/已确认>"]) assert.ok(compact.includes(marker), marker);
   assert.doesNotMatch(compact, /N\/A|不适用|产品追溯|页面验收/);
   assert.match(release, /创建 Issue 阶段不需要读取/);
   assert.ok(Buffer.byteLength(entry) < 8000, "entry remains a concise router plus essential gates");

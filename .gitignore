@@ -1,3 +1,8 @@
 work/
 .DS_Store
 .reasonix/
+
+# Thinloop临时恢复、缓存和日志；长期计划仍纳入Git
+.scd/tasks/current.md
+.scd/cache/
+.scd/logs/
