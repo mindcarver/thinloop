@@ -1,7 +1,7 @@
 ---
 status: approved
 created_at: 2026-11-08T13:12:15+08:00
-updated_at: 2026-11-08T14:02:36+08:00
+updated_at: 2026-11-08T14:04:38+08:00
 recorded_timezone: Asia/Shanghai
 plan_approved_at: null
 implementation_authorized_at: null
@@ -15,15 +15,15 @@ source_baseline: 2926993ee2d58b240bce30b621a74515bc88cd06
 
 ## 当前状态
 
-本文依据当前对话保存已确认方向和待选方案。用户已授权保存草稿并纳入 Git；完整实施计划尚未确认，未获开工批准。本文件的字段与组织方式是当前草稿记录方式，不代表未来技能模板已经定稿。
+用户已通过AP-001批准Git 4346eceda744b707d09c879b7e623b58adbc7038中的完整方案并授权开工。交付Issue为 https://github.com/mindcarver/thinloop/issues/116 ，实施子智能体 /root/implement_116_sol 使用用户指定的 gpt-6.1-sol 模型。当前为实施中；工程验证、独立验收、合并和安装尚未完成。
 
 ## 文档索引
 
 - [requirements.md](requirements.md)：已确认需求与来源。
 - [decisions.md](decisions.md)：Q1–Q12 的选择、原文依据与实际记录时间。
 - 本文件：调查依据、待决定项和计划进度。
-- [architecture.md](architecture.md)：D1–D8完整技术方案，待本轮审阅。
-- [implementation.md](implementation.md)：T1–T5文件范围、顺序及A1–A6验收，待本轮批准开工。
+- [architecture.md](architecture.md)：D1–D8已批准技术方案。
+- [implementation.md](implementation.md)：T1–T5已批准文件范围、顺序及A1–A6验收。
 
 ## 已查明的现状
 
@@ -38,18 +38,16 @@ source_baseline: 2926993ee2d58b240bce30b621a74515bc88cd06
 - 相关测试显式约束默认免确认及禁止永久计划，需与最终批准规则同步变更。
 - .scd 已有设计、规格和演进记录受 Git 跟踪；当前 .gitignore 不忽略 .scd 或 .scd/plans。
 
-## 当前待确认
+## 当前批准范围
 
-Q1–Q12全部已有明确选择。请审阅architecture.md的D1–D8和implementation.md的T1–T5：共享契约/模板、适用技能边界、文件命名、文档状态、Git批准关联、时间字段、临时忽略清单、旧任务恢复、具体修改范围、版本0.19.0与验收交付方式。
-
-它们是完整候选方案，尚未批准实施。用户可以逐项修改，或明确确认当前Git版本的完整方案并授权开工。若只确认方案而未授权开工，则继续停留在规划。
+Q1–Q12、architecture.md的D1–D8和implementation.md的T1–T5均已由AP-001批准，开工授权明确。按此版本连续实施；新技术选择或实质变化仍需展示差异并重新确认。Git保留此前候选方案及全部讨论记录。
 
 ## 计划约束
 
 - 采用用户选择的10B：技能规则与检查清单，不新增运行时校验器或Hook。
 - 采用11A：Git历史追溯，不复制版本目录。
 - 采用12A：保留现有产品/系统基线位置，通过引用与增量衔接。
-- 本次仅提交计划文档；产品技能行为及客户端尚未变更。
+- 当前已进入获批实施阶段；完成声明以Issue实际证据为准。
 
 ## 变更记录
 
@@ -62,3 +60,5 @@ Q1–Q12全部已有明确选择。请审阅architecture.md的D1–D8和implemen
 ## 本轮执行状态
 
 2026-11-08T14:02:36+08:00：用户已通过AP-001批准完整方案并授权GPT-6.1 Sol子智能体实施，前文候选/待批准描述作为当时草稿记录保留。当前实施范围固定为提交4346eceda744b707d09c879b7e623b58adbc7038，接下来创建交付Issue后委派。尚未完成实施或验收。
+
+- 2026-11-08T14:04:38+08:00：同步AP-001后的当前管理状态，关联Issue #116与指定模型的实际实施委派；未改变获批方案内容。

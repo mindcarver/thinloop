@@ -1,7 +1,7 @@
 ---
 status: approved
 created_at: 2026-11-08T13:16:03+08:00
-updated_at: 2026-11-08T14:02:36+08:00
+updated_at: 2026-11-08T14:04:38+08:00
 recorded_timezone: Asia/Shanghai
 plan_approved_at: null
 implementation_authorized_at: null
@@ -12,7 +12,7 @@ approved_git_ref: 4346eceda744b707d09c879b7e623b58adbc7038
 
 # 用户决策与记录
 
-已确认的是各行决策；完整架构和开发计划仍待审阅、批准开工。
+下表为逐轮决策记录；完整架构和开发计划已由后续AP-001批准并授权开工，具体依据见该事件。
 
 | 决策 | 用户选择 | 已确认含义 | 记录时间 |
 |---|---|---|---|

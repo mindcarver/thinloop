@@ -2,7 +2,7 @@
 status: approved
 version: 1
 created_at: 2026-11-08T13:22:52+08:00
-updated_at: 2026-11-08T14:02:36+08:00
+updated_at: 2026-11-08T14:04:38+08:00
 recorded_timezone: Asia/Shanghai
 plan_approved_at: null
 implementation_authorized_at: null
@@ -15,7 +15,7 @@ approved_git_ref: 4346eceda744b707d09c879b7e623b58adbc7038
 
 ## 实施前提
 
-依赖 requirements.md 与 architecture.md 中本次提交的完整方案得到用户明确确认，并获得开工授权。Q1–Q12的方向确认不自动批准本文件的全部实现细节。当前状态：待审阅，尚未开工。
+用户已通过AP-001批准Git 4346eceda744b707d09c879b7e623b58adbc7038中的requirements.md、architecture.md及本实施方案，并明确授权GPT-6.1 Sol子智能体开工。当前状态：实施中，Issue #116。
 
 ## 任务与文件范围
 

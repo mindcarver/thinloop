@@ -2,7 +2,7 @@
 status: approved
 version: 1
 created_at: 2026-11-08T13:22:52+08:00
-updated_at: 2026-11-08T14:02:36+08:00
+updated_at: 2026-11-08T14:04:38+08:00
 recorded_timezone: Asia/Shanghai
 plan_approved_at: null
 implementation_authorized_at: null
@@ -15,7 +15,7 @@ approved_git_ref: 4346eceda744b707d09c879b7e623b58adbc7038
 
 ## 审阅状态
 
-Q1–Q12已经确认。以下D1–D8是根据这些要求整理的具体实现方案，供用户本轮统一审阅；在用户批准完整方案并明确开工前，不视为获准实施。
+Q1–Q12及以下D1–D8已由AP-001明确批准，批准对象为Git 4346eceda744b707d09c879b7e623b58adbc7038中的方案。开工已授权；本段只同步批准状态，不修改方案。
 
 ## D1：一个共享指令契约
 
