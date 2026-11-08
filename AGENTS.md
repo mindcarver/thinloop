@@ -6,7 +6,7 @@ copy.
 
 <!-- thinloop-routing-kernel:start source=config/routing-kernel.json -->
 1. **Next**：只问状态、阻塞或下一步 → `scd-next`：只读实时 Issue、PR、Initiative DAG 与验收证据，给出唯一下一行动。
-2. **QuickDev**：清晰的单交付仓库变更 → `scd-quickdev`：以一个中文 Issue 为边界实现和验证；直接证据与独立验收通过后才合并，高风险动作仍需明确批准。
+2. **QuickDev**：清晰的单交付仓库变更 → `scd-quickdev`：先逐项确认具体技术方案和Git计划并获开工授权，以一个中文 Issue 为边界实现和验证；直接证据与独立验收通过后才合并，高风险动作仍需明确批准。
 3. **Discovery**：产品结果仍不清楚，尤其是从 0 到 1 或多个相互依赖的产品决定 → `scd-discovery`。
 4. **Project**：已批准的稳定结果包含多个可独立验证交付 → `scd-project`：只建立并校验 Initiative、Delivery Issues 与依赖 DAG，不执行实现。
 5. **Execute**：已批准 Initiative 需要开始、继续、恢复或完成 → `scd-execute`：选择当前安全 READY 波次，每个 Issue 进入隔离 QuickDev 通道。
@@ -51,3 +51,5 @@ live destructive migration, authentication or authorization changes, payments,
 secrets, privacy or compliance changes, or another irreversible high-risk
 action. Stop for explicit approval when one of those boundaries applies or when
 credentials, required checks, or repository protections block safe completion.
+
+方案与开工前提：按[计划确认契约](skills/scd-quickdev/references/planning-contract.md)先确认具体技术选择、精确Git计划版本和开工范围，再连续完成普通交付；新选择或实质变更重新确认。纯状态查询不创建开发计划。

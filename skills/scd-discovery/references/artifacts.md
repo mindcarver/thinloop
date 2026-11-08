@@ -1,6 +1,6 @@
 # Discovery 产物
 
-只创建能够持续产生价值的最小产物。已确认的全新产品使用 `.scd/product/prd.md` 保存产品基线。现有产品的一项清晰变更只保留一个 GitHub Issue，作为需求与验收的唯一事实来源。已确认的多交付项目由 `scd-project` 创建一个 Initiative 和多个独立 Delivery Issues；不要强行塞进一个 Issue。
+只创建能够持续产生价值的最小产物。已确认的全新产品使用 `.scd/product/prd.md` 保存产品基线。现有产品的一项清晰变更保存按需任务计划，Issue引用批准版本并负责执行验收。已确认的多交付项目由 `scd-project` 创建一个 Initiative 和多个独立 Delivery Issues；不要强行塞进一个 Issue。
 
 ## 权威边界
 
@@ -41,7 +41,7 @@ updated_at: 2026-07-27T12:34:56+08:00
 
 ## 全新产品 PRD
 
-用户明确确认将全新产品落实为仓库工作后，从 `../assets/product-prd.md` 创建 `.scd/product/prd.md`。确认前不得创建永久草稿。
+用户明确确认将全新产品落实为仓库工作后，从 `../assets/product-prd.md` 创建 `.scd/product/prd.md`。确认前不得创建产品基线永久草稿；任务计划中的requirements草稿及逐轮决策应持久保存。
 
 使用以下 frontmatter：
 
@@ -144,13 +144,13 @@ PRD 必须包含：
 - 不可逆横切技术决策使用仓库 ADR；
 - 没有仓库惯例时，新的共享机器可读契约放在可见根目录 `contracts/`。
 
-不要创建永久 `implementation-plan.md`；任务拆解保存在 Issue 中，`.scd/tasks/current.md` 只用于临时恢复。
+按共享契约保存持久implementation.md，Issue引用其批准版本并保存执行任务；`.scd/tasks/current.md` 只用于临时恢复。
 
-架构和技术设计不增加固定确认门。只有设计选择改变已确认结果、可见行为、范围、数据或隐私边界、权限、不可逆操作或验收时，才返回 Discovery。
+架构和具体技术选择均按共享计划契约确认。只有设计选择改变已确认结果、可见行为、范围、数据或隐私边界、权限、不可逆操作或验收时，才返回 Discovery。
 
 ## 确认后的契约变更
 
-- **实施变更：** 更新 Issue 任务或验证，无需再次确认。
+- **实施变更：** 获批范围内操作无需重复确认；未覆盖技术选择或实质方案变化先修订计划、重确认，再更新Issue。
 - **不改变行为的文字澄清：** 更新 Issue，并在交接中说明。
 - **产品契约变更：** 更新受影响 Issue 章节，只讨论受影响决策；存在全新产品 PRD 时更新并递增其版本；实施继续前取得明确确认。
 

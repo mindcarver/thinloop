@@ -1,4 +1,4 @@
 interface:
   display_name: "SCD 技能演进"
   short_description: "依据已确认的证据改进 Thinloop 技能"
-  default_prompt: "使用 $scd-evolve 诊断这次开发交互，并在修改前提出一项经过证据分级的 Thinloop 技能改进。"
+  default_prompt: "使用 $scd-evolve 诊断这次开发交互，并在修改前提出一项经过证据分级的 Thinloop 技能改进。 读取共享计划确认契约：具体技术选择先确认，批准精确Git计划并授权开工后按范围连续交付；漏答待定，实质变化重确认。只读不创建开发计划，治理更窄边界有效。"

@@ -32,7 +32,7 @@ test("全部 Thinloop Skill 文本载荷均包含中文", () => {
     .flatMap((entry) => collectPayloadFiles(path.join(skillsRoot, entry.name)))
     .sort();
 
-  assert.equal(files.length, 67); // Shared visual and step communication references.
+  assert.equal(files.length, 74); // Shared visual and step communication references.
   for (const file of files) {
     assert.match(read(file), han, file);
   }
@@ -88,17 +88,11 @@ test("Issue 模板保持中文结构和规范机器标识", () => {
   assert.doesNotMatch(combined, /^## (?:Outcome|Acceptance|Implementation tasks|Verification)$/m);
 });
 
-test("QuickDev 默认免确认且只在用户主动要求时启用确认门", () => {
-  const quickdev = read("skills/scd-quickdev/SKILL.md");
-  const contract = read(
-    "skills/scd-quickdev/references/issue-delivery-contract.md",
-  );
-
-  assert.match(
-    quickdev,
-    /默认不询问用户是否要先确认完整的 Issue 草案、实施方案和任务清单/,
-  );
-  assert.match(quickdev, /没有主动要求确认[\s\S]*`状态：默认免确认`/);
-  assert.match(quickdev, /只有用户主动要求先看或先确认[\s\S]*等待明确确认/);
-  assert.match(contract, /不会创建本地 `plan\.md`/);
+test("QuickDev 默认确认技术计划与开工授权", () => {
+  const skill = read("skills/scd-quickdev/SKILL.md");
+  const contract = read("skills/scd-quickdev/references/planning-contract.md");
+  assert.match(skill, /默认先只读调查/);
+  assert.match(skill, /精确Git版本批准与明确开工授权/);
+  assert.match(contract, /漏答保持待定/);
+  assert.match(contract, /此前已存在的提交与精确文件清单/);
 });

@@ -17,7 +17,7 @@ test("uiux is composable and keeps clear UI changes on the direct path", () => {
   assert.match(skill, /\*\*聚焦设计：\*\*/);
   assert.match(skill, /\*\*产品体验：\*\*/);
   assert.match(skill, /\*\*体验验证：\*\*/);
-  assert.match(skill, /不提 UX 问题、不创建产物，直接交给 `scd-quickdev`/);
+  assert.match(skill, /交给QuickDev确认具体方案和实施计划/);
   assert.match(skill, /小型 UI 变更也不会因此进入“产品体验”路径/);
 });
 
@@ -85,14 +85,14 @@ test("uiux blocks readiness on visual conflict or missing required confirmation"
   assert.match(combined, /确认前保持 `draft`|取得一次明确确认后才能设为 `ready`/);
   assert.match(combined, /冲突时保持 `status: draft`|冲突时保持 `draft`/);
   assert.match(combined, /不得静默选择一方|不得静默指定一方优先/);
-  assert.match(skill, /不恢复 QuickDev 的默认方案确认门/);
+  assert.match(skill, /就绪审查不代替方案批准或开工授权/);
 });
 
 test("uiux keeps trivial local UI changes on the direct path without mandatory mockups", () => {
   const skill = read("skills/scd-uiux/SKILL.md");
 
   assert.match(skill, /文案、颜色、间距或局部组件变更[\s\S]*不强制扩大成设计项目/);
-  assert.match(skill, /不提 UX 问题、不创建产物，直接交给 `scd-quickdev`/);
+  assert.match(skill, /交给QuickDev确认具体方案和实施计划/);
 });
 
 test("uiux keeps the shared frontend-backend contract jointly owned", () => {

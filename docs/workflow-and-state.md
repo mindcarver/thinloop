@@ -15,7 +15,7 @@ GitHub Delivery Issue 保存切片边界和验收；多交付项目由 Initiativ
 
 <!-- thinloop-routing-kernel:start source=config/routing-kernel.json -->
 1. **Next**：只问状态、阻塞或下一步 → `scd-next`：只读实时 Issue、PR、Initiative DAG 与验收证据，给出唯一下一行动。
-2. **QuickDev**：清晰的单交付仓库变更 → `scd-quickdev`：以一个中文 Issue 为边界实现和验证；直接证据与独立验收通过后才合并，高风险动作仍需明确批准。
+2. **QuickDev**：清晰的单交付仓库变更 → `scd-quickdev`：先逐项确认具体技术方案和Git计划并获开工授权，以一个中文 Issue 为边界实现和验证；直接证据与独立验收通过后才合并，高风险动作仍需明确批准。
 3. **Discovery**：产品结果仍不清楚，尤其是从 0 到 1 或多个相互依赖的产品决定 → `scd-discovery`。
 4. **Project**：已批准的稳定结果包含多个可独立验证交付 → `scd-project`：只建立并校验 Initiative、Delivery Issues 与依赖 DAG，不执行实现。
 5. **Execute**：已批准 Initiative 需要开始、继续、恢复或完成 → `scd-execute`：选择当前安全 READY 波次，每个 Issue 进入隔离 QuickDev 通道。
@@ -31,8 +31,7 @@ GitHub Delivery Issue 保存切片边界和验收；多交付项目由 Initiativ
 和 cutover 门禁。Next 不修改上述图或启动实现，只在调用时从实时证据重建状态。
 QuickDev 每个 lane 只固定使用一个独立验收 Agent，其实现请求包含任务内
 Issue、分支、提交、推送、PR 与合资格合并；高风险合并和生产部署仍需明确授权。
-Issue 是 QuickDev 的持久计划：默认免确认并自动继续；只有用户主动要求时才先确认
-完整 Issue、实施方案和 tasks，此后任何实质性计划变化都要重新确认。
+任务计划保存需求、方案与批准版本；Issue负责执行和验收。默认先确认具体技术选择、精确Git计划及开工范围；实质变化重新确认，获批操作不重复询问。
 QuickDev 创建或更新的 Issue 标题、正文、验收、tasks 和验证记录统一使用中文，
 但命令、路径、代码标识和机器状态保持规范原值。
 十三个 Thinloop Skill 的说明、Agent 提示词、参考契约与模板也统一使用中文。
@@ -53,7 +52,7 @@ UIUX 的前端交接由三类互补事实组成：UX 契约负责行为、状态
 复杂交互缺少可练习原型时同样不能交接。重大新页面、整体改版和高成本视觉方向
 取得一次用户确认后才能 `ready`；整体改版、高保真品牌表达或主观关键视觉验收
 还会标记是否需要实现后最终视觉确认。普通页面仍由独立验收自主完成，不改变
-QuickDev 默认免确认的实施流程。
+QuickDev 默认先确认计划及开工授权的实施流程。
 
 ## 工作闭环
 
@@ -97,7 +96,7 @@ contracts/              # 按需：跨边界机器契约
 ```
 
 PRD 只管理产品级 why/what、MVP、`FR-*` 和成功指标。Project 的 Initiative、
-Delivery Issues 和 DAG 位于 GitHub，不创建本地项目 Wiki、永久实施计划或
+Delivery Issues 和 DAG 位于 GitHub，不创建本地项目 Wiki、重复执行数据库或
 调度数据库，也不把 PRD 变成执行计划。
 
 仓库中已有的 `.scd/specs/` 文件仅保留为旧版本设计和评估历史；普通新交付
@@ -118,3 +117,5 @@ Delivery Issues 和 DAG 位于 GitHub，不创建本地项目 Wiki、永久实�
 - [Evolve 历史契约](../skills/scd-evolve/references/source-and-history-contract.md)
 - [Reengineering 再工程契约](../skills/scd-reengineering/references/reengineering-contract.md)
 - [Reengineering 执行契约](../skills/scd-reengineering/references/execution-contract.md)
+
+方案与开工前提：按[计划确认契约](../skills/scd-quickdev/references/planning-contract.md)先确认具体技术选择、精确Git计划版本和开工范围，再连续完成普通交付；新选择或实质变更重新确认。纯状态查询不创建开发计划。

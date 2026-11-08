@@ -2,8 +2,10 @@
 managed_by: scd-discovery
 status: draft
 version: 1
-updated_at: YYYY-MM-DDTHH:MM:SSZ
+updated_at: <实际北京时间YYYY-MM-DDTHH:mm:ss+08:00>
 approved_at:
+created_at: <实际北京时间YYYY-MM-DDTHH:mm:ss+08:00>
+recorded_timezone: Asia/Shanghai
 ---
 
 # 产品需求文档
@@ -40,3 +42,10 @@ approved_at:
 
 - 状态：草稿
 - 已确认版本：尚未确认
+
+## 任务计划与时间追溯
+
+- 任务计划：<路径、文件清单及精确Git版本>
+- 方案批准/开工授权：<独立事件引用；ready不代表批准>
+- occurred_at：<事件真实时间；未知为空并说明>
+- recorded_at：<实际记录时间+08:00>

@@ -3,6 +3,10 @@ managed_by: scd-uiux
 status: draft
 sources:
   - <仓库相对路径或稳定 URL>
+created_at: <实际北京时间YYYY-MM-DDTHH:mm:ss+08:00>
+updated_at: <实际北京时间YYYY-MM-DDTHH:mm:ss+08:00>
+version: 1
+recorded_timezone: Asia/Shanghai
 ---
 
 # 结果与边界
@@ -61,3 +65,10 @@ sources:
 - <视觉 ID>：<目标视口、真实渲染证据和允许差异>
 
 ## 待定决策
+
+## 任务计划与时间追溯
+
+- 任务计划：<路径、文件清单及精确Git版本>
+- 方案批准/开工授权：<独立事件引用；ready不代表批准>
+- occurred_at：<事件真实时间；未知为空并说明>
+- recorded_at：<实际记录时间+08:00>

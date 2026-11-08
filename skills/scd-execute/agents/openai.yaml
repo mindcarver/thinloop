@@ -1,4 +1,4 @@
 interface:
   display_name: "SCD 项目执行"
   short_description: "按安全的 READY 波次执行已确认的项目 DAG"
-  default_prompt: "使用 $scd-execute 继续这个已确认的 Initiative：验证实时 DAG，通过隔离的 QuickDev 通道启动当前安全的 READY 波次，依次合并，并重新计算就绪状态。"
+  default_prompt: "使用 $scd-execute 继续这个已确认的 Initiative：验证实时 DAG，通过隔离的 QuickDev 通道启动当前安全的 READY 波次，依次合并，并重新计算就绪状态。 读取共享计划确认契约：具体技术选择先确认，批准精确Git计划并授权开工后按范围连续交付；漏答待定，实质变化重确认。只读不创建开发计划，治理更窄边界有效。"

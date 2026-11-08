@@ -14,9 +14,9 @@ test("discovery routes greenfield work without burdening clear changes", () => {
   const skill = read("skills/scd-discovery/SKILL.md");
 
   assert.match(skill, /全新产品[\s\S]*默认走完整 Discovery/);
-  assert.match(skill, /\*\*直接实施：\*\*/);
+  assert.match(skill, /\*\*清晰交付：\*\*/);
   assert.match(skill, /\*\*单点澄清：\*\*/);
-  assert.match(skill, /不创建 Discovery 产物、不追加问题/);
+  assert.match(skill, /无需完整Discovery访谈/);
   assert.match(skill, /就绪快速路径/);
 });
 
@@ -39,7 +39,7 @@ test("discovery requires frontier-round interviewing and explicit approval", () 
     interviewing,
     /前沿是前置决策已全部落定、彼此互不依赖的未决决策集合/,
   );
-  assert.match(interviewing, /临时假设视为临时落定/);
+  assert.match(interviewing, /未回答的选择保持待定/);
   assert.match(interviewing, /## 每轮收敛/);
   assert.doesNotMatch(interviewing, /每次只请求一个决策/);
   assert.match(readiness, /静默对抗式审查/);
@@ -56,7 +56,7 @@ test("discovery persists approved greenfield PRD without burdening clear changes
   assert.match(skill, /已确认的全新产品/);
   assert.match(skill, /\.scd\/product\/prd\.md/);
   assert.match(skill, /现有产品的清晰变更/);
-  assert.match(artifacts, /确认前不得创建永久草稿/);
+  assert.match(artifacts, /任务计划中的requirements草稿及逐轮决策应持久保存/);
   assert.match(artifacts, /默认分支访问/);
   assert.match(prd, /status: draft/);
   assert.match(prd, /version: 1/);
@@ -76,13 +76,13 @@ test("discovery persists approved greenfield PRD without burdening clear changes
   assert.match(artifacts, /GitHub Issue/);
   assert.match(
     artifacts,
-    /现有产品的一项清晰变更只保留一个 GitHub Issue/,
+    /现有产品的一项清晰变更保存按需任务计划/,
   );
   assert.doesNotMatch(artifacts, /\.scd\/specs\/<slug>\.md/);
   assert.match(artifacts, /## 验收条件/);
   assert.match(artifacts, /A1：/);
   assert.match(artifacts, /\.scd\/architecture\.md/);
-  assert.match(artifacts, /不要创建永久 `implementation-plan\.md`/);
+  assert.match(artifacts, /保存持久implementation\.md/);
 });
 
 test("downstream skills consume PRD authority and delivery evidence", () => {

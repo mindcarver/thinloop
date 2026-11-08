@@ -1,4 +1,4 @@
 interface:
   display_name: "SCD UIUX 设计"
   short_description: "直接设计网页体验"
-  default_prompt: "使用 $scd-uiux，在实施前将这项网页产品行为转化为可评审的交互与界面契约。"
+  default_prompt: "使用 $scd-uiux，在实施前将这项网页产品行为转化为可评审的交互与界面契约。 读取共享计划确认契约：具体技术选择先确认，批准精确Git计划并授权开工后按范围连续交付；漏答待定，实质变化重确认。只读不创建开发计划，治理更窄边界有效。"

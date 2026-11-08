@@ -1,4 +1,4 @@
 interface:
   display_name: "SCD 需求发现"
   short_description: "将产品意图澄清为已确认的 Issue"
-  default_prompt: "使用 $scd-discovery，在实施前将这个产品想法转化为已确认且可测试的 GitHub Issue。"
+  default_prompt: "使用 $scd-discovery，在实施前将这个产品想法转化为已确认且可测试的 GitHub Issue。 读取共享计划确认契约：具体技术选择先确认，批准精确Git计划并授权开工后按范围连续交付；漏答待定，实质变化重确认。只读不创建开发计划，治理更窄边界有效。"
