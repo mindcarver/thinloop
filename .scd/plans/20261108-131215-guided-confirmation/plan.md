@@ -1,10 +1,13 @@
 ---
-status: draft
+status: approved
 created_at: 2026-11-08T13:12:15+08:00
-updated_at: 2026-11-08T13:22:52+08:00
+updated_at: 2026-11-08T14:02:36+08:00
 recorded_timezone: Asia/Shanghai
 plan_approved_at: null
 implementation_authorized_at: null
+approval_recorded_at: 2026-11-08T14:02:36+08:00
+implementation_authorization_recorded_at: 2026-11-08T14:02:36+08:00
+approved_git_ref: 4346eceda744b707d09c879b7e623b58adbc7038
 source_baseline: 2926993ee2d58b240bce30b621a74515bc88cd06
 ---
 
@@ -55,3 +58,7 @@ Q1–Q12全部已有明确选择。请审阅architecture.md的D1–D8和implemen
 - 2026-11-08T13:16:03+08:00：记录Q7=B、Q8=B、Q9=A；按已确认的按需分文档方式提取需求与决策记录，保留初始草稿Git历史；列出Q10–Q12待选技术方案。
 
 - 2026-11-08T13:22:52+08:00：记录Q10=B、Q11=A、Q12=A；形成architecture.md和implementation.md完整候选方案，保持draft和未授权开工状态。
+
+## 本轮执行状态
+
+2026-11-08T14:02:36+08:00：用户已通过AP-001批准完整方案并授权GPT-6.1 Sol子智能体实施，前文候选/待批准描述作为当时草稿记录保留。当前实施范围固定为提交4346eceda744b707d09c879b7e623b58adbc7038，接下来创建交付Issue后委派。尚未完成实施或验收。

@@ -1,10 +1,13 @@
 ---
-status: draft
+status: approved
 created_at: 2026-11-08T13:16:03+08:00
-updated_at: 2026-11-08T13:22:52+08:00
+updated_at: 2026-11-08T14:02:36+08:00
 recorded_timezone: Asia/Shanghai
 plan_approved_at: null
 implementation_authorized_at: null
+approval_recorded_at: 2026-11-08T14:02:36+08:00
+implementation_authorization_recorded_at: 2026-11-08T14:02:36+08:00
+approved_git_ref: 4346eceda744b707d09c879b7e623b58adbc7038
 ---
 
 # 用户决策与记录
@@ -30,3 +33,14 @@ implementation_authorized_at: null
 
 
 - 2026-11-08T13:22:52+08:00：新增用户原文「10B  11A 12A」对应的Q10–Q12确认记录；完整架构与开发方案尚待批准。
+
+## AP-001：完整方案批准及开工授权
+
+- 用户依据：在展示完整方案并询问是否批准并开工后，用户回复「批准 让 6.1 sol 模型子智能体去实施」。
+- 目标Git提交：4346eceda744b707d09c879b7e623b58adbc7038。
+- 批准文件：plan.md、requirements.md、architecture.md、implementation.md、decisions.md（以上目标提交中的版本）。
+- 批准范围：架构D1–D8、开发T1–T5及A1–A6验收；按方案完成普通交付。
+- 实施模型：用户明确指定GPT-6.1 Sol子智能体。
+- occurred_at：未知（原用户消息未暴露精确到秒时间）。
+- recorded_at：2026-11-08T14:02:36+08:00。元数据中的事件发生时间为空不代表未批准，以本条实际用户依据及记录时间为准。
+- 本记录是追加的批准事实，不改变此前已批准的方案内容；原草稿状态和审阅措辞可通过目标Git提交还原。

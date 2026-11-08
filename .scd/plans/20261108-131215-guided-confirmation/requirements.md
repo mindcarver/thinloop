@@ -1,10 +1,13 @@
 ---
-status: draft
+status: approved
 created_at: 2026-11-08T13:16:03+08:00
-updated_at: 2026-11-08T13:22:52+08:00
+updated_at: 2026-11-08T14:02:36+08:00
 recorded_timezone: Asia/Shanghai
 plan_approved_at: null
 implementation_authorized_at: null
+approval_recorded_at: 2026-11-08T14:02:36+08:00
+implementation_authorization_recorded_at: 2026-11-08T14:02:36+08:00
+approved_git_ref: 4346eceda744b707d09c879b7e623b58adbc7038
 ---
 
 # 已确认需求
