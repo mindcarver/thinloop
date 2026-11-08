@@ -1,7 +1,7 @@
 ---
 status: approved
 created_at: 2026-11-08T13:12:15+08:00
-updated_at: 2026-11-08T14:04:38+08:00
+updated_at: 2026-11-08T14:10:38+08:00
 recorded_timezone: Asia/Shanghai
 plan_approved_at: null
 implementation_authorized_at: null
@@ -15,7 +15,7 @@ source_baseline: 2926993ee2d58b240bce30b621a74515bc88cd06
 
 ## 当前状态
 
-用户已通过AP-001批准Git 4346eceda744b707d09c879b7e623b58adbc7038中的完整方案并授权开工。交付Issue为 https://github.com/mindcarver/thinloop/issues/116 ，实施子智能体 /root/implement_116_sol 使用用户指定的 gpt-6.1-sol 模型。当前为实施中；工程验证、独立验收、合并和安装尚未完成。
+用户已通过AP-001批准Git 4346eceda744b707d09c879b7e623b58adbc7038中的完整方案并授权开工。交付Issue为 https://github.com/mindcarver/thinloop/issues/116 ，实施子智能体 /root/implement_116_sol 使用用户指定的 gpt-6.1-sol 模型。指定模型实施候选已提交，事件见EX-001；工程、独立验收、合并和安装的实时状态由Issue #116维护。
 
 ## 文档索引
 

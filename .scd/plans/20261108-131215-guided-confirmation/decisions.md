@@ -1,7 +1,7 @@
 ---
 status: approved
 created_at: 2026-11-08T13:16:03+08:00
-updated_at: 2026-11-08T14:04:38+08:00
+updated_at: 2026-11-08T14:10:38+08:00
 recorded_timezone: Asia/Shanghai
 plan_approved_at: null
 implementation_authorized_at: null
@@ -44,3 +44,14 @@ approved_git_ref: 4346eceda744b707d09c879b7e623b58adbc7038
 - occurred_at：未知（原用户消息未暴露精确到秒时间）。
 - recorded_at：2026-11-08T14:02:36+08:00。元数据中的事件发生时间为空不代表未批准，以本条实际用户依据及记录时间为准。
 - 本记录是追加的批准事实，不改变此前已批准的方案内容；原草稿状态和审阅措辞可通过目标Git提交还原。
+
+## EX-001：指定模型提交实施候选
+
+- 类型：implementation-submitted。
+- 实施者：/root/implement_116_sol；模型：gpt-6.1-sol（用户指定）。
+- 目标Git SHA：bfc23e61a32b68d677a1f5fcee8b9e1ecd4a0381。
+- occurred_at：2026-11-08T14:09:53+08:00（Git提交时间，只表示提交事件，不代表用户批准或整项交付完成）。
+- recorded_at：2026-11-08T14:10:38+08:00。
+- 关联：AP-001、Issue #116。
+- 状态：T1–T3实施候选已提交；T4工程结果由实施者报告，最终独立验收与远端CI待完成；T5由父Agent继续。
+- 证据日志：/tmp/thinloop116-tests-final2.log、/tmp/thinloop116-gates.log、/tmp/thinloop116-last-targeted.log；持久交付证据记录到Issue/PR。
