@@ -1,7 +1,7 @@
 ---
 status: draft
 created_at: 2026-11-08T13:16:03+08:00
-updated_at: 2026-11-08T13:16:03+08:00
+updated_at: 2026-11-08T13:22:52+08:00
 recorded_timezone: Asia/Shanghai
 plan_approved_at: null
 implementation_authorized_at: null
@@ -64,3 +64,21 @@ implementation_authorized_at: null
 使用Asia/Shanghai、精确到秒、+08:00。记录创建、修订、决策确认、计划批准、开工、完成与对应版本；原始事件时间未知时只记录补录时间。
 
 来源：Q9。
+
+## FR-010：指令与清单约束
+
+通过技能规则与检查清单落实确认流程，不新增运行时校验器、校验代码或宿主Hook。
+
+来源：Q10=B。
+
+## FR-011：Git版本追溯
+
+批准记录关联具体计划文件及其Git提交，通过历史还原用户批准内容，不额外复制版本目录。
+
+来源：Q11=A。
+
+## FR-012：保留现有基线
+
+保留已有PRD、系统架构和接口文档位置；任务计划引用对应版本并说明本次增量；实施验收后更新基线。
+
+来源：Q12=A。
