@@ -34,3 +34,33 @@ test('local design decisions persist and baseline templates have unique time met
     assert.match(front, /updated_at:.*\+08:00/);
   }
 });
+test('local routing cannot exempt non-product technical choices from confirmation', () => {
+  const scope = read('skills/scd-quickdev/references/scope-contract.md');
+  assert.match(scope, /不是具体技术选择确认的排他条件/);
+  assert.doesNotMatch(scope, /只有在无用户参与的选择.*才提问/);
+  for (const file of ['skills/scd-project/SKILL.md','skills/scd-project/references/project-contract.md']) {
+    const text = read(file);
+    assert.match(text, /依赖边或共享技术方案/);
+    assert.match(text, /即使产品行为不变/);
+    assert.doesNotMatch(text, /只有产品契约变化时才请求确认|只有受影响结果.*才再次取得确认/);
+  }
+  const maintenance = read('skills/scd-maintenance/SKILL.md');
+  assert.match(maintenance, /具体技术方案也按计划契约确认/);
+  assert.doesNotMatch(maintenance, /只有权威选择.*才询问/);
+});
+test('release preserves approved Git objects before deleting their final reference', () => {
+  assert.match(contract, /新克隆/);
+  assert.match(contract, /git show/);
+  assert.match(contract, /获批SHA是默认分支祖先/);
+  assert.match(contract, /不得擅自创建tag、改仓库保护/);
+  const release = read('skills/scd-quickdev/references/release-contract.md');
+  assert.match(release, /未通过时BLOCKED，不删除最后引用/);
+  assert.match(release, /等价diff不能替代批准历史/);
+  assert.match(release, /获批SHA及文件的新克隆恢复证据后，删除本地任务分支/);
+  assert.match(release, /不会删除获批SHA的最后持久引用后，显式删除远端任务分支/);
+});
+test('installation retains historical 0.18.2 and separately describes 0.19.0', () => {
+  const installation = read('docs/installation.md');
+  assert.match(installation, /升级到 v0\.18\.2：步骤提示改为/);
+  assert.match(installation, /升级到 v0\.19\.0：默认先确认具体技术选择/);
+});

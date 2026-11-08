@@ -250,7 +250,7 @@ node skills/scd-project/scripts/validate-project-graph.mjs \
 2. 确认 DONE 节点具有实时 QuickDev 验收和关闭证据；
 3. 重建并验证依赖图快照；
 4. 更新 Initiative 图版本和受影响子节点的协调字段；
-5. 只有产品契约变化时才请求确认；
+5. 新图版本、依赖边或共享技术方案等实质变化也须确认，即使产品行为不变；已批准图内操作不重复询问；
 6. 报告 READY 节点和精确 BLOCKED 原因。
 
 不要维护第二套长期执行状态。未来外部执行器必须从相同 Initiative、Delivery Issues、拉取请求和验收证据重建视图。
