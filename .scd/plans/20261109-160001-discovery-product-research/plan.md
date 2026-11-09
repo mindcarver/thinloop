@@ -2,7 +2,7 @@
 status: approved
 version: 2
 created_at: 2026-11-09T16:00:01+08:00
-updated_at: 2026-11-09T16:50:08+08:00
+updated_at: 2026-11-09T16:58:17+08:00
 recorded_timezone: Asia/Shanghai
 ---
 
@@ -16,6 +16,6 @@ recorded_timezone: Asia/Shanghai
 - Thinloop 基线：`7da112df7d373d63c9ffb2e8dfedc12fee7215b9`，与调查时 origin/main 一致；版本 0.19.0。
 - 上游参考：phuryn/pm-skills，`9af7bfd0bc47fdad43c2eaa7a43cd13918e7aaef`，MIT，Copyright (c) 2026 Pawel Huryn。
 - 推荐方案：新增独立 scd-research，承担产品前期用户、竞品、替代方案和风险假设研究；scd-discovery 消费研究结论并定义产品。保留既有确认边界；技能目录由十三变为十四。
-- 审批状态：用户已要求能力内化；下面的具体触发规则、文件组织与验证方案尚待统一确认，未获得该版本开工授权。
-- 本次仅保存可审阅计划，尚未修改技能、评测、路由或客户端安装。
-- 批准后：创建中文 Delivery Issue，记录其对本计划精确 Git 提交和文件的引用，再连续完成实现、验证、独立验收、PR、合并和本地已安装 Agent 的 Thinloop 刷新。
+- 审批状态：用户已明确批准 v2 并授权实施、验证、合并和本机已有 SCD 同步，见 decisions.md E3。批准提交为 `515ade14d4e5e1b0543deb73bfd4b4b9d4aefafd`。
+- 当前进度：技能、目录、路由、版本和场景已实现；工程检查已通过。独立验收、合并后客户端更新和关闭审计继续记录到 Issue #118。
+- 交付跟踪：中文 Issue #118，PR #119；它们负责执行验收状态，本计划继续保留具体方案及批准版本。
