@@ -31,6 +31,19 @@ function escapeXml(value) {
 
 const skillFlows = [
   {
+    slug: "research",
+    index: "14",
+    title: "SCD 产品研究",
+    subtitle: "产品机会 → 有证据的投入决定",
+    stages: [
+      ["用户任务", "与约束"],
+      ["竞品", "与替代"],
+      ["证据", "与反证"],
+      ["假设", "与验证"],
+      ["研究结论", "或需求交接"],
+    ],
+  },
+  {
     slug: "discovery",
     index: "01",
     title: "SCD 需求澄清",

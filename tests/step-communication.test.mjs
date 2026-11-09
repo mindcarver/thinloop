@@ -9,7 +9,7 @@ const skills = fs.readdirSync(path.join(root, "skills")).filter(name => name.sta
 const canonical = path.join(root, "skills/scd-quickdev/references/step-communication.md");
 
 test("全部直接技能入口在工作流前加载唯一的步骤沟通规则", () => {
-  assert.equal(skills.length, 13);
+  assert.equal(skills.length, 14);
   for (const name of skills) {
     const entry = path.join(root, "skills", name, "SKILL.md");
     const source = fs.readFileSync(entry, "utf8");

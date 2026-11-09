@@ -49,3 +49,11 @@ v2 方案批准：尚未收到。v2 开工授权：尚未收到。已确认“�
 - occurred_at：null（消息精确时间不可得）。
 - recorded_at：2026-11-09T16:50:08+08:00
 - 未决选择：本版范围内无；实质变化另行确认。
+
+## E4：实施与工程检查
+
+- recorded_at：2026-11-09T16:55:45+08:00
+- 方案：v2，批准版本 515ade14d4e5e1b0543deb73bfd4b4b9d4aefafd，Issue #118。
+- 当前评测定义 evals/thinloop/manifest.json 的载荷技能表同步新增 scd-research，否则已有 dry-run 明确报目录不一致；属于第 14 个技能的必要目录同步，不改变历史冻结评测或评分器。
+- 工程：369/369 测试通过，版本/路由/评测定义与 dry-run、交付协议、流程图和插件 strict validation 通过。Research/Discovery quick_validate 通过（uv 临时 PyYAML，不增加项目依赖）。
+- 独立验收、远端 CI、合并、安装更新与资源清理尚待完成。

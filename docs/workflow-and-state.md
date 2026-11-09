@@ -16,12 +16,13 @@ GitHub Delivery Issue 保存切片边界和验收；多交付项目由 Initiativ
 <!-- thinloop-routing-kernel:start source=config/routing-kernel.json -->
 1. **Next**：只问状态、阻塞或下一步 → `scd-next`：只读实时 Issue、PR、Initiative DAG 与验收证据，给出唯一下一行动。
 2. **QuickDev**：清晰的单交付仓库变更 → `scd-quickdev`：先逐项确认具体技术方案和Git计划并获开工授权，以一个中文 Issue 为边界实现和验证；直接证据与独立验收通过后才合并，高风险动作仍需明确批准。
-3. **Discovery**：产品结果仍不清楚，尤其是从 0 到 1 或多个相互依赖的产品决定 → `scd-discovery`。
-4. **Project**：已批准的稳定结果包含多个可独立验证交付 → `scd-project`：只建立并校验 Initiative、Delivery Issues 与依赖 DAG，不执行实现。
-5. **Execute**：已批准 Initiative 需要开始、继续、恢复或完成 → `scd-execute`：选择当前安全 READY 波次，每个 Issue 进入隔离 QuickDev 通道。
-6. **Reengineering**：跨语言、框架、架构、存储或运行时替换，或项目级大幅重构 → `scd-reengineering`：先固定来源、兼容性与切换门，再消费批准的 DAG。
-7. **条件设计**：只有真实复杂度需要时才加入设计：重要 Web 体验 → `scd-uiux`；已有页面视觉打磨 → `scd-ui-polish`；领域、系统或共享接口边界 → `scd-architecture`。
-8. **显式治理**：只有用户明确要求时才调用治理与个人能力：`scd-maintenance`、`scd-knowledge`、`scd-evolve`、`scd-interview`；普通开发不得自动触发。
+3. **Research**：产品前期用户、需求强度、竞品或替代方案研究，或新产品缺乏关键机会证据 → `scd-research`：可独立交付研究，需要定义产品时交给 Discovery。
+4. **Discovery**：产品结果仍不清楚，尤其是从 0 到 1 或多个相互依赖的产品决定 → `scd-discovery`。
+5. **Project**：已批准的稳定结果包含多个可独立验证交付 → `scd-project`：只建立并校验 Initiative、Delivery Issues 与依赖 DAG，不执行实现。
+6. **Execute**：已批准 Initiative 需要开始、继续、恢复或完成 → `scd-execute`：选择当前安全 READY 波次，每个 Issue 进入隔离 QuickDev 通道。
+7. **Reengineering**：跨语言、框架、架构、存储或运行时替换，或项目级大幅重构 → `scd-reengineering`：先固定来源、兼容性与切换门，再消费批准的 DAG。
+8. **条件设计**：只有真实复杂度需要时才加入设计：重要 Web 体验 → `scd-uiux`；已有页面视觉打磨 → `scd-ui-polish`；领域、系统或共享接口边界 → `scd-architecture`。
+9. **显式治理**：只有用户明确要求时才调用治理与个人能力：`scd-maintenance`、`scd-knowledge`、`scd-evolve`、`scd-interview`；普通开发不得自动触发。
 <!-- thinloop-routing-kernel:end -->
 
 默认不强制 TDD、角色系统或固定阶段。Project 只拆解项目、校验 Issue 级 DAG
