@@ -18,6 +18,7 @@ const expectedSkills = [
   "scd-project",
   "scd-quickdev",
   "scd-reengineering",
+  "scd-research",
   "scd-ui-polish",
   "scd-uiux",
 ];

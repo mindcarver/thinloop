@@ -26,7 +26,7 @@ test("README presents three layers, evidence cases, and generated routes before 
   const layers = "## 三层能力 / THREE LAYERS";
   const cases = "## 三个可追溯对照 / BEFORE & AFTER";
   const quickStart = "## 30 秒开始 / QUICK START";
-  const catalog = "## 完整十三 Skill 目录 / FULL CATALOG";
+  const catalog = "## 完整十四 Skill 目录 / FULL CATALOG";
   const routeStart = "<!-- thinloop-routing-kernel:start source=config/routing-kernel.json -->";
   const routeEnd = "<!-- thinloop-routing-kernel:end -->";
 
@@ -42,6 +42,7 @@ test("README presents three layers, evidence cases, and generated routes before 
   assert.match(layerSection, /\*\*主动治理与个人能力\*\*/);
   assert.deepEqual(skillLinks(layerSection), [
     "scd-next",
+    "scd-research",
     "scd-discovery",
     "scd-project",
     "scd-execute",
@@ -89,10 +90,10 @@ test("README keeps all three Before/After examples traceable and bounded by evid
   assert.match(cases, /历史两臂结果[\s\S]*不等于当前十三 Skill/);
 });
 
-test("README retains thirteen complete Skill entries, every flow, and the documentation index", () => {
+test("README retains fourteen complete Skill entries, every flow, and the documentation index", () => {
   const catalog = between(
     readme,
-    "## 完整十三 Skill 目录 / FULL CATALOG",
+    "## 完整十四 Skill 目录 / FULL CATALOG",
     "## 工作闭环 / WORKFLOW",
   );
   const expectedSkills = fs
@@ -100,7 +101,7 @@ test("README retains thirteen complete Skill entries, every flow, and the docume
     .filter((entry) => entry.isDirectory())
     .map((entry) => entry.name)
     .sort();
-  assert.equal(expectedSkills.length, 13);
+  assert.equal(expectedSkills.length, 14);
   assert.deepEqual(skillLinks(catalog).sort(), expectedSkills);
 
   for (const skill of expectedSkills) {

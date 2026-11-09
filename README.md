@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <kbd>v0.19.0</kbd>
+  <kbd>v0.20.0</kbd>
   &nbsp;
   <kbd>ISSUE-DRIVEN</kbd>
   &nbsp;
@@ -46,7 +46,7 @@ Thinloop 不接管开发过程，只守住容易在长任务里丢失的结果�
 
 | 层级 | Skill | 什么时候进入 |
 |---|---|---|
-| **核心交付** | [Next](./skills/scd-next/SKILL.md) · [Discovery](./skills/scd-discovery/SKILL.md) · [Project](./skills/scd-project/SKILL.md) · [Execute](./skills/scd-execute/SKILL.md) · [QuickDev](./skills/scd-quickdev/SKILL.md) | 从状态导航、产品澄清和多交付拆解，一直到每个 Issue 的实现、验收与合并。清晰单交付直接进入 QuickDev。 |
+| **核心交付** | [Next](./skills/scd-next/SKILL.md) · [Research](./skills/scd-research/SKILL.md) · [Discovery](./skills/scd-discovery/SKILL.md) · [Project](./skills/scd-project/SKILL.md) · [Execute](./skills/scd-execute/SKILL.md) · [QuickDev](./skills/scd-quickdev/SKILL.md) | 从状态导航、产品研究、产品澄清和多交付拆解，一直到每个 Issue 的实现、验收与合并。清晰单交付直接进入 QuickDev。 |
 | **条件设计与再工程** | [UIUX](./skills/scd-uiux/SKILL.md) · [UI Polish](./skills/scd-ui-polish/SKILL.md) · [Architecture](./skills/scd-architecture/SKILL.md) · [Reengineering](./skills/scd-reengineering/SKILL.md) | 已有页面可直接打磨视觉；体验设计、系统边界或项目级替换只在真实需要时加入。 |
 | **主动治理与个人能力** | [Maintenance](./skills/scd-maintenance/SKILL.md) · [Knowledge](./skills/scd-knowledge/SKILL.md) · [Evolve](./skills/scd-evolve/SKILL.md) · [Interview](./skills/scd-interview/SKILL.md) | 只在用户明确要求审计、沉淀、演进或提炼面试题时调用，普通开发不会自动触发。 |
 
@@ -110,12 +110,13 @@ UIUX 设计与页面验收自动使用同一份[页面视觉质量标准](./skil
 <!-- thinloop-routing-kernel:start source=config/routing-kernel.json -->
 1. **Next**：只问状态、阻塞或下一步 → `scd-next`：只读实时 Issue、PR、Initiative DAG 与验收证据，给出唯一下一行动。
 2. **QuickDev**：清晰的单交付仓库变更 → `scd-quickdev`：先逐项确认具体技术方案和Git计划并获开工授权，以一个中文 Issue 为边界实现和验证；直接证据与独立验收通过后才合并，高风险动作仍需明确批准。
-3. **Discovery**：产品结果仍不清楚，尤其是从 0 到 1 或多个相互依赖的产品决定 → `scd-discovery`。
-4. **Project**：已批准的稳定结果包含多个可独立验证交付 → `scd-project`：只建立并校验 Initiative、Delivery Issues 与依赖 DAG，不执行实现。
-5. **Execute**：已批准 Initiative 需要开始、继续、恢复或完成 → `scd-execute`：选择当前安全 READY 波次，每个 Issue 进入隔离 QuickDev 通道。
-6. **Reengineering**：跨语言、框架、架构、存储或运行时替换，或项目级大幅重构 → `scd-reengineering`：先固定来源、兼容性与切换门，再消费批准的 DAG。
-7. **条件设计**：只有真实复杂度需要时才加入设计：重要 Web 体验 → `scd-uiux`；已有页面视觉打磨 → `scd-ui-polish`；领域、系统或共享接口边界 → `scd-architecture`。
-8. **显式治理**：只有用户明确要求时才调用治理与个人能力：`scd-maintenance`、`scd-knowledge`、`scd-evolve`、`scd-interview`；普通开发不得自动触发。
+3. **Research**：产品前期用户、需求强度、竞品或替代方案研究，或新产品缺乏关键机会证据 → `scd-research`：可独立交付研究，需要定义产品时交给 Discovery。
+4. **Discovery**：产品结果仍不清楚，尤其是从 0 到 1 或多个相互依赖的产品决定 → `scd-discovery`。
+5. **Project**：已批准的稳定结果包含多个可独立验证交付 → `scd-project`：只建立并校验 Initiative、Delivery Issues 与依赖 DAG，不执行实现。
+6. **Execute**：已批准 Initiative 需要开始、继续、恢复或完成 → `scd-execute`：选择当前安全 READY 波次，每个 Issue 进入隔离 QuickDev 通道。
+7. **Reengineering**：跨语言、框架、架构、存储或运行时替换，或项目级大幅重构 → `scd-reengineering`：先固定来源、兼容性与切换门，再消费批准的 DAG。
+8. **条件设计**：只有真实复杂度需要时才加入设计：重要 Web 体验 → `scd-uiux`；已有页面视觉打磨 → `scd-ui-polish`；领域、系统或共享接口边界 → `scd-architecture`。
+9. **显式治理**：只有用户明确要求时才调用治理与个人能力：`scd-maintenance`、`scd-knowledge`、`scd-evolve`、`scd-interview`；普通开发不得自动触发。
 <!-- thinloop-routing-kernel:end -->
 
 新产品的 `.scd/product/prd.md` 保存产品级 why/what、MVP、`FR-*` 需求和成功
@@ -125,7 +126,7 @@ UIUX 设计与页面验收自动使用同一份[页面视觉质量标准](./skil
 
 <a id="capabilities"></a>
 
-## 完整十三 Skill 目录 / FULL CATALOG
+## 完整十四 Skill 目录 / FULL CATALOG
 
 <table width="100%">
   <tr>
@@ -216,6 +217,14 @@ UIUX 设计与页面验收自动使用同一份[页面视觉质量标准](./skil
       <p><strong>适合：</strong>已有网页的视觉优化、响应式与交互细节打磨。</p>
     </td>
   </tr>
+  <tr>
+    <td width="33%" valign="top">
+      <img src="./assets/retro-discovery.png" alt="SCD Research 产品研究图标" width="92">
+      <h3><a href="./skills/scd-research/SKILL.md">14 · SCD Research</a></h3>
+      <p>研究用户、竞品与替代，核对需求证据和关键假设，决定是否继续投入。</p>
+      <p><strong>适合：</strong>产品前期调研、用户研究、竞品分析和机会验证。</p>
+    </td>
+  </tr>
 </table>
 
 > 能力卡直达各 Skill 的权威说明；更细的契约和模板沿其 `Resources` 按需读取，不在 README 重复维护。
@@ -254,6 +263,12 @@ Issue 的验收、实施和交付三本账；页面差异还必须通过真实�
 <p><img src="./assets/flows/scd-next.svg" alt="SCD Next 流程：从实时 Issue、PR、Initiative DAG 和验收证据到唯一建议下一步" width="100%"></p>
 <p><img src="./assets/flows/scd-ui-polish.svg" alt="SCD UI Polish 流程：从真实页面基线到统一视觉方向、QuickDev 实施、八维复查和前后对比" width="100%"></p>
 <p><img src="./assets/flows/scd-interview.svg" alt="SCD Interview 流程：从显式请求和对话回顾到确认后的面试题写入或检索" width="100%"></p>
+
+<p><img src="./assets/flows/scd-research.svg" alt="SCD Research 流程：从用户任务、竞品替代和证据反证到假设验证、独立研究结果或 Discovery 交接" width="100%"></p>
+
+Research 可以独立回答产品是否值得继续；需要定义产品时，Research → Discovery。
+已有充分研究或批准规格直接复用，清晰局部变更不强制市场调研。研究计划、需求契约
+和真实付费/留存验证是不同证据，不能互相替代。
 
 每张图只保留该 Skill 的五个关键节点；完整触发条件、分支和安全边界仍以对应
 `SKILL.md` 为准。

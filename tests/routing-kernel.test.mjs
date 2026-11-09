@@ -39,8 +39,8 @@ test("routing kernel is compact and covers every Thinloop skill once", () => {
   const skills = kernel.routes.flatMap((route) => route.skills);
 
   assert.equal(source.trimEnd().split(/\r?\n/).length <= 20, true);
-  assert.equal(kernel.routes.length, 8);
-  assert.equal(new Set(skills).size, 13);
+  assert.equal(kernel.routes.length, 9);
+  assert.equal(new Set(skills).size, 14);
   assert.deepEqual([...skills].sort(), fs.readdirSync(path.join(root, "skills")).sort());
   assert.deepEqual(inspectRoutingKernel(root), []);
   assert.match(renderDefaultPrompt(kernel), /^Thinloop routing source: config\/routing-kernel\.json\./);
@@ -52,7 +52,7 @@ test("drift check fails when a README route is deliberately deleted", () => {
   const readme = fs.readFileSync(readmePath, "utf8");
   fs.writeFileSync(
     readmePath,
-    readme.replace(/^4\. \*\*Project\*\*.*\n/m, ""),
+    readme.replace(/^5\. \*\*Project\*\*.*\n/m, ""),
   );
 
   assert.deepEqual(inspectRoutingKernel(directory), [

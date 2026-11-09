@@ -1,0 +1,4 @@
+interface:
+  display_name: "SCD 产品研究"
+  short_description: "研究用户、竞品与需求证据，验证产品机会"
+  default_prompt: "使用 $scd-research，先研究目标用户的真实行为、当前替代方案、竞品与采用阻力，再识别关键假设并设计最小验证。按实际证据与反证建议继续、收窄、调整或暂缓，区分事实、推断和未执行验证；只研究时独立结束，需要定义产品时交给 scd-discovery，不自动开始实施。"
