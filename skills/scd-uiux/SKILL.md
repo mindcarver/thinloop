@@ -66,7 +66,7 @@ description: "在生产实施前设计或完善 Web 产品的用户体验和界�
 
 ## 形成可实施的视觉交付
 
-创建或验证线框图、视觉稿或原型前，阅读 `references/visual-evidence.md`。
+创建或验证线框图、视觉稿或原型前，阅读 `references/visual-evidence.md`。生成任何视觉产物前，先按[设计品味](references/design-taste.md)写出五项方向块并逐条排查反模式黑名单；命名不出方向时不得开始生成。
 视觉设计自动使用共用的[页面视觉质量](references/visual-quality.md)：统一方向、八维检查、实际渲染的有限轮次自审与可核对对比。已有页面只需视觉打磨时可独立使用 [scd-ui-polish](../scd-ui-polish/SKILL.md)；生产实施仍交给 QuickDev，清晰局部变更不增加设计阶段。
 
 - 明显的文案、颜色、间距或局部组件变更继续使用简洁的交互增量说明，不强制扩大成设计项目。
