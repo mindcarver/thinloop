@@ -17,6 +17,7 @@ function collectPayloadFiles(directory) {
   for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
     const absolutePath = path.join(directory, entry.name);
     if (entry.isDirectory()) {
+      if (entry.name === "data") continue; // 第三方机器可读资产，见 data/THIRD-PARTY-NOTICES.md
       files.push(...collectPayloadFiles(absolutePath));
     } else if (/\.(?:md|yaml)$/.test(entry.name)) {
       files.push(path.relative(root, absolutePath));
