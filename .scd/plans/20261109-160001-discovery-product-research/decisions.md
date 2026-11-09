@@ -1,8 +1,8 @@
 ---
-status: draft
+status: approved
 version: 2
 created_at: 2026-11-09T16:00:01+08:00
-updated_at: 2026-11-09T16:42:23+08:00
+updated_at: 2026-11-09T16:50:08+08:00
 recorded_timezone: Asia/Shanghai
 ---
 
@@ -38,3 +38,14 @@ recorded_timezone: Asia/Shanghai
 5. 整版批准后创建中文 Issue，连续完成普通 Git/PR/合并和已安装宿主 Thinloop 刷新（含第 14 个技能）；不安装 phuryn/pm-skills 或缺失宿主。
 
 v2 方案批准：尚未收到。v2 开工授权：尚未收到。已确认“独立”不等于批准尚未展示的全部具体选择。
+
+## E3：v2 方案批准与开工授权
+
+- 类型：批准与开工（用户明确合并授权）。
+- 原文：“确认按 v2 方案开始实施，新增独立的 scd-research，完成验证和合并后同步更新本机已有的 SCD 技能。”
+- 目标Git SHA：`515ade14d4e5e1b0543deb73bfd4b4b9d4aefafd`。
+- 精确文件：本目录 plan.md、requirements.md、implementation.md、decisions.md，v2。
+- 范围：v2 的 T1–T7、A1–A6，包括普通交付和本机已有 Thinloop 同步；不安装外部 pm-skills。
+- occurred_at：null（消息精确时间不可得）。
+- recorded_at：2026-11-09T16:50:08+08:00
+- 未决选择：本版范围内无；实质变化另行确认。
