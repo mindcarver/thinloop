@@ -50,7 +50,7 @@ description: "在生产实施前设计或完善 Web 产品的用户体验和界�
 
 ## 先建模行为，再打磨外观
 
-进行聚焦设计和产品体验工作时，阅读 `references/experience-contract.md`。构建已触发的体验部分：
+进行聚焦设计和产品体验工作时，阅读 `references/experience-contract.md`；按[设计方法论](references/design-method.md)从触发组织切片并走设计循环，平台级交互与无障碍底线遵循[Web 平台设计原则](references/platform-principles.md)。构建已触发的体验部分：
 
 1. 关键旅程及其成功或恢复路径；
 2. 界面、导航和信息层级；
