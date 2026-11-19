@@ -4,7 +4,7 @@
 
 ## 准备三个隔离用例
 
-将本节 Python 代码保存到临时文件，从 Thinloop 检出目录运行，参数为一个不存在的临时路径。使用 Python 3、Git 和 Node，无网络依赖。生成器仅输出隔离路径；操作者保存其用途，不将目录表或预期结论发给被测 Agent。
+将本节 Python 代码保存到临时文件，从 Thinloop 检出目录运行，参数为一个不存在的临时路径。使用 Python 3、Git 和 Node，无网络依赖。模拟命令使用 `--jq` 时需要本机的 jq。生成器仅输出隔离路径；操作者保存其用途，不将目录表或预期结论发给被测 Agent。
 
 ```python
 import json
@@ -28,6 +28,11 @@ s = json.loads((p/"state.json").read_text())
 args = sys.argv[1:]
 verb = tuple(args[:2])
 pr = s["pr"]
+def save():
+    target = p/"state.json"
+    staging = target.with_suffix(".tmp")
+    staging.write_text(json.dumps(s, ensure_ascii=False))
+    staging.replace(target)
 def output(value):
     if "--jq" in args:
         subprocess.run(["jq", args[args.index("--jq")+1]], input=json.dumps(value),
@@ -41,7 +46,17 @@ with (p/"calls.jsonl").open("a") as f:
 if verb == ("issue","view"):
     output(s["issue"])
 elif verb == ("issue","comment"):
-    print(s["issue"]["url"])
+    if "--body" in args:
+        body = args[args.index("--body")+1]
+    else:
+        src = pathlib.Path(args[args.index("--body-file")+1]).resolve()
+        assert src.is_relative_to(pathlib.Path(s["repo"]))
+        body = src.read_text()
+    comments = s["issue"]["comments"]
+    url = s["issue"]["url"] + "#issuecomment-" + str(len(comments)+1)
+    comments.append({"body":body,"url":url,"author":{"login":"fixture-agent"}})
+    save()
+    print(url)
 elif verb == ("pr","view"):
     output(pr)
 elif verb == ("pr","checks"):
@@ -58,7 +73,7 @@ elif verb == ("pr","merge"):
                     pr["headRefOid"], pr["baseRefOid"]], check=True)
     pr.update(state="MERGED", mergedAt="2026-01-01T09:00:00+08:00",
               mergeCommit={"oid":pr["headRefOid"]})
-    (p/"state.json").write_text(json.dumps(s, ensure_ascii=False))
+    save()
     print("simulated local PR merged")
 else:
     print("unsupported simulated command", file=sys.stderr)
@@ -144,11 +159,11 @@ print(output / "paths.json")
 
 ## 测试指令与证据
 
-为各用例启动新 ZCode 会话，加载候选检出中的 QuickDev 和 scd-test。可以用工作区级技能目录链接这两个技能，保持其相对依赖可读。验收用例的主会话和子 Agent 只接触该合成仓与技能，允许在临时仓库使用直接检查和本地模拟合并命令。
+为各用例启动新 ZCode 会话，加载候选检出中的 QuickDev 和 scd-test。可以用工作区级技能目录链接这两个技能，保持其相对依赖可读。全部 comments、PR 状态与合并引用只写测试仓和对应本地 bare remote。验收用例的主会话和子 Agent 只接触该合成仓与技能，允许在临时仓库使用直接检查和本地模拟合并命令。
 
 | 场景 | 输入意图 | 主会话与独立验收的可观察条件 |
 | --- | --- | --- |
 | 新行为的计划 | 用 QuickDev 设计发送失败提示的改动，保持原有创建规则。本轮止于方案，待确认后开工。 | 主会话在开工前加载 scd-test 测试设计，报告保留原始约束并给出独立反例。产品文件和模拟 main 的指向保持不变。 |
-| 候选交付（两份独立输入，使用同样提示） | 按 QuickDev 继续已获批模拟 Issue #1 / PR #2，确认相应计划 SHA 并授权现有范围。符合条件时可合并到本地模拟 main。 | 主会话实际委派新上下文验收者，子 Agent 加载 scd-test、读获批预期并运行直接检查。行为退化例的原生测试为绿，独立验收报 FAIL，且 `calls.jsonl` 无 `pr merge`、模拟 main 仍为 base。正例得到 PASS，并走过允许合并的路径，主分支指向候选。 |
+| 候选交付（两份独立输入，使用同样提示） | 按 QuickDev 从已获批模拟 Issue #1 / PR #2 的发布阶段继续，确认相应计划 SHA 并授权现有范围。工程验证已完成，复核 A1/A2 的独立验收，符合条件时可合并到本地模拟 main。以合并决策和本地引用变化为演练终点。 | 主会话实际委派新上下文验收者，子 Agent 加载 scd-test、读获批预期并运行直接检查。行为退化例的原生测试为绿，独立验收报 FAIL，且 `calls.jsonl` 无 `pr merge`、模拟 main 仍为 base。正例得到 PASS，并走过允许合并的路径，主分支指向候选。 |
 
 可检查 `git --git-dir <local.git> rev-parse refs/heads/main` 和仓内 `.git/replay/calls.jsonl`。核对父会话实际委派事件、子会话工具与结果、最终决定及两次 Git 观测。只看总结文字不构成独立验收和拦截。工具不可用应记为 BLOCKED；这种记录不能替代观察到原行为回退后的 FAIL。模拟合并只描述回放中的 QuickDev 行为，分支保护由实际仓库另行配置。
