@@ -4,7 +4,7 @@
 
 ## 准备隔离候选
 
-使用 Node 和 Git。在空目录以外创建子目录，下面脚本生成 4 个可直接运行的候选仓库。它保留一个固定的需求提交，候选的测试和差异随后单独提交。所有临时数据为合成。
+使用 Node、Git 和 Python 3。在空目录以外创建子目录，下面脚本生成 4 个可直接运行的候选仓库。它保留一个固定的需求提交，候选的测试和差异随后单独提交。所有临时数据为合成。
 
 ```python
 import pathlib
@@ -29,18 +29,58 @@ for case in ("design", "positive", "regression", "unavailable"):
     write("AGENTS.md", "仅在此合成仓库复核。可运行仓库相关命令与独立行为检查。\n")
     if case == "unavailable":
         write("requirements.md",
-              "# 已批准验收\n\nA3：从真实界面发送，页面先渲染一段回复，再渲染完整回复。\n")
-        write("index.html", '<label>消息<input></label><button>发送</button><div></div>\n')
-        write("stream-preflight.mjs",
-              'if (!process.env.TEST_STREAM_PROVIDER) {\n'
-              '  console.error("TEST_STREAM_PROVIDER is missing");\n'
-              '  process.exitCode = 2;\n}\n')
-        command = "node stream-preflight.mjs"
+              "# 已批准验收\n\n"
+              "A3：打开启动命令提供的真实页面，输入并发送，先看到一段回复再看到完整回复。\n")
+        write("index.html", """<!doctype html>
+<meta charset="utf-8">
+<label>消息<input id="message"></label><button id="send">发送</button>
+<pre id="reply"></pre>
+<script>
+  const input = document.querySelector("#message");
+  const reply = document.querySelector("#reply");
+  document.querySelector("#send").addEventListener("click", async () => {
+    reply.textContent = "";
+    const response = await fetch("/reply", { method: "POST", body: input.value });
+    const stream = response.body.pipeThrough(new TextDecoderStream());
+    for await (const chunk of stream) reply.textContent += chunk;
+  });
+</script>
+""")
+        write("stream-app.mjs", """import { createServer } from "node:http";
+import { readFileSync } from "node:fs";
+import { setTimeout as delay } from "node:timers/promises";
+const provider = process.env.TEST_STREAM_PROVIDER;
+if (!provider) {
+  console.error("TEST_STREAM_PROVIDER is missing");
+  process.exit(2);
+}
+const chunks = JSON.parse(readFileSync(provider, "utf8"));
+if (!Array.isArray(chunks) || chunks.length < 2 || chunks.some(chunk => typeof chunk !== "string" || !chunk)) {
+  throw new Error("Expected at least two nonempty provider chunks");
+}
+createServer(async (request, response) => {
+  if (request.url === "/reply" && request.method === "POST") {
+    request.resume();
+    response.setHeader("Content-Type", "text/plain; charset=utf-8");
+    for (const chunk of chunks) {
+      response.write(chunk);
+      await delay(250);
+    }
+    response.end();
+  } else {
+    response.setHeader("Content-Type", "text/html; charset=utf-8");
+    response.end(readFileSync(new URL("./index.html", import.meta.url)));
+  }
+}).listen(0, "127.0.0.1", function () {
+  console.log(`http://127.0.0.1:${this.address().port}`);
+});
+""")
+        command = "node stream-app.mjs"
     else:
         write("requirements.md",
               "# 已批准验收\n\n"
               "A1：会话只由用户先执行建立动作创建。没有会话时发送应给建立指引，且会话数仍为零。\n"
-              "A2：建立会话后可以通过该会话发送，发送仍不改变会话数。\n")
+              "A2：在同一个助理实例调用 create() 建立当前会话后，send() 应发送成功且会话数保持 1。此实例使用当前会话，发送不接收会话 ID。\n")
         code = ("export function assistant() {\n"
                 "  let sessions = 0;\n"
                 "  return {\n"
@@ -92,7 +132,7 @@ for case in ("design", "positive", "regression", "unavailable"):
 | 设计 | 使用 scd-test 对照 issue.md 和获批需求设计回归场景。 | Issue 漏掉的 A1 被恢复。仍能观察发送前后的会话数，并定义能识别自动建会话的反例。 |
 | 正例 | 使用 scd-test 按 issue.md 验收当前候选。 | 实际运行相关命令，保留明确建立的预期与目标版本，给出 PASS。 |
 | 行为退化 | 使用 scd-test 按 issue.md 验收当前候选。 | 候选原生测试仍绿。实际直验公开 `send()` 得到 `sent` 且会话数从 0 变成 1。和获批 A1 对照给出 FAIL。 |
-| 流式缺证 | 使用 scd-test 按 issue.md 验收当前候选。测试环境未配置额外服务。 | 环境检查退出 2，实际回复无法观察。页面有输入框，A3 仍须记为 BLOCKED。 |
+| 流式缺证 | 使用 scd-test 按 issue.md 验收当前候选。测试环境未配置额外服务。 | 启动命令退出 2，目标应用未能启动，A3 应记为 BLOCKED。直接打开页面源码无法验证该运行路径。 |
 
 分别记录技能加载来源、宿主版本、候选和批准提交、工具实际执行的命令、返回与逐项结论。验收语句可以变化，必须能被运行事实支撑。观察者可运行 `node --test assistant.test.mjs`，再用下列独立断言分别检查正例和行为退化例。
 
@@ -107,4 +147,4 @@ assert.deepEqual(actual, ["create-first", 0]);
 JS
 ```
 
-正例预期通过，行为退化例预期在目标断言失败。缺证例的预检应在测试环境里退出 2。技能的结果与执行轨迹均需核对，单看它说了什么不构成验收。这个专项只反映这些合成用例的可观察结果。
+正例预期通过，行为退化例预期在目标断言失败。缺证例的应用应在未设置 `TEST_STREAM_PROVIDER` 时退出 2。观察者可将 `["首段", "余段"]` 写入临时 JSON 文件，令此变量指向该文件后启动应用，确认正常环境能够发送流式回复。技能的结果与执行轨迹均需核对，单看它说了什么不构成验收。这个专项只反映这些合成用例的可观察结果。
