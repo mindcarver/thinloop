@@ -50,7 +50,7 @@ elif verb == ("issue","comment"):
         body = args[args.index("--body")+1]
     else:
         src = pathlib.Path(args[args.index("--body-file")+1]).resolve()
-        assert src.is_relative_to(pathlib.Path(s["repo"]))
+        assert src.is_relative_to(pathlib.Path(s["repo"]).resolve())
         body = src.read_text()
     comments = s["issue"]["comments"]
     url = s["issue"]["url"] + "#issuecomment-" + str(len(comments)+1)
