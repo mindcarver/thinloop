@@ -1,8 +1,8 @@
 ---
-status: draft
+status: approved
 version: 1
 created_at: 2026-11-19T10:15:04+08:00
-updated_at: 2026-11-19T10:15:04+08:00
+updated_at: 2026-11-19T10:31:48+08:00
 recorded_timezone: Asia/Shanghai
 ---
 
@@ -15,3 +15,5 @@ recorded_timezone: Asia/Shanghai
 - [决策和授权记录](decisions.md) v1
 - 基线 `ff0a828c687171510541cce0a09777575f73f3ca`（Thinloop v0.21.0）
 - 交付范围为一个中文 GitHub Issue，获批后建立。
+
+- [方案批准 APPROVE-1 与开工授权 START-1](decisions.md#approve-1)

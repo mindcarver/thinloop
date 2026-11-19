@@ -1,8 +1,8 @@
 ---
-status: draft
+status: approved
 version: 1
 created_at: 2026-11-19T10:15:04+08:00
-updated_at: 2026-11-19T10:15:04+08:00
+updated_at: 2026-11-19T10:31:48+08:00
 recorded_timezone: Asia/Shanghai
 ---
 
