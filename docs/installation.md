@@ -2,16 +2,16 @@
 
 [返回 README](../README.md)
 
-十四个 Skill 遵循同一目录契约。推荐安装方式如下：
+十五个 Skill 遵循同一目录契约。推荐安装方式如下：
 
 | Agent | 推荐安装 | 更新生效 |
 |---|---|---|
-| Codex | 把十四个 Skill 链接到 `~/.codex/skills` | 新任务 |
-| OpenCode | 把十四个 Skill 链接到 `~/.config/opencode/skills` | 重启 OpenCode |
-| Pi | 把十四个 Skill 链接到 `~/.pi/agent/skills` | 新会话或执行 `/reload` |
-| CodeWhale | 把十四个 Skill 链接到 `~/.codewhale/skills` | 新会话 |
-| Reasonix | 把十四个 Skill 链接到 `~/.reasonix/skills` | 新会话 |
-| DeepSeek Harness | 把十四个 Skill 链接到 `~/.dsh/skills`，并在 `$DSH_HOME/cordis.patch.yml` 挂载 `.dsh-plugin/continuity.mjs`（宿主级 Cordis 插件行） | 新会话（filesystem provider 的 watcher 会自动失效并更新目录） |
+| Codex | 把十五个 Skill 链接到 `~/.codex/skills` | 新任务 |
+| OpenCode | 把十五个 Skill 链接到 `~/.config/opencode/skills` | 重启 OpenCode |
+| Pi | 把十五个 Skill 链接到 `~/.pi/agent/skills` | 新会话或执行 `/reload` |
+| CodeWhale | 把十五个 Skill 链接到 `~/.codewhale/skills` | 新会话 |
+| Reasonix | 把十五个 Skill 链接到 `~/.reasonix/skills` | 新会话 |
+| DeepSeek Harness | 把十五个 Skill 链接到 `~/.dsh/skills`，并在 `$DSH_HOME/cordis.patch.yml` 挂载 `.dsh-plugin/continuity.mjs`（宿主级 Cordis 插件行） | 新会话（filesystem provider 的 watcher 会自动失效并更新目录） |
 | Claude Code | 安装完整插件 | 更新后重启或重新加载插件 |
 | WorkBuddy | 安装完整插件 | 更新后重启 WorkBuddy |
 | ZCode | 安装完整插件 | 更新后新建会话 |
@@ -112,7 +112,7 @@ for root in "${skill_roots[@]}"; do
 done
 ```
 
-上面的脚本只移除明确的旧链接 `scd-dev-loop`，并修复十四个 Thinloop Skill
+上面的脚本只移除明确的旧链接 `scd-dev-loop`，并修复十五个 Thinloop Skill
 链接；遇到同名的真实文件或目录会跳过，不会覆盖用户内容。OpenCode 也能读取
 `~/.claude/skills`，Pi 也能读取 `~/.agents/skills`；CodeWhale 使用
 `~/.codewhale/skills`，并允许 `CODEWHALE_SKILLS_DIR` 直接覆盖整个 Skill
@@ -134,7 +134,7 @@ Reasonix 已有的全局或项目 Hook 与未经验证的连续性阻断语义�
 DeepSeek Harness 的 Skill 发现由内置的 filesystem provider 负责：它按
 `<projectRoot>/.dsh/skills`、`<projectRoot>/.agents/skills`、自定义目录、
 `$DSH_HOME/skills`（默认 `~/.dsh/skills`）与 `~/.agents/skills` 分层扫描
-标准 `SKILL.md` 目录。把十四个 Skill 链接到 `~/.dsh/skills` 后，新会话的
+标准 `SKILL.md` 目录。把十五个 Skill 链接到 `~/.dsh/skills` 后，新会话的
 skill 工具即可发现并加载 `scd-next`、`scd-execute`、`scd-project`、
 `scd-quickdev` 等全部 Skill；provider 的 watcher 会自动失效并更新模型侧
 目录，不依赖重启。DeepSeek Harness 没有 Claude Code、WorkBuddy、ZCode 那种
@@ -212,7 +212,7 @@ claude plugin install thinloop@thinloop --scope user
 
 WorkBuddy 5.3.5 内置的 CodeBuddy 运行时读取
 `.codebuddy-plugin/marketplace.json` 与 `.codebuddy-plugin/plugin.json`。
-完整插件会注册十四个 Skill，并在 `PreCompact` 与 `Stop` 时通过
+完整插件会注册十五个 Skill，并在 `PreCompact` 与 `Stop` 时通过
 `CODEBUDDY_PLUGIN_ROOT` 运行连续性检查；状态不完整时返回原生
 `continue: false`，让 Agent 先补齐恢复信息。
 
@@ -226,7 +226,7 @@ WorkBuddy 5.3.5 内置的 CodeBuddy 运行时读取
 3. 自定义 Marketplace 会显示在 Personal 筛选下；切换到 Personal 后，在
    `thinloop` 卡片点击 Install，并保持插件启用。
 
-完整插件会注册十四个 Skill；`Stop` 发现激活状态不可恢复时会让主 Agent 继续
+完整插件会注册十五个 Skill；`Stop` 发现激活状态不可恢复时会让主 Agent 继续
 补齐，最多连续三次；压缩后的 `SessionStart(compact)` 会把缺失状态作为恢复
 上下文注入。ZCode 不支持 Codex 专用的 `PreCompact` 事件，因此当前运行时会
 记录一条 warning 并只跳过该事件，不影响上述两个 ZCode Hook。
@@ -405,3 +405,4 @@ ZCode：使用 $scd-evolve 诊断本次使用过的 Thinloop Skill。
 - 升级到 v0.20.0：新增独立 `scd-research`，支持产品前期用户、竞品、替代方案和假设验证；Discovery 消费研究结论，保留清晰变更快速路径。已有客户端按原安装形态更新并核对十四个技能，详见 [`v0.20.0`](./releases/v0.20.0.md)。
 - 升级到 v0.20.1：`scd-uiux` 补入设计智力层——生成前方向块、反模式黑名单、三层设计令牌纪律与两阶段保真度循环，八维检查升级为阈值加反模式双列。详见 [`v0.20.1`](./releases/v0.20.1.md)。
 - 升级到 v0.21.0：`scd-uiux` 补入设计知识层——DTCG 令牌与组件规范数据资产、可检索设计知识库（styles/字体搭配/产品配色等 9 域+22 框架表，自研 node 检索引擎）、33MB 设计系统参考语料、WDS 设计方法论与双视角评审；安装体积约 +31MB。详见 [`v0.21.0`](./releases/v0.21.0.md)。
+- 升级到 v0.22.0：新增独立 `scd-test`。十五个技能目录按现有安装方式刷新。新会话可直接调用 `scd-test` 设计测试或核对验收。详见 [v0.22.0](./releases/v0.22.0.md)。

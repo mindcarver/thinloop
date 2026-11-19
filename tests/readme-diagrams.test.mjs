@@ -21,6 +21,8 @@ const slugs = [
   "next",
   "interview",
   "ui-polish",
+  "research",
+  "test",
 ];
 
 function read(relativePath) {
@@ -37,7 +39,7 @@ test("README flow diagrams are reproducible", () => {
   assert.equal(result.status, 0, result.stderr);
 });
 
-test("README references the overview and all thirteen skill diagrams with alt text", () => {
+test("README references the overview and all fifteen skill diagrams with alt text", () => {
   const readme = read("README.md");
   const expectedFiles = [
     "thinloop-overview.svg",

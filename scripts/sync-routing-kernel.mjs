@@ -8,6 +8,7 @@ const pluginPath = ".codex-plugin/plugin.json";
 const routeIds = [
   "next",
   "quickdev",
+  "test",
   "research",
   "discovery",
   "project",
@@ -35,7 +36,7 @@ export function loadRoutingKernel(root = defaultRoot) {
     throw new Error(`${sourcePath} must use schemaVersion 1 and routes[]`);
   }
   if (kernel.routes.map(({ id }) => id).join() !== routeIds.join()) {
-    throw new Error(`${sourcePath} must define the nine canonical routes in order`);
+    throw new Error(`${sourcePath} must define the ten canonical routes in order`);
   }
 
   const skills = [];
@@ -56,8 +57,8 @@ export function loadRoutingKernel(root = defaultRoot) {
       skills.push(skill);
     }
   }
-  if (skills.length !== 14 || new Set(skills).size !== 14) {
-    throw new Error(`${sourcePath} must cover 14 Thinloop skills exactly once`);
+  if (skills.length !== 15 || new Set(skills).size !== 15) {
+    throw new Error(`${sourcePath} must cover 15 Thinloop skills exactly once`);
   }
 
   const project = kernel.routes.find(({ id }) => id === "project");
@@ -150,7 +151,7 @@ function main() {
       errors.forEach((error) => console.error(error));
       process.exitCode = 1;
     } else {
-      console.log("routing kernel check passed (9 routes, 4 generated surfaces)");
+      console.log(`routing kernel check passed (${routeIds.length} routes, 4 generated surfaces)`);
     }
   } else {
     const changed = syncRoutingKernel();
