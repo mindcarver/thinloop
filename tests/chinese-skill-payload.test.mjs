@@ -33,13 +33,13 @@ test("全部 Thinloop Skill 文本载荷均包含中文", () => {
     .flatMap((entry) => collectPayloadFiles(path.join(skillsRoot, entry.name)))
     .sort();
 
-  assert.equal(files.length, 81); // Adds design-method and platform-principles references.
+  assert.equal(files.length, 85);
   for (const file of files) {
     assert.match(read(file), han, file);
   }
 });
 
-test("十四个 Skill 描述与十三份 Agent 提示词均使用中文", () => {
+test("十五个 Skill 描述与十四份 Agent 提示词均使用中文", () => {
   const skillFiles = fs
     .readdirSync(skillsRoot, { withFileTypes: true })
     .filter((entry) => entry.isDirectory() && entry.name.startsWith("scd-"))
@@ -49,8 +49,8 @@ test("十四个 Skill 描述与十三份 Agent 提示词均使用中文", () => 
     .map((file) => file.replace("/SKILL.md", "/agents/openai.yaml"))
     .filter((file) => fs.existsSync(path.join(root, file)));
 
-  assert.equal(skillFiles.length, 14);
-  assert.equal(agentFiles.length, 13);
+  assert.equal(skillFiles.length, 15);
+  assert.equal(agentFiles.length, 14);
   for (const file of skillFiles) {
     const description = read(file).match(/^description:\s*"([^"]+)"/m)?.[1];
     assert.match(description ?? "", han, file);

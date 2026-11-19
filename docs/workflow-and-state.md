@@ -16,13 +16,14 @@ GitHub Delivery Issue 保存切片边界和验收；多交付项目由 Initiativ
 <!-- thinloop-routing-kernel:start source=config/routing-kernel.json -->
 1. **Next**：只问状态、阻塞或下一步 → `scd-next`：只读实时 Issue、PR、Initiative DAG 与验收证据，给出唯一下一行动。
 2. **QuickDev**：清晰的单交付仓库变更 → `scd-quickdev`：先逐项确认具体技术方案和Git计划并获开工授权，以一个中文 Issue 为边界实现和验证；直接证据与独立验收通过后才合并，高风险动作仍需明确批准。
-3. **Research**：产品前期用户、需求强度、竞品或替代方案研究，或新产品缺乏关键机会证据 → `scd-research`：可独立交付研究，需要定义产品时交给 Discovery。
-4. **Discovery**：产品结果仍不清楚，尤其是从 0 到 1 或多个相互依赖的产品决定 → `scd-discovery`。
-5. **Project**：已批准的稳定结果包含多个可独立验证交付 → `scd-project`：只建立并校验 Initiative、Delivery Issues 与依赖 DAG，不执行实现。
-6. **Execute**：已批准 Initiative 需要开始、继续、恢复或完成 → `scd-execute`：选择当前安全 READY 波次，每个 Issue 进入隔离 QuickDev 通道。
-7. **Reengineering**：跨语言、框架、架构、存储或运行时替换，或项目级大幅重构 → `scd-reengineering`：先固定来源、兼容性与切换门，再消费批准的 DAG。
-8. **条件设计**：只有真实复杂度需要时才加入设计：重要 Web 体验 → `scd-uiux`；已有页面视觉打磨 → `scd-ui-polish`；领域、系统或共享接口边界 → `scd-architecture`。
-9. **显式治理**：只有用户明确要求时才调用治理与个人能力：`scd-maintenance`、`scd-knowledge`、`scd-evolve`、`scd-interview`；普通开发不得自动触发。
+3. **Test**：设计验收测试或复核实现证据 → `scd-test`：对照原始要求和已批准版本，设计可观察场景或独立验收候选；代码交付仍由已获批的 QuickDev 处理。
+4. **Research**：产品前期用户、需求强度、竞品或替代方案研究，或新产品缺乏关键机会证据 → `scd-research`：可独立交付研究，需要定义产品时交给 Discovery。
+5. **Discovery**：产品结果仍不清楚，尤其是从 0 到 1 或多个相互依赖的产品决定 → `scd-discovery`。
+6. **Project**：已批准的稳定结果包含多个可独立验证交付 → `scd-project`：只建立并校验 Initiative、Delivery Issues 与依赖 DAG，不执行实现。
+7. **Execute**：已批准 Initiative 需要开始、继续、恢复或完成 → `scd-execute`：选择当前安全 READY 波次，每个 Issue 进入隔离 QuickDev 通道。
+8. **Reengineering**：跨语言、框架、架构、存储或运行时替换，或项目级大幅重构 → `scd-reengineering`：先固定来源、兼容性与切换门，再消费批准的 DAG。
+9. **条件设计**：只有真实复杂度需要时才加入设计：重要 Web 体验 → `scd-uiux`；已有页面视觉打磨 → `scd-ui-polish`；领域、系统或共享接口边界 → `scd-architecture`。
+10. **显式治理**：只有用户明确要求时才调用治理与个人能力：`scd-maintenance`、`scd-knowledge`、`scd-evolve`、`scd-interview`；普通开发不得自动触发。
 <!-- thinloop-routing-kernel:end -->
 
 默认不强制 TDD、角色系统或固定阶段。Project 只拆解项目、校验 Issue 级 DAG
@@ -35,7 +36,7 @@ Issue、分支、提交、推送、PR 与合资格合并；高风险合并和生
 任务计划保存需求、方案与批准版本；Issue负责执行和验收。默认先确认具体技术选择、精确Git计划及开工范围；实质变化重新确认，获批操作不重复询问。
 QuickDev 创建或更新的 Issue 标题、正文、验收、tasks 和验证记录统一使用中文，
 但命令、路径、代码标识和机器状态保持规范原值。
-十三个 Thinloop Skill 的说明、Agent 提示词、参考契约与模板也统一使用中文。
+十五个 Thinloop Skill 的说明、Agent 提示词、参考契约与模板也统一使用中文。
 
 QuickDev 的完成审计不把“任务勾完”当成交付。验收账要求每个验收标识有直接
 `PASS` 证据；实施账要求每项任务为 `DONE`、`SUPERSEDED` 或 `N/A`，后两者

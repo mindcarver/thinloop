@@ -31,6 +31,19 @@ function escapeXml(value) {
 
 const skillFlows = [
   {
+    slug: "test",
+    index: "15",
+    title: "SCD 测试设计与独立验收",
+    subtitle: "批准要求 → 可观察测试或验收证据",
+    stages: [
+      ["查证", "原始要求"],
+      ["锁定", "行为预期"],
+      ["设计场景", "或验收目标"],
+      ["关键反例", "与运行证据"],
+      ["测试设计", "或验收结论"],
+    ],
+  },
+  {
     slug: "research",
     index: "14",
     title: "SCD 产品研究",
