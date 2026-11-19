@@ -6,7 +6,7 @@ copy.
 
 <!-- thinloop-routing-kernel:start source=config/routing-kernel.json -->
 1. **Next**：只问状态、阻塞或下一步 → `scd-next`：只读实时 Issue、PR、Initiative DAG 与验收证据，给出唯一下一行动。
-2. **QuickDev**：清晰的单交付仓库变更 → `scd-quickdev`：先逐项确认具体技术方案和Git计划并获开工授权，以一个中文 Issue 为边界实现和验证；直接证据与独立验收通过后才合并，高风险动作仍需明确批准。
+2. **QuickDev**：清晰的单交付仓库变更 → `scd-quickdev`：关键行为开工前用 scd-test 按原始需求设计测试，再确认具体方案、Git计划并获得开工授权；以一个中文 Issue 为边界实施，scd-test 独立验收通过后才合并，高风险动作仍需明确批准。
 3. **Test**：设计验收测试或复核实现证据 → `scd-test`：对照原始要求和已批准版本，设计可观察场景或独立验收候选；代码交付仍由已获批的 QuickDev 处理。
 4. **Research**：产品前期用户、需求强度、竞品或替代方案研究，或新产品缺乏关键机会证据 → `scd-research`：可独立交付研究，需要定义产品时交给 Discovery。
 5. **Discovery**：产品结果仍不清楚，尤其是从 0 到 1 或多个相互依赖的产品决定 → `scd-discovery`。

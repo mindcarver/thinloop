@@ -345,3 +345,21 @@ test("quickdev loads short phase references conditionally and offers a compact l
     assert.ok(entry.includes(`references/${file}`), `${file} must remain reachable with its trigger`);
   }
 });
+
+test("quickdev resolves scd-test in the plan and independent acceptance phases", () => {
+  const entryPath = "skills/scd-quickdev/SKILL.md";
+  const releasePath = "skills/scd-quickdev/references/release-contract.md";
+  const [planning, delivery] = read(entryPath).split("## 实施与验收");
+  const independent = read(releasePath).split("## 独立验收").at(-1);
+
+  for (const [source, text] of [[entryPath, planning], [releasePath, independent]]) {
+    const target = text.match(/\[scd-test\]\(([^)]+)\)/)?.[1];
+    assert.ok(target, `${source} must link the skill from the applicable phase`);
+    assert.equal(path.resolve(root, path.dirname(source), target), path.join(root, "skills/scd-test/SKILL.md"));
+    assert.ok(fs.existsSync(path.resolve(root, path.dirname(source), target)));
+  }
+  assert.match(planning, /原始要求及批准版本[\s\S]*精确 Git 计划与开工范围/);
+  assert.match(delivery, /由该验收者实际执行[\s\S]*验收模式/);
+  assert.match(independent, /按原始预期直接复验行为/);
+  assert.match(independent, /候选 HEAD 与获批验收依据/);
+});
