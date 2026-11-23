@@ -13,7 +13,9 @@
 3. 覆盖差异真实触发的加载、空数据、成功、失败、权限、部分成功和恢复状态；
 4. 按共用视觉标准确定并记录适用视口，在布局真实变化时覆盖代表性桌面和窄屏视口；
 5. 存在 UX 视觉交付时，把实际结果逐项映射到视觉 ID 并记录允许差异；不存在时把视觉 ID 标为 `N/A`，仍需验证 Issue 定义的可见结果；
-6. 执行共用八维检查，另核对键盘顺序、焦点与基本无障碍名称；
+6. 执行共用八维检查与双视角自审：
+   - **规范审（脚本量化硬底线 + 交互核对）**：在真实浏览器的受测视口与关键状态下运行零依赖探测脚本 `skills/scd-uiux/scripts/dom-audit.mjs`（通过 `node skills/scd-uiux/scripts/dom-audit.mjs --print-snippet` 获取浏览器自包含片段并在 `page.evaluate(...)` 或浏览器控制台执行，或对采集快照运行 `auditSnapshot()`），客观校验 `horizontal_overflow`、`small_body_text`、`small_touch_target`、`heading_hierarchy`、`missing_accessible_name`、`broken_image`、`low_contrast` 7 类硬底线，并人工核对键盘顺序、焦点返回与状态完备；脚本命中当前回归硬底线告警时按对应维度 `FAIL` 处理；
+   - **工作室主审（多模态看图主审）**：结合真实页面截图与对应产品形态轨道（展示/营销型 Web vs 高密度工具/工作台型 Web App）复核视觉层级、构图、留白与辨识度；
 7. 检查与旅程相关的控制台错误和失败网络请求，并区分当前回归与已知无关基线；
 8. 保存可复现的截图、录屏、浏览器追踪或等价证据引用，并链接基线、各轮自审与同条件对比。
 

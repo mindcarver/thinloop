@@ -64,8 +64,45 @@ test("new skill and shared references remain readable in supported installation 
       for (const target of localLinks(path.join(destination, "scd-ui-polish/SKILL.md"))) {
         assert.ok(fs.existsSync(path.resolve(destination, "scd-ui-polish", target)), `${platform.id}: ${target}`);
       }
+      assert.ok(
+        fs.existsSync(path.join(destination, "scd-uiux/scripts/dom-audit.mjs")),
+        `${platform.id}: dom-audit.mjs must be present`,
+      );
     }
   } finally {
     fs.rmSync(temporary, { recursive: true, force: true });
+  }
+});
+
+test("visual quality and page acceptance integrate dual-track thresholds and dom-audit norm review", () => {
+  const quality = fs.readFileSync(path.join(root, "skills", canonical), "utf8");
+  const pageAcceptance = fs.readFileSync(
+    path.join(root, "skills/scd-quickdev/references/page-acceptance.md"),
+    "utf8",
+  );
+
+  assert.match(quality, /展示\/营销\/内容型 Web/);
+  assert.match(quality, /高密度工具\/工作台型 Web App/);
+  assert.match(quality, /1\.35x–1\.75x/);
+  assert.match(quality, /KPI 指标卡/);
+  assert.match(quality, /桌面优先/);
+  assert.match(quality, /窄屏可用或优雅降级/);
+
+  for (const doc of [quality, pageAcceptance]) {
+    assert.match(doc, /dom-audit\.mjs/);
+    assert.match(doc, /--print-snippet/);
+    assert.match(doc, /规范审/);
+    assert.match(doc, /工作室主审/);
+    for (const rule of [
+      "horizontal_overflow",
+      "small_body_text",
+      "small_touch_target",
+      "heading_hierarchy",
+      "missing_accessible_name",
+      "broken_image",
+      "low_contrast",
+    ]) {
+      assert.match(doc, new RegExp(rule));
+    }
   }
 });
