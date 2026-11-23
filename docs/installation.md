@@ -15,12 +15,14 @@
 | Claude Code | 安装完整插件 | 更新后重启或重新加载插件 |
 | WorkBuddy | 安装完整插件 | 更新后重启 WorkBuddy |
 | ZCode | 安装完整插件 | 更新后新建会话 |
+| Antigravity | 在 `~/.gemini/config/plugins/thinloop` 装配全局插件（`plugin.json`、`hooks.json`、`rules/AGENTS.md` 与 `skills`/`hooks` 源码软链） | 自动发现，下一轮生效 |
 
-Skill 链接随源码仓库更新，但默认不启用连续性 Hook；Claude Code、WorkBuddy
-和 ZCode 的完整插件会额外启用各自支持的 Hook，DeepSeek Harness 则通过把
-`.dsh-plugin/continuity.mjs` 挂载到 DSH 的 home 级用户 patch 层启用
-`agent/turn-stopping` 连续性闸门。不要在同一个 Agent 中同时安装完整插件和
-个人 Skill 链接，以免重复暴露同名能力。
+Skill 链接随源码仓库更新，但默认不启用连续性 Hook；Claude Code、WorkBuddy、
+ZCode 与 Antigravity 的完整/全局插件会额外启用各自支持的 Hook，DeepSeek
+Harness 则通过把 `.dsh-plugin/continuity.mjs` 挂载到 DSH 的 home 级用户 patch
+层启用 `agent/turn-stopping` 连续性闸门。不要在同一个 Agent 中同时安装完整插件
+和个人 Skill 链接（或在 Antigravity 中同时在 `~/.gemini/config/skills.json` /
+`~/.gemini/config/skills/` 暴露 Thinloop Skill），以免重复暴露同名能力。
 
 ## Codex、OpenCode、Pi、CodeWhale、Reasonix 与 DeepSeek Harness
 
@@ -231,6 +233,53 @@ WorkBuddy 5.3.5 内置的 CodeBuddy 运行时读取
 上下文注入。ZCode 不支持 Codex 专用的 `PreCompact` 事件，因此当前运行时会
 记录一条 warning 并只跳过该事件，不影响上述两个 ZCode Hook。
 
+## Antigravity 2.0 全局插件
+
+Antigravity 2.0 自动发现 `~/.gemini/config/plugins/thinloop`（支持以
+`ANTIGRAVITY_CONFIG_DIR` 环境变量覆盖为 `$ANTIGRAVITY_CONFIG_DIR/plugins/thinloop`）。
+先审查仓库中的 Skill 与 `hooks/check-state.mjs`，再使用一键装配命令创建插件载荷：
+
+```bash
+# 首次装配全局插件（严禁手改 ~/.gemini/config/config.json）
+node scripts/refresh-install.mjs --platform antigravity --install
+
+# 刷新已安装的全局插件载荷（未安装时拒绝隐式安装）
+node scripts/refresh-install.mjs --platform antigravity
+
+# 只读校验插件载荷与防重复暴露冲突
+node scripts/verify-install.mjs --platform antigravity
+```
+
+插件载荷包含四部分：
+
+1. `plugin.json`：仅保留 Antigravity 白名单顶层字段（`name`、`displayName`、
+   与 `.codex-plugin/plugin.json` 同步的 `version`、`description`、`author`、
+   `homepage`、`repository` 与三条中文 `suggestedPrompts`），不写入未知顶层字段。
+2. `hooks.json`（位于插件根目录）与 `hooks` 源码软链：使用 Antigravity 扁平
+   `Stop` 格式调用 `node "./hooks/check-state.mjs" --platform antigravity`。
+   当 `.scd/tasks/current.md` 不可恢复且正常结束（`NO_TOOL_CALL`）时返回
+   `{"decision":"continue","reason":...}`；遇到 `USER_CANCELED`、`ERROR`、
+   `MAX_INVOCATIONS` 或 `continuationActive: true` 时返回 `{}` 直接放行，避免
+   与用户取消冲突或死循环。
+3. `rules/AGENTS.md`：仅包含由 `config/routing-kernel.json` 渲染出的十条
+   Thinloop Routing Kernel（无 YAML frontmatter，绝不包含 Thinloop 仓库自用的
+   `Thinloop Delivery Default`）。
+4. `skills` 源码软链：指向源码仓库 `skills/`，自动暴露全部十五个 Skill。
+
+**严禁手工修改 `~/.gemini/config/config.json`**；插件启用或禁用应通过
+Antigravity Customizations 界面切换，改动自动发现、下一轮生效。
+
+### 防与 `skills.json` / 全局 `skills/` 重复暴露
+
+全局插件已经通过 `~/.gemini/config/plugins/thinloop/skills` 暴露全部十五个
+Thinloop Skill。若此前在 `~/.gemini/config/skills.json` 的 `entries` 中指向了
+Thinloop `skills/`，或在 `~/.gemini/config/skills/` 放置了同名 `scd-*` 链接，
+安装全局插件后请移除对应条目，避免 Antigravity 重复暴露同名 Skill。
+
+`node scripts/verify-install.mjs --platform antigravity` 为纯只读检查：
+核对 `~/.gemini/config/plugins/thinloop` 的白名单 `plugin.json`、根级扁平 `hooks.json`（`Stop`）、纯路由内核 `rules/AGENTS.md`、十五个源码 Skill 与无 `skills.json`/`skills/scd-*` 重复暴露。插件目录不存在时返回
+`NOT_INSTALLED`；检测到上述任一重复暴露冲突时返回 `FAIL` 并指出移除位置。
+
 ## 每次交付核对三端
 
 每次 Thinloop 交付后都核对已安装的 ZCode、Claude Code 和 Codex；只改 README、
@@ -291,11 +340,15 @@ claude plugin update thinloop@thinloop --scope user
 
 # WorkBuddy 完整插件（安装了 CodeBuddy CLI 时）
 codebuddy plugin update thinloop@thinloop --scope user
+
+# Antigravity 2.0 全局插件（仅刷新已安装目录）
+node scripts/refresh-install.mjs --platform antigravity
 ```
 
 - Claude Code：命令成功后重启客户端，或在交互会话重新加载插件。
 - WorkBuddy：也可以在插件页刷新市场后更新 Thinloop；完成后重启 WorkBuddy。
 - ZCode：Settings → Plugins → Refresh → `thinloop` → Update；更新后新建会话。
+- Antigravity：运行 `node scripts/refresh-install.mjs --platform antigravity` 原子刷新 `plugin.json`、`hooks.json`、`rules/AGENTS.md` 与 `skills`/`hooks` 软链；自动发现，下一轮生效。
 - 升级到 v0.13.1：确认当前列表中存在 `scd-knowledge`、`scd-next`、`scd-execute`、`scd-reengineering`、`scd-project` 与 `scd-quickdev`，
   并且插件版本与当前源码仓库一致。Knowledge 仍只在用户显式调用时工作，写入前仍需确认具体草稿和目标。
 - 升级到 v0.13.3：确认当前列表中存在十二个 Skill，包括新增的 `scd-interview`；个人面试题默认存到
@@ -346,11 +399,11 @@ node scripts/verify-install.mjs
 
 检查器从
 [`config/platform-capabilities.json`](../config/platform-capabilities.json)
-读取九个平台的能力契约，遵循 `CODEX_HOME`、`XDG_CONFIG_HOME`、
-`PI_CODING_AGENT_DIR/skills`、`CODEWHALE_SKILLS_DIR`、`~/.reasonix/skills`
-与 `DSH_HOME`，只读取 Skill
-链接、CodeWhale 的无网络 `doctor --json` 报告、Claude Code 插件清单及本地
-插件内容；
+读取十个平台的能力契约，遵循 `CODEX_HOME`、`XDG_CONFIG_HOME`、
+`PI_CODING_AGENT_DIR/skills`、`CODEWHALE_SKILLS_DIR`、`~/.reasonix/skills`、
+`DSH_HOME` 与 `ANTIGRAVITY_CONFIG_DIR`，只读取 Skill
+链接、CodeWhale 的无网络 `doctor --json` 报告、Claude Code / ZCode 插件清单及
+Antigravity 全局插件目录（含 `skills.json` 与全局 `skills/` 防重复暴露检查）；
 不安装、修复、覆盖、重启或重新加载任何 Agent。状态和退出码见
 [验证指南](./verification.md)。
 
@@ -398,6 +451,9 @@ ZCode：使用 $scd-execute 继续这个已批准的 Initiative，执行当前�
 ZCode：使用 $scd-next 只读检查当前项目进度和下一步。
 ZCode：使用 $scd-reengineering 重新实现这个项目并保留选定兼容契约。
 ZCode：使用 $scd-evolve 诊断本次使用过的 Thinloop Skill。
+Antigravity：检查当前项目状态并告诉我唯一建议下一步（触发 scd-next）。
+Antigravity：按 Thinloop QuickDev 修复这个单交付问题并完成独立验收。
+Antigravity：把已批准的 PRD 拆分为多 Issue 依赖图但不直接开工（触发 scd-project）。
 ```
 
 方案与开工前提：按[计划确认契约](../skills/scd-quickdev/references/planning-contract.md)先确认具体技术选择、精确Git计划版本和开工范围，再连续完成普通交付；新选择或实质变更重新确认。纯状态查询不创建开发计划。

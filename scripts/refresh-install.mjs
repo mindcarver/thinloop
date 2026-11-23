@@ -5,11 +5,209 @@ import os from "node:os";
 import path from "node:path";
 import { spawn, spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { inspectInstallations } from "./verify-install.mjs";
+import {
+  expectedAntigravityHooks,
+  expectedAntigravityManifest,
+  expectedAntigravityRules,
+  inspectInstallations,
+  resolveAntigravityPaths,
+} from "./verify-install.mjs";
 import { pluginList } from "./plugin-list.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const pluginId = "thinloop@thinloop";
+
+function atomicWriteFile(destination, content) {
+  const temporary = `${destination}.thinloop-${process.pid}`;
+  fs.writeFileSync(temporary, content, "utf8");
+  try {
+    fs.renameSync(temporary, destination);
+  } finally {
+    if (fs.existsSync(temporary)) fs.unlinkSync(temporary);
+  }
+}
+
+function atomicSymlink(target, destination) {
+  const temporary = `${destination}.thinloop-${process.pid}`;
+  const linkType = process.platform === "win32" ? "junction" : "dir";
+  fs.symlinkSync(target, temporary, linkType);
+  try {
+    if (process.platform === "win32") {
+      try {
+        if (fs.lstatSync(destination).isSymbolicLink()) fs.unlinkSync(destination);
+      } catch (error) {
+        if (error?.code !== "ENOENT") throw error;
+      }
+    }
+    fs.renameSync(temporary, destination);
+  } finally {
+    try {
+      fs.lstatSync(temporary);
+      fs.unlinkSync(temporary);
+    } catch (error) {
+      if (error?.code !== "ENOENT") throw error;
+    }
+  }
+}
+
+function validateAntigravityPluginDir(pluginDir, { allowCreate }) {
+  let exists = false;
+  let legacySkillsDir = false;
+
+  try {
+    const dirLstat = fs.lstatSync(pluginDir);
+    exists = true;
+    if (dirLstat.isSymbolicLink() || !dirLstat.isDirectory()) {
+      const stat = fs.statSync(pluginDir);
+      if (!stat.isDirectory()) {
+        throw new Error(`Refusing to modify non-directory: ${pluginDir}`);
+      }
+    }
+  } catch (error) {
+    if (error?.code === "ENOENT") {
+      if (!allowCreate) {
+        throw new Error(
+          "No installed Antigravity Thinloop plugin; do not install a missing client implicitly",
+        );
+      }
+      return { exists: false, legacySkillsDir: false };
+    }
+    throw error;
+  }
+
+  const manifestPath = path.join(pluginDir, "plugin.json");
+  let existingManifest;
+  try {
+    existingManifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+  } catch {
+    throw new Error(
+      `Not an owned Antigravity Thinloop plugin (missing or unreadable plugin.json): ${pluginDir}`,
+    );
+  }
+  if (existingManifest?.name !== "thinloop") {
+    throw new Error(`Not an owned Antigravity Thinloop plugin: ${pluginDir}`);
+  }
+
+  for (const filePath of [
+    manifestPath,
+    path.join(pluginDir, "hooks.json"),
+    path.join(pluginDir, "rules", "AGENTS.md"),
+  ]) {
+    try {
+      if (fs.lstatSync(filePath).isDirectory()) {
+        throw new Error(`Refusing to replace directory with file: ${filePath}`);
+      }
+    } catch (error) {
+      if (error?.code !== "ENOENT") throw error;
+    }
+  }
+
+  const rulesDir = path.join(pluginDir, "rules");
+  try {
+    if (!fs.statSync(rulesDir).isDirectory()) {
+      throw new Error(`Refusing to replace non-directory: ${rulesDir}`);
+    }
+  } catch (error) {
+    if (error?.code !== "ENOENT") throw error;
+  }
+
+  const hooksLink = path.join(pluginDir, "hooks");
+  try {
+    if (!fs.lstatSync(hooksLink).isSymbolicLink()) {
+      throw new Error(`Refusing to replace non-link: ${hooksLink}`);
+    }
+  } catch (error) {
+    if (error?.code !== "ENOENT") throw error;
+  }
+
+  const skillsLink = path.join(pluginDir, "skills");
+  try {
+    const skillsStat = fs.lstatSync(skillsLink);
+    if (!skillsStat.isSymbolicLink()) {
+      if (!skillsStat.isDirectory()) {
+        throw new Error(`Refusing to replace non-link: ${skillsLink}`);
+      }
+      for (const entry of fs.readdirSync(skillsLink, { withFileTypes: true })) {
+        const entryPath = path.join(skillsLink, entry.name);
+        if (!entry.name.startsWith("scd-") || !fs.lstatSync(entryPath).isSymbolicLink()) {
+          throw new Error(`Refusing to replace non-link: ${entryPath}`);
+        }
+      }
+      legacySkillsDir = true;
+    }
+  } catch (error) {
+    if (error?.code !== "ENOENT") throw error;
+  }
+
+  return { exists, legacySkillsDir };
+}
+
+function assembleAntigravityPlugin({
+  sourceRoot,
+  homeDir,
+  environment,
+  platform,
+  allowCreate,
+}) {
+  const { pluginDir } = resolveAntigravityPaths(platform, homeDir, environment);
+  const state = validateAntigravityPluginDir(pluginDir, { allowCreate });
+  const manifestText = `${JSON.stringify(expectedAntigravityManifest(sourceRoot), null, 2)}\n`;
+  const hooksText = `${JSON.stringify(expectedAntigravityHooks(), null, 2)}\n`;
+  const rulesText = expectedAntigravityRules(sourceRoot);
+  const skillsTarget = path.join(sourceRoot, "skills");
+  const hooksTarget = path.join(sourceRoot, "hooks");
+
+  if (!state.exists) {
+    fs.mkdirSync(pluginDir, { recursive: true });
+  }
+  fs.mkdirSync(path.join(pluginDir, "rules"), { recursive: true });
+
+  atomicWriteFile(path.join(pluginDir, "plugin.json"), manifestText);
+  atomicWriteFile(path.join(pluginDir, "hooks.json"), hooksText);
+  atomicWriteFile(path.join(pluginDir, "rules", "AGENTS.md"), rulesText);
+
+  const skillsPath = path.join(pluginDir, "skills");
+  if (state.legacySkillsDir) {
+    for (const entry of fs.readdirSync(skillsPath)) {
+      fs.unlinkSync(path.join(skillsPath, entry));
+    }
+    fs.rmdirSync(skillsPath);
+  }
+  atomicSymlink(skillsTarget, skillsPath);
+  atomicSymlink(hooksTarget, path.join(pluginDir, "hooks"));
+}
+
+export function installAntigravityPlugin({
+  sourceRoot = root,
+  homeDir = os.homedir(),
+  environment = process.env,
+} = {}) {
+  const resolvedSource = path.resolve(sourceRoot);
+  const registryPath = path.join(resolvedSource, "config/platform-capabilities.json");
+  const registry = JSON.parse(fs.readFileSync(registryPath, "utf8"));
+  const platform = registry.platforms.find((entry) => entry.id === "antigravity");
+  if (!platform) {
+    throw new Error("Antigravity platform is missing from config/platform-capabilities.json");
+  }
+  assembleAntigravityPlugin({
+    sourceRoot: resolvedSource,
+    homeDir,
+    environment,
+    platform,
+    allowCreate: true,
+  });
+  const report = inspectInstallations({
+    sourceRoot: resolvedSource,
+    homeDir,
+    environment,
+    platformId: "antigravity",
+    registryPath,
+  });
+  if (report.results[0].status !== "PASS") {
+    throw new Error("Install did not verify PASS; run verify-install.mjs --platform antigravity");
+  }
+  return report;
+}
 
 function run(command, context) {
   const result = spawnSync(command[0], command.slice(1), {
@@ -66,13 +264,21 @@ export async function refreshInstallation({
   platformId, sourceRoot = root, homeDir = os.homedir(), environment = process.env,
   runCommand = run, request = zcodeRequest,
 } = {}) {
-  if (!["codex", "claude-code", "zcode"].includes(platformId)) {
-    throw new Error("--platform must be codex, claude-code or zcode");
+  if (!["codex", "claude-code", "zcode", "antigravity"].includes(platformId)) {
+    throw new Error("--platform must be codex, claude-code, zcode or antigravity");
   }
   const context = { sourceRoot: path.resolve(sourceRoot), environment: { ...environment, HOME: homeDir } };
   const registry = JSON.parse(fs.readFileSync(path.join(sourceRoot, "config/platform-capabilities.json"), "utf8"));
   const platform = registry.platforms.find(entry => entry.id === platformId);
-  if (platformId === "codex") {
+  if (platformId === "antigravity") {
+    assembleAntigravityPlugin({
+      sourceRoot: context.sourceRoot,
+      homeDir,
+      environment,
+      platform,
+      allowCreate: false,
+    });
+  } else if (platformId === "codex") {
     const skillsRoot = path.join(environment.CODEX_HOME || path.join(homeDir, ".codex"), "skills");
     const names = fs.readdirSync(path.join(sourceRoot, "skills"))
       .filter(name => fs.existsSync(path.join(sourceRoot, "skills", name, "SKILL.md")));
@@ -159,8 +365,17 @@ export async function refreshInstallation({
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const args = process.argv.slice(2);
   try {
-    if (args.length !== 2 || args[0] !== "--platform") throw new Error("Usage: node scripts/refresh-install.mjs --platform codex|claude-code|zcode");
-    const report = await refreshInstallation({ platformId: args[1] });
+    const isAntigravityInstall =
+      args.length === 3 &&
+      args[0] === "--platform" &&
+      args[1] === "antigravity" &&
+      args[2] === "--install";
+    if (!isAntigravityInstall && (args.length !== 2 || args[0] !== "--platform")) {
+      throw new Error("Usage: node scripts/refresh-install.mjs --platform codex|claude-code|zcode|antigravity [--install]");
+    }
+    const report = isAntigravityInstall
+      ? installAntigravityPlugin()
+      : await refreshInstallation({ platformId: args[1] });
     process.stdout.write(`PASS ${args[1]} Thinloop ${report.expectedVersion}; new task/session required for loaded instructions\n`);
   } catch (error) {
     process.stderr.write(`${error.message}\n`);

@@ -3,6 +3,19 @@ import path from "node:path";
 
 import { RELATIVE_STATE_PATH, validateState } from "./validate-state.mjs";
 
+function parsePlatformArg(argv = process.argv.slice(2)) {
+  for (let index = 0; index < argv.length; index += 1) {
+    const arg = argv[index];
+    if (arg === "--platform") {
+      return argv[index + 1] || null;
+    }
+    if (arg.startsWith("--platform=")) {
+      return arg.slice("--platform=".length) || null;
+    }
+  }
+  return null;
+}
+
 async function readStdin() {
   let input = "";
   process.stdin.setEncoding("utf8");
@@ -16,11 +29,25 @@ function emit(payload) {
   process.stdout.write(`${JSON.stringify(payload)}\n`);
 }
 
-function block(eventName, managedBy, issues) {
+function allow(isAntigravity) {
+  if (isAntigravity) {
+    emit({});
+  }
+}
+
+function block(eventName, managedBy, issues, { isAntigravity = false } = {}) {
   const issueList = issues.map((issue) => `- ${issue}`).join("\n");
   const message =
     `${managedBy} paused ${eventName} because .scd/tasks/current.md is not resumable:\n` +
     `${issueList}\nUpdate the note, then retry the lifecycle event.`;
+
+  if (isAntigravity) {
+    emit({
+      decision: "continue",
+      reason: message,
+    });
+    return;
+  }
 
   if (
     process.env.ZCODE_PLUGIN_ROOT &&
@@ -59,12 +86,36 @@ function block(eventName, managedBy, issues) {
 }
 
 async function main() {
+  const platformArg = parsePlatformArg();
+  let isAntigravity = platformArg === "antigravity";
+
   try {
     const hookInput = await readStdin();
+    const hasKnownPluginEnv = Boolean(
+      process.env.CLAUDE_PLUGIN_ROOT ||
+      process.env.ZCODE_PLUGIN_ROOT ||
+      process.env.CODEBUDDY_PLUGIN_ROOT,
+    );
+    if (
+      !platformArg &&
+      !hasKnownPluginEnv &&
+      typeof hookInput.hookEventName === "string" &&
+      hookInput.hookEventName.trim().length > 0
+    ) {
+      isAntigravity = true;
+    }
+
+    const workspaceFallback =
+      isAntigravity &&
+      Array.isArray(hookInput.workspacePaths) &&
+      typeof hookInput.workspacePaths[0] === "string" &&
+      hookInput.workspacePaths[0].trim()
+        ? hookInput.workspacePaths[0]
+        : "";
     const cwd =
       typeof hookInput.cwd === "string" && hookInput.cwd.trim()
         ? hookInput.cwd
-        : process.cwd();
+        : workspaceFallback || process.cwd();
     const statePath = path.resolve(cwd, RELATIVE_STATE_PATH);
 
     let markdown;
@@ -72,6 +123,7 @@ async function main() {
       markdown = await fs.readFile(statePath, "utf8");
     } catch (error) {
       if (error?.code === "ENOENT") {
+        allow(isAntigravity);
         return;
       }
       throw error;
@@ -79,11 +131,28 @@ async function main() {
 
     const result = validateState(markdown);
     if (!result.managed || result.issues.length === 0) {
+      allow(isAntigravity);
       return;
     }
 
-    const eventName = hookInput.hook_event_name || "lifecycle event";
+    const eventName =
+      hookInput.hookEventName || hookInput.hook_event_name || "lifecycle event";
+    if (isAntigravity && (eventName === "Stop" || eventName === "lifecycle event")) {
+      const hasTerminationReason =
+        hookInput.terminationReason !== undefined &&
+        hookInput.terminationReason !== null &&
+        hookInput.terminationReason !== "";
+      if (
+        (hasTerminationReason && hookInput.terminationReason !== "NO_TOOL_CALL") ||
+        hookInput.continuationActive === true
+      ) {
+        allow(true);
+        return;
+      }
+    }
+
     if (
+      !isAntigravity &&
       process.env.CLAUDE_PLUGIN_ROOT &&
       !process.env.CODEBUDDY_PLUGIN_ROOT &&
       !process.env.ZCODE_PLUGIN_ROOT &&
@@ -101,8 +170,12 @@ async function main() {
       });
       return;
     }
-    block(eventName, result.managedBy, result.issues);
+    block(eventName, result.managedBy, result.issues, { isAntigravity });
   } catch (error) {
+    if (isAntigravity) {
+      emit({});
+      return;
+    }
     emit({
       continue: true,
       systemMessage:
