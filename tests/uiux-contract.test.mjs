@@ -164,3 +164,50 @@ test("the approved uiux specification retains A1 through A9", () => {
     assert.match(specification, new RegExp(`^- A${index}:`, "m"));
   }
 });
+
+test("uiux differentiates showcase web and high-density workbench taste tracks with shared guardrails", () => {
+  const taste = read("skills/scd-uiux/references/design-taste.md");
+
+  assert.match(taste, /展示\/营销\/内容型 Web/);
+  assert.match(taste, /高密度工具\/工作台型 Web App/);
+  assert.match(taste, /2\.5x|2\.5 倍/);
+  assert.match(taste, /不对称/);
+  assert.match(taste, /KPI 指标卡/);
+  assert.match(taste, /定价格/);
+  assert.match(taste, /数据网格/);
+  assert.match(taste, /1\.35x–1\.75x/);
+  assert.match(taste, /移动优先/);
+  assert.match(taste, /桌面优先/);
+  assert.match(taste, /窄屏可用或优雅降级策略/);
+  assert.match(taste, /4\.5:1/);
+  assert.match(taste, /3:1/);
+  assert.match(taste, /#000/);
+  assert.match(taste, /强调色彩虹/);
+  assert.match(taste, /emoji/);
+  assert.match(taste, /prefers-reduced-motion/);
+});
+
+test("uiux requires Brownfield token extraction and unambiguous state-switcher HTML prototype carriers", () => {
+  const skill = read("skills/scd-uiux/SKILL.md");
+  const tokens = read("skills/scd-uiux/references/design-tokens.md");
+  const polish = read("skills/scd-ui-polish/SKILL.md");
+  const visual = read("skills/scd-uiux/references/visual-evidence.md");
+
+  for (const doc of [skill, tokens, polish]) {
+    assert.match(doc, /Brownfield/);
+    assert.match(doc, /CSS 自定义属性/);
+    assert.match(doc, /Tailwind/);
+    assert.match(doc, /组件库变体/);
+    assert.match(doc, /存量令牌基线/);
+  }
+
+  assert.match(visual, /纯灰度/);
+  assert.match(visual, /单文件 HTML 线框/);
+  assert.match(visual, /三层 DTCG CSS Custom Properties/);
+  assert.match(visual, /\.scd\/ux\/<slug>\/prototype\//);
+  assert.match(visual, /状态切换条|State Switcher/);
+  for (const state of ["loading", "empty", "error", "success", "dark", "mobile"]) {
+    assert.match(visual, new RegExp(`\`${state}\``));
+  }
+  assert.match(visual, /Figma.*Stitch.*Excalidraw/);
+});
