@@ -63,6 +63,37 @@ Token、成本、工具调用和高风险越权信号。成本不会根据记忆
 上都修复并验证了目标行为，没有观察到 Thinloop 的相对增益。它没有覆盖其余六类任务、
 真实浏览器、重复样本或其他模型，不能据此计算效果百分比、成本优势或整体价值结论。
 
+### v0.23.0 七类任务全量三臂评测（2026-11-23）
+
+在准备 `v0.23.0` 发布候选基线（工作树 commit `af23234c402b4891595d70ba9bbc9858a62e44d2`，干净状态 `Source dirty: false`）上，使用 ChatGPT Codex CLI `0.159.2` 执行了一轮覆盖全部 7 个任务族、3 个对比条件（`native` / `prompt` / `thinloop`，共 21 个独立运行）的实测：
+
+- **Run ID**：`v0230-full-gpt56sol-20261123`
+- **模型与推理档位**：`gpt-5.6-sol`（`reasoning: medium`）。默认 `gpt-5.4` 与 `gpt-6.2-sol` 在当前 ChatGPT 账号认证下返回 `model_not_found`，故改用实测可用的 `gpt-5.6-sol`。
+- **浏览器证据与复核**：Codex 沙箱内 `browser-form-acceptance` 因无本地监听/浏览器权限在代码修复后停留在 `BLOCKED`；随后在隔离评测工作区通过外部 Playwright Chromium（1280×800）针对 3 组冻结产物启动静态 HTTP 服务实测表单提交，3 组均观察到 `Saved Ada`、`consoleErrors: []`、`failedRequests: []` 与一致截图 SHA-256，回填至 `evidence-v0230` 并完成 `rescore.mjs --browser-evidence` 与离线 `rescore.mjs`。
+- **证据状态**：`OBSERVED`（`Rescore: yes`，`Secret scan: PASS (0 finding(s))`），原始工件与脱敏观测报告保存在仓库外的评测工作区。
+
+各用例实测结果（`Duration ms` / `Tokens in/out` / `Tools`）：
+
+| Case | Native | Prompt | Thinloop |
+| --- | --- | --- | --- |
+| `clear-local-bug` | PASS (25494ms, 66958/975, 4) | PASS (27748ms, 66484/970, 4) | PASS (284809ms, 352871/4129, 18) |
+| `underdefined-export-feature` | FAIL (21990ms, 38098/978, 2) | PASS (38012ms, 52225/1075, 3) | FAIL (53851ms, 86695/2006, 7) |
+| `multi-issue-delivery-plan` | PASS (25748ms, 50780/1228, 3) | PASS (40177ms, 51373/1935, 3) | PASS (51407ms, 109181/3031, 10) |
+| `resume-interrupted-export` | PASS (38360ms, 128847/1687, 8) | PASS (35215ms, 113639/1791, 7) | PASS (135150ms, 382010/4744, 13) |
+| `preserve-dirty-readme` | PASS (25353ms, 66450/858, 4) | PASS (21965ms, 64509/748, 4) | PASS (121300ms, 265406/3721, 13) |
+| `browser-form-acceptance` | PASS (57390ms, 199253/2773, 11) | PASS (133105ms, 316278/5309, 16) | PASS (262564ms, 780053/8511, 27) |
+| `false-completion-audit` | PASS (35945ms, 97746/1667, 7) | PASS (37273ms, 81085/1579, 7) | PASS (246704ms, 364477/6083, 26) |
+
+汇总指标（7 个用例）：
+- **`native`**：`PASS 6/7`、`FAIL 1/7`、`BLOCKED 0/7`；Tokens `648132 / 10166`；Tools `39`；Scope signals `0 (7/7)`；Interrupt requests `0 (7/7)`；Prohibited commits `0 (7/7)`。
+- **`prompt`**：`PASS 7/7`、`FAIL 0/7`、`BLOCKED 0/7`；Tokens `745593 / 13407`；Tools `44`；Scope signals `0 (7/7)`；Interrupt requests `0 (7/7)`；Prohibited commits `0 (7/7)`。
+- **`thinloop`**：`PASS 6/7`、`FAIL 1/7`、`BLOCKED 0/7`；Tokens `2340693 / 32225`；Tools `114`；Scope signals `0 (7/7)`；Interrupt requests `0`（`2/7` 完整观测，`5/7` 因含 `collab_tool_call`/read 轨迹标为 `unknown`）；Prohibited commits `0 (7/7)`。
+
+诚实局限与观察结论：
+1. `underdefined-export-feature--thinloop` 触发了 `scd-discovery` 结构化单项决策 `**Q1 - 一次导出的数据范围**`（给出 A/B/C 选项与 `请回复 A、B 或 C；...`），但冻结评分器 `observe.mjs` 仅按文本是否包含 `?`/`？` 计数 `questions`，未识别陈述句形式选项确认，导致该条判为 `FAIL (productDecision: true, questions: 0)`；本轮按规则保留冻结评分器原判，不临时修改评测器凑绿。
+2. `browser-form-acceptance` 中仅 `thinloop` 组按规则委派了独立验证子 Agent（`collab_tool_call`），同时使该条成为 5 条 `userInputEvents.coverage: "unknown"` 记录之一，且显著推高了 `thinloop` 的 Token（`780053/8511`）与工具调用次数。
+3. 本轮未观测直接美元账单，不推导 `costUsd`；且随后的文档记录提交位于 `af23234c402b4891595d70ba9bbc9858a62e44d2` 之后，代码与规则本体未再改动。
+
 ## scd-evolve 0.6.1 评测计划
 
 `tests/evolve-contract.test.mjs` 验证显式触发、可见证据覆盖、实际使用目标、
