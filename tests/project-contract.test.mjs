@@ -4,6 +4,8 @@ import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
+import { validateProjectGraph } from "../skills/scd-project/scripts/validate-project-graph.mjs";
+
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 function read(relativePath) {
@@ -108,4 +110,120 @@ test("discovery and quickdev route project work without widening implementation 
   assert.match(quickdev, /拒绝 Initiative、PLANNED 占位节点、BLOCKED 节点/);
   assert.match(execute, /所有可安全独立执行的 READY 节点/);
   assert.match(workflow, /不启动 Agent、worktree 或长期 loop/);
+});
+
+test("project conditionally runs three-way cross-artifact readiness checks", () => {
+  const skill = read("skills/scd-project/SKILL.md");
+  const contract = read(
+    "skills/scd-project/references/project-contract.md",
+  );
+
+  for (const doc of [skill, contract]) {
+    assert.match(doc, /## 跨产物交叉就绪核对/);
+    assert.match(doc, /不新增独立 Skill/);
+    assert.match(doc, /两类及以上.*上游权威产物/);
+    assert.match(doc, /纯后端.*无 UX/);
+    assert.match(doc, /只核对.*已存在的产物对/);
+    assert.match(doc, /不(?:得)?伪造空检查/);
+
+    assert.match(doc, /PRD \(`FR-\*`\) ↔ UX/);
+    assert.match(doc, /面向用户的 `FR-\*`/);
+    assert.match(doc, /界面族、旅程或(?:稳定)?视觉 ID（`UI-\*`）/);
+    assert.match(doc, /有意非 UI/);
+
+    assert.match(doc, /UX ↔ Architecture \/ 共享接口契约/);
+    assert.match(doc, /展示字段、筛选\/排序参数/);
+    assert.match(doc, /用户操作/);
+    assert.match(doc, /权限态/);
+    assert.match(doc, /失败.*空态.*部分成功/);
+    assert.match(doc, /错误码/);
+
+    assert.match(doc, /PRD \(`FR-\*`\) ↔ Architecture \/ 共享接口契约/);
+    assert.match(doc, /后端、数据、权限或集成类 `FR-\*`/);
+    assert.match(doc, /系统边界/);
+    assert.match(doc, /数据所有权/);
+  }
+});
+
+test("project blocks READY on cross-artifact gaps and routes back by owner without changing graph schema", () => {
+  const skill = read("skills/scd-project/SKILL.md");
+  const contract = read(
+    "skills/scd-project/references/project-contract.md",
+  );
+
+  for (const doc of [skill, contract]) {
+    assert.match(doc, /不得标为 `READY`/);
+    assert.match(doc, /保持 `BLOCKED`.*`blockers`.*`PLANNED`/s);
+    assert.match(doc, /不改变.*validate-project-graph\.mjs.*JSON Schema/);
+    assert.match(doc, /`scd-discovery`/);
+    assert.match(doc, /`scd-uiux`/);
+    assert.match(doc, /`scd-architecture`/);
+    assert.match(doc, /严禁在 `scd-project` 中凭猜测悄悄修补/);
+  }
+
+  assert.match(skill, /产品范围或规则冲突回流 `scd-discovery`/);
+  assert.match(skill, /体验与视觉缺口回流 `scd-uiux`/);
+  assert.match(skill, /系统边界、数据所有权或共享接口契约缺口回流 `scd-architecture`/);
+  assert.match(contract, /产品范围、业务规则、权限边界、验收矛盾或 `FR-\*` 缺失\/变更 \| `scd-discovery`/);
+  assert.match(contract, /体验覆盖、界面族\/旅程\/视觉 ID（`UI-\*`）、交互状态或 UX 契约未就绪 \| `scd-uiux`/);
+  assert.match(contract, /系统边界、数据所有权、领域职责或共享机器可读接口契约.* \| `scd-architecture`/);
+
+  const blockedByCrossGap = validateProjectGraph({
+    schemaVersion: 1,
+    revision: 1,
+    nodes: [
+      {
+        id: "orders-list",
+        issue: 201,
+        contract: "approved",
+        delivery: "open",
+        humanGate: "clear",
+        dependsOn: [],
+        blockers: [
+          "跨产物缺口(scd-architecture): UI-002 筛选/排序参数与部分成功错误码在共享接口契约缺失",
+        ],
+      },
+      {
+        id: "audit-export",
+        issue: null,
+        contract: "planned",
+        delivery: "open",
+        humanGate: "clear",
+        dependsOn: [],
+        blockers: [
+          "跨产物缺口(scd-discovery): FR-009 权限边界与 PRD 冲突",
+        ],
+      },
+    ],
+  });
+
+  assert.equal(blockedByCrossGap.valid, true);
+  assert.deepEqual(blockedByCrossGap.ready, []);
+  assert.deepEqual(
+    blockedByCrossGap.nodes.map(({ id, state }) => ({ id, state })),
+    [
+      { id: "audit-export", state: "PLANNED" },
+      { id: "orders-list", state: "BLOCKED" },
+    ],
+  );
+  assert.throws(
+    () =>
+      validateProjectGraph({
+        schemaVersion: 1,
+        revision: 1,
+        nodes: [
+          {
+            id: "orders-list",
+            issue: 201,
+            contract: "approved",
+            delivery: "open",
+            humanGate: "clear",
+            dependsOn: [],
+            blockers: [],
+            crossReadiness: "blocked",
+          },
+        ],
+      }),
+    /nodes\[0\] has unknown field: crossReadiness/,
+  );
 });
