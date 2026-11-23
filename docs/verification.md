@@ -76,6 +76,7 @@ node evals/knowledge/runner/run.mjs --mode full
 | Claude Code | `claude plugin list --json` 提供版本、enabled 与安装路径；检查器从该路径核对十五个 Skill 和两个 Hook，包括 `scd-next` 与 `scd-execute` |
 | WorkBuddy | 不验证：WorkBuddy 无可靠只读 CLI 探测；已取消插件页核验要求 |
 | ZCode | `zcode plugins list --json` 提供 enabled、version、rootPath、skillCount 与 hookDetails；检查完整 Skill/Hook 载荷和两个可运行 Hook |
+| Antigravity | 核对 `~/.gemini/config/plugins/thinloop` 的白名单 `plugin.json`、根级扁平 `hooks.json`（`Stop`）、纯路由内核 `rules/AGENTS.md`、十五个源码 Skill 与无 `skills.json`/`skills/scd-*` 重复暴露 |
 
 在 Thinloop 源码仓库运行统一的只读检查：
 
@@ -86,16 +87,18 @@ node scripts/verify-install.mjs --platform pi
 node scripts/verify-install.mjs --platform codewhale
 node scripts/verify-install.mjs --platform reasonix
 node scripts/verify-install.mjs --platform dsh
+node scripts/verify-install.mjs --platform antigravity
 ```
 
 检查器从
 [`config/platform-capabilities.json`](../config/platform-capabilities.json)
-读取九个平台的安装形态、Skill 根、Hook 和验证入口，并使用以下状态：
+读取十个平台的安装形态、Skill 根、Hook 和验证入口，并使用以下状态：
 
 | 状态 | 含义 |
 |---|---|
 | `PASS` | 自动验证入口已确认安装内容符合当前源码 |
 | `FAIL` | 自动验证入口已确认缺失、停用、版本漂移或 Skill / Hook 不完整 |
+| `NOT_INSTALLED` | 平台插件目录尚未安装（例如尚未装配 `~/.gemini/config/plugins/thinloop`） |
 | `UNVERIFIED` | 所需 CLI 不可用、失败或没有返回有效 JSON，不能判断安装结果 |
 | `MANUAL` | 平台没有可靠的自动验证入口，必须按提示从界面核验 |
 | `SKIP` | 平台按用户决定不参与验证，检查器不核验也不计入失败 |

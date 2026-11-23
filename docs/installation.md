@@ -463,3 +463,4 @@ Antigravity：把已批准的 PRD 拆分为多 Issue 依赖图但不直接开工
 - 升级到 v0.21.0：`scd-uiux` 补入设计知识层——DTCG 令牌与组件规范数据资产、可检索设计知识库（styles/字体搭配/产品配色等 9 域+22 框架表，自研 node 检索引擎）、33MB 设计系统参考语料、WDS 设计方法论与双视角评审；安装体积约 +31MB。详见 [`v0.21.0`](./releases/v0.21.0.md)。
 - 升级到 v0.22.0：新增独立 `scd-test`。十五个技能目录按现有安装方式刷新。新会话可直接调用 `scd-test` 设计测试或核对验收。详见 [v0.22.0](./releases/v0.22.0.md)。
 - 升级到 v0.22.1：QuickDev 在关键行为开工前用 `scd-test` 设计测试，合并前由现有独立验收者使用它复验。十五个技能按原方式刷新，详见 [v0.22.1](./releases/v0.22.1.md)。
+- 升级到 v0.23.0：15 个 `SKILL.md` 瘦身去重（119,857 B → 77,717 B，-35.16%）且 `scd-uiux` 移除未接入死语料后降至 1.1 MB；计划契约引入 L0/L1/L2 分级并兼容 Squash Merge 仓库；`scd-test` 升级 Blind-First、5 条反模式、P0–P2 分层、ATDD 与受控 `WAIVED`；`scd-uiux` 增加双轨品味、存量令牌提取、状态切换条原型规范与 `dom-audit.mjs`；`scd-project` 前置跨产物交叉核对；正式将 Antigravity 2.0 纳入十平台清单。已安装宿主按原形态刷新（Antigravity 若曾用 `skills.json` 需先清理再装配全局插件），详见 [v0.23.0](./releases/v0.23.0.md)。
