@@ -34,7 +34,7 @@ description: "在实施前，把跨越多个可独立验证交付的已确认项
 
 ## 从实时项目事实出发
 
-1. 阅读适用的 `AGENTS.md`、`CLAUDE.md`、仓库说明、现有 Issues、拉取请求、架构文档、共享契约和测试。全新产品还要读取默认分支中已确认的 `.scd/product/prd.md`。
+1. 阅读适用的 `AGENTS.md`、`CLAUDE.md`、仓库说明、现有 Issues、拉取请求、UX 契约、架构文档、共享接口契约和测试。全新产品还要读取默认分支中已确认的 `.scd/product/prd.md`。
 2. 创建前先查找现有 Initiative 和 Delivery Issues，避免重复。
 3. 区分已确认的项目决策、工作假设、延期交付和未解决阻塞。
 4. 报告节点 READY 或 DONE 前，重新读取实时 Issue 与拉取请求状态。
@@ -77,6 +77,17 @@ description: "在实施前，把跨越多个可独立验证交付的已确认项
 
 对 PRD 管理的 Delivery Issue，存在以下任一情况时不能进入 READY：产品契约引用缺失；已确认版本无法从默认分支访问；某个 `FR-*` 标识在该版本中不存在；切片与 PRD 矛盾。把精确的追溯缺口返回 Discovery；不要在 Project 中修复产品范围。
 
+## 跨产物交叉就绪核对
+
+拆解切片、确认依赖图或宣布任何 Delivery Issue 进入 `READY` 前，执行条件触发的跨产物交叉就绪核对（细则见 `references/project-contract.md`，不新增独立 Skill）：
+
+- **条件触发**：仅当项目同时存在两类及以上上游权威产物（已确认 PRD、已就绪 UX 契约、已就绪 Architecture / 共享机器可读接口契约）时触发；只有单一产物时不触发且不伪造空检查，缺少某一类产物（如纯后端无 UX）时只核对已存在的产物对。
+- **三向一致性核对**：
+  1. **PRD (`FR-*`) ↔ UX**：每条面向用户的 `FR-*` 都在 UX 契约中落到具体界面族、旅程或视觉 ID（`UI-*`），或明确标记为有意非 UI，无漏项且未私自改写范围；
+  2. **UX ↔ Architecture / 共享接口契约**：UX 界面所需展示字段、筛选/排序参数、用户操作、权限态与失败/空态/部分成功等错误语义，在共享机器可读接口契约中均有对应操作、字段与错误码，术语和标识一致；
+  3. **PRD (`FR-*`) ↔ Architecture / 共享接口契约**：每条后端、数据、权限或集成类 `FR-*` 均有对应系统边界、数据所有权与共享接口契约支撑。
+- **缺口阻断与责任回流**：存在任何未对齐缺口（或相关上游设计契约仍为 `draft` 未就绪）时，受影响的 Delivery Issue **不得标为 `READY`**，必须保持 `BLOCKED`（将精确缺口写入既有 `blockers` 字段，不改变 `validate-project-graph.mjs` 的 JSON Schema）或 `PLANNED`；记录精确缺口并按责任回流上游技能：产品范围或规则冲突回流 `scd-discovery`，体验与视觉缺口回流 `scd-uiux`，系统边界、数据所有权或共享接口契约缺口回流 `scd-architecture`。严禁在 `scd-project` 中凭猜测悄悄修补产品契约、UX 契约或共享接口契约。
+
 ## 建模依赖 DAG
 
 只有硬因果前置条件才使用有向边：下游交付在上游 DONE 前无法正确实施或验证。
@@ -101,6 +112,7 @@ description: "在实施前，把跨越多个可独立验证交付的已确认项
 - Initiative 的协调边界、共享决策和项目集成验收；
 - 每个已实例化 Delivery Issue 的结果与验收衔接点；
 - PRD 管理产品时，每个 Delivery Issue 实施的 `FR-*` 标识；
+- 触发跨产物交叉就绪核对时的已核对产物对、未对齐缺口及责任回流（单一产物时注明不触发）；
 - 依赖边及其因果理由；
 - PLANNED 占位节点，以及它们为何不可执行；
 - 当前 READY 集合、BLOCKED 原因、集成门和人工门。
@@ -147,5 +159,5 @@ description: "在实施前，把跨越多个可独立验证交付的已确认项
 
 ## 资源
 
-- `references/project-contract.md`：中文 Initiative 与 Delivery Issue 模板、依赖图快照、状态派生、确认和重新规划规则。
+- `references/project-contract.md`：中文 Initiative 与 Delivery Issue 模板、跨产物交叉就绪核对、依赖图快照、状态派生、确认和重新规划规则。
 - `scripts/validate-project-graph.mjs`：无依赖的依赖图验证与确定性就绪分类。
