@@ -408,3 +408,44 @@ test("quickdev cleanup distinguishes ordinary merge from Squash-Merge-only repos
   assert.doesNotMatch(release, /若只能用丢失该历史的squash\/rebase，停止/);
   assert.match(release, /不得擅自创建 tag 或改保护/);
 });
+
+test("quickdev release enforces Blind-First acceptance, test-review anti-patterns, and L0 docs-only exemption boundary", () => {
+  const release = read("skills/scd-quickdev/references/release-contract.md");
+  const independent = release.split("## 独立验收").at(-1);
+
+  assert.match(independent, /Blind-First（先盲验、后对账）两步顺序/);
+  assert.match(independent, /第一步（盲验）[\s\S]*不读取实施者的自检 `PASS` 结论/);
+  assert.match(independent, /第二步（对账）[\s\S]*候选完成审计三本账[\s\S]*实施者声称 `PASS` 但盲验未观察到/);
+  assert.match(independent, /`test-review` 5 条测试反模式门禁/);
+  assert.match(independent, /过度 Mock 穿透/);
+  assert.match(independent, /弱断言\/浅断言[\s\S]*`toBeDefined`[\s\S]*`toBeTruthy`/);
+  assert.match(independent, /测试实现细节/);
+  assert.match(independent, /硬编码等待[\s\S]*`sleep`[\s\S]*`setTimeout`/);
+  assert.match(independent, /无清理副作用/);
+
+  assert.match(independent, /L0 纯文档、注释或纯文案无行为改动/);
+  assert.match(independent, /可免除强制调用独立新上下文子 Agent/);
+  assert.match(
+    independent,
+    /所有涉及代码行为、测试断言、配置\/脚本逻辑或页面\/样式的改动仍 100% 强制调用独立新上下文子 Agent/,
+  );
+  assert.match(independent, /严禁借 L0 跳过独立验收/);
+});
+
+test("quickdev evidence and release permit controlled WAIVED only for non-P0 non-high-risk approved gaps", () => {
+  const evidence = read("skills/scd-quickdev/references/evidence-contract.md");
+  const release = read("skills/scd-quickdev/references/release-contract.md");
+
+  for (const [name, text] of [
+    ["evidence-contract.md", evidence],
+    ["release-contract.md", release],
+  ]) {
+    assert.match(text, /`PASS`、`FAIL` 或 `BLOCKED`/, name);
+    assert.match(text, /`WAIVED`/, name);
+    assert.match(text, /仅(?:适用于|限)非 `P0`、非高风险门/, name);
+    assert.match(text, /缺失原因、残留风险、补测\/跟踪条件及用户显式批准依据/, name);
+    assert.match(text, /严禁对 `P0` 关键行为、高风险人工门[\s\S]*未获用户明示批准的缺口使用 `WAIVED`/, name);
+    assert.match(text, /严禁(?:把|将)已观察到的(?:违背（`FAIL`）|`FAIL`)伪装成 `WAIVED`/, name);
+    assert.match(text, /不得把 `UNVERIFIED` 或部分验证行为提升为 `PASS`/, name);
+  }
+});
