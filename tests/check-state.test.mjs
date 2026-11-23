@@ -389,3 +389,183 @@ test("repeat guard does not change PreCompact or other platform protocols", () =
     assert.equal(generic.continue, false);
   } finally { fs.rmSync(cwd, { recursive: true, force: true }); }
 });
+
+function runAntigravityHook(
+  cwd,
+  input = {},
+  { args = [], env = {}, rawInput } = {},
+) {
+  return spawnSync(process.execPath, [hookPath, ...args], {
+    cwd,
+    input:
+      rawInput !== undefined
+        ? rawInput
+        : JSON.stringify({
+            cwd,
+            hookEventName: "Stop",
+            ...input,
+          }),
+    encoding: "utf8",
+    env: {
+      ...process.env,
+      CLAUDE_PLUGIN_ROOT: "",
+      CODEBUDDY_PLUGIN_ROOT: "",
+      ZCODE_PLUGIN_ROOT: "",
+      ...env,
+    },
+  });
+}
+
+test("Antigravity Stop continues with reason when state is invalid under NO_TOOL_CALL or omitted terminationReason", () => {
+  const cwd = makeWorkspace();
+  try {
+    writeState(cwd, validState({ evidence: "" }));
+    for (const payload of [
+      { terminationReason: "NO_TOOL_CALL", continuationActive: false },
+      {},
+    ]) {
+      const output = parseOutput(runAntigravityHook(cwd, payload));
+      assert.equal(output.decision, "continue");
+      assert.match(output.reason, /^scd-quickdev paused Stop/);
+      assert.match(output.reason, /empty section: Evidence/);
+      assert.equal("continue" in output, false);
+      assert.equal("systemMessage" in output, false);
+    }
+  } finally {
+    fs.rmSync(cwd, { recursive: true, force: true });
+  }
+});
+
+test("Antigravity Stop allows USER_CANCELED, ERROR, and MAX_INVOCATIONS without forcing continuation", () => {
+  const cwd = makeWorkspace();
+  try {
+    writeState(cwd, validState({ evidence: "" }));
+    for (const terminationReason of [
+      "USER_CANCELED",
+      "ERROR",
+      "MAX_INVOCATIONS",
+    ]) {
+      const output = parseOutput(
+        runAntigravityHook(cwd, { terminationReason, continuationActive: false }),
+      );
+      assert.deepEqual(output, {});
+    }
+  } finally {
+    fs.rmSync(cwd, { recursive: true, force: true });
+  }
+});
+
+test("Antigravity Stop allows when continuationActive is true to prevent infinite loops", () => {
+  const cwd = makeWorkspace();
+  try {
+    writeState(cwd, validState({ evidence: "" }));
+    const output = parseOutput(
+      runAntigravityHook(cwd, {
+        terminationReason: "NO_TOOL_CALL",
+        continuationActive: true,
+      }),
+    );
+    assert.deepEqual(output, {});
+  } finally {
+    fs.rmSync(cwd, { recursive: true, force: true });
+  }
+});
+
+test("Antigravity Stop returns empty JSON object when state is absent, unmanaged, or valid", () => {
+  const cwd = makeWorkspace();
+  try {
+    assert.deepEqual(
+      parseOutput(
+        runAntigravityHook(cwd, { terminationReason: "NO_TOOL_CALL" }),
+      ),
+      {},
+    );
+    writeState(cwd, validState({ managedBy: "another-tool" }));
+    assert.deepEqual(
+      parseOutput(
+        runAntigravityHook(cwd, { terminationReason: "NO_TOOL_CALL" }),
+      ),
+      {},
+    );
+    writeState(cwd, validState());
+    assert.deepEqual(
+      parseOutput(
+        runAntigravityHook(cwd, { terminationReason: "NO_TOOL_CALL" }),
+      ),
+      {},
+    );
+  } finally {
+    fs.rmSync(cwd, { recursive: true, force: true });
+  }
+});
+
+test("Antigravity CLI --platform flag forces Antigravity protocol and fail-open JSON output", () => {
+  const cwd = makeWorkspace();
+  try {
+    writeState(cwd, validState({ status: "complete" }));
+    for (const args of [
+      ["--platform", "antigravity"],
+      ["--platform=antigravity"],
+    ]) {
+      const blocked = parseOutput(
+        runAntigravityHook(
+          cwd,
+          { hookEventName: undefined, hook_event_name: "Stop" },
+          { args, env: { CLAUDE_PLUGIN_ROOT: "/unrelated/claude" } },
+        ),
+      );
+      assert.equal(blocked.decision, "continue");
+      assert.match(blocked.reason, /status must be active or blocked/);
+
+      const workspaceFallback = parseOutput(
+        runAntigravityHook(
+          os.tmpdir(),
+          {},
+          {
+            args,
+            rawInput: JSON.stringify({
+              workspacePaths: [cwd],
+              hookEventName: "Stop",
+              terminationReason: "NO_TOOL_CALL",
+            }),
+          },
+        ),
+      );
+      assert.equal(workspaceFallback.decision, "continue");
+      assert.match(workspaceFallback.reason, /status must be active or blocked/);
+
+      const invalidJson = parseOutput(
+        runAntigravityHook(cwd, {}, { args, rawInput: "{not-json" }),
+      );
+      assert.deepEqual(invalidJson, {});
+    }
+  } finally {
+    fs.rmSync(cwd, { recursive: true, force: true });
+  }
+});
+
+test("camelCase hookEventName does not hijack Claude, ZCode, or WorkBuddy plugin roots", () => {
+  const cwd = makeWorkspace();
+  try {
+    writeState(cwd, validState({ status: "complete" }));
+    const claude = parseOutput(
+      runAntigravityHook(
+        cwd,
+        { hookEventName: "Stop" },
+        { env: { CLAUDE_PLUGIN_ROOT: "root" } },
+      ),
+    );
+    assert.equal(claude.decision, "block");
+
+    const workbuddy = parseOutput(
+      runAntigravityHook(
+        cwd,
+        { hookEventName: "Stop" },
+        { env: { CODEBUDDY_PLUGIN_ROOT: "root" } },
+      ),
+    );
+    assert.equal(workbuddy.continue, false);
+  } finally {
+    fs.rmSync(cwd, { recursive: true, force: true });
+  }
+});

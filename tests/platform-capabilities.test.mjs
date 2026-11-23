@@ -8,6 +8,9 @@ import { zcodeFixture } from "./helpers/zcode-fixture.mjs";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 import {
+  expectedAntigravityHooks,
+  expectedAntigravityManifest,
+  expectedAntigravityRules,
   formatText,
   inspectInstallations,
 } from "../scripts/verify-install.mjs";
@@ -185,7 +188,77 @@ function resultMap(report) {
   );
 }
 
-test("platform registry is the nine-platform capability contract", () => {
+function installAntigravityFixture(
+  homeDir,
+  {
+    environment = {},
+    manifestOverrides = {},
+    hooksConfig,
+    rulesContent,
+    perSkillLinks = false,
+    copySkills = false,
+    extraSkills = [],
+    skipHooksLink = false,
+  } = {},
+) {
+  const configRoot = environment.ANTIGRAVITY_CONFIG_DIR
+    ? path.resolve(environment.ANTIGRAVITY_CONFIG_DIR)
+    : path.join(homeDir, ".gemini", "config");
+  const pluginDir = path.join(configRoot, "plugins", "thinloop");
+  fs.mkdirSync(path.join(pluginDir, "rules"), { recursive: true });
+
+  const manifest = {
+    ...expectedAntigravityManifest(root),
+    ...manifestOverrides,
+  };
+  for (const [key, value] of Object.entries(manifest)) {
+    if (value === undefined) delete manifest[key];
+  }
+  fs.writeFileSync(
+    path.join(pluginDir, "plugin.json"),
+    `${JSON.stringify(manifest, null, 2)}\n`,
+  );
+  fs.writeFileSync(
+    path.join(pluginDir, "hooks.json"),
+    `${JSON.stringify(hooksConfig ?? expectedAntigravityHooks(), null, 2)}\n`,
+  );
+  fs.writeFileSync(
+    path.join(pluginDir, "rules", "AGENTS.md"),
+    rulesContent ?? expectedAntigravityRules(root),
+  );
+
+  const linkType = process.platform === "win32" ? "junction" : "dir";
+  if (!skipHooksLink) {
+    fs.symlinkSync(
+      path.join(root, "hooks"),
+      path.join(pluginDir, "hooks"),
+      linkType,
+    );
+  }
+  const skillsDest = path.join(pluginDir, "skills");
+  if (copySkills) {
+    fs.cpSync(path.join(root, "skills"), skillsDest, { recursive: true });
+  } else if (perSkillLinks || extraSkills.length > 0) {
+    fs.mkdirSync(skillsDest, { recursive: true });
+    for (const skillName of expectedSkills) {
+      fs.symlinkSync(
+        path.join(root, "skills", skillName),
+        path.join(skillsDest, skillName),
+        linkType,
+      );
+    }
+    for (const extra of extraSkills) {
+      const extraPath = path.join(skillsDest, extra);
+      fs.mkdirSync(extraPath, { recursive: true });
+      fs.writeFileSync(path.join(extraPath, "SKILL.md"), `# ${extra}\n`);
+    }
+  } else {
+    fs.symlinkSync(path.join(root, "skills"), skillsDest, linkType);
+  }
+  return { configRoot, pluginDir };
+}
+
+test("platform registry is the ten-platform capability contract", () => {
   assert.equal(registry.schemaVersion, 1);
   assert.deepEqual(
     registry.platforms.map((entry) => entry.id),
@@ -199,6 +272,7 @@ test("platform registry is the nine-platform capability contract", () => {
       "claude-code",
       "workbuddy",
       "zcode",
+      "antigravity",
     ],
   );
   assert.equal(expectedSkills.length, 15);
@@ -221,10 +295,17 @@ test("platform registry is the nine-platform capability contract", () => {
       installation,
       new RegExp(escapeRegex(definition.installation.takesEffect)),
     );
-    assert.match(
-      verification,
-      new RegExp(escapeRegex(definition.verification.summary)),
-    );
+    if (definition.id === "antigravity") {
+      assert.match(
+        installation,
+        new RegExp(escapeRegex(definition.verification.summary)),
+      );
+    } else {
+      assert.match(
+        verification,
+        new RegExp(escapeRegex(definition.verification.summary)),
+      );
+    }
 
     if (definition.installation.manifest) {
       const manifest = readJson(definition.installation.manifest);
@@ -237,6 +318,12 @@ test("platform registry is the nine-platform capability contract", () => {
           fs.existsSync(path.join(root, hook.source)),
           `${definition.id} ${hook.event} (${hook.source})`,
         );
+        continue;
+      }
+      if (hook.kind === "antigravity-plugin-hook") {
+        assert.equal(hook.event, "Stop");
+        assert.equal(hook.source, "hooks.json");
+        assert.equal(hook.name, "thinloop-continuity");
         continue;
       }
       const hooks = readJson(hook.source).hooks?.[hook.event];
@@ -267,6 +354,7 @@ test("read-only checker verifies complete automatic installs", () => {
     linkSkills(homeDir, "codewhale");
     linkSkills(homeDir, "reasonix");
     linkSkills(homeDir, "dsh");
+    installAntigravityFixture(homeDir);
     const report = inspectInstallations({
       registryPath,
       sourceRoot: root,
@@ -296,6 +384,7 @@ test("read-only checker verifies complete automatic installs", () => {
     assert.equal(results["claude-code"].status, "PASS");
     assert.equal(results.workbuddy.status, "SKIP");
     assert.equal(results.zcode.status, "UNVERIFIED");
+    assert.equal(results.antigravity.status, "PASS");
     assert.match(formatText(report), /Mode: read-only/);
   } finally {
     fs.rmSync(homeDir, { recursive: true, force: true });
@@ -476,6 +565,7 @@ test("unavailable automatic plugin CLI stays unverified instead of failing", () 
     linkSkills(homeDir, "codewhale");
     linkSkills(homeDir, "reasonix");
     linkSkills(homeDir, "dsh");
+    installAntigravityFixture(homeDir);
     const report = inspectInstallations({
       registryPath,
       sourceRoot: root,
@@ -515,6 +605,7 @@ test("missing plugin evidence stays unverified instead of being guessed", () => 
     linkSkills(homeDir, "codewhale");
     linkSkills(homeDir, "reasonix");
     linkSkills(homeDir, "dsh");
+    installAntigravityFixture(homeDir);
     const report = inspectInstallations({
       registryPath,
       sourceRoot: root,
@@ -561,6 +652,7 @@ test("checker has a dedicated not-installed fixture", () => {
     assert.equal(report.exitCode, 1);
     assert.equal(results["claude-code"].status, "FAIL");
     assert.equal(results.workbuddy.status, "SKIP");
+    assert.equal(results.antigravity.status, "NOT_INSTALLED");
     assert.match(
       results["claude-code"].checks.find((check) => check.name === "plugin")
         .detail,
@@ -822,6 +914,15 @@ test("checker source and registered probes are read-only", () => {
   assert.match(platform("workbuddy").verification.summary, /不验证/);
   assert.equal(platform("zcode").verification.mode, "plugin-cli");
   assert.deepEqual(platform("zcode").verification.command, ["zcode", "plugins", "list", "--json"]);
+  assert.equal(platform("antigravity").verification.mode, "plugin-dir");
+  assert.equal(platform("antigravity").verification.command, undefined);
+  assert.equal(platform("antigravity").installation.configRoot, ".gemini/config");
+  assert.equal(platform("antigravity").installation.pluginDir, "plugins/thinloop");
+  assert.equal(
+    platform("antigravity").installation.configRootOverride.environment,
+    "ANTIGRAVITY_CONFIG_DIR",
+  );
+  assert.equal(platform("antigravity").capabilities.hookHandler, "hooks/check-state.mjs");
 });
 
 test("checker can target Pi without probing unrelated platforms", () => {
@@ -1310,4 +1411,326 @@ test("ZCode invalid JSON remains UNVERIFIED", () => {
   });
   assert.equal(report.results[0].status, "UNVERIFIED");
   assert.match(report.results[0].checks[0].detail, /invalid JSON/);
+});
+
+test("Antigravity reports NOT_INSTALLED without running any CLI when plugin directory is absent", () => {
+  const homeDir = makeFixture();
+  try {
+    const report = inspectInstallations({
+      registryPath,
+      sourceRoot: root,
+      homeDir,
+      environment: {},
+      platformId: "antigravity",
+      runCommand() {
+        throw new Error("Antigravity check must remain read-only without CLI execution");
+      },
+    });
+    assert.equal(report.exitCode, 0);
+    assert.equal(report.counts.NOT_INSTALLED, 1);
+    assert.equal(report.results[0].status, "NOT_INSTALLED");
+    assert.equal(report.results[0].checks[0].status, "NOT_INSTALLED");
+    assert.match(report.results[0].checks[0].detail, /is not installed/);
+  } finally {
+    fs.rmSync(homeDir, { recursive: true, force: true });
+  }
+});
+
+test("Antigravity verifies default install, per-skill symlinks, and ANTIGRAVITY_CONFIG_DIR override", () => {
+  const homeDir = makeFixture();
+  const customConfig = path.join(homeDir, "custom-antigravity-config");
+  try {
+    installAntigravityFixture(homeDir);
+    const defaultReport = inspectInstallations({
+      registryPath,
+      sourceRoot: root,
+      homeDir,
+      environment: {},
+      platformId: "antigravity",
+      runCommand() {
+        throw new Error("Antigravity check must not run a CLI probe");
+      },
+    });
+    assert.equal(defaultReport.exitCode, 0);
+    assert.equal(defaultReport.results[0].status, "PASS");
+    assert.deepEqual(
+      defaultReport.results[0].checks.map((check) => check.name),
+      ["manifest", "version", "hooks", "rules", "skills", "duplication"],
+    );
+    assert.ok(defaultReport.results[0].checks.every((check) => check.status === "PASS"));
+
+    installAntigravityFixture(homeDir, {
+      environment: { ANTIGRAVITY_CONFIG_DIR: customConfig },
+      perSkillLinks: true,
+    });
+    const overrideReport = inspectInstallations({
+      registryPath,
+      sourceRoot: root,
+      homeDir,
+      environment: { ANTIGRAVITY_CONFIG_DIR: customConfig },
+      platformId: "antigravity",
+    });
+    assert.equal(overrideReport.exitCode, 0);
+    assert.equal(overrideReport.results[0].status, "PASS");
+    assert.match(
+      overrideReport.results[0].checks.find((check) => check.name === "skills").detail,
+      /custom-antigravity-config/,
+    );
+  } finally {
+    fs.rmSync(homeDir, { recursive: true, force: true });
+  }
+});
+
+test("Antigravity rejects unknown plugin.json fields, stale version, invalid prompts, and disabled flag", () => {
+  for (const [label, manifestOverrides, expectedCheck, pattern] of [
+    ["unknown top-level fields", { skills: "./skills/", keywords: ["bad"] }, "manifest", /unknown top-level fields: skills, keywords/],
+    ["stale version", { version: "0.0.0" }, "version", /0\.0\.0 installed/],
+    ["missing displayName", { displayName: undefined }, "manifest", /displayName missing/],
+    ["non-https homepage", { homepage: "http://example.com" }, "manifest", /homepage must be an https/],
+    ["wrong suggestedPrompts count", { suggestedPrompts: ["只有一条"] }, "manifest", /exactly 3/],
+    ["disabled true", { disabled: true }, "manifest", /disabled: true/],
+  ]) {
+    const homeDir = makeFixture();
+    try {
+      installAntigravityFixture(homeDir, { manifestOverrides });
+      const report = inspectInstallations({
+        registryPath,
+        sourceRoot: root,
+        homeDir,
+        environment: {},
+        platformId: "antigravity",
+      });
+      assert.equal(report.exitCode, 1, label);
+      assert.equal(report.results[0].status, "FAIL", label);
+      const check = report.results[0].checks.find((entry) => entry.name === expectedCheck);
+      assert.equal(check.status, "FAIL", label);
+      assert.match(check.detail, pattern, label);
+    } finally {
+      fs.rmSync(homeDir, { recursive: true, force: true });
+    }
+  }
+});
+
+test("Antigravity rejects nested, disabled, flagless, or stale hooks.json and executes valid hook command", () => {
+  for (const [label, hooksConfig, pattern] of [
+    ["nested Claude hooks wrapper", { hooks: { Stop: [] } }, /missing root flat hook/],
+    ["grouped matcher/hooks Stop entry", { "thinloop-continuity": { Stop: [{ matcher: "*", hooks: [] }] } }, /flat handler format/],
+    ["disabled hook", { "thinloop-continuity": { enabled: false, Stop: [{ type: "command", command: 'node "./hooks/check-state.mjs" --platform antigravity' }] } }, /is disabled/],
+    ["missing --platform antigravity", { "thinloop-continuity": { Stop: [{ type: "command", command: 'node "./hooks/check-state.mjs"' }] } }, /--platform antigravity/],
+    ["unreadable handler path", { "thinloop-continuity": { Stop: [{ type: "command", command: 'node "./hooks/missing-check-state.mjs" --platform antigravity' }] } }, /check-state\.mjs/],
+  ]) {
+    const homeDir = makeFixture();
+    try {
+      installAntigravityFixture(homeDir, { hooksConfig });
+      const report = inspectInstallations({
+        registryPath,
+        sourceRoot: root,
+        homeDir,
+        environment: {},
+        platformId: "antigravity",
+      });
+      assert.equal(report.exitCode, 1, label);
+      const hooksCheck = report.results[0].checks.find((entry) => entry.name === "hooks");
+      assert.equal(hooksCheck.status, "FAIL", label);
+      assert.match(hooksCheck.detail, pattern, label);
+    } finally {
+      fs.rmSync(homeDir, { recursive: true, force: true });
+    }
+  }
+
+  // Verify the generated hooks.json command actually executes from pluginDir.
+  const homeDir = makeFixture();
+  const workspace = makeFixture();
+  try {
+    const { pluginDir } = installAntigravityFixture(homeDir);
+    const stopCommand = JSON.parse(
+      fs.readFileSync(path.join(pluginDir, "hooks.json"), "utf8"),
+    )["thinloop-continuity"].Stop[0].command;
+
+    const cleanRun = spawnSync(stopCommand, {
+      cwd: pluginDir,
+      encoding: "utf8",
+      input: JSON.stringify({
+        cwd: workspace,
+        hookEventName: "Stop",
+        terminationReason: "NO_TOOL_CALL",
+      }),
+      shell: true,
+    });
+    assert.equal(cleanRun.status, 0, cleanRun.stderr);
+    assert.deepEqual(JSON.parse(cleanRun.stdout), {});
+
+    fs.mkdirSync(path.join(workspace, ".scd", "tasks"), { recursive: true });
+    fs.writeFileSync(
+      path.join(workspace, ".scd", "tasks", "current.md"),
+      "---\nmanaged_by: scd-quickdev\nstatus: complete\nupdated_at: 2026-11-23T12:00:00+08:00\n---\n",
+    );
+    const blockedRun = spawnSync(stopCommand, {
+      cwd: pluginDir,
+      encoding: "utf8",
+      input: JSON.stringify({
+        cwd: workspace,
+        hookEventName: "Stop",
+        terminationReason: "NO_TOOL_CALL",
+        continuationActive: false,
+      }),
+      shell: true,
+    });
+    assert.equal(blockedRun.status, 0, blockedRun.stderr);
+    const parsed = JSON.parse(blockedRun.stdout);
+    assert.equal(parsed.decision, "continue");
+    assert.match(parsed.reason, /status must be active or blocked/);
+  } finally {
+    fs.rmSync(homeDir, { recursive: true, force: true });
+    fs.rmSync(workspace, { recursive: true, force: true });
+  }
+});
+
+test("Antigravity rejects rules/AGENTS.md with Delivery Default, frontmatter, or kernel drift", () => {
+  const validRules = expectedAntigravityRules(root);
+  for (const [label, rulesContent, pattern] of [
+    ["Thinloop Delivery Default leak", `${validRules}\n# Thinloop Delivery Default\nDo internal delivery\n`, /Thinloop Delivery Default/],
+    ["YAML frontmatter", `---\ntrigger: always_on\n---\n\n${validRules}`, /YAML frontmatter/],
+    ["drifted routing kernel", "# Thinloop Routing Kernel\n\nOutdated rules\n", /drifted from config\/routing-kernel\.json/],
+    ["unexpected trailing content", `${validRules}\nExtra repo rule\n`, /unexpected content/],
+  ]) {
+    const homeDir = makeFixture();
+    try {
+      installAntigravityFixture(homeDir, { rulesContent });
+      const report = inspectInstallations({
+        registryPath,
+        sourceRoot: root,
+        homeDir,
+        environment: {},
+        platformId: "antigravity",
+      });
+      assert.equal(report.exitCode, 1, label);
+      const rulesCheck = report.results[0].checks.find((entry) => entry.name === "rules");
+      assert.equal(rulesCheck.status, "FAIL", label);
+      assert.match(rulesCheck.detail, pattern, label);
+    } finally {
+      fs.rmSync(homeDir, { recursive: true, force: true });
+    }
+  }
+});
+
+test("Antigravity rejects copied skills or unexpected legacy skills", () => {
+  const copiedHome = makeFixture();
+  const legacyHome = makeFixture();
+  try {
+    installAntigravityFixture(copiedHome, { copySkills: true });
+    const copiedReport = inspectInstallations({
+      registryPath,
+      sourceRoot: root,
+      homeDir: copiedHome,
+      environment: {},
+      platformId: "antigravity",
+    });
+    assert.equal(copiedReport.exitCode, 1);
+    assert.equal(
+      copiedReport.results[0].checks.find((check) => check.name === "skills").status,
+      "FAIL",
+    );
+    assert.match(
+      copiedReport.results[0].checks.find((check) => check.name === "skills").detail,
+      /not source links/,
+    );
+
+    installAntigravityFixture(legacyHome, { extraSkills: ["scd-dev-loop"] });
+    const legacyReport = inspectInstallations({
+      registryPath,
+      sourceRoot: root,
+      homeDir: legacyHome,
+      environment: {},
+      platformId: "antigravity",
+    });
+    assert.equal(legacyReport.exitCode, 1);
+    assert.match(
+      legacyReport.results[0].checks.find((check) => check.name === "skills").detail,
+      /unexpected scd skills: scd-dev-loop/,
+    );
+  } finally {
+    fs.rmSync(copiedHome, { recursive: true, force: true });
+    fs.rmSync(legacyHome, { recursive: true, force: true });
+  }
+});
+
+test("Antigravity detects duplicate exposure via skills.json entries and global skills/scd-*", () => {
+  const homeDir = makeFixture();
+  try {
+    const { configRoot } = installAntigravityFixture(homeDir);
+    const skillsJsonPath = path.join(configRoot, "skills.json");
+
+    // 1. skills.json pointing to Thinloop skills/ fails duplication check.
+    fs.writeFileSync(
+      skillsJsonPath,
+      JSON.stringify({ entries: [{ path: path.join(root, "skills") }] }),
+    );
+    const dupJsonReport = inspectInstallations({
+      registryPath,
+      sourceRoot: root,
+      homeDir,
+      environment: {},
+      platformId: "antigravity",
+    });
+    assert.equal(dupJsonReport.exitCode, 1);
+    assert.equal(dupJsonReport.results[0].status, "FAIL");
+    const dupCheck = dupJsonReport.results[0].checks.find(
+      (check) => check.name === "duplication",
+    );
+    assert.equal(dupCheck.status, "FAIL");
+    assert.match(dupCheck.detail, /duplicate exposure/);
+    assert.match(dupCheck.detail, /skills\.json/);
+    assert.match(dupCheck.detail, /remove this entry/);
+
+    // 2. skills.json pointing to an unrelated skill directory passes.
+    const unrelatedDir = path.join(homeDir, "other-skills");
+    fs.mkdirSync(path.join(unrelatedDir, "my-helper"), { recursive: true });
+    fs.writeFileSync(path.join(unrelatedDir, "my-helper", "SKILL.md"), "# helper\n");
+    fs.writeFileSync(
+      skillsJsonPath,
+      JSON.stringify({
+        entries: [
+          { path: unrelatedDir },
+          { path: path.join(root, "skills"), exclude: ["scd-.*"] },
+        ],
+      }),
+    );
+    const cleanJsonReport = inspectInstallations({
+      registryPath,
+      sourceRoot: root,
+      homeDir,
+      environment: {},
+      platformId: "antigravity",
+    });
+    assert.equal(cleanJsonReport.exitCode, 0);
+    assert.equal(cleanJsonReport.results[0].status, "PASS");
+
+    // 3. Global ~/.gemini/config/skills/scd-* fails duplication check.
+    const globalSkill = path.join(configRoot, "skills", "scd-quickdev");
+    fs.mkdirSync(path.dirname(globalSkill), { recursive: true });
+    fs.symlinkSync(
+      path.join(root, "skills", "scd-quickdev"),
+      globalSkill,
+      process.platform === "win32" ? "junction" : "dir",
+    );
+    const dupDirReport = inspectInstallations({
+      registryPath,
+      sourceRoot: root,
+      homeDir,
+      environment: {},
+      platformId: "antigravity",
+    });
+    assert.equal(dupDirReport.exitCode, 1);
+    assert.equal(dupDirReport.results[0].status, "FAIL");
+    const dupDirCheck = dupDirReport.results[0].checks.find(
+      (check) => check.name === "duplication",
+    );
+    assert.equal(dupDirCheck.status, "FAIL");
+    assert.match(dupDirCheck.detail, /duplicate exposure/);
+    assert.match(dupDirCheck.detail, /scd-quickdev/);
+    assert.match(dupDirCheck.detail, /remove these entries/);
+  } finally {
+    fs.rmSync(homeDir, { recursive: true, force: true });
+  }
 });

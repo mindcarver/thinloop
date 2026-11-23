@@ -8,6 +8,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { isDeepStrictEqual } from "node:util";
 import { pluginList } from "./plugin-list.mjs";
 import { readDshPatch, hasDshInsertion } from "./dsh-patch.mjs";
+import { loadRoutingKernel, renderMarkdownKernel } from "./sync-routing-kernel.mjs";
 
 const SCRIPT_ROOT = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -18,7 +19,26 @@ const DEFAULT_REGISTRY = path.join(
   "config",
   "platform-capabilities.json",
 );
-const RESULT_ORDER = ["PASS", "FAIL", "UNVERIFIED", "MANUAL", "SKIP"];
+const RESULT_ORDER = ["PASS", "FAIL", "NOT_INSTALLED", "UNVERIFIED", "MANUAL", "SKIP"];
+export const ANTIGRAVITY_MANIFEST_ALLOWED_KEYS = new Set([
+  "name",
+  "displayName",
+  "version",
+  "description",
+  "author",
+  "homepage",
+  "repository",
+  "suggestedPrompts",
+  "logo",
+  "disabled",
+]);
+const ANTIGRAVITY_DEFAULT_REPO_URL = "https://github.com/mindcarver/thinloop";
+const ANTIGRAVITY_SUGGESTED_PROMPTS = [
+  "检查当前项目的 Issue、PR 和推进状态，并给出唯一建议下一步",
+  "把一个明确的单交付改动按计划确认、测试设计与独立验收完整交付",
+  "把模糊的产品想法先做澄清并沉淀为可测试的产品契约与多 Issue 依赖图",
+];
+const ANTIGRAVITY_HOOK_NAME = "thinloop-continuity";
 const READ_ONLY_PROBES = new Map([
   ["claude-code", ["claude", "plugin", "list", "--json"]],
   ["zcode", ["zcode", "plugins", "list", "--json"]],
@@ -152,6 +172,11 @@ function validateRegistry(registry) {
     } else if (platform.verification.command !== undefined) {
       throw new Error(`Platform ${platform.id} must not declare a command`);
     }
+    if (platform.verification.mode === "plugin-dir") {
+      if (!platform.installation.configRoot || !platform.installation.pluginDir) {
+        throw new Error(`Platform ${platform.id} plugin-dir installation paths are required`);
+      }
+    }
     const manualRuntime = platform.verification.manualRuntime;
     if (manualRuntime) {
       const allowed = MANUAL_PROBES.get(platform.id);
@@ -206,6 +231,9 @@ function makeCheck(name, status, detail) {
 function resultStatus(checks) {
   if (checks.some((check) => check.status === "FAIL")) {
     return "FAIL";
+  }
+  if (checks.some((check) => check.status === "NOT_INSTALLED")) {
+    return "NOT_INSTALLED";
   }
   if (checks.some((check) => check.status === "UNVERIFIED")) {
     return "UNVERIFIED";
@@ -874,6 +902,616 @@ function inspectSkip(platform) {
   ]);
 }
 
+export function resolveAntigravityPaths(platform, homeDir, environment = {}) {
+  const override = platform.installation.configRootOverride;
+  const overrideRoot = override && environment[override.environment];
+  const configRoot =
+    typeof overrideRoot === "string" && overrideRoot.length > 0
+      ? path.resolve(overrideRoot)
+      : resolveFrom(homeDir, platform.installation.configRoot);
+  const pluginDir = resolveFrom(configRoot, platform.installation.pluginDir);
+  return { configRoot, pluginDir };
+}
+
+export function expectedAntigravityManifest(sourceRoot) {
+  const codexManifest = readJson(
+    resolveFrom(sourceRoot, ".codex-plugin/plugin.json"),
+  );
+  let repoUrls = {};
+  const claudeManifestPath = resolveFrom(sourceRoot, ".claude-plugin/plugin.json");
+  if (fs.existsSync(claudeManifestPath)) {
+    try {
+      repoUrls = readJson(claudeManifestPath);
+    } catch {
+      repoUrls = {};
+    }
+  }
+  return {
+    name: codexManifest.name,
+    displayName: codexManifest.interface?.displayName || "Thinloop",
+    version: codexManifest.version,
+    description: codexManifest.description,
+    author: codexManifest.author || { name: "mindcarver" },
+    homepage: repoUrls.homepage || ANTIGRAVITY_DEFAULT_REPO_URL,
+    repository: repoUrls.repository || ANTIGRAVITY_DEFAULT_REPO_URL,
+    suggestedPrompts: [...ANTIGRAVITY_SUGGESTED_PROMPTS],
+  };
+}
+
+export function expectedAntigravityHooks() {
+  return {
+    [ANTIGRAVITY_HOOK_NAME]: {
+      Stop: [
+        {
+          type: "command",
+          command: 'node "./hooks/check-state.mjs" --platform antigravity',
+          timeout: 5,
+        },
+      ],
+    },
+  };
+}
+
+export function expectedAntigravityRules(sourceRoot) {
+  const kernel = loadRoutingKernel(sourceRoot);
+  return [
+    "# Thinloop Routing Kernel",
+    "",
+    "Generated from `config/routing-kernel.json` for Antigravity global plugin installation.",
+    "",
+    renderMarkdownKernel(kernel),
+    "",
+  ].join("\n");
+}
+
+function extractAntigravityHookTarget(command, pluginDir) {
+  if (typeof command !== "string" || !command.trim()) {
+    return { error: "hook command is empty" };
+  }
+  const hasPlatformFlag = /(?:^|\s)--platform(?:=|\s+)antigravity(?:\s|$)/.test(
+    command,
+  );
+  if (!hasPlatformFlag) {
+    return { error: "hook command must pass --platform antigravity" };
+  }
+  const match =
+    command.match(/"([^"]*check-state\.mjs)"/) ||
+    command.match(/'([^']*check-state\.mjs)'/) ||
+    command.match(/(?:^|\s)(\S*check-state\.mjs)(?:\s|$)/);
+  if (!match) {
+    return { error: "hook command does not target hooks/check-state.mjs" };
+  }
+  const rawTarget = match[1];
+  const resolved = path.isAbsolute(rawTarget)
+    ? rawTarget
+    : path.resolve(pluginDir, rawTarget);
+  return { rawTarget, resolved };
+}
+
+function inspectAntigravityManifest(pluginDir, expected) {
+  const manifestPath = path.join(pluginDir, "plugin.json");
+  const expectedManifest = expectedAntigravityManifest(expected.sourceRoot);
+  try {
+    const manifest = readJson(manifestPath);
+    if (!manifest || typeof manifest !== "object" || Array.isArray(manifest)) {
+      return [
+        makeCheck("manifest", "FAIL", "plugin.json must be a JSON object"),
+        makeCheck("version", "UNVERIFIED", "plugin.json is not a JSON object"),
+      ];
+    }
+    const problems = [];
+    const unknownKeys = Object.keys(manifest).filter(
+      (key) => !ANTIGRAVITY_MANIFEST_ALLOWED_KEYS.has(key),
+    );
+    if (unknownKeys.length > 0) {
+      problems.push(`unknown top-level fields: ${unknownKeys.join(", ")}`);
+    }
+    if (manifest.name !== expectedManifest.name) {
+      problems.push(
+        `name ${manifest.name ?? "missing"}; ${expectedManifest.name} expected`,
+      );
+    }
+    if (manifest.displayName !== expectedManifest.displayName) {
+      problems.push(
+        `displayName ${manifest.displayName ?? "missing"}; ${expectedManifest.displayName} expected`,
+      );
+    }
+    if (typeof manifest.description !== "string" || !manifest.description.trim()) {
+      problems.push("description must be a non-empty string");
+    }
+    const validAuthor =
+      (typeof manifest.author === "string" && manifest.author.trim().length > 0) ||
+      (manifest.author &&
+        typeof manifest.author === "object" &&
+        !Array.isArray(manifest.author) &&
+        typeof manifest.author.name === "string" &&
+        manifest.author.name.trim().length > 0);
+    if (!validAuthor) {
+      problems.push("author must be a non-empty string or object with name");
+    }
+    if (
+      typeof manifest.homepage !== "string" ||
+      !manifest.homepage.startsWith("https://")
+    ) {
+      problems.push("homepage must be an https:// URL");
+    }
+    const validRepository =
+      (typeof manifest.repository === "string" &&
+        manifest.repository.startsWith("https://")) ||
+      (manifest.repository &&
+        typeof manifest.repository === "object" &&
+        !Array.isArray(manifest.repository) &&
+        typeof manifest.repository.url === "string" &&
+        manifest.repository.url.startsWith("https://"));
+    if (!validRepository) {
+      problems.push("repository must be an https:// URL or { type, url } object");
+    }
+    const validPrompts =
+      Array.isArray(manifest.suggestedPrompts) &&
+      manifest.suggestedPrompts.length === 3 &&
+      manifest.suggestedPrompts.every(
+        (item) => typeof item === "string" && item.trim().length > 0,
+      );
+    if (!validPrompts) {
+      problems.push("suggestedPrompts must contain exactly 3 non-empty strings");
+    }
+    if (manifest.disabled === true) {
+      problems.push("plugin.json must not declare disabled: true");
+    }
+
+    return [
+      makeCheck(
+        "manifest",
+        problems.length > 0 ? "FAIL" : "PASS",
+        problems.length > 0
+          ? problems.join("; ")
+          : `${manifest.name} plugin.json satisfies Antigravity whitelist`,
+      ),
+      makeCheck(
+        "version",
+        typeof manifest.version !== "string" || !manifest.version
+          ? "FAIL"
+          : manifest.version === expected.version
+            ? "PASS"
+            : "FAIL",
+        typeof manifest.version === "string" && manifest.version
+          ? `${manifest.version} installed; ${expected.version} expected`
+          : `version missing in plugin.json; ${expected.version} expected`,
+      ),
+    ];
+  } catch (error) {
+    return [
+      makeCheck("manifest", "FAIL", `plugin.json: ${error.message}`),
+      makeCheck(
+        "version",
+        "UNVERIFIED",
+        "version cannot be verified without a readable plugin.json",
+      ),
+    ];
+  }
+}
+
+function inspectAntigravityHooks(pluginDir, platform, expected) {
+  const hooksJsonPath = path.join(pluginDir, "hooks.json");
+  const expectedHandlerPath = resolveFrom(
+    expected.sourceRoot,
+    platform.capabilities.hookHandler,
+  );
+  const expectedHandlerReal = fs.realpathSync(expectedHandlerPath);
+  let hooksConfig;
+  try {
+    hooksConfig = readJson(hooksJsonPath);
+  } catch (error) {
+    return makeCheck("hooks", "FAIL", `hooks.json: ${error.message}`);
+  }
+  if (!hooksConfig || typeof hooksConfig !== "object" || Array.isArray(hooksConfig)) {
+    return makeCheck("hooks", "FAIL", "hooks.json must be a JSON object");
+  }
+  const entry = hooksConfig[ANTIGRAVITY_HOOK_NAME];
+  if (!entry || typeof entry !== "object" || Array.isArray(entry)) {
+    return makeCheck(
+      "hooks",
+      "FAIL",
+      `hooks.json missing root flat hook "${ANTIGRAVITY_HOOK_NAME}"`,
+    );
+  }
+  if (entry.enabled === false) {
+    return makeCheck(
+      "hooks",
+      "FAIL",
+      `hooks.json hook "${ANTIGRAVITY_HOOK_NAME}" is disabled`,
+    );
+  }
+  if (!Array.isArray(entry.Stop) || entry.Stop.length === 0) {
+    return makeCheck(
+      "hooks",
+      "FAIL",
+      `hooks.json "${ANTIGRAVITY_HOOK_NAME}.Stop" must be a non-empty flat handler array`,
+    );
+  }
+
+  const problems = [];
+  let matchedValidHandler = false;
+  for (const [index, handler] of entry.Stop.entries()) {
+    if (!handler || typeof handler !== "object" || Array.isArray(handler)) {
+      problems.push(`Stop[${index}] must be a handler object`);
+      continue;
+    }
+    if ("hooks" in handler || "matcher" in handler) {
+      problems.push(
+        `Stop[${index}] must use Antigravity flat handler format (not grouped matcher/hooks)`,
+      );
+      continue;
+    }
+    if (handler.type !== undefined && handler.type !== "command") {
+      problems.push(`Stop[${index}] unsupported type ${JSON.stringify(handler.type)}`);
+      continue;
+    }
+    const extracted = extractAntigravityHookTarget(handler.command, pluginDir);
+    if (extracted.error) {
+      problems.push(`Stop[${index}] ${extracted.error}`);
+      continue;
+    }
+    try {
+      fs.accessSync(extracted.resolved, fs.constants.R_OK);
+      const actualReal = fs.realpathSync(extracted.resolved);
+      if (actualReal !== expectedHandlerReal) {
+        problems.push(
+          `Stop[${index}] resolves to ${actualReal}; ${expectedHandlerReal} expected`,
+        );
+        continue;
+      }
+      matchedValidHandler = true;
+    } catch (error) {
+      problems.push(
+        `Stop[${index}] unreadable handler ${extracted.resolved}: ${error.message}`,
+      );
+    }
+  }
+
+  if (problems.length > 0 || !matchedValidHandler) {
+    return makeCheck(
+      "hooks",
+      "FAIL",
+      problems.length > 0
+        ? problems.join("; ")
+        : `hooks.json "${ANTIGRAVITY_HOOK_NAME}.Stop" has no valid check-state.mjs handler`,
+    );
+  }
+  return makeCheck(
+    "hooks",
+    "PASS",
+    `1/1 flat Stop hook (${ANTIGRAVITY_HOOK_NAME}) in hooks.json resolves to ${expectedHandlerPath}`,
+  );
+}
+
+function inspectAntigravityRules(pluginDir, expected) {
+  const rulesPath = path.join(pluginDir, "rules", "AGENTS.md");
+  let content;
+  try {
+    content = fs.readFileSync(rulesPath, "utf8");
+  } catch (error) {
+    return makeCheck("rules", "FAIL", `rules/AGENTS.md: ${error.message}`);
+  }
+  const normalized = content.replace(/\r\n/g, "\n");
+  const problems = [];
+  if (/^---\s*\n/.test(normalized)) {
+    problems.push("rules/AGENTS.md must not include YAML frontmatter");
+  }
+  if (normalized.includes("Thinloop Delivery Default")) {
+    problems.push(
+      "rules/AGENTS.md must not include repository-only Thinloop Delivery Default",
+    );
+  }
+  const expectedBlock = renderMarkdownKernel(loadRoutingKernel(expected.sourceRoot));
+  const blockIndex = normalized.indexOf(expectedBlock);
+  if (blockIndex < 0) {
+    problems.push("rules/AGENTS.md has drifted from config/routing-kernel.json");
+  } else {
+    const trailing = normalized.slice(blockIndex + expectedBlock.length).trim();
+    if (trailing.length > 0) {
+      problems.push(
+        "rules/AGENTS.md contains unexpected content after routing kernel",
+      );
+    }
+  }
+  return makeCheck(
+    "rules",
+    problems.length > 0 ? "FAIL" : "PASS",
+    problems.length > 0
+      ? problems.join("; ")
+      : "rules/AGENTS.md matches config/routing-kernel.json without repository-only delivery rules",
+  );
+}
+
+function inspectAntigravitySkills(pluginDir, expected) {
+  const skillRoot = path.join(pluginDir, "skills");
+  let rootLstat;
+  try {
+    rootLstat = fs.lstatSync(skillRoot);
+  } catch (error) {
+    return makeCheck("skills", "FAIL", `skills: ${error.message}`);
+  }
+  let rootStat;
+  try {
+    rootStat = fs.statSync(skillRoot);
+  } catch (error) {
+    return makeCheck("skills", "FAIL", `skills: ${error.message}`);
+  }
+  if (!rootStat.isDirectory()) {
+    return makeCheck(
+      "skills",
+      "FAIL",
+      "skills must be a directory or symbolic link to source skills",
+    );
+  }
+
+  const rootIsLink = rootLstat.isSymbolicLink();
+  const missing = [];
+  const nonLinks = [];
+  const wrongTargets = [];
+  const inspectionErrors = [];
+
+  for (const skillName of expected.skillNames) {
+    const installedDir = path.join(skillRoot, skillName);
+    const installedSkillMd = path.join(installedDir, "SKILL.md");
+    let entryLstat;
+    try {
+      entryLstat = fs.lstatSync(installedDir);
+    } catch (error) {
+      if (error?.code === "ENOENT") {
+        missing.push(skillName);
+        continue;
+      }
+      inspectionErrors.push(`${skillName}: ${error.message}`);
+      continue;
+    }
+    if (!rootIsLink && !entryLstat.isSymbolicLink()) {
+      nonLinks.push(skillName);
+      continue;
+    }
+    if (!fs.existsSync(installedSkillMd)) {
+      missing.push(`${skillName}/SKILL.md`);
+      continue;
+    }
+    try {
+      const actualSkillMd = fs.realpathSync(installedSkillMd);
+      const expectedSkillMd = fs.realpathSync(
+        path.join(expected.skillsRoot, skillName, "SKILL.md"),
+      );
+      if (actualSkillMd !== expectedSkillMd) {
+        wrongTargets.push(`${skillName} -> ${actualSkillMd}`);
+      }
+    } catch (error) {
+      wrongTargets.push(`${skillName} -> ${error.message}`);
+    }
+  }
+
+  let unexpected = [];
+  try {
+    unexpected = unexpectedSkillNames(skillRoot, expected);
+  } catch (error) {
+    inspectionErrors.push(error.message);
+  }
+
+  const problems = [
+    ...(missing.length > 0 ? [`missing: ${missing.join(", ")}`] : []),
+    ...(nonLinks.length > 0 ? [`not source links: ${nonLinks.join(", ")}`] : []),
+    ...(wrongTargets.length > 0 ? [`wrong targets: ${wrongTargets.join(", ")}`] : []),
+    ...(unexpected.length > 0
+      ? [`unexpected scd skills: ${unexpected.join(", ")}`]
+      : []),
+  ];
+  return makeCheck(
+    "skills",
+    problems.length > 0
+      ? "FAIL"
+      : inspectionErrors.length > 0
+        ? "UNVERIFIED"
+        : "PASS",
+    problems.length > 0
+      ? problems.join("; ")
+      : inspectionErrors.length > 0
+        ? inspectionErrors.join("; ")
+        : `${expected.skillNames.length}/${expected.skillNames.length} plugin skills in ${skillRoot} resolve to ${expected.skillsRoot}`,
+  );
+}
+
+function matchesSkillPattern(name, pattern) {
+  if (typeof pattern !== "string" || !pattern) {
+    return false;
+  }
+  if (name === pattern) {
+    return true;
+  }
+  try {
+    return new RegExp(`^(?:${pattern})$`).test(name);
+  } catch {
+    return false;
+  }
+}
+
+function resolveSkillsJsonEntryPath(rawPath, homeDir, configRoot) {
+  if (rawPath === "~") {
+    return path.resolve(homeDir);
+  }
+  if (rawPath.startsWith("~/") || rawPath.startsWith("~\\")) {
+    return path.resolve(homeDir, rawPath.slice(2));
+  }
+  if (path.isAbsolute(rawPath)) {
+    return path.resolve(rawPath);
+  }
+  return path.resolve(configRoot, rawPath);
+}
+
+function inspectAntigravityDuplication(configRoot, pluginDir, expected, homeDir) {
+  const conflicts = [];
+  const skillsJsonPath = path.join(configRoot, "skills.json");
+  const globalSkillsDir = path.join(configRoot, "skills");
+  const expectedSkillsReal = fs.realpathSync(expected.skillsRoot);
+  const expectedSet = new Set(expected.skillNames);
+  let pluginSkillsReal = null;
+  try {
+    pluginSkillsReal = fs.realpathSync(path.join(pluginDir, "skills"));
+  } catch {
+    pluginSkillsReal = null;
+  }
+
+  if (fs.existsSync(skillsJsonPath)) {
+    let skillsConfig;
+    try {
+      skillsConfig = readJson(skillsJsonPath);
+    } catch (error) {
+      conflicts.push(
+        `skills.json could not be parsed (${error.message}); inspect ${skillsJsonPath}`,
+      );
+    }
+    if (Array.isArray(skillsConfig?.entries)) {
+      for (const entry of skillsConfig.entries) {
+        if (typeof entry?.path !== "string" || !entry.path.trim()) {
+          continue;
+        }
+        const resolvedPath = resolveSkillsJsonEntryPath(
+          entry.path.trim(),
+          homeDir,
+          configRoot,
+        );
+        let entryReal = null;
+        try {
+          entryReal = fs.realpathSync(resolvedPath);
+        } catch {
+          entryReal = null;
+        }
+        const pointsToThinloopRoot =
+          entryReal === expectedSkillsReal ||
+          (pluginSkillsReal !== null && entryReal === pluginSkillsReal) ||
+          resolvedPath === path.resolve(expected.skillsRoot) ||
+          resolvedPath === path.resolve(pluginDir, "skills");
+
+        let exposedCandidates = [];
+        if (pointsToThinloopRoot) {
+          exposedCandidates = [...expected.skillNames];
+        } else if (entryReal) {
+          try {
+            if (fs.statSync(entryReal).isDirectory()) {
+              exposedCandidates = fs
+                .readdirSync(entryReal, { withFileTypes: true })
+                .map((item) => item.name)
+                .filter(
+                  (name) =>
+                    (expectedSet.has(name) || name.startsWith("scd-")) &&
+                    fs.existsSync(path.join(entryReal, name, "SKILL.md")),
+                );
+            }
+          } catch {
+            exposedCandidates = [];
+          }
+        }
+
+        if (Array.isArray(entry.include_only) && entry.include_only.length > 0) {
+          exposedCandidates = exposedCandidates.filter((name) =>
+            entry.include_only.some((pattern) => matchesSkillPattern(name, pattern)),
+          );
+        }
+        if (Array.isArray(entry.exclude) && entry.exclude.length > 0) {
+          exposedCandidates = exposedCandidates.filter(
+            (name) =>
+              !entry.exclude.some((pattern) => matchesSkillPattern(name, pattern)),
+          );
+        }
+
+        if (exposedCandidates.length > 0) {
+          conflicts.push(
+            `duplicate exposure: ${skillsJsonPath} entry "${entry.path}" also exposes ${exposedCandidates.length} Thinloop skill(s) alongside global plugin; remove this entry from ${skillsJsonPath}`,
+          );
+        }
+      }
+    }
+  }
+
+  try {
+    const globalEntries = fs
+      .readdirSync(globalSkillsDir, { withFileTypes: true })
+      .map((entry) => entry.name)
+      .filter((name) => expectedSet.has(name) || name.startsWith("scd-"))
+      .sort();
+    if (globalEntries.length > 0) {
+      conflicts.push(
+        `duplicate exposure: ${globalSkillsDir} contains ${globalEntries.join(", ")} alongside global plugin; remove these entries from ${globalSkillsDir}`,
+      );
+    }
+  } catch (error) {
+    if (error?.code !== "ENOENT") {
+      conflicts.push(`could not inspect ${globalSkillsDir}: ${error.message}`);
+    }
+  }
+
+  return makeCheck(
+    "duplication",
+    conflicts.length > 0 ? "FAIL" : "PASS",
+    conflicts.length > 0
+      ? conflicts.join("; ")
+      : `no duplicate Thinloop skill exposure in ${skillsJsonPath} or ${globalSkillsDir}`,
+  );
+}
+
+function inspectAntigravityPlugin(platform, expected, homeDir, environment) {
+  const { configRoot, pluginDir } = resolveAntigravityPaths(
+    platform,
+    homeDir,
+    environment,
+  );
+  let pluginDirStat;
+  try {
+    pluginDirStat = fs.statSync(pluginDir);
+  } catch (error) {
+    if (error?.code === "ENOENT") {
+      try {
+        fs.lstatSync(pluginDir);
+        return singleCheckResult(
+          platform,
+          "plugin",
+          "FAIL",
+          `${pluginDir} is a broken symbolic link`,
+        );
+      } catch (lstatError) {
+        if (lstatError?.code === "ENOENT") {
+          return singleCheckResult(
+            platform,
+            "plugin",
+            "NOT_INSTALLED",
+            `${pluginDir} is not installed`,
+          );
+        }
+        return singleCheckResult(platform, "plugin", "UNVERIFIED", lstatError.message);
+      }
+    }
+    return singleCheckResult(platform, "plugin", "UNVERIFIED", error.message);
+  }
+  if (!pluginDirStat.isDirectory()) {
+    return singleCheckResult(
+      platform,
+      "plugin",
+      "FAIL",
+      `${pluginDir} is not a directory`,
+    );
+  }
+
+  const [manifestCheck, versionCheck] = inspectAntigravityManifest(
+    pluginDir,
+    expected,
+  );
+  const checks = [
+    manifestCheck,
+    versionCheck,
+    inspectAntigravityHooks(pluginDir, platform, expected),
+    inspectAntigravityRules(pluginDir, expected),
+    inspectAntigravitySkills(pluginDir, expected),
+    inspectAntigravityDuplication(configRoot, pluginDir, expected, homeDir),
+  ];
+  return platformResult(platform, checks);
+}
+
 export function inspectInstallations({
   registryPath = DEFAULT_REGISTRY,
   sourceRoot = SCRIPT_ROOT,
@@ -923,6 +1561,14 @@ export function inspectInstallations({
     }
     if (platform.verification.mode === "plugin-cli") {
       return inspectPlugin(platform, expected, runCommand, context);
+    }
+    if (platform.verification.mode === "plugin-dir") {
+      return inspectAntigravityPlugin(
+        platform,
+        expected,
+        context.homeDir,
+        environment,
+      );
     }
     if (platform.verification.mode === "manual") {
       return inspectManual(platform);

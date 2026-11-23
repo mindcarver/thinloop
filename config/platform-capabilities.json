@@ -260,6 +260,40 @@
         "summary": "`zcode plugins list --json` 提供 enabled、version、rootPath、skillCount 与 hookDetails；检查完整 Skill/Hook 载荷和两个可运行 Hook",
         "manualFallback": "ZCode CLI 不可用时保持 UNVERIFIED，不自动安装宿主"
       }
+    },
+    {
+      "id": "antigravity",
+      "displayName": "Antigravity",
+      "installation": {
+        "mode": "plugin-dir",
+        "configRoot": ".gemini/config",
+        "configRootOverride": {
+          "environment": "ANTIGRAVITY_CONFIG_DIR"
+        },
+        "pluginDir": "plugins/thinloop",
+        "skillRoot": ".gemini/config/plugins/thinloop/skills",
+        "skillRootOverride": {
+          "environment": "ANTIGRAVITY_CONFIG_DIR",
+          "suffix": "plugins/thinloop/skills"
+        },
+        "summary": "在 `~/.gemini/config/plugins/thinloop` 装配全局插件（`plugin.json`、`hooks.json`、`rules/AGENTS.md` 与 `skills`/`hooks` 源码软链）",
+        "takesEffect": "自动发现，下一轮生效"
+      },
+      "capabilities": {
+        "hookHandler": "hooks/check-state.mjs",
+        "hooks": [
+          {
+            "event": "Stop",
+            "kind": "antigravity-plugin-hook",
+            "source": "hooks.json",
+            "name": "thinloop-continuity"
+          }
+        ]
+      },
+      "verification": {
+        "mode": "plugin-dir",
+        "summary": "核对 `~/.gemini/config/plugins/thinloop` 的白名单 `plugin.json`、根级扁平 `hooks.json`（`Stop`）、纯路由内核 `rules/AGENTS.md`、十五个源码 Skill 与无 `skills.json`/`skills/scd-*` 重复暴露"
+      }
     }
   ]
 }
