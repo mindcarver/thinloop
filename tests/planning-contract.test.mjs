@@ -64,3 +64,44 @@ test('installation retains historical 0.18.2 and separately describes 0.19.0', (
   assert.match(installation, /升级到 v0\.18\.2：步骤提示改为/);
   assert.match(installation, /升级到 v0\.19\.0：默认先确认具体技术选择/);
 });
+test('planning contract defines L0/L1/L2 tiers while preserving explicit confirmation invariants', () => {
+  const issue = read('skills/scd-quickdev/references/issue-delivery-contract.md');
+  const quickdev = read('skills/scd-quickdev/SKILL.md');
+  for (const marker of [
+    'L0（清晰局部小修/纯文档/小配置）',
+    '免建 6 模板 `.scd/plans/` 目录与双次本地计划提交',
+    '对话与紧凑中文 Issue 承载具体方案确认与开工授权',
+    '绝不得跳过用户对具体方案与开工范围的明确确认',
+    '不得扩大到含高风险门、跨模块架构决策',
+    '范围扩大，立即升级至 L1/L2',
+    'L1（常规单功能/含关键行为或 UI 变更）',
+    '只保留实际需要的计划文档',
+    'L2（多交付 Initiative / 架构边界 / 高风险变更）',
+    '完整持久计划目录、精确版本冻结、独立集成验收与高风险人工门',
+    '不新增运行时校验器、Schema检查脚本、依赖或Hook',
+  ]) {
+    assert.ok(contract.includes(marker), `planning-contract missing: ${marker}`);
+  }
+  assert.match(issue, /L0\/L1\/L2 规模自适应分级/);
+  assert.match(quickdev, /L0\/L1\/L2 分级/);
+  for (const [name, text] of [['planning-contract', contract], ['issue-delivery-contract', issue], ['quickdev', quickdev]]) {
+    assert.doesNotMatch(text, /L0[^\n。；]*(?:免确认|免用户确认|跳过用户确认|自动批准)|状态：默认免确认/, name);
+  }
+});
+test('persistent reachability supports Squash-Merge-only repos and blocks when merged records are missing', () => {
+  const release = read('skills/scd-quickdev/references/release-contract.md');
+  for (const [name, text] of [['planning-contract', contract], ['release-contract', release]]) {
+    assert.match(text, /普通 Merge 仓库/, name);
+    assert.match(text, /仅允许 Squash Merge 的消费者仓库/, name);
+    assert.match(text, /合并后默认分支上的持久计划文件与批准事件记录/, name);
+    assert.match(text, /批准版本、用户实际确认依据及时间戳/, name);
+    assert.match(text, /L0 紧凑中文 Issue 批准记录/, name);
+    assert.match(text, /已合并 PR 合并提交/, name);
+    assert.match(text, /不再一律 `BLOCKED`/, name);
+    assert.match(text, /放行并执行分支清理/, name);
+    assert.match(text, /若合并后默认分支缺失该持久计划文件或批准事件记录[\s\S]*BLOCKED[\s\S]*不删除最后引用/, name);
+  }
+  assert.doesNotMatch(contract, /若消费者仅允许会丢失批准历史的squash\/rebase，停止/);
+  assert.doesNotMatch(release, /若只能用丢失该历史的squash\/rebase，停止/);
+  assert.match(release, /不得擅自创建 tag 或改保护/);
+});

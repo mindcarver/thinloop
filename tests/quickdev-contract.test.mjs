@@ -363,3 +363,48 @@ test("quickdev resolves scd-test in the plan and independent acceptance phases",
   assert.match(independent, /按原始预期直接复验行为/);
   assert.match(independent, /候选 HEAD 与获批验收依据/);
 });
+
+test("quickdev scales planning across L0, L1, and L2 without dropping explicit confirmation", () => {
+  const skill = read("skills/scd-quickdev/SKILL.md");
+  const issue = read("skills/scd-quickdev/references/issue-delivery-contract.md");
+  const release = read("skills/scd-quickdev/references/release-contract.md");
+
+  assert.match(skill, /L0\/L1\/L2 分级/);
+  assert.match(skill, /L0（清晰局部小修\/纯文档\/小配置，无跨模块架构\/接口\/高风险门）/);
+  assert.match(skill, /免建 6 模板 `\.scd\/plans\/` 与双次本地计划提交/);
+  assert.match(skill, /由对话与紧凑中文 Issue 承载具体方案确认与开工授权，绝不得跳过确认/);
+  assert.match(skill, /L1（常规单功能\/关键行为或UI）/);
+  assert.match(skill, /L2（多交付\/架构边界\/高风险）/);
+
+  assert.match(issue, /L0\/L1\/L2 规模自适应分级/);
+  assert.match(issue, /免建 6 模板 `\.scd\/plans\/` 目录与双次本地计划提交/);
+  assert.match(issue, /绝不得跳过用户对具体方案与开工范围的明确确认/);
+  assert.match(issue, /不得扩大到含高风险门或跨模块架构决策的任务/);
+  assert.match(issue, /分级：<L0\/L1>/);
+
+  assert.match(release, /L0\/L1\/L2 分级核对方案批准与开工授权/);
+  assert.match(release, /确认未越界触及跨模块架构或高风险人工门/);
+
+  const combined = `${skill}\n${issue}\n${release}`;
+  assert.doesNotMatch(
+    combined,
+    /L0[^\n。；]*(?:免确认|免用户确认|跳过用户确认|自动批准)/,
+  );
+});
+
+test("quickdev cleanup distinguishes ordinary merge from Squash-Merge-only repos and blocks on missing records", () => {
+  const release = read("skills/scd-quickdev/references/release-contract.md");
+
+  assert.match(release, /普通 Merge 仓库[\s\S]*获批 SHA 是默认分支祖先[\s\S]*独立新克隆用 `git show`/);
+  assert.match(
+    release,
+    /仅允许 Squash Merge 的消费者仓库[\s\S]*合并后默认分支上的持久计划文件与批准事件记录[\s\S]*已合并 PR 合并提交[\s\S]*放行并执行分支清理，不再一律 `BLOCKED`/,
+  );
+  assert.match(
+    release,
+    /若合并后默认分支缺失该持久计划文件或批准事件记录[\s\S]*未通过时BLOCKED，不删除最后引用/,
+  );
+  assert.match(release, /缺失则 `BLOCKED` 不删除/);
+  assert.doesNotMatch(release, /若只能用丢失该历史的squash\/rebase，停止/);
+  assert.match(release, /不得擅自创建 tag 或改保护/);
+});
