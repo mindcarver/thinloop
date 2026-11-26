@@ -33,7 +33,7 @@ test("全部 Thinloop Skill 文本载荷均包含中文", () => {
     .flatMap((entry) => collectPayloadFiles(path.join(skillsRoot, entry.name)))
     .sort();
 
-  assert.equal(files.length, 85);
+  assert.equal(files.length, 86);
   for (const file of files) {
     assert.match(read(file), han, file);
   }

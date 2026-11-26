@@ -9,7 +9,7 @@ description: "通过有证据支持的项目级重构或新实施，对现有仓
 
 把现有系统转化为更优实现，严格区分源码、观察行为、产品意图与法律许可；产品决策、架构、项目拆解与单 Issue 交付直接复用 Thinloop 权威技能。设计或实施前读[计划确认契约](../scd-quickdev/references/planning-contract.md)（只读查询/审计不建计划，保持更窄治理权限）。
 
-核心边界：上游源码与行为只是证据，不自动成为目标契约；已确认兼容性边界决定保留/改变/删除；`scd-project` 负责 Initiative、Delivery Issues 与硬依赖 DAG；`scd-execute` 在门禁通过后负责 READY 波次、隔离通道与串行合并；每条 `scd-quickdev` 通道交付一个 READY Delivery Issue 与 PR；独立验收、集成门和生产切换人工门始终有效。
+核心边界：上游源码与行为只是证据，不自动成为目标契约；已确认兼容性边界决定保留/改变/删除；目标架构与结构边界遵守[工程最佳实践](../scd-quickdev/references/engineering-practice.md)（高内聚低耦合、单向依赖、边界防腐层与 6 条结构反模式门禁）；`scd-project` 负责 Initiative、Delivery Issues 与硬依赖 DAG；`scd-execute` 在门禁通过后负责 READY 波次、隔离通道与串行合并；每条 `scd-quickdev` 通道交付一个 READY Delivery Issue 与 PR；独立验收、集成门和生产切换人工门始终有效。
 
 ## 遵循故障关闭状态机
 

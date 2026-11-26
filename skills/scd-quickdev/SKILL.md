@@ -28,7 +28,7 @@ description: "编码 Agent 被要求修改仓库时，把清晰的单交付仓�
 
 ## 实施与验收
 
-1. **隔离与准备：** 创建/更新 Issue 与隔离时读 Issue 契约（低风险用紧凑模板）。用户授权普通局部 Issue、分支、推送、PR、合规合并与清理，不越过高风险门。页面任务修改前读页面参考并按共用视觉标准存基线（至少检查代表性桌面和窄屏视口）。缺陷先复现、查因果根因、补失败回归测试再最小修复（原因进入框架或依赖时，在认定应用代码有错前查其官方 Issue 跟踪器，未证实保持 `Unconfirmed`）。
+1. **隔离与准备：** 创建/更新 Issue 与隔离时读 Issue 契约（低风险用紧凑模板）。用户授权普通局部 Issue、分支、推送、PR、合规合并与清理，不越过高风险门。写代码或设计新功能交互边界前按阶段读取工程最佳实践参考（遵循高内聚低耦合、边界解析、浅嵌套复用与先查最新官方文档）。页面任务修改前读页面参考并按共用视觉标准存基线（至少检查代表性桌面和窄屏视口）。缺陷先复现、查因果根因、补失败回归测试再最小修复（原因进入框架或依赖时，在认定应用代码有错前查其官方 Issue 跟踪器，未证实保持 `Unconfirmed`）。
 2. **验证：** 运行直接练习变更的可行最强检查与构建/相关测试，把每个验收项映射到已观察证据、`UNVERIFIED` 或阻塞，区分当前回归与无关基线。实际差异影响页面、路由、组件交互、可见样式或响应式行为时，无论是否调用过 UIUX，都必须执行页面验收门（真实浏览器操作及视觉证据，缺失则 `BLOCKED`；页面验收门由真实差异触发，不属于可选的“适用时”判断）。
 
 ## 审计整个 Issue 是否完成
@@ -48,6 +48,7 @@ description: "编码 Agent 被要求修改仓库时，把清晰的单交付仓�
 | 产品/范围歧义，或 PRD、Project、UX、Architecture 交接 | [scope-contract.md](references/scope-contract.md) |
 | Issue 有 PRD、重要页面/跨层设计、迁移/兼容性复杂度 | [extended-issue.md](references/extended-issue.md)，仅展开命中章节 |
 | 选择验证或表述未验证边界 | [evidence-contract.md](references/evidence-contract.md) |
+| 实际开发或新功能引入外部库/SDK/接口 | [engineering-practice.md](references/engineering-practice.md) |
 | 真实页面差异或 UX 视觉交付（预计有页面差异时，修改前读取） | [page-acceptance.md](references/page-acceptance.md) |
 | 工程完成，准备 PR/独立验收/合并/清理关闭 | [release-contract.md](references/release-contract.md) |
 | 任务跨会话、暂停或恢复，需要创建/修改/删除后备状态 | [continuity-contract.md](references/continuity-contract.md) |
